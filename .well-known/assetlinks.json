@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.example.bookit",
+      "sha256_cert_fingerprints": ["C4:9D:54:73:F0:F8:C9:D9:42:9D:3C:E7:18:46:45:39:1A:33:BC:E8:27:39:4C:45:79:90:F5:DC:4A:0E:A4:40"]
+    }
+  }
+]
