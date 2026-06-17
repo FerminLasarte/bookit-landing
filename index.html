@@ -1,10 +1,210 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Bookit</title>
-    <meta http-equiv="refresh" content="0;url=https://somosbookit.com.ar">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Bookit | Tu próximo turno a un clic</title>
+    <meta name="description" content="Descargá la app oficial de Bookit para gestionar tus reservas en barberías, peluquerías y centros de estética de forma rápida y sencilla.">
+    <meta name="theme-color" content="#D78A1D">
+    <link rel="icon" type="image/png" href="https://ikfxokmxmbzfcdzjefzf.supabase.co/storage/v1/object/public/assets/favicon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.somosbookit.com.ar/">
+    <meta property="og:title" content="¡Sumate a Bookit!">
+    <meta property="og:description" content="Descargá la app, usá mi código de invitación y ganemos beneficios juntos.">
+    <meta property="og:image" content="https://ikfxokmxmbzfcdzjefzf.supabase.co/storage/v1/object/public/assets/banner_compartir.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="¡Sumate a Bookit!">
+    <meta name="twitter:description" content="Descargá la app, usá mi código de invitación y ganemos beneficios juntos.">
+    <meta name="twitter:image" content="https://ikfxokmxmbzfcdzjefzf.supabase.co/storage/v1/object/public/assets/banner_compartir.jpg">
+
+    <style>
+        /* 1. PALETA CLARA (Light Mode) - Basado en tu ThemeData 
+        */
+        :root {
+            --primary: #D78A1D;
+            --primary-hover: #C67D19;
+            --bg-color: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: rgba(31, 41, 55, 0.08);
+            --shadow-color: rgba(31, 41, 55, 0.1);
+        }
+
+        /* 2. PALETA OSCURA (Dark Mode) - Basado en tu ThemeData 
+        */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #151311;
+                --card-bg: #24211E;
+                --text-main: #E8E2D9;
+                --text-muted: #D9C6B4;
+                --border-color: rgba(255, 255, 255, 0.05);
+                --shadow-color: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            /* Se usa la fuente de Apple nativa (SF Pro Text) si está disponible */
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            overflow-x: hidden; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .background-glow { 
+            position: absolute; 
+            width: 500px; 
+            height: 500px; 
+            background: radial-gradient(circle, rgba(215, 138, 29, 0.15) 0%, rgba(0,0,0,0) 70%); 
+            top: -100px; 
+            z-index: -1; 
+        }
+
+        .container { max-width: 480px; width: 100%; text-align: center; z-index: 1; }
+        
+        .logo { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: var(--text-main); margin-bottom: 24px; }
+        .logo span { color: var(--primary); }
+        
+        .card { 
+            background-color: var(--card-bg); 
+            border-radius: 24px; 
+            padding: 32px 24px; 
+            box-shadow: 0 10px 25px -5px var(--shadow-color); 
+            border: 1px solid var(--border-color); 
+            margin-bottom: 24px; 
+        }
+
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+        p { color: var(--text-muted); font-size: 15px; line-height: 1.5; margin-bottom: 24px; }
+        
+        /* Caja del código estilo inputDecorationTheme de tu Flutter */
+        .referral-box { 
+            display: none; 
+            background: rgba(215, 138, 29, 0.08); 
+            border: 2px dashed rgba(215, 138, 29, 0.3); 
+            border-radius: 12px; 
+            padding: 16px; 
+            margin-bottom: 24px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        .referral-box:hover { 
+            background: rgba(215, 138, 29, 0.12); 
+            border-color: var(--primary); 
+        }
+        .referral-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); font-weight: 700; margin-bottom: 6px; }
+        .referral-code { font-size: 28px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .copy-icon { font-size: 16px; color: var(--text-muted); }
+        
+        .cta-button { 
+            display: block; 
+            background-color: var(--primary); 
+            color: #FFFFFF; 
+            text-decoration: none; 
+            padding: 14px 24px; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            font-size: 16px; 
+            transition: background-color 0.2s ease; 
+            margin-bottom: 12px; 
+            border: none;
+        }
+        .cta-button:hover { background-color: var(--primary-hover); }
+        
+        .store-badges { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+        .store-btn { background: #000; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 10px; color: white; display: flex; align-items: center; gap: 8px; font-size: 12px; text-align: left; text-decoration: none; width: 140px; }
+        .store-btn strong { display: block; font-size: 14px; }
+        
+        .footer { font-size: 13px; color: var(--text-muted); }
+        
+        .toast { position: fixed; bottom: -50px; background-color: var(--text-main); color: var(--bg-color); padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10; }
+        .toast.show { bottom: 30px; }
+    </style>
 </head>
 <body>
-    <h1>Redirigiendo a Bookit...</h1>
+
+    <div class="background-glow"></div>
+
+    <div class="container">
+        <div class="logo">Book<span>it</span></div>
+
+        <div class="card">
+            <h1 id="main-title">Tu próximo turno, a un clic de distancia</h1>
+            <p id="main-desc">Descargá la app oficial de Bookit para gestionar tus reservas en barberías, peluquerías y centros de estética de forma rápida y sencilla.</p>
+
+            <div class="referral-box" id="ref-box" onclick="copyCode()">
+                <div class="referral-label">¡Te regalaron una invitación!</div>
+                <div class="referral-code">
+                    <span id="code-text">—</span>
+                    <span class="copy-icon">📋</span>
+                </div>
+                <p style="font-size: 11px; margin: 6px 0 0 0; color: var(--text-muted);">Tocá para copiar el código e ingresalo al registrarte</p>
+            </div>
+
+            <a href="/" class="cta-button" id="main-cta">Descargar App</a>
+
+        </div>
+
+        <div class="footer">
+            &copy; 2026 Bookit. Todos los derechos reservados.
+        </div>
+    </div>
+
+    <div class="toast" id="toast">¡Código copiado con éxito!</div>
+
+    <script>
+        function getReferralCode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let code = urlParams.get('code');
+
+            if (!code) {
+                const pathParts = window.location.pathname.split('/');
+                const inviteIndex = pathParts.indexOf('invite');
+                if (inviteIndex !== -1 && pathParts[inviteIndex + 1]) {
+                    if (pathParts[inviteIndex + 1] === 'comercio' && pathParts[inviteIndex + 2]) {
+                        code = pathParts[inviteIndex + 2];
+                    } else if (pathParts[inviteIndex + 1] !== 'comercio') {
+                        code = pathParts[inviteIndex + 1];
+                    }
+                }
+            }
+            return code ? code.trim().toUpperCase() : null;
+        }
+
+        const referralCode = getReferralCode();
+
+        if (referralCode) {
+            document.getElementById('ref-box').style.display = 'block';
+            document.getElementById('code-text').innerText = referralCode;
+            document.getElementById('main-title').innerText = "¡Te invitaron a unirte a Bookit!";
+            document.getElementById('main-desc').innerText = "Descargá la app, usá el código de abajo al registrarte y sumá puntos para tus próximos turnos.";
+        }
+
+        function copyCode() {
+            if (!referralCode) return;
+            navigator.clipboard.writeText(referralCode).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => { toast.classList.remove('show'); }, 2500);
+            });
+        }
+    </script>
 </body>
 </html>
