@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "TU_TEAM_ID.ar.com.somosbookit.app",
+        "appID": "MPX5U375K6.ar.com.somosbookit.app",
         "paths": [
           "/auth/v1/verify", 
           "/reset-password/*",
