@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
     // 2. Enviar el correo de bienvenida con Resend
     const { error: emailError } = await resend.emails.send({
-      from: 'Bookit VIP <auth@somosbookit.com.ar>', // Cambia "auth" por el correo que inventaste
+      from: 'Bookit VIP <hola@somosbookit.com.ar>', // Cambia "auth" por el correo que inventaste
       to: email,
       subject: '¡Tus 500 puntos Bookit están asegurados! 🎁',
       html: `
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
           <p>Acabamos de guardar tus <strong>500 puntos bajo llave</strong>. Te vamos a avisar antes que a nadie cuando la app esté lista para descargar en Tandil para que puedas canjearlos en tu primer turno.</p>
           <p>Mientras tanto, seguinos en Instagram para enterarte de qué locales ya se están sumando.</p>
           <br/>
-          <a href="https://instagram.com/tu_instagram_aqui" style="background-color: #D78A1D; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ver novedades en Instagram</a>
+          <a href="https://instagram.com/somosbookit" style="background-color: #D78A1D; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">Ver novedades en Instagram</a>
           <br/><br/>
           <p>Nos vemos pronto,<br/>El equipo de Bookit.</p>
         </div>
