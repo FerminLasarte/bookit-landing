@@ -1,24 +1,39 @@
 {
   "name": "bookit-web",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "2.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FacuAntivero/bookit-web.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/FacuAntivero/bookit-web/issues"
   },
-  "homepage": "https://github.com/FacuAntivero/bookit-web#readme",
-  "description": "",
+  "homepage": "https://www.somosbookit.com.ar",
+  "description": "Landing y lista de espera de Bookit — turnos para barberías, peluquerías y estética en Tandil.",
   "dependencies": {
-    "@supabase/supabase-js": "^2.111.0",
-    "resend": "^6.18.1"
+    "@supabase/supabase-js": "^2.112.3",
+    "lucide-react": "^1.31.0",
+    "motion": "^13.1.0",
+    "next": "^16.3.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "resend": "^6.20.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2"
   }
 }
