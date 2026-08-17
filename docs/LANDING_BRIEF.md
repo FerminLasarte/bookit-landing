@@ -101,7 +101,7 @@ type WaitlistPayload = {
 8. Éxito → `200 { success: true, message: '¡Registro exitoso!' }`
 9. Cualquier otra excepción → `500 { error: 'Hubo un error al procesar tu solicitud. Intentá de nuevo.' }`
 
-**Env vars (ya en Vercel):** `RESEND_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+**Env vars (ya en Vercel):** `RESEND_API_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`.
 
 **Mejoras a incluir en la migración** (mantienen el contrato, lo endurecen):
 

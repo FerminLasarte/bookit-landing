@@ -13,9 +13,9 @@ export const dynamic = "force-dynamic";
  * Las claves nuevas son server-only. Las `NEXT_PUBLIC_*` quedan como fallback
  * para no romper el deploy actual de Vercel mientras se migran las env vars.
  */
-const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseUrl = process.env.SUPABASE_URL ?? process.env.SUPABASE_URL;
 const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  process.env.SUPABASE_SERVICE_ROLE ?? process.env.SUPABASE_ANON_KEY;
 
 function jsonError(error: string, status: number) {
   return NextResponse.json({ error }, { status });
