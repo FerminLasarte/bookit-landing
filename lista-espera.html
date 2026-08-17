@@ -3,13 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <title>Lista VIP | Bookit</title>
     <meta name="theme-color" content="#D78A1D">
     <link rel="icon" type="image/png" href="https://ikfxokmxmbzfcdzjefzf.supabase.co/storage/v1/object/public/assets/favicon.png">
 
+    <!-- Open Graph / redes sociales (WhatsApp, Instagram, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Bookit | Tandil, tu forma de sacar turnos está por cambiar">
+    <meta property="og:description" content="Anotate en la lista VIP y llevate 500 Puntos Bookit de regalo para tu primer turno. Barberías, uñas, depilación y más, todo en una sola app.">
+    <meta property="og:image" content="https://ikfxokmxmbzfcdzjefzf.supabase.co/storage/v1/object/public/assets/og-image.png">
+    <meta property="og:url" content="https://bookit.com.ar/lista-espera.html">
+    <meta property="og:locale" content="es_AR">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bookit | Tandil, tu forma de sacar turnos está por cambiar">
+    <meta name="twitter:description" content="Anotate en la lista VIP y llevate 500 Puntos Bookit de regalo para tu primer turno.">
+    <meta name="twitter:image" content="https://ikfxokmxmbzfcdzjefzf.supabase.co/storage/v1/object/public/assets/og-image.png">
+
     <style>
-        /* Mismos estilos base de tu index.html */
         :root {
             --primary: #D78A1D;
             --primary-hover: #C67D19;
@@ -34,51 +46,59 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
-        body { 
-            background-color: var(--bg-color); color: var(--text-main); 
-            min-height: 100vh; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; padding: 20px; 
+        body {
+            background-color: var(--bg-color); color: var(--text-main);
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 20px;
             overflow-x: hidden; transition: background-color 0.3s, color 0.3s;
         }
 
-        .background-glow { 
-            position: absolute; width: 500px; height: 500px; 
-            background: radial-gradient(circle, rgba(215, 138, 29, 0.15) 0%, rgba(0,0,0,0) 70%); 
-            top: -100px; z-index: -1; 
+        .background-glow {
+            position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(215, 138, 29, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: -100px; z-index: -1;
         }
 
         .container { max-width: 480px; width: 100%; text-align: center; z-index: 1; }
-        
+
         .logo { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: var(--text-main); margin-bottom: 24px; }
         .logo span { color: var(--primary); }
-        
-        .card { 
-            background-color: var(--card-bg); border-radius: 24px; 
-            padding: 32px 24px; box-shadow: 0 10px 25px -5px var(--shadow-color); 
-            border: 1px solid var(--border-color); margin-bottom: 16px; 
+
+        .card {
+            background-color: var(--card-bg); border-radius: 24px;
+            padding: 32px 24px; box-shadow: 0 10px 25px -5px var(--shadow-color);
+            border: 1px solid var(--border-color); margin-bottom: 16px;
         }
 
-        h1 { font-size: 22px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
-        p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
-        
-        /* Estilos específicos del formulario */
+        h1 { font-size: 22px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; transition: opacity 0.15s ease; }
+        p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 24px; transition: opacity 0.15s ease; }
+
         .form-group { margin-bottom: 16px; text-align: left; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
-        .form-group input[type="text"], .form-group input[type="email"] { 
-            width: 100%; padding: 12px; border-radius: 8px; 
-            border: 1px solid var(--border-color); background: var(--bg-color); 
+        
+        /* Limpiamos el CSS del select unificándolo con los inputs */
+        .form-group input[type="text"], 
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group select {
+            width: 100%; padding: 12px; border-radius: 8px;
+            border: 1px solid var(--border-color); background: var(--bg-color);
             color: var(--text-main); font-size: 15px; outline: none;
         }
-        .form-group input:focus { border-color: var(--primary); }
-        
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+
         .radio-group { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
         .radio-label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; color: var(--text-main); }
         .radio-label input { accent-color: var(--primary); width: 16px; height: 16px; }
 
-        .cta-button { 
-            display: block; width: 100%; background-color: var(--primary); 
-            color: #FFFFFF; padding: 14px 24px; border-radius: 12px; 
-            font-weight: 600; font-size: 16px; transition: background-color 0.2s ease; 
+        .consent-group { display: flex; align-items: flex-start; gap: 8px; margin-top: 20px; text-align: left; }
+        .consent-group input { accent-color: var(--primary); width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
+        .consent-group label { font-size: 12px; color: var(--text-muted); line-height: 1.4; cursor: pointer; }
+
+        .cta-button {
+            display: block; width: 100%; background-color: var(--primary);
+            color: #FFFFFF; padding: 14px 24px; border-radius: 12px;
+            font-weight: 600; font-size: 16px; transition: background-color 0.2s ease;
             border: none; cursor: pointer; margin-top: 24px;
         }
         .cta-button:hover { background-color: var(--primary-hover); }
@@ -95,8 +115,8 @@
         <div class="logo">Book<span>it</span></div>
 
         <div class="card" id="form-card">
-            <h1>Tandil, tu forma de sacar turnos está a punto de cambiar.</h1>
-            <p>Anotate en la lista VIP y llevate <strong>500 Puntos Bookit</strong> de regalo para canjear en tu primer turno cuando lancemos la app.</p>
+            <h1 id="main-title">Tandil, tu forma de sacar turnos está a punto de cambiar.</h1>
+            <p id="main-desc">Anotate en la lista VIP y llevate <strong>500 Puntos Bookit</strong> de regalo para canjear en tu primer turno cuando lancemos la app.</p>
 
             <form id="waitlist-form">
                 <div class="form-group">
@@ -111,25 +131,51 @@
 
                 <div class="form-group">
                     <label for="whatsapp">WhatsApp (Opcional)</label>
-                    <input type="text" id="whatsapp" placeholder="Ej: 2494...">
+                    <!-- Actualizado a type="tel" y inputmode para mejor experiencia en móviles -->
+                    <input type="tel" id="whatsapp" inputmode="tel" placeholder="Ej: 2494...">
                 </div>
 
                 <div class="form-group" style="margin-top: 20px;">
                     <label>¿Cómo vas a usar Bookit? *</label>
                     <div class="radio-group">
                         <label class="radio-label">
-                            <input type="radio" name="user_type" value="cliente" required> 
+                            <input type="radio" name="user_type" value="cliente" required>
                             Soy cliente (Quiero sacar turnos)
                         </label>
                         <label class="radio-label">
-                            <input type="radio" name="user_type" value="local"> 
+                            <input type="radio" name="user_type" value="local">
                             Soy dueño de un local (Quiero digitalizarlo)
                         </label>
                     </div>
                 </div>
 
+                <div class="form-group" id="category-group" style="display: none;">
+                    <label for="category">Categoría de tu comercio *</label>
+                    <!-- Estilos en línea eliminados, ahora heredados por CSS arriba -->
+                    <select id="category">
+                        <option value="">Seleccioná una opción</option>
+                        <option value="barberia">Barbería</option>
+                        <option value="peluqueria">Peluquería</option>
+                        <option value="manicura">Manicura</option>
+                        <option value="estetica">Estética</option>
+                        <option value="masajes">Masajes</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="category-other-group" style="display: none;">
+                    <label for="category-other">Contanos cuál *</label>
+                    <input type="text" id="category-other" placeholder="Ej: Depilación láser">
+                </div>
+
+                <div class="consent-group">
+                    <input type="checkbox" id="consent" required>
+                    <label for="consent">Acepto recibir novedades de Bookit por email y/o WhatsApp, y que mis datos sean tratados conforme a la Ley 25.326 de Protección de Datos Personales. *</label>
+                </div>
+
                 <button type="submit" class="cta-button" id="submit-btn">Quiero mis 500 puntos</button>
-                <p id="error-message" style="color: #ef4444; margin-top: 15px; display: none; font-weight: bold; text-align: center; font-size: 13px;"></p>
+                <!-- Agregado el atributo aria-live para accesibilidad -->
+                <p id="error-message" aria-live="polite" style="color: #ef4444; margin-top: 15px; display: none; font-weight: bold; text-align: center; font-size: 13px;"></p>
             </form>
         </div>
 
@@ -139,50 +185,137 @@
     </div>
 
     <script>
+        // --- Oferta dinámica según tipo de usuario ---
+        const COPY = {
+            default: {
+                title: 'Tandil, tu forma de sacar turnos está a punto de cambiar.',
+                desc: 'Anotate en la lista VIP y llevate <strong>500 Puntos Bookit</strong> de regalo para canjear en tu primer turno cuando lancemos la app.',
+                button: 'Quiero mis 500 puntos'
+            },
+            cliente: {
+                title: 'Tandil, tu forma de sacar turnos está a punto de cambiar.',
+                desc: 'Anotate en la lista VIP y llevate <strong>500 Puntos Bookit</strong> de regalo para canjear en tu primer turno cuando lancemos la app.',
+                button: 'Quiero mis 500 puntos'
+            },
+            local: {
+                title: 'Sumá tu local a Bookit antes que nadie.',
+                desc: 'Anotate en la lista VIP y accedé a <strong>precio fundador de por vida</strong>: cupos limitados para los primeros locales que se sumen antes del lanzamiento.',
+                button: 'Quiero mi lugar como fundador'
+            }
+        };
+
+        const titleEl = document.getElementById('main-title');
+        const descEl = document.getElementById('main-desc');
+        const btnEl = document.getElementById('submit-btn');
+
+        function updateCopy(type) {
+            const c = COPY[type] || COPY.default;
+            titleEl.style.opacity = 0;
+            descEl.style.opacity = 0;
+            setTimeout(() => {
+                titleEl.textContent = c.title;
+                descEl.innerHTML = c.desc;
+                btnEl.textContent = c.button;
+                titleEl.style.opacity = 1;
+                descEl.style.opacity = 1;
+            }, 150);
+        }
+
+        document.querySelectorAll('input[name="user_type"]').forEach(radio => {
+            radio.addEventListener('change', (e) => updateCopy(e.target.value));
+        });
+
+        // --- Mostrar/ocultar campo de categoría solo para dueños de local ---
+        const categoryGroup = document.getElementById('category-group');
+        const categorySelect = document.getElementById('category');
+        const categoryOtherGroup = document.getElementById('category-other-group');
+        const categoryOtherInput = document.getElementById('category-other');
+
+        // La validación requerida dinámica ya estaba perfecta aquí
+        document.querySelectorAll('input[name="user_type"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const isLocal = e.target.value === 'local';
+                categoryGroup.style.display = isLocal ? 'block' : 'none';
+                categorySelect.required = isLocal;
+
+                if (!isLocal) {
+                    categorySelect.value = '';
+                    categoryOtherGroup.style.display = 'none';
+                    categoryOtherInput.required = false;
+                    categoryOtherInput.value = '';
+                }
+            });
+        });
+
+        categorySelect.addEventListener('change', () => {
+            const isOther = categorySelect.value === 'otro';
+            categoryOtherGroup.style.display = isOther ? 'block' : 'none';
+            categoryOtherInput.required = isOther;
+            if (!isOther) categoryOtherInput.value = '';
+        });
+
+        // --- Envío del formulario ---
         document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const form = e.target;
             const btn = document.getElementById('submit-btn');
             const errorMsg = document.getElementById('error-message');
             const card = document.getElementById('form-card');
-            
+
+            const originalBtnText = btn.textContent;
             btn.innerText = 'Guardando tus puntos...';
             btn.disabled = true;
             errorMsg.style.display = 'none';
+
+            const userType = form.querySelector('input[name="user_type"]:checked').value;
 
             const data = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 whatsapp: document.getElementById('whatsapp').value,
-                user_type: form.querySelector('input[name="user_type"]:checked').value
+                user_type: userType,
+                consent: document.getElementById('consent').checked
             };
 
+            if (userType === 'local') {
+                const category = document.getElementById('category').value;
+                data.category = category === 'otro'
+                    ? document.getElementById('category-other').value
+                    : category;
+            }
+
             try {
-                // Llama a la API que creamos en el paso anterior
                 const response = await fetch('/api/waitlist', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                
+
                 const result = await response.json();
 
                 if (response.ok) {
-                    // Reemplazamos el formulario con el mensaje de éxito
-                    card.innerHTML = `
+                    const successHtml = userType === 'local'
+                        ? `
+                        <h1 style="color: var(--primary);">¡Adentro! 🎉</h1>
+                        <p style="font-size: 15px; color: var(--text-main);">Tu local ya está en la lista VIP de fundadores.</p>
+                        <p style="font-size: 14px;">Te vamos a contactar por WhatsApp o email para contarte los detalles del precio fundador antes de que se agoten los cupos.</p>
+                        <a href="https://www.instagram.com/bookit_arg" style="display: block; background-color: var(--primary); color: white; text-align: center; padding: 14px; text-decoration: none; border-radius: 12px; font-weight: bold; margin-top: 24px;">Seguinos en Instagram</a>
+                        `
+                        : `
                         <h1 style="color: var(--primary);">¡Adentro! 🎉</h1>
                         <p style="font-size: 15px; color: var(--text-main);">Ya estás oficialmente en la lista VIP.</p>
                         <p style="font-size: 14px;">Acabamos de enviarte un correo confirmando tus 500 puntos (revisá Spam por las dudas). Te vamos a avisar antes que a nadie cuando la app esté lista para descargar.</p>
-                        <a href="https://www.instagram.com/somosbookit" style="display: block; background-color: var(--primary); color: white; text-align: center; padding: 14px; text-decoration: none; border-radius: 12px; font-weight: bold; margin-top: 24px;">Seguinos en Instagram</a>
-                    `;
+                        <a href="https://www.instagram.com/bookit_arg" style="display: block; background-color: var(--primary); color: white; text-align: center; padding: 14px; text-decoration: none; border-radius: 12px; font-weight: bold; margin-top: 24px;">Seguinos en Instagram</a>
+                        `;
+                    card.innerHTML = successHtml;
                 } else {
                     throw new Error(result.error || 'Ocurrió un error al registrarte.');
                 }
             } catch (error) {
                 errorMsg.innerText = error.message;
                 errorMsg.style.display = 'block';
-                btn.innerText = 'Quiero mis 500 puntos';
+                btn.innerText = originalBtnText;
                 btn.disabled = false;
             }
         });
