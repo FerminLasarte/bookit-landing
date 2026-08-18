@@ -10,11 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FacuAntivero/bookit-web.git"
+    "url": "git+https://github.com/FerminLasarte/bookit-landing.git"
   },
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/FacuAntivero/bookit-web/issues"
+    "url": "https://github.com/FerminLasarte/bookit-landing/issues"
   },
   "homepage": "https://www.somosbookit.com.ar",
   "description": "Landing y lista de espera de Bookit — turnos para barberías, peluquerías y estética en Tandil.",

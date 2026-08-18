@@ -10,10 +10,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Las claves nuevas son server-only. Las `NEXT_PUBLIC_*` quedan como fallback
- * para no romper el deploy actual de Vercel mientras se migran las env vars.
+ * Claves server-only. `SUPABASE_SERVICE_ROLE` es la preferida; `SUPABASE_ANON_KEY`
+ * queda como fallback mientras el service role no esté configurado en Vercel.
  */
-const supabaseUrl = process.env.SUPABASE_URL ?? process.env.SUPABASE_URL;
+const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey =
   process.env.SUPABASE_SERVICE_ROLE ?? process.env.SUPABASE_ANON_KEY;
 
