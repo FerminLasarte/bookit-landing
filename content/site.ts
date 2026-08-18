@@ -14,14 +14,13 @@ export const site = {
   email: "somosbookit@gmail.com",
   transactionalEmail: "hola@somosbookit.com.ar",
   instagram: {
-    handle: "@somosbookit",
-    url: "https://instagram.com/somosbookit",
+    handle: "@bookit_arg",
+    url: "https://instagram.com/bookit_arg",
   },
   phone: {
-    // TODO: reemplazar por el teléfono real
-    display: "+54 9 249 400-0000",
-    href: "tel:+5492494000000",
-    isPlaceholder: true,
+    display: "+54 9 249 460-0615",
+    href: "tel:+5492494600615",
+    isPlaceholder: false,
   },
   app: {
     bundleId: "ar.com.somosbookit.app",

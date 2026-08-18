@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
@@ -8,6 +9,27 @@ import AnimatedButton from "./AnimatedButton";
 import Wordmark from "./Wordmark";
 import { navLinks } from "@/content/nav";
 import { cn } from "@/lib/utils";
+
+/**
+ * Ícono + wordmark. El PNG tiene fondo papel claro: en dark mode el header
+ * pasa a ink-900 y esa placa clara quedaría flotando, así que el ícono
+ * solo se muestra en light y el wordmark (que sí es dark-aware) queda solo.
+ */
+function Logo({ className = "" }: { className?: string }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <Image
+        src="/brand/icon.jpeg"
+        alt=""
+        width={28}
+        height={28}
+        className="rounded-[0.4rem] dark:hidden"
+        priority
+      />
+      <Wordmark className={className} />
+    </span>
+  );
+}
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -59,7 +81,7 @@ export default function Nav() {
           {/* Sin `aria-label`: el nombre accesible sale del wordmark ("Bookit"),
               así el texto visible y el nombre accesible coinciden. */}
           <Link href="/" className="ring-focus flex min-h-11 items-center rounded-sm">
-            <Wordmark className="text-xl" />
+            <Logo className="text-xl" />
           </Link>
 
           <ul className="hidden items-center gap-8 md:flex">
@@ -100,7 +122,7 @@ export default function Nav() {
           className="fixed inset-0 z-90 flex flex-col bg-cream-50 md:hidden dark:bg-ink-900"
         >
           <div className="wrap flex h-18 shrink-0 items-center justify-between">
-            <Wordmark className="text-xl" />
+            <Logo className="text-xl" />
             <button
               type="button"
               onClick={() => setOpen(false)}

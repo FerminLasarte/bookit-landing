@@ -35,8 +35,7 @@ const canales = [
     label: "Teléfono",
     value: site.phone.display,
     href: site.phone.href,
-    // TODO: reemplazar por el teléfono real
-    hint: "Número de ejemplo: todavía no está operativo.",
+    hint: "Llamadas y WhatsApp, en horario comercial.",
     icon: <Phone className={iconClasses} strokeWidth={1.75} aria-hidden="true" />,
   },
 ] as const;

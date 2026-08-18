@@ -38,10 +38,11 @@
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
   /*
-   * Cifras. No comparte tipografía con el texto: ver el comentario en `layout.tsx`.
+   * Cifras. Pila de sistema (SF Pro en Apple, sin descarga) con Manrope de
+   * respaldo: minimal, sin adorno, en vez del serif editorial anterior.
    * Se aplica sólo desde la utilidad `num`, nunca suelta.
    */
-  --font-numeric: var(--font-instrument), ui-serif, Georgia, "Times New Roman", serif;
+  --font-numeric: -apple-system, BlinkMacSystemFont, var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
   --text-display-xl: clamp(2.75rem, 6.5vw, 5.5rem);
   --text-display-xl--line-height: 0.95;
@@ -157,12 +158,12 @@
    * una tipografía propia. `tnum` + `lnum` para que las columnas no bailen.
    */
   font-family: var(--font-numeric);
-  font-weight: 400;
+  font-weight: 500;
   font-feature-settings:
     "tnum" 1,
     "lnum" 1;
   font-variant-numeric: tabular-nums lining-nums;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.02em;
 }
 
 @utility measure {

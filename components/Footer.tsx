@@ -46,7 +46,7 @@ export default function Footer() {
             <p className="mt-4 max-w-[28ch] text-small text-bone-300">
               Turnos para barberías, peluquerías y estética.
             </p>
-            <p className="mt-6 font-mono text-xs text-bone-300/80">{site.hq}</p>
+            <p className="mt-6 text-small text-bone-300/80">{site.hq}</p>
             <p className="mt-4 text-small text-bone-300">
               Hecho en {site.city} <span aria-hidden="true">🧡</span>
             </p>
@@ -95,7 +95,6 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                {/* TODO: reemplazar por el teléfono real */}
                 <a href={site.phone.href} className={linkClasses}>
                   <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                   <span className="num">{site.phone.display}</span>
