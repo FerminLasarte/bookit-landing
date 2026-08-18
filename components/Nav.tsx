@@ -10,22 +10,11 @@ import Wordmark from "./Wordmark";
 import { navLinks } from "@/content/nav";
 import { cn } from "@/lib/utils";
 
-/**
- * Ícono + wordmark. El PNG tiene fondo papel claro: en dark mode el header
- * pasa a ink-900 y esa placa clara quedaría flotando, así que el ícono
- * solo se muestra en light y el wordmark (que sí es dark-aware) queda solo.
- */
+/** Ícono (fondo transparente) + wordmark. */
 function Logo({ className = "" }: { className?: string }) {
   return (
     <span className="inline-flex items-center gap-2">
-      <Image
-        src="/brand/icon.jpeg"
-        alt=""
-        width={28}
-        height={28}
-        className="rounded-[0.4rem] dark:hidden"
-        priority
-      />
+      <Image src="/brand/icon.png" alt="" width={28} height={28} priority />
       <Wordmark className={className} />
     </span>
   );
