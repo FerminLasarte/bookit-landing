@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, JetBrains_Mono, Manrope } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  Instrument_Serif,
+  JetBrains_Mono,
+  Manrope,
+} from "next/font/google";
 import type { ReactNode } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -18,6 +23,21 @@ const manrope = Manrope({
   display: "swap",
   weight: ["400", "500", "600", "700"],
   variable: "--font-manrope",
+});
+
+/**
+ * La tipografía de las cifras (§4.6.3).
+ *
+ * Los números no se escriben con la misma tipografía que el texto: un serif
+ * editorial de un solo peso al lado del grotesk extrabold de los títulos hace
+ * que cada cifra se lea como una pieza gráfica y no como texto más. Va en
+ * `.num`, que es lo único que la usa.
+ */
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400"],
+  variable: "--font-instrument",
 });
 
 const jetbrains = JetBrains_Mono({
@@ -102,7 +122,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="es-AR"
-      className={`${bricolage.variable} ${manrope.variable} ${jetbrains.variable}`}
+      className={`${bricolage.variable} ${manrope.variable} ${instrument.variable} ${jetbrains.variable}`}
     >
       <body className="flex min-h-dvh flex-col">
         <script

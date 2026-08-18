@@ -1,33 +1,19 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowDown, Download } from "lucide-react";
 import AnimatedButton from "@/components/AnimatedButton";
+import Audiences from "@/components/Audiences";
 import Eyebrow from "@/components/Eyebrow";
 import Faq from "@/components/Faq";
-import Hairline from "@/components/Hairline";
 import HeroGlow from "@/components/HeroGlow";
 import HowItWorks from "@/components/HowItWorks";
 import Reveal from "@/components/Reveal";
+import Rewards from "@/components/Rewards";
 import Section from "@/components/Section";
-import WaitlistForm from "@/components/WaitlistForm";
-import { IconCheck, IconPoints, IconReferral } from "@/components/icons";
-import { featuresCliente, featuresLocal } from "@/content/features";
-import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
-
-/** Bullet de las listas de beneficios: check ámbar, decorativo. */
-function Bullet({ onDark = false }: { onDark?: boolean }) {
-  return (
-    <IconCheck
-      className={
-        onDark
-          ? "mt-1 h-4.5 w-4.5 shrink-0 text-amber-300"
-          : "mt-1 h-4.5 w-4.5 shrink-0 text-amber-600 dark:text-amber-300"
-      }
-    />
-  );
-}
 
 export default function Home() {
   return (
@@ -36,12 +22,16 @@ export default function Home() {
       {/*
        * El hero NO usa `Reveal`: está sobre el pliegue, así que no hay scroll que
        * revelar, y arrancarlo en `opacity: 0` retrasaba el LCP hasta la hidratación.
+       *
+       * Ocupa la pantalla entera menos el nav (`h-18` = 4.5rem). `svh` y no `dvh`:
+       * en mobile, con `dvh` el hero cambia de alto cuando la barra del navegador
+       * se esconde al scrollear, y el texto salta.
        */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-32">
+      <section className="relative flex min-h-[calc(100svh-4.5rem)] flex-col justify-center overflow-hidden py-20">
         {/* El único destello ámbar de la página. Sigue al puntero (§ver HeroGlow) */}
         <HeroGlow />
 
-        <div className="wrap relative">
+        <div className="wrap relative w-full">
           <div className="md:grid md:grid-cols-12 md:gap-8">
             <div className="md:col-span-9">
               <Eyebrow>Tandil · Próximo lanzamiento</Eyebrow>
@@ -56,22 +46,43 @@ export default function Home() {
                 trabajo.
               </p>
 
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="mt-10">
                 <AnimatedButton
-                  text="Sumate a la lista VIP"
-                  href="/lista-espera"
+                  text="Descargar la app"
+                  href="/descargar"
                   variant="primary"
                   size="lg"
+                  icon={<Download className="h-4.5 w-4.5" strokeWidth={2} aria-hidden="true" />}
                 />
-                <AnimatedButton text="Tengo un local" href="#locales" variant="quiet" size="lg" />
               </div>
 
+              {/*
+               * Mientras no haya links de tienda, el botón lleva a /descargar, que
+               * lo explica. Esta línea lo adelanta para que nadie llegue esperando
+               * un link que todavía no existe.
+               */}
               <p className="mt-7 text-small text-ink-500 dark:text-bone-300">
-                Anotate ahora y llevate 500 Puntos Bookit para tu primer turno.
+                Todavía no lanzamos.{" "}
+                <Link
+                  href="/lista-espera"
+                  className="ring-focus rounded-sm font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
+                >
+                  Sumate a la lista VIP
+                </Link>{" "}
+                y llevate <span className="num">500</span> Puntos Bookit para tu primer turno.
               </p>
             </div>
           </div>
         </div>
+
+        {/* Pista de scroll: dice que abajo sigue algo, sin gritarlo */}
+        <Link
+          href="#como-funciona"
+          className="ring-focus absolute inset-x-0 bottom-8 mx-auto hidden w-fit items-center gap-2 rounded-pill px-3 py-2 text-xs font-semibold text-ink-500 transition-colors duration-150 hover:text-ink-900 md:flex dark:text-bone-300 dark:hover:text-bone-100"
+        >
+          Cómo funciona
+          <ArrowDown className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+        </Link>
       </section>
 
       {/* ───────────────────── 2. Cómo funciona ───────────────────── */}
@@ -79,198 +90,20 @@ export default function Home() {
         <HowItWorks />
       </Section>
 
-      {/* ───────────── 3. Para vos, que sacás turnos ───────────── */}
-      <Section id="clientes" labelledBy="clientes-title" className="bg-cream-100 dark:bg-ink-800">
-        <div className="md:grid md:grid-cols-12 md:gap-8">
-          <div className="md:col-span-5">
-            <Reveal>
-              <Eyebrow>Para quien saca turnos</Eyebrow>
-              <h2
-                id="clientes-title"
-                className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100"
-              >
-                Sacar turno debería llevar 30 segundos.
-              </h2>
-            </Reveal>
-          </div>
-
-          <ul className="mt-12 space-y-5 md:col-span-6 md:col-start-7 md:mt-2">
-            {featuresCliente.map((feature, index) => (
-              <Reveal as="li" key={feature} index={index} className="flex items-start gap-3.5">
-                <Bullet />
-                <span className="text-ink-900 dark:text-bone-100">{feature}</span>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
-      </Section>
-
-      {/* ───────────────── 4. Para tu local (corte visual) ───────────────── */}
-      <section id="locales" aria-labelledby="locales-title" className="bg-ink-900 py-24 md:py-36">
-        <div className="wrap">
-          <div className="md:grid md:grid-cols-12 md:gap-8">
-            <div className="md:col-span-5">
-              <Reveal>
-                <Eyebrow onDark>Para comercios</Eyebrow>
-                <h2
-                  id="locales-title"
-                  className="mt-5 text-display-lg font-semibold text-bone-100"
-                >
-                  Tu agenda, sin idas y vueltas.
-                </h2>
-              </Reveal>
-
-              <Reveal index={1}>
-                <div className="mt-10 rounded-card border border-white/10 bg-white/4 p-6">
-                  <h3 className="text-h3 font-semibold text-amber-300">
-                    Precio fundador de por vida.
-                  </h3>
-                  <p className="mt-3 text-small text-bone-300">
-                    Cupos limitados para los primeros locales que se suman antes del lanzamiento en
-                    Tandil. Te contactamos por WhatsApp o email con los detalles.
-                  </p>
-                </div>
-              </Reveal>
-
-              <Reveal index={2} className="mt-8">
-                <AnimatedButton
-                  text="Quiero mi lugar como fundador"
-                  href="/lista-espera?tipo=local"
-                  variant="glass"
-                  size="lg"
-                />
-              </Reveal>
-            </div>
-
-            <ul className="mt-14 space-y-5 md:col-span-6 md:col-start-7 md:mt-2">
-              {featuresLocal.map((feature, index) => (
-                <Reveal as="li" key={feature} index={index} className="flex items-start gap-3.5">
-                  <Bullet onDark />
-                  <span className="text-bone-100">{feature}</span>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────── 5. Puntos Bookit ─────────────────── */}
-      <Section id="puntos" labelledBy="puntos-title">
-        <div className="md:grid md:grid-cols-12 md:gap-8">
-          <div className="md:col-span-6">
-            <Reveal>
-              <IconPoints className="h-8 w-8 text-amber-600 dark:text-amber-300" />
-              <Eyebrow className="mt-6">Puntos Bookit</Eyebrow>
-              <h2
-                id="puntos-title"
-                className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100"
-              >
-                Los turnos que ya te hacías, ahora te devuelven algo.
-              </h2>
-              <p className="measure mt-6 text-ink-500 dark:text-bone-300">
-                Cada turno que reservás por Bookit te deja puntos. Se acumulan solos y los canjeás
-                en los turnos que vienen, en cualquier local de la app.
-              </p>
-            </Reveal>
-          </div>
-
-          {/* La cifra como pieza gráfica (§6.1.6) */}
-          <Reveal index={1} className="mt-12 md:col-span-5 md:col-start-8 md:mt-0">
-            <div className="flex items-baseline gap-4">
-              {/* amber-600 y no amber-500: la cifra es contenido, y el ámbar de
-                  marca sobre papel da 2,65:1 (por debajo del 3:1 de texto grande). */}
-              <span className="font-display text-display-xl font-extrabold tabular-nums text-amber-600 dark:text-amber-300">
-                500
-              </span>
-              <span className="text-small font-semibold text-ink-500 dark:text-bone-300">
-                puntos
-              </span>
-            </div>
-            <Hairline className="mt-6" />
-            <p className="measure mt-6 text-ink-500 dark:text-bone-300">
-              De regalo por anotarte a la lista, guardados para tu primer turno.
-            </p>
-          </Reveal>
-        </div>
-      </Section>
-
-      {/* ──────────────── 6. Invitá y ganen los dos ──────────────── */}
+      {/* ──────────── 3. Los dos públicos, en una sola pieza ──────────── */}
       <Section
-        id="referidos"
-        labelledBy="referidos-title"
-        className="bg-cream-100 dark:bg-ink-800"
+        id="publico"
+        labelledBy="publico-title"
+        className="bg-cream-100 dark:bg-ink-800/40"
       >
-        <div className="md:grid md:grid-cols-12 md:gap-8">
-          <div className="md:col-span-6">
-            <Reveal>
-              <IconReferral className="h-8 w-8 text-amber-600 dark:text-amber-300" />
-              <Eyebrow className="mt-6">Referidos</Eyebrow>
-              <h2
-                id="referidos-title"
-                className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100"
-              >
-                Invitá y ganen los dos.
-              </h2>
-              <p className="measure mt-6 text-ink-500 dark:text-bone-300">
-                Cada persona en Bookit tiene su código. Compartilo, y cuando alguien se registra con
-                él, ganan los dos.
-              </p>
-            </Reveal>
-          </div>
-
-          <Reveal index={1} className="mt-12 md:col-span-5 md:col-start-8 md:mt-0">
-            <div className="rounded-card border border-ink-900/8 bg-paper p-6 shadow-[0_1px_0_rgba(0,0,0,0.03)] dark:border-white/8 dark:bg-ink-900">
-              <Eyebrow variant="label">Tu link se ve así</Eyebrow>
-              <p className="mt-3 font-mono text-small break-all text-ink-900 dark:text-bone-100">
-                somosbookit.com.ar/invite/
-                <span className="text-amber-700 dark:text-amber-300">TUCODIGO</span>
-              </p>
-              <p className="mt-5 text-small text-ink-500 dark:text-bone-300">
-                Si la persona ya tiene la app instalada, el link la abre directo. Si no, ve tu código
-                en la web y lo usa al registrarse.
-              </p>
-            </div>
-          </Reveal>
-        </div>
+        <Audiences />
       </Section>
 
-      {/* ─────────────────── 7. Lista de espera ─────────────────── */}
-      <Section id="lista" labelledBy="lista-title">
-        <div className="md:grid md:grid-cols-12 md:gap-8">
-          <div className="md:col-span-4">
-            <Reveal>
-              <Eyebrow>Lista VIP</Eyebrow>
-              <h2
-                id="lista-title"
-                className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100"
-              >
-                Anotate antes del lanzamiento.
-              </h2>
-              <p className="measure mt-6 text-ink-500 dark:text-bone-300">
-                Estamos armando la lista de fundadores en {site.city}. Elegí cómo vas a usar Bookit
-                y te avisamos antes que a nadie.
-              </p>
-              <ul className="mt-8 space-y-3">
-                {["Sin costo", "Te avisamos por email", "Podés darte de baja cuando quieras"].map(
-                  (item) => (
-                    <li key={item} className="flex items-center gap-3 text-small">
-                      <IconCheck className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-300" />
-                      <span className="text-ink-500 dark:text-bone-300">{item}</span>
-                    </li>
-                  ),
-                )}
-              </ul>
-            </Reveal>
-          </div>
+      {/* ───────────── 4. Puntos + Referidos (corte visual) ───────────── */}
+      <Rewards />
 
-          <Reveal index={1} className="mt-10 md:col-span-7 md:col-start-6 md:mt-0">
-            <WaitlistForm headingAs="p" />
-          </Reveal>
-        </div>
-      </Section>
-
-      {/* ────────────────────────── 8. FAQ ────────────────────────── */}
-      <Section id="faq" labelledBy="faq-title" className="bg-cream-100 dark:bg-ink-800">
+      {/* ────────────────────────── 5. FAQ ────────────────────────── */}
+      <Section id="faq" labelledBy="faq-title">
         <div className="md:grid md:grid-cols-12 md:gap-8">
           <div className="md:col-span-4">
             <Reveal>
@@ -289,8 +122,12 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ──────────────── 9. Cierre — la sección de respiro ──────────────── */}
-      <Section rhythm="breath" labelledBy="cierre-title">
+      {/* ──────────────── 6. Cierre — la sección de respiro ──────────────── */}
+      <Section
+        rhythm="breath"
+        labelledBy="cierre-title"
+        className="bg-cream-100 dark:bg-ink-800/40"
+      >
         <Reveal className="mx-auto max-w-[46ch] text-center">
           <h2
             id="cierre-title"
@@ -298,11 +135,18 @@ export default function Home() {
           >
             Tandil, tu forma de sacar turnos está a punto de cambiar.
           </h2>
-          <div className="mt-10 flex justify-center">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <AnimatedButton
+              text="Descargar la app"
+              href="/descargar"
+              variant="primary"
+              size="lg"
+              icon={<Download className="h-4.5 w-4.5" strokeWidth={2} aria-hidden="true" />}
+            />
             <AnimatedButton
               text="Sumate a la lista VIP"
               href="/lista-espera"
-              variant="primary"
+              variant="quiet"
               size="lg"
             />
           </div>

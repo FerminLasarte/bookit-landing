@@ -98,7 +98,7 @@ export default function Footer() {
                 {/* TODO: reemplazar por el teléfono real */}
                 <a href={site.phone.href} className={linkClasses}>
                   <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                  <span className="font-mono tabular-nums">{site.phone.display}</span>
+                  <span className="num">{site.phone.display}</span>
                 </a>
               </li>
             </ul>
@@ -107,7 +107,9 @@ export default function Footer() {
 
         <div className="mt-14 border-t border-white/8 pt-6">
           <div className="flex flex-col gap-2 text-xs text-bone-300 md:flex-row md:items-center md:justify-between">
-            <p>© {year} Bookit. Todos los derechos reservados.</p>
+            <p>
+              © <span className="num">{year}</span> Bookit. Todos los derechos reservados.
+            </p>
             <p>Datos personales tratados conforme a la Ley 25.326.</p>
           </div>
         </div>

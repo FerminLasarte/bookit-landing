@@ -16,3 +16,6 @@ out/
 .DS_Store
 .vercel
 .env*
+
+# Config local de Claude Code
+.claude/

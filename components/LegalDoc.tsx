@@ -56,7 +56,7 @@ function Block({ block }: { block: LegalBlock }) {
             <li key={item} className="flex gap-3 text-ink-500 dark:text-bone-300">
               <span
                 aria-hidden="true"
-                className="mt-0.5 shrink-0 font-mono text-small tabular-nums text-amber-700 dark:text-amber-300"
+                className="num mt-0.5 shrink-0 text-small text-amber-700 dark:text-amber-300"
               >
                 {String(index + 1).padStart(2, "0")}
               </span>

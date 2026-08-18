@@ -37,6 +37,11 @@
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+  /*
+   * Cifras. No comparte tipografía con el texto: ver el comentario en `layout.tsx`.
+   * Se aplica sólo desde la utilidad `num`, nunca suelta.
+   */
+  --font-numeric: var(--font-instrument), ui-serif, Georgia, "Times New Roman", serif;
 
   --text-display-xl: clamp(2.75rem, 6.5vw, 5.5rem);
   --text-display-xl--line-height: 0.95;
@@ -59,6 +64,29 @@
 
   /* Curvas del sistema */
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Animaciones de ambiente (§4.4): lentas, en loop, nunca por encima del texto */
+  --animate-aurora: aurora 18s ease-in-out infinite;
+  --animate-flow: flow 1.4s linear infinite;
+
+  @keyframes aurora {
+    0%,
+    100% {
+      transform: translate3d(-4%, -2%, 0) scale(1);
+      opacity: 0.85;
+    }
+    50% {
+      transform: translate3d(4%, 3%, 0) scale(1.12);
+      opacity: 1;
+    }
+  }
+
+  /* Corrimiento del guionado: hace que la línea de referidos "fluya". */
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -12;
+    }
+  }
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */
@@ -121,6 +149,20 @@
   @media (min-width: 768px) {
     padding-inline: 2.5rem;
   }
+}
+
+@utility num {
+  /*
+   * Toda cifra visible del sitio pasa por acá: es lo que le da a los números
+   * una tipografía propia. `tnum` + `lnum` para que las columnas no bailen.
+   */
+  font-family: var(--font-numeric);
+  font-weight: 400;
+  font-feature-settings:
+    "tnum" 1,
+    "lnum" 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.005em;
 }
 
 @utility measure {
