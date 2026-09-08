@@ -23,13 +23,36 @@ export default function Home() {
        * El hero NO usa `Reveal`: está sobre el pliegue, así que no hay scroll que
        * revelar, y arrancarlo en `opacity: 0` retrasaba el LCP hasta la hidratación.
        *
-       * Ocupa la pantalla entera menos el nav (`h-18` = 4.5rem). `svh` y no `dvh`:
-       * en mobile, con `dvh` el hero cambia de alto cuando la barra del navegador
-       * se esconde al scrollear, y el texto salta.
+       * Ocupa la pantalla entera, nav incluido: el `-mt-18` lo mete por debajo
+       * del header (que es translúcido y con blur), así el primer plano es todo
+       * hero. El `pt-28` compensa esos 4,5rem para que el texto no quede tapado.
+       *
+       * `svh` y no `dvh`: en mobile, con `dvh` el hero cambia de alto cuando la
+       * barra del navegador se esconde al scrollear, y el texto salta.
        */}
-      <section className="relative flex min-h-[calc(100svh-4.5rem)] flex-col justify-center overflow-hidden py-20">
+      <section className="relative isolate -mt-18 flex min-h-svh flex-col justify-center overflow-hidden pt-28 pb-20">
+        {/*
+         * El plano del hero: un lavado cálido que baja desde arriba y se apaga
+         * antes de llegar al final. Es lo que hace que el hero se lea como una
+         * pantalla propia sin necesidad de una línea que lo cierre.
+         */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,var(--color-amber-50)_0%,rgba(253,246,234,0)_78%)] dark:bg-[linear-gradient(180deg,rgba(215,138,29,0.08)_0%,rgba(215,138,29,0)_78%)]"
+        />
+
         {/* El único destello ámbar de la página. Sigue al puntero (§ver HeroGlow) */}
         <HeroGlow />
+
+        {/*
+         * Difuminado de salida (§4.3): el hero no termina en un borde, se
+         * disuelve en el color de la página. Va por encima del destello —para
+         * apagarlo— y por debajo del texto.
+         */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-[linear-gradient(180deg,rgba(251,249,245,0)_0%,var(--color-cream-50)_88%)] dark:bg-[linear-gradient(180deg,rgba(21,19,17,0)_0%,var(--color-ink-900)_88%)]"
+        />
 
         <div className="wrap relative w-full">
           <div className="md:grid md:grid-cols-12 md:gap-8">
@@ -94,12 +117,12 @@ export default function Home() {
       <Section
         id="publico"
         labelledBy="publico-title"
-        className="bg-cream-100 dark:bg-ink-800/40"
+        tone="tint"
       >
         <Audiences />
       </Section>
 
-      {/* ───────────── 4. Puntos + Referidos (corte visual) ───────────── */}
+      {/* ──────────── 4. Puntos + Referidos (lienzo oscuro) ──────────── */}
       <Rewards />
 
       {/* ────────────────────────── 5. FAQ ────────────────────────── */}
@@ -126,7 +149,7 @@ export default function Home() {
       <Section
         rhythm="breath"
         labelledBy="cierre-title"
-        className="bg-cream-100 dark:bg-ink-800/40"
+        tone="tint"
       >
         <Reveal className="mx-auto max-w-[46ch] text-center">
           <h2

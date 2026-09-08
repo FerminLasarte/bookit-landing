@@ -150,7 +150,7 @@ export default async function ListaEsperaPage({
       </section>
 
       {/* ─────────────────── 2. Qué te llevás ─────────────────── */}
-      <Section labelledBy="beneficios-title" className="bg-cream-100 dark:bg-ink-800/40">
+      <Section labelledBy="beneficios-title" tone="tint">
         <Reveal className="max-w-[36rem]">
           <Eyebrow>Beneficios</Eyebrow>
           <h2
@@ -232,7 +232,7 @@ export default async function ListaEsperaPage({
       </Section>
 
       {/* ─────────────────── 4. Letra chica ─────────────────── */}
-      <Section labelledBy="datos-title" className="bg-cream-100 dark:bg-ink-800/40">
+      <Section labelledBy="datos-title" tone="tint">
         <Reveal className="mx-auto max-w-[52ch] text-center">
           <h2
             id="datos-title"

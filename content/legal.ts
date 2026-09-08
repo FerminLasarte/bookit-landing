@@ -128,11 +128,12 @@ export const terminos: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: `Cada cuenta tiene un código de invitación propio, que se comparte como link (${site.url.replace("https://www.", "")}/invite/TUCODIGO). Cuando alguien se registra usando tu código, las dos partes reciben el beneficio vigente al momento del registro.`,
+          text: `El programa de referidos es exclusivo de las cuentas personales, es decir, de quienes sacan turnos. Cada una tiene un código de invitación propio, que se comparte como link (${site.url.replace("https://www.", "")}/invite/TUCODIGO). Cuando alguien se registra como usuario usando tu código, las dos partes reciben el beneficio vigente al momento del registro.`,
         },
         {
           type: "ul",
           items: [
+            "Las cuentas de local no participan del programa: no tienen código de invitación ni generan beneficios por referir. Su beneficio de incorporación es el precio fundador descripto en la sección siguiente.",
             "Un beneficio por persona registrada: no se acumula con otras promociones salvo que se indique.",
             "Está prohibido crear cuentas falsas o duplicadas, usar datos de terceros sin autorización, o difundir tu código como spam.",
             "Detectado un uso irregular, anulamos los beneficios asociados y podemos suspender las cuentas involucradas.",

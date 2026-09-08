@@ -76,7 +76,7 @@ export function GET(request: Request) {
             ¡Sumate a Bookit!
           </div>
           <div style={{ display: "flex", color: "#D9C6B4", fontSize: 28, maxWidth: 820 }}>
-            Descargá la app, usá mi código de invitación y ganemos beneficios juntos.
+            Descargá la app, usá mi código de invitación y ganemos puntos los dos.
           </div>
         </div>
 

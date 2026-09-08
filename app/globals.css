@@ -69,6 +69,12 @@
   /* Animaciones de ambiente (§4.4): lentas, en loop, nunca por encima del texto */
   --animate-aurora: aurora 18s ease-in-out infinite;
   --animate-flow: flow 1.4s linear infinite;
+  /*
+   * El brillo que cruza el CTA principal. Pasa cada 6s y el barrido dura 1,8s:
+   * el resto del ciclo el reflejo está fuera del botón, así se lee como un
+   * destello ocasional y no como un loop nervioso.
+   */
+  --animate-sheen: sheen 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   @keyframes aurora {
     0%,
@@ -86,6 +92,18 @@
   @keyframes flow {
     to {
       stroke-dashoffset: -12;
+    }
+  }
+
+  /* Reflejo del CTA: entra por izquierda, cruza, y espera fuera de cuadro. */
+  @keyframes sheen {
+    0%,
+    45% {
+      transform: translateX(-170%) skewX(-14deg);
+    }
+    75%,
+    100% {
+      transform: translateX(170%) skewX(-14deg);
     }
   }
 }
@@ -169,6 +187,35 @@
 @utility measure {
   /* Medida de lectura máxima: 64ch, §4.2 */
   max-width: 64ch;
+}
+
+@utility fade-y {
+  /*
+   * Difuminado de sección (§4.3).
+   *
+   * Las secciones con color propio ya no cortan con una línea: su fondo se
+   * desvanece arriba y abajo, así el color entra y sale sin borde. Se aplica
+   * SIEMPRE sobre la capa de fondo, nunca sobre el contenedor con texto — la
+   * máscara afecta a todos los hijos y dejaría los títulos semitransparentes.
+   *
+   * `--fade-y` es la altura del degradé; se puede pisar por clase
+   * (`[--fade-y:9rem]`) cuando la sección tiene más aire.
+   */
+  --fade-y: 6rem;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-y),
+    #000 calc(100% - var(--fade-y)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-y),
+    #000 calc(100% - var(--fade-y)),
+    transparent 100%
+  );
 }
 
 @utility ring-focus {

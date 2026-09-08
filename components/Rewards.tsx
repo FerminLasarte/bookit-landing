@@ -126,8 +126,19 @@ export default function Rewards() {
     <section
       id="puntos"
       aria-labelledby="recompensas-title"
-      className="relative overflow-hidden bg-ink-900 py-24 md:py-36"
+      className="relative isolate overflow-hidden py-32 md:py-44"
     >
+      {/*
+       * El lienzo oscuro va en su propia capa con `fade-y`: en vez de cortar el
+       * papel con una línea recta, la tinta entra y sale con un degradé. El
+       * padding (8rem) es mayor que el difuminado (6rem) a propósito: cuando
+       * empieza el texto, el fondo ya es tinta plena y el contraste se sostiene.
+       */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-ink-900 fade-y [--fade-y:6rem]"
+      />
+
       {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto */}
       <div
         aria-hidden="true"
@@ -211,8 +222,8 @@ export default function Rewards() {
             </h3>
 
             <p className="mt-5 max-w-[38ch] text-small text-bone-300">
-              Cada persona en Bookit tiene su código. Compartilo, y cuando alguien se registra con
-              él, suman los dos.
+              Cada persona que saca turnos con Bookit tiene su código. Compartilo, y cuando alguien
+              se registra con él, suman puntos los dos.
             </p>
 
             <div className="mt-10 rounded-card border border-white/10 bg-white/3 p-6">
@@ -230,6 +241,15 @@ export default function Rewards() {
             <p className="mt-6 max-w-[38ch] text-xs text-bone-300">
               Si la persona ya tiene la app instalada, el link la abre directo. Si no, ve tu código
               en la web y lo usa al registrarse.
+            </p>
+
+            {/*
+             * El programa es sólo entre quienes sacan turnos. Los locales no
+             * tienen código ni suman puntos: su beneficio es el precio fundador.
+             */}
+            <p className="mt-3 max-w-[38ch] text-xs text-bone-300">
+              Es un beneficio entre personas que sacan turnos. Los locales no participan del
+              programa de referidos.
             </p>
           </motion.div>
         </div>

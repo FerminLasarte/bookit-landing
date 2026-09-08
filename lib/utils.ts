@@ -18,15 +18,14 @@ export function normalizeCode(raw: string | undefined | null): string | null {
  * Orden de precedencia (§6.3): `?code=` lo resuelve el caller.
  *   `/invite/XXX`            → XXX
  *   `/invite/comercio/XXX`   → XXX
+ *
+ * La rama `comercio` es sólo compatibilidad: ya no generamos esos links —los
+ * referidos son sólo entre personas que sacan turnos— pero los que se
+ * compartieron siguen resolviendo el código en vez de leer "COMERCIO".
  */
 export function codeFromSlug(slug: readonly string[] | undefined): string | null {
   if (!slug || slug.length === 0) return null;
   const [first, second] = slug;
   if (first === "comercio") return normalizeCode(second);
   return normalizeCode(first);
-}
-
-/** `true` cuando la ruta es la variante para comercios. */
-export function isComercioSlug(slug: readonly string[] | undefined): boolean {
-  return slug?.[0] === "comercio";
 }

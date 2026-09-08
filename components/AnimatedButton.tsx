@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 
 type Size = "sm" | "md" | "lg";
 type Variant = "primary" | "ink" | "glass" | "quiet";
+/** Todo lo que no es el CTA principal comparte la animación de panel. */
+type SecondaryVariant = Exclude<Variant, "primary">;
 
 const sizeClasses: Record<Size, string> = {
   sm: "h-10 px-6 text-xs",
@@ -11,37 +13,54 @@ const sizeClasses: Record<Size, string> = {
 };
 
 /**
- * Cada variante define: cómo se ve en reposo, de qué color entra el panel de hover,
- * y de qué color queda el texto entrante (que siempre tiene que contrastar con el panel).
+ * Variantes secundarias. Cada una define: cómo se ve en reposo, de qué color
+ * entra el panel de hover, y de qué color queda el texto entrante (que siempre
+ * tiene que contrastar con el panel).
  */
-const variantClasses: Record<Variant, { base: string; panel: string; hoverText: string }> = {
-  // CTA principal: ámbar de marca → invierte a papel con texto tinta.
-  // El texto va en tinta y no en blanco: blanco sobre #D78A1D da 2,78:1 y no
-  // pasa AA a 16px. Tinta sobre el mismo ámbar da 6,75:1 sin tocar la marca.
-  primary: {
-    base: "border-amber-500 bg-amber-500 text-ink-900",
-    panel: "bg-cream-50",
-    hoverText: "text-ink-900",
-  },
-  // CTA secundario sólido sobre papel: tinta → invierte a ámbar
-  ink: {
-    base: "border-ink-900 bg-ink-900 text-bone-100 dark:border-bone-100 dark:bg-bone-100 dark:text-ink-900",
-    panel: "bg-amber-500",
-    hoverText: "text-ink-900",
-  },
-  // Sobre el hero oscuro / imagen: vidrio → invierte a papel
-  glass: {
-    base: "border-white/20 bg-white/10 text-white backdrop-blur-md",
-    panel: "bg-cream-50",
-    hoverText: "text-ink-900",
-  },
-  // Terciario: sólo contorno, para acciones de bajo peso
-  quiet: {
-    base: "border-ink-900/15 bg-transparent text-ink-900 dark:border-white/20 dark:text-bone-100",
-    panel: "bg-ink-900 dark:bg-bone-100",
-    hoverText: "text-bone-100 dark:text-ink-900",
-  },
-};
+const variantClasses: Record<SecondaryVariant, { base: string; panel: string; hoverText: string }> =
+  {
+    // CTA secundario sólido sobre papel: tinta → invierte a ámbar
+    ink: {
+      base: "border-ink-900 bg-ink-900 text-bone-100 dark:border-bone-100 dark:bg-bone-100 dark:text-ink-900",
+      panel: "bg-amber-500",
+      hoverText: "text-ink-900",
+    },
+    // Sobre el hero oscuro / imagen: vidrio → invierte a papel
+    glass: {
+      base: "border-white/20 bg-white/10 text-white backdrop-blur-md",
+      panel: "bg-cream-50",
+      hoverText: "text-ink-900",
+    },
+    // Terciario: sólo contorno, para acciones de bajo peso
+    quiet: {
+      base: "border-ink-900/15 bg-transparent text-ink-900 dark:border-white/20 dark:text-bone-100",
+      panel: "bg-ink-900 dark:bg-bone-100",
+      hoverText: "text-bone-100 dark:text-ink-900",
+    },
+  };
+
+/**
+ * El CTA principal (§4.5).
+ *
+ * No es un rectángulo de color plano: es una cápsula con volumen. El degradé
+ * vertical del ámbar de marca hace la luz, el `inset` blanco de arriba y el
+ * marrón de abajo hacen el borde biselado, y la sombra ámbar difusa lo levanta
+ * del papel. En hover sube 2px, la sombra crece, y en `active` vuelve a apoyar:
+ * el botón se siente como un objeto físico que se puede apretar.
+ *
+ * El texto va en tinta y no en blanco: blanco sobre #D78A1D da 2,78:1 y no pasa
+ * AA a 16px. Tinta sobre el mismo ámbar da 6,75:1 sin tocar la marca.
+ */
+const primaryClasses = [
+  "border-[#a9660f]/35 text-ink-900",
+  "bg-[linear-gradient(180deg,#f0ac42_0%,#d78a1d_52%,#be770f_100%)]",
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(107,60,0,0.28),0_8px_20px_-10px_rgba(190,119,15,0.7),0_2px_6px_-2px_rgba(21,19,17,0.16)]",
+  "transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+  "hover:-translate-y-0.5",
+  "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(107,60,0,0.32),0_18px_38px_-14px_rgba(190,119,15,0.85),0_5px_14px_-6px_rgba(21,19,17,0.22)]",
+  "active:translate-y-0 active:scale-[0.985] active:duration-100",
+  "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+].join(" ");
 
 interface AnimatedButtonProps {
   text: string;
@@ -73,48 +92,28 @@ export default function AnimatedButton({
   className = "",
   ariaLabel,
 }: AnimatedButtonProps) {
-  const v = variantClasses[variant];
+  const isPrimary = variant === "primary";
 
   const isExternal = external ?? (!!href && /^(https?:|mailto:|tel:)/.test(href));
 
   const rootClasses = [
-    "group relative inline-flex items-center justify-center overflow-hidden rounded-[48px] border font-bold",
-    "transition-transform duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:scale-[1.02]",
+    "group relative inline-flex items-center justify-center overflow-hidden rounded-pill border font-bold",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 dark:focus-visible:ring-offset-ink-900",
     "disabled:pointer-events-none disabled:opacity-55",
-    "motion-reduce:transition-none motion-reduce:hover:scale-100",
+    isPrimary
+      ? primaryClasses
+      : [
+          "transition-transform duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] hover:scale-[1.02]",
+          "motion-reduce:transition-none motion-reduce:hover:scale-100",
+          variantClasses[variant as SecondaryVariant].base,
+        ].join(" "),
     fullWidth ? "w-full" : "w-full md:w-auto",
     sizeClasses[size],
-    v.base,
     className,
   ].join(" ");
 
-  const inner = (
-    <>
-      {/* Panel de hover: entra desde arriba y "endereza" las esquinas */}
-      <span className="absolute inset-0 z-0 overflow-hidden rounded-[48px]" aria-hidden="true">
-        <span
-          className={`absolute inset-0 h-full w-full -translate-y-[101%] rounded-[48px] ${v.panel} transition-all duration-500 ease-[cubic-bezier(0.4,0,0,1)] group-hover:translate-y-0 group-hover:rounded-none motion-reduce:transition-none`}
-        />
-      </span>
-
-      <span className="relative z-10 flex items-center gap-2.5 overflow-hidden">
-        {/* Texto en reposo: cae y desaparece */}
-        <span className="flex items-center gap-2.5 whitespace-nowrap transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[160%] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
-          {icon}
-          {text}
-        </span>
-
-        {/* Texto entrante: cae desde arriba y ocupa el lugar */}
-        <span
-          className={`absolute inset-0 flex -translate-y-[160%] items-center justify-center gap-2.5 whitespace-nowrap ${v.hoverText} transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 motion-reduce:hidden`}
-          aria-hidden="true"
-        >
-          {icon}
-          {text}
-        </span>
-      </span>
-    </>
+  const inner = isPrimary ? <PrimaryInner text={text} icon={icon} /> : (
+    <SecondaryInner text={text} icon={icon} variant={variant as SecondaryVariant} />
   );
 
   if (href && !disabled) {
@@ -147,5 +146,91 @@ export default function AnimatedButton({
     >
       {inner}
     </button>
+  );
+}
+
+/**
+ * Las tres capas del CTA principal, de atrás hacia adelante:
+ *
+ *  1. El vidrio: una luz fija en la mitad de arriba. Es lo que le da la forma de
+ *     cápsula pulida, y no se mueve nunca.
+ *  2. El reflejo: un haz inclinado que cruza el botón cada 6 segundos. Es la
+ *     animación que vive dentro del botón — corta, espaciada, imposible de
+ *     confundir con un estado de carga.
+ *  3. La luz de hover: un foco cálido que se enciende desde arriba cuando el
+ *     puntero entra, para que el hover se sienta antes de leer el cambio.
+ *
+ * Ninguna capa toca el layout (sólo opacidad y transform), así que el texto
+ * nunca se mueve de lugar.
+ */
+function PrimaryInner({ text, icon }: { text: string; icon?: ReactNode }) {
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-pill bg-[linear-gradient(180deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0)_100%)]"
+      />
+
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-0 w-[45%] animate-sheen bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.5)_50%,transparent_100%)] group-disabled:hidden motion-reduce:hidden"
+      />
+
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_140%_at_50%_-20%,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0)_60%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none"
+      />
+
+      <span className="relative flex items-center gap-2.5 whitespace-nowrap">
+        {icon && (
+          // El ícono acompaña el hover con un empujón mínimo: 1px, lo justo
+          // para que el conjunto se sienta vivo sin que el texto baile.
+          <span className="flex transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-px group-active:translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
+            {icon}
+          </span>
+        )}
+        {text}
+      </span>
+    </>
+  );
+}
+
+/** El panel que entra desde arriba y "endereza" las esquinas. */
+function SecondaryInner({
+  text,
+  icon,
+  variant,
+}: {
+  text: string;
+  icon?: ReactNode;
+  variant: SecondaryVariant;
+}) {
+  const v = variantClasses[variant];
+
+  return (
+    <>
+      <span className="absolute inset-0 z-0 overflow-hidden rounded-pill" aria-hidden="true">
+        <span
+          className={`absolute inset-0 h-full w-full -translate-y-[101%] rounded-pill ${v.panel} transition-all duration-500 ease-[cubic-bezier(0.4,0,0,1)] group-hover:translate-y-0 group-hover:rounded-none motion-reduce:transition-none`}
+        />
+      </span>
+
+      <span className="relative z-10 flex items-center gap-2.5 overflow-hidden">
+        {/* Texto en reposo: cae y desaparece */}
+        <span className="flex items-center gap-2.5 whitespace-nowrap transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[160%] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
+          {icon}
+          {text}
+        </span>
+
+        {/* Texto entrante: cae desde arriba y ocupa el lugar */}
+        <span
+          className={`absolute inset-0 flex -translate-y-[160%] items-center justify-center gap-2.5 whitespace-nowrap ${v.hoverText} transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 motion-reduce:hidden`}
+          aria-hidden="true"
+        >
+          {icon}
+          {text}
+        </span>
+      </span>
+    </>
   );
 }

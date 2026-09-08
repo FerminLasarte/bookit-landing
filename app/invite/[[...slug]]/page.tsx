@@ -6,7 +6,7 @@ import Hairline from "@/components/Hairline";
 import ReferralCode from "@/components/ReferralCode";
 import Wordmark from "@/components/Wordmark";
 import { flags, site } from "@/content/site";
-import { codeFromSlug, isComercioSlug, normalizeCode } from "@/lib/utils";
+import { codeFromSlug, normalizeCode } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug?: string[] }>;
@@ -15,7 +15,7 @@ type PageProps = {
 
 const shareTitle = "¡Sumate a Bookit!";
 const shareDescription =
-  "Descargá la app, usá mi código de invitación y ganemos beneficios juntos.";
+  "Descargá la app, usá mi código de invitación y ganemos puntos los dos.";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -51,14 +51,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+/**
+ * Los referidos son sólo entre personas que sacan turnos, así que acá hay un
+ * único mensaje con código. La variante para comercios se dio de baja junto con
+ * el programa: un local no tiene código ni suma puntos por invitar.
+ */
 const copy = {
   conCodigo: {
     title: "¡Te invitaron a unirte a Bookit!",
     desc: "Descargá la app, usá el código de abajo al registrarte y sumá puntos para tus próximos turnos.",
-  },
-  conCodigoComercio: {
-    title: "¡Invitaron a tu local a Bookit!",
-    desc: "Sumá tu local a Bookit, usá el código de abajo al registrarte y arrancá con tu agenda digital.",
   },
   sinCodigo: {
     title: "Tu próximo turno, a un clic de distancia.",
@@ -69,15 +70,10 @@ const copy = {
 export default async function InvitePage({ params, searchParams }: PageProps) {
   const [{ slug }, { code: queryCode }] = await Promise.all([params, searchParams]);
 
-  // Precedencia (§6.3): ?code= → /invite/XXX → /invite/comercio/XXX
+  // Precedencia (§6.3): ?code= → /invite/XXX
   const code = normalizeCode(queryCode) ?? codeFromSlug(slug);
-  const esComercio = isComercioSlug(slug);
 
-  const contenido = code
-    ? esComercio
-      ? copy.conCodigoComercio
-      : copy.conCodigo
-    : copy.sinCodigo;
+  const contenido = code ? copy.conCodigo : copy.sinCodigo;
 
   return (
     <div className="relative overflow-hidden py-16 md:py-24">
@@ -94,7 +90,7 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
           </div>
 
           <div className="mt-10 rounded-card border border-ink-900/8 bg-paper p-7 shadow-[0_1px_0_rgba(0,0,0,0.03)] md:p-9 dark:border-white/8 dark:bg-ink-800">
-            {code && <Eyebrow>{esComercio ? "Invitación para comercios" : "Invitación"}</Eyebrow>}
+            {code && <Eyebrow>Invitación</Eyebrow>}
 
             <h1 className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100">
               {contenido.title}
@@ -120,9 +116,7 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
                 <>
                   <AnimatedButton
                     text="Anotate y te avisamos"
-                    href={
-                      esComercio ? "/lista-espera?tipo=local" : "/lista-espera"
-                    }
+                    href="/lista-espera"
                     variant="primary"
                     size="lg"
                     fullWidth

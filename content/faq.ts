@@ -36,6 +36,10 @@ export const faq: readonly FaqItem[] = [
     a: "Sumás puntos por cada turno y los canjeás en los siguientes. Por anotarte a la lista te llevás 500 de regalo para el primero.",
   },
   {
+    q: "¿Cómo funcionan los referidos?",
+    a: "Cada persona que saca turnos tiene su código de invitación: quien se registra con él y quien lo compartió suman puntos. Es sólo entre usuarios — los locales no tienen código ni participan del programa.",
+  },
+  {
     q: "¿Qué hacen con mis datos?",
     a: "Sólo los usamos para avisarte del lanzamiento y darte soporte. Podés pedir la baja cuando quieras.",
     link: { label: "Ver Política de Privacidad", href: "/legal/privacidad" },
