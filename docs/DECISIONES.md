@@ -110,16 +110,33 @@ y no buscar por todo el repo. Cuando una decisión se confirma, la fila queda ac
 
 ## 5. Medición
 
-Lighthouse mobile, build de producción en local:
+Lighthouse mobile, build de producción en local. **Medido el 21 de septiembre de
+2026**, después del rediseño del hero y del cierre, del cambio de nav y de la
+tanda de accesibilidad. La tabla anterior era de agosto y había quedado vieja.
 
 | Página | Perf | A11y | Best practices | SEO |
 |---|---|---|---|---|
-| `/` | 95 | 100 | 100 | 100 |
+| `/` | 97 | 100 | 100 | 100 |
 | `/lista-espera` | 97 | 100 | 100 | 100 |
 | `/legal/terminos` | 98 | 100 | 100 | 100 |
-| `/soporte` | 95 | 100 | 100 | 100 |
+| `/soporte` | 98 | 100 | 100 | 100 |
 | `/descargar` | 98 | 100 | 100 | 100 |
-| `/invite/ABC123` | 96 | 100 | 100 | 66 |
+| `/invite/ABC123` | 95 | 100 | 100 | 66 |
+
+En escritorio, `/` da 100 / 100 / 100 / 100, con LCP de 0,6s y CLS 0.
+
+Tres defectos salieron de esta medición y **ninguna de las tres auditorías de
+diseño los había encontrado**:
+
+1. `app/manifest.ts` apuntaba a `/icon` y `/apple-icon` sin extensión, y Next los
+   sirve como `.png`: los dos daban 404. No se veía en la página —el `<head>`
+   los linkea bien— pero rompía los iconos de la PWA instalada.
+2. El bloque de aviso de los legales y la caja del código de referido ponían
+   `ink-500` sobre `amber-50`: **4,49:1**, falla AA por una centésima. Otra vez
+   un lavado de color debajo del texto.
+3. El botón de copiar el código tenía un `aria-label` que no contenía su texto
+   visible (WCAG 2.5.3): quien maneja el navegador por voz decía lo que ve y no
+   activaba nada. Se eliminó la etiqueta y el nombre sale del contenido.
 
 El SEO 66 de `/invite/*` es `is-crawlable`, o sea el `noindex` **deliberado** de las invitaciones
 personales, no un defecto.
