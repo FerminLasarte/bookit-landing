@@ -51,7 +51,7 @@ export default function Home() {
          */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-[linear-gradient(180deg,rgba(251,249,245,0)_0%,var(--color-cream-50)_88%)] dark:bg-[linear-gradient(180deg,rgba(21,19,17,0)_0%,var(--color-ink-900)_88%)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-[linear-gradient(180deg,rgba(251,252,253,0)_0%,var(--color-cream-50)_88%)] dark:bg-[linear-gradient(180deg,rgba(21,19,17,0)_0%,var(--color-ink-900)_88%)]"
         />
 
         <div className="wrap relative w-full">

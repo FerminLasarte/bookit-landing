@@ -585,8 +585,9 @@ o un CTA grande si se decide mantener el form sólo en su página. **Recomendado
 - ¿Cuánto cuesta para quien saca turnos? → Nada. Bookit es gratis para clientes.
 - ¿Y para los locales? → Es una suscripción mensual. Los locales fundadores tienen precio preferencial
   de por vida. Te pasamos los detalles cuando te contactamos.
-- ¿Se paga el turno por la app? → *(Confirmar antes de publicar. Si no hay pagos in-app en el
-  lanzamiento, decirlo: el pago se sigue haciendo en el local.)*
+- ¿Se paga el turno por la app? → **Sí** *(confirmado el 21/9/2026; ver §11.1)*. Reservás y pagás el
+  turno desde la app, en el mismo paso. El precio y las condiciones los informa el local antes de
+  confirmar.
 - ¿En qué ciudades está? → Arrancamos en Tandil y vamos ciudad por ciudad.
 - ¿Cómo funcionan los puntos? → Sumás puntos por cada turno y los canjeás en los siguientes.
 - ¿Qué hacen con mis datos? → Sólo los usamos para avisarte del lanzamiento y darte soporte. Podés
@@ -810,8 +811,11 @@ La landing está terminada cuando **todo** esto es verdad:
 
 ## 11. Decisiones pendientes (preguntar antes de asumir)
 
-1. ¿Hay pago del turno dentro de la app en el lanzamiento, o se paga en el local? → afecta FAQ, ToS y
-   si el botón de arrepentimiento aplica ya.
+1. ~~¿Hay pago del turno dentro de la app en el lanzamiento, o se paga en el local?~~ **Resuelta el
+   21/9/2026: sí hay pago dentro de la app.** Revierte el supuesto contrario con el que se construyó
+   la landing. Aplicada en `flags.inAppPayments`, que alimenta FAQ, Términos §3 y el Botón de
+   arrepentimiento — que ahora aplica de verdad y no sólo se explica. Detalle en
+   `docs/DECISIONES.md` §3 y §4.
 2. ¿Precio de la suscripción para locales? → hoy la web no lo dice; se puede dejar así.
 3. ¿Ya existen links de App Store / Google Play, o el CTA "Descargar" sigue siendo lista de espera?
 4. ¿Razón social, CUIT y domicilio fiscal para los legales?

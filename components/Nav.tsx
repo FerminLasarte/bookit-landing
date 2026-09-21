@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
@@ -10,14 +9,15 @@ import Wordmark from "./Wordmark";
 import { navLinks } from "@/content/nav";
 import { cn } from "@/lib/utils";
 
-/** Ícono (fondo transparente) + wordmark. */
+/*
+ * El lockup, solo. Antes acá iban el PNG del isotipo y el wordmark
+ * tipográfico al lado; el lockup ya trae el isotipo adentro, así que ponerlo
+ * de nuevo al costado era dibujar la marca dos veces. El manual §2 sólo
+ * admite el wordmark suelto cuando el isotipo ya está presente en la pieza,
+ * que no es el caso de un nav.
+ */
 function Logo({ className = "" }: { className?: string }) {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <Image src="/brand/icon.png" alt="" width={28} height={28} priority />
-      <Wordmark className={className} />
-    </span>
-  );
+  return <Wordmark className={className} />;
 }
 
 export default function Nav() {
@@ -55,14 +55,14 @@ export default function Nav() {
     <>
       <a
         href="#contenido"
-        className="ring-focus sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:flex focus:min-h-11 focus:items-center focus:rounded-pill focus:bg-ink-900 focus:px-5 focus:text-small focus:font-semibold focus:text-bone-100"
+        className="ring-focus sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:flex focus:min-h-11 focus:items-center focus:rounded-pill focus:bg-ink-950 focus:px-5 focus:text-small focus:font-semibold focus:text-bone-100"
       >
         Saltar al contenido
       </a>
 
       <header
         className={cn(
-          "sticky top-0 z-50 bg-cream-50/80 backdrop-blur-md transition-colors duration-300 dark:bg-ink-900/80",
+          "sticky top-0 z-50 bg-cream-50/80 backdrop-blur-md transition-colors duration-300 dark:bg-ink-950/80",
           scrolled ? "border-b border-ink-900/8 dark:border-white/8" : "border-b border-transparent",
         )}
       >
@@ -108,7 +108,7 @@ export default function Nav() {
           role="dialog"
           aria-modal="true"
           aria-label="Menú"
-          className="fixed inset-0 z-90 flex flex-col bg-cream-50 md:hidden dark:bg-ink-900"
+          className="fixed inset-0 z-90 flex flex-col bg-cream-50 md:hidden dark:bg-ink-950"
         >
           <div className="wrap flex h-18 shrink-0 items-center justify-between">
             <Logo className="text-xl" />

@@ -21,7 +21,7 @@ const variantClasses: Record<SecondaryVariant, { base: string; panel: string; ho
   {
     // CTA secundario sólido sobre papel: tinta → invierte a ámbar
     ink: {
-      base: "border-ink-900 bg-ink-900 text-bone-100 dark:border-bone-100 dark:bg-bone-100 dark:text-ink-900",
+      base: "border-ink-900 bg-ink-950 text-bone-100 dark:border-bone-100 dark:bg-bone-100 dark:text-ink-900",
       panel: "bg-amber-500",
       hoverText: "text-ink-900",
     },
@@ -34,7 +34,7 @@ const variantClasses: Record<SecondaryVariant, { base: string; panel: string; ho
     // Terciario: sólo contorno, para acciones de bajo peso
     quiet: {
       base: "border-ink-900/15 bg-transparent text-ink-900 dark:border-white/20 dark:text-bone-100",
-      panel: "bg-ink-900 dark:bg-bone-100",
+      panel: "bg-ink-950 dark:bg-bone-100",
       hoverText: "text-bone-100 dark:text-ink-900",
     },
   };
@@ -98,7 +98,7 @@ export default function AnimatedButton({
 
   const rootClasses = [
     "group relative inline-flex items-center justify-center overflow-hidden rounded-pill border font-bold",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 dark:focus-visible:ring-offset-ink-900",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 dark:focus-visible:ring-offset-ink-950",
     "disabled:pointer-events-none disabled:opacity-55",
     isPrimary
       ? primaryClasses

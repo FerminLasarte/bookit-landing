@@ -50,7 +50,7 @@ function ScreenBuscar() {
     <>
       <motion.div
         variants={row}
-        className="flex items-center gap-2.5 rounded-pill border border-ink-900/10 bg-cream-50 px-4 py-3 dark:border-white/10 dark:bg-ink-900"
+        className="flex items-center gap-2.5 rounded-pill border border-ink-900/10 bg-cream-50 px-4 py-3 dark:border-white/10 dark:bg-ink-950"
       >
         <Search
           className="h-4 w-4 shrink-0 text-ink-500 dark:text-bone-300"
@@ -84,7 +84,7 @@ function ScreenBuscar() {
           <motion.div
             key={local.name}
             variants={row}
-            className="flex items-center justify-between gap-4 rounded-field border border-ink-900/8 bg-cream-50 px-4 py-3 dark:border-white/8 dark:bg-ink-900"
+            className="flex items-center justify-between gap-4 rounded-field border border-ink-900/8 bg-cream-50 px-4 py-3 dark:border-white/8 dark:bg-ink-950"
           >
             <div className="min-w-0">
               <p className={cn(screenTitle, "truncate")}>{local.name}</p>
@@ -150,7 +150,7 @@ function ScreenHorarios() {
 
       <motion.div
         variants={row}
-        className="mt-6 flex items-center justify-center rounded-pill bg-ink-900 py-3 text-small font-semibold text-bone-100 dark:bg-bone-100 dark:text-ink-900"
+        className="mt-6 flex items-center justify-center rounded-pill bg-ink-950 py-3 text-small font-semibold text-bone-100 dark:bg-bone-100 dark:text-ink-900"
       >
         Confirmar turno
       </motion.div>
@@ -189,7 +189,7 @@ function ScreenPuntos() {
           <motion.li
             key={item.label}
             variants={row}
-            className="flex items-center justify-between gap-4 bg-cream-50 px-4 py-3 dark:bg-ink-900"
+            className="flex items-center justify-between gap-4 bg-cream-50 px-4 py-3 dark:bg-ink-950"
           >
             <span className={cn(screenMuted, "truncate")}>{item.label}</span>
             <span className="num shrink-0 text-small text-amber-700 dark:text-amber-300">
@@ -223,7 +223,7 @@ function Device({ children }: { children: ReactNode }) {
         {/* Muesca: dos trazos, sin dibujar un iPhone entero */}
         <div
           aria-hidden="true"
-          className="mx-auto mb-3 h-1 w-10 rounded-full bg-ink-900/12 dark:bg-white/12"
+          className="mx-auto mb-3 h-1 w-10 rounded-full bg-ink-950/12 dark:bg-white/12"
         />
         <div className="min-h-[24rem] rounded-[1.75rem] bg-paper p-5 dark:bg-ink-800">
           {children}
@@ -340,7 +340,7 @@ export default function HowItWorks() {
                     {isActive && !reduced && (
                       <span
                         aria-hidden="true"
-                        className="mt-4 block h-px w-full origin-left bg-ink-900/8 dark:bg-white/10"
+                        className="mt-4 block h-px w-full origin-left bg-ink-950/8 dark:bg-white/10"
                       >
                         <motion.span
                           key={`${active}-${paused}-${inView}`}

@@ -3,7 +3,7 @@
 Complemento de `LANDING_BRIEF.md`. Acá queda registrado **en qué me aparté del brief y por qué**,
 y qué supuestos tomé sobre las decisiones pendientes de la §11.
 
-Última actualización: 17 de agosto de 2026
+Última actualización: 21 de septiembre de 2026
 
 ---
 
@@ -74,14 +74,15 @@ los `Hairline` y el wordmark sobre oscuro. Ninguno es texto chico sobre papel.
 ## 3. Supuestos sobre las decisiones pendientes (§11)
 
 Están centralizados en `content/site.ts` como `flags`, para que confirmarlos sea cambiar una línea
-y no buscar por todo el repo.
+y no buscar por todo el repo. Cuando una decisión se confirma, la fila queda acá igual, marcada como
+**confirmada** y con la fecha: el flag sigue siendo el único lugar del que se lee el dato.
 
 | § | Pregunta | Supuesto | Dónde se cambia | Qué afecta |
 |---|---|---|---|---|
-| 11.1 | ¿Se paga el turno en la app? | **No**: se paga en el local | `flags.inAppPayments` | FAQ, Términos §3, Botón de arrepentimiento §2 |
+| 11.1 | ¿Se paga el turno en la app? | **Sí — confirmado el 21/9/2026**, ya no es supuesto. Revierte el "se paga en el local" que estuvo vigente hasta esa fecha. Fuente: `PRODUCT.md`, "Capabilities and Constraints" | `flags.inAppPayments` (hoy `true`) | FAQ, Términos §3, Botón de arrepentimiento §2 |
 | 11.3 | ¿Hay links de App Store / Play? | **No** todavía | `flags.storeLinksLive` + `site.app.appStore/playStore` | CTA de `/descargar` y de `/invite/*` |
 | 11.6 | ¿Se suma analítica? | **No**: sin analítica, y por eso **sin banner de cookies** | `flags.analytics` | Política de Cookies |
-| 11.5 | ¿Teléfono real? | Sigue el de ejemplo, marcado | `site.phone` (`isPlaceholder: true`) | Footer, `/soporte`, Botón de arrepentimiento |
+| 11.5 | ¿Teléfono real? | El código ya trae `+54 9 249 460-0615` con `isPlaceholder: false`. **A confirmar** que sea el definitivo: el Botón de arrepentimiento lo publica como canal | `site.phone` | Footer, `/soporte`, Botón de arrepentimiento |
 | 11.2 | ¿Precio de la suscripción? | No se menciona, como hoy | — | Términos §6, FAQ |
 | 11.4 | ¿Razón social, CUIT, domicilio fiscal? | **Falta** | `content/legal.ts` | Hay un bloque `note` visible en Términos §10 y Privacidad §1 avisando que falta |
 | 11.7 | ¿Screenshots reales de la app? | No hay: la página se resuelve con tipografía y los motivos de §4.6 | — | Hero (sin mockup, que era la opción preferida del brief) |
@@ -91,8 +92,19 @@ y no buscar por todo el repo.
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol
   de intermediario. El contenido está completo y es real, pero no es asesoramiento legal.
 - **Razón social, CUIT y domicilio fiscal** para Términos y Privacidad.
-- **Teléfono de contacto real** (hoy `+54 9 249 400-0000`, marcado con `isPlaceholder`).
-- **Confirmar si hay pagos in-app** antes de publicar, por el Botón de arrepentimiento.
+- **Teléfono de contacto real.** El código ya publica `+54 9 249 460-0615` con `isPlaceholder: false`,
+  y el Botón de arrepentimiento lo ofrece como canal alternativo al correo. Hay que confirmar que sea
+  el número definitivo y que alguien lo atienda.
+- **Revisión legal del Botón de arrepentimiento y de Términos §3, ahora que hay pagos in-app**
+  (confirmados el 21/9/2026). Con cobro dentro de la app el derecho de la Ley 24.240 pasa a aplicar
+  de verdad, así que los textos describen un mecanismo operativo, no una explicación a futuro.
+  Tres puntos que necesitan criterio de una persona con formación legal, no de código:
+  1. El plazo, la forma de reintegro y el descuento proporcional por servicio ya prestado
+     (Botón de arrepentimiento §4).
+  2. Cómo se reparte la responsabilidad del reintegro entre Bookit y el local, dado que Bookit
+     cobra pero el servicio lo presta el local (Términos §1 y §3).
+  3. Si la suscripción mensual de los locales se cobra online o no. El texto vigente del Botón de
+     arrepentimiento §2 dice que todavía no, y eso quedó sin verificar en este cambio.
 - **Migrar las env vars de Supabase** a `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE` (server-only). Las
   `NEXT_PUBLIC_*` siguen funcionando como fallback, así que el deploy no se rompe si no se hace.
 

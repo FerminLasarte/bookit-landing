@@ -90,12 +90,27 @@ export const terminos: LegalDoc = {
             "El uso reiterado de reservas sin presentarse puede derivar en la suspensión de la cuenta.",
           ],
         },
-        {
-          type: "p",
-          text: flags.inAppPayments
-            ? "El pago del servicio se realiza a través de la app, según las condiciones informadas al momento de reservar."
-            : "Reservar por Bookit no implica pagar por Bookit: el servicio lo abonás directamente en el local, según sus medios de pago.",
-        },
+        ...(flags.inAppPayments
+          ? ([
+              {
+                type: "p",
+                text: "El turno se paga desde la app al reservar, por el precio y las condiciones que el local informa antes de que confirmes. Bookit gestiona ese cobro; el servicio lo presta el local, que sigue siendo el responsable de prestarlo.",
+              },
+              {
+                type: "p",
+                text: `Si cancelás un turno ya pagado, la devolución se rige por la política de cancelación que el local informó al reservar y por la ${site.legal.consumerLaw}. Además, si contrataste a distancia, tenés el derecho de revocación de los 10 días corridos.`,
+                link: {
+                  label: "Ver Botón de arrepentimiento",
+                  href: "/legal/boton-de-arrepentimiento",
+                },
+              },
+            ] as const)
+          : ([
+              {
+                type: "p",
+                text: "Reservar por Bookit no implica pagar por Bookit: el servicio lo abonás directamente en el local, según sus medios de pago.",
+              },
+            ] as const)),
       ],
     },
     {
@@ -555,16 +570,31 @@ export const botonArrepentimiento: LegalDoc = {
       id: "estado-actual",
       heading: "2. Situación actual de Bookit",
       blocks: [
-        {
-          type: "p",
-          text: flags.inAppPayments
-            ? "Bookit procesa pagos online, por lo que este derecho aplica plenamente a las contrataciones realizadas a través de la plataforma."
-            : "Bookit está en pre-lanzamiento y todavía no cobra suscripciones ni turnos online: anotarse a la lista de espera es gratuito y no genera ninguna obligación de pago para vos. Por eso, hoy no hay contratación que revocar.",
-        },
-        {
-          type: "p",
-          text: "Cuando habilitemos el cobro online de la suscripción de locales, este derecho aplica a esa contratación y el canal para ejercerlo es el que está más abajo. Dejamos la página publicada desde ahora para que el canal exista y sea fácil de encontrar.",
-        },
+        ...(flags.inAppPayments
+          ? ([
+              {
+                type: "p",
+                text: "Los turnos que reservás por Bookit se pagan dentro de la app. Eso es una contratación a distancia, así que el derecho aplica de lleno y no es una explicación para el futuro: si pagaste un turno por la plataforma, podés revocar esa contratación dentro de los 10 días corridos, sin costo y sin justificar el motivo.",
+              },
+              {
+                type: "p",
+                text: "El canal para ejercerlo está en la sección siguiente, lo atendemos nosotros y no depende del local. Revocar la contratación no es lo mismo que cancelar un turno desde la app: podés usar cualquiera de las dos vías, y por esta tenemos que responderte igual.",
+              },
+              {
+                type: "p",
+                text: "La suscripción mensual de los locales todavía no se cobra online. Cuando habilitemos ese cobro, el mismo derecho y el mismo canal aplican a esa contratación.",
+              },
+            ] as const)
+          : ([
+              {
+                type: "p",
+                text: "Bookit está en pre-lanzamiento y todavía no cobra suscripciones ni turnos online: anotarse a la lista de espera es gratuito y no genera ninguna obligación de pago para vos. Por eso, hoy no hay contratación que revocar.",
+              },
+              {
+                type: "p",
+                text: "Cuando habilitemos el cobro online de la suscripción de locales, este derecho aplica a esa contratación y el canal para ejercerlo es el que está más abajo. Dejamos la página publicada desde ahora para que el canal exista y sea fácil de encontrar.",
+              },
+            ] as const)),
       ],
     },
     {
@@ -590,12 +620,16 @@ export const botonArrepentimiento: LegalDoc = {
         },
         {
           type: "p",
-          text: "También podés hacerlo por teléfono al número de contacto publicado en el sitio.",
+          text: `También podés hacerlo por teléfono al ${site.phone.display}.`,
         },
-        {
-          type: "note",
-          text: "El teléfono publicado es un número de ejemplo hasta que se cargue el definitivo. El canal operativo es el correo electrónico.",
-        },
+        ...(site.phone.isPlaceholder
+          ? ([
+              {
+                type: "note",
+                text: "El teléfono publicado es un número de ejemplo hasta que se cargue el definitivo. El canal operativo es el correo electrónico.",
+              },
+            ] as const)
+          : ([] as const)),
       ],
     },
     {

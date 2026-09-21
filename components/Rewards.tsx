@@ -136,7 +136,7 @@ export default function Rewards() {
        */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-ink-900 fade-y [--fade-y:6rem]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-ink-950 fade-y [--fade-y:6rem]"
       />
 
       {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto */}
