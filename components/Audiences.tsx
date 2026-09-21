@@ -81,7 +81,9 @@ export default function Audiences() {
               <div className="mt-auto pt-10">
                 <AnimatedButton
                   text="Sumate a la lista VIP"
-                  href="/lista-espera"
+                  // El lado local ya llevaba su `?tipo=`; este lo tiraba y
+                  // obligaba a volver a declarar lo recién declarado.
+                  href="/lista-espera?tipo=cliente"
                   variant="ink"
                   size="md"
                 />
@@ -92,7 +94,10 @@ export default function Audiences() {
             <article
               id="locales"
               aria-labelledby="locales-title"
-              className="relative flex flex-col overflow-hidden bg-ink-950 p-8 md:p-12"
+              // `scroll-mt` generoso: se llega acá desde el nav y desde el CTA
+              // "Tengo un local" del hero, y con el margen chico se aterrizaba
+              // a mitad de card, con el h2 de la sección ya pasado.
+              className="relative flex scroll-mt-32 flex-col overflow-hidden bg-ink-950 p-8 md:scroll-mt-40 md:p-12"
             >
               {/*
                * Dos capas de calor. Sobre papel el corte ya lo hace el color de
@@ -103,10 +108,8 @@ export default function Audiences() {
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 bg-[linear-gradient(150deg,rgba(215,138,29,0.12)_0%,rgba(215,138,29,0.02)_45%,transparent_70%)]"
               />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -top-24 -right-16 h-64 w-64 animate-aurora rounded-full bg-[radial-gradient(circle,rgba(215,138,29,0.2)_0%,rgba(215,138,29,0)_70%)]"
-              />
+              {/* Sin aurora acá: el ámbar va reservado a una sola cosa por pieza
+              (docs/MARCA.md). En esta sección esa cosa es el CTA. */}
 
               <div className="relative flex flex-1 flex-col">
                 <IconStore className="h-7 w-7 text-amber-300" />

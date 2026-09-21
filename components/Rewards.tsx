@@ -134,9 +134,17 @@ export default function Rewards() {
        * padding (8rem) es mayor que el difuminado (6rem) a propósito: cuando
        * empieza el texto, el fondo ya es tinta plena y el contraste se sostiene.
        */}
+      {/*
+        `marca-profunda`, no `ink-950`: en modo oscuro `ink-950` ES el fondo de
+        la página, así que el lienzo desaparecía y la sección se quedaba sin
+        canvas justo en el tema donde más lo necesita. El negro con tinte ámbar
+        del manual es distinto en los dos temas — es la idea de marca, no un
+        artefacto del tema. Lo comparte con el hero: son las dos piezas tipo
+        cartel de la página, y cada una tiene un solo acento ámbar (acá, el 500).
+      */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-ink-950 fade-y [--fade-y:6rem]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda fade-y [--fade-y:6rem]"
       />
 
       {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto */}

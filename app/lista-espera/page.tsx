@@ -92,8 +92,9 @@ export default async function ListaEsperaPage({
   searchParams: Promise<{ tipo?: string }>;
 }) {
   const { tipo } = await searchParams;
-  // `?tipo=local` preselecciona el público (§6.2).
-  const initialAudience: Audience | null = tipo === "local" ? "local" : null;
+  // `?tipo=local` / `?tipo=cliente` preselecciona el público (§6.2).
+  const initialAudience: Audience | null =
+    tipo === "local" ? "local" : tipo === "cliente" ? "cliente" : null;
 
   return (
     <>

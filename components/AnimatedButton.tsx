@@ -171,11 +171,13 @@ function PrimaryInner({ text, icon }: { text: string; icon?: ReactNode }) {
         className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-pill bg-[linear-gradient(180deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0)_100%)]"
       />
 
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 w-[45%] animate-sheen bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.5)_50%,transparent_100%)] group-disabled:hidden motion-reduce:hidden"
-      />
-
+      {/*
+        Acá había un brillo que barría la cápsula cada 6s, para siempre, en
+        todos los botones primarios del sitio. `docs/MARCA.md` (Movimiento):
+        "nada gira esperando". El volumen ya lo hacen el biselado y la sombra,
+        y la respuesta al puntero la hace el destello de hover de abajo: un
+        brillo que se mueve solo no informaba nada, sólo pedía atención.
+      */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_140%_at_50%_-20%,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0)_60%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none"

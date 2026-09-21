@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
+} from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { Search } from "lucide-react";
 import Eyebrow from "./Eyebrow";
@@ -78,8 +84,12 @@ function ScreenBuscar() {
 
       <div className="mt-6 space-y-2.5">
         {[
-          { name: "Estudio Norte", meta: "Barbería · a 6 cuadras", next: "14:30" },
-          { name: "Sala Bruna", meta: "Peluquería · Centro", next: "16:00" },
+          // Antes decía "a 6 cuadras" y "Centro". Una distancia a pie es la
+          // afirmación más verificable de la página, en un producto que todavía
+          // no tiene locales ni permiso de ubicación: era la primera que un
+          // tandilense iba a salir a comprobar. El rubro solo alcanza.
+          { name: "Estudio Norte", meta: "Barbería", next: "14:30" },
+          { name: "Sala Bruna", meta: "Peluquería", next: "16:00" },
         ].map((local) => (
           <motion.div
             key={local.name}
@@ -90,7 +100,15 @@ function ScreenBuscar() {
               <p className={cn(screenTitle, "truncate")}>{local.name}</p>
               <p className={cn(screenMuted, "truncate")}>{local.meta}</p>
             </div>
-            <span className="num shrink-0 rounded-pill bg-amber-500/12 px-2.5 py-1 text-xs text-amber-700 dark:text-amber-300">
+            {/*
+              Sin lavado ámbar en claro: `amber-700` sobre `amber-500/12` daba
+              4,25:1 (necesita 4,5). El tinte que está DEBAJO del texto es lo
+              que lo costaba — sobre la superficie pelada da 4,75:1. En oscuro
+              se mantiene, que ahí da 8,31:1. Rellenarlo de ámbar y poner tinta
+              encima también pasaba, pero es el "chip con relleno de marca
+              dentro de una lista" que docs/MARCA.md prohíbe.
+            */}
+            <span className="num shrink-0 rounded-pill px-2.5 py-1 text-xs text-amber-700 dark:bg-amber-500/12 dark:text-amber-300">
               {local.next}
             </span>
           </motion.div>
@@ -212,12 +230,10 @@ const screens = [ScreenBuscar, ScreenHorarios, ScreenPuntos] as const;
  */
 function Device({ children }: { children: ReactNode }) {
   return (
+    // El destello ámbar que había acá se fue: una sola cosa por pieza
+    // (docs/MARCA.md), y además su cadena de ancestros llegaba a `<html>` en
+    // `overflow-x: visible`, así que metía scroll horizontal.
     <div className="relative">
-      {/* Destello de ambiente: detrás del marco, nunca sobre el texto */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-10 animate-aurora rounded-full bg-[radial-gradient(circle_at_50%_40%,rgba(215,138,29,0.16)_0%,rgba(215,138,29,0)_68%)]"
-      />
 
       <div className="relative mx-auto max-w-[22rem] rounded-[2.5rem] border border-ink-900/10 bg-paper p-3 shadow-[0_32px_80px_-32px_rgba(21,19,17,0.35)] dark:border-white/10 dark:bg-ink-800">
         {/* Muesca: dos trazos, sin dibujar un iPhone entero */}
@@ -239,6 +255,33 @@ export default function HowItWorks() {
   const reduced = useReducedMotion();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  /**
+   * WCAG 2.2.2 pide una forma de frenar algo que se mueve solo más de 5s.
+   * `paused` sólo existía en puntero y foco — en un teléfono no hay ninguno
+   * de los dos. Tocar un paso ahora detiene la rotación para siempre.
+   */
+  const [tookControl, setTookControl] = useState(false);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const selectStep = (index: number) => {
+    setActive(index);
+    setTookControl(true);
+  };
+
+  const onTabKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    const last = steps.length - 1;
+    let next: number | null = null;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight")
+      next = active === last ? 0 : active + 1;
+    else if (event.key === "ArrowUp" || event.key === "ArrowLeft")
+      next = active === 0 ? last : active - 1;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = last;
+    if (next === null) return;
+    event.preventDefault();
+    selectStep(next);
+    tabRefs.current[next]?.focus();
+  };
 
   const ref = useRef<HTMLDivElement>(null);
   // `amount: 0.4` — sólo avanza cuando la sección está realmente mirándose.
@@ -246,13 +289,13 @@ export default function HowItWorks() {
 
   // Un timeout por paso, no un interval: al tocar un paso el reloj arranca de cero.
   useEffect(() => {
-    if (reduced || paused || !inView) return;
+    if (reduced || paused || !inView || tookControl) return;
     const timer = window.setTimeout(
       () => setActive((current) => (current + 1) % steps.length),
       STEP_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [active, paused, inView, reduced]);
+  }, [active, paused, inView, reduced, tookControl]);
 
   const Screen = screens[active] ?? ScreenBuscar;
 
@@ -264,9 +307,16 @@ export default function HowItWorks() {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div className="md:grid md:grid-cols-12 md:items-center md:gap-16">
-        {/* ── Columna de texto ── */}
-        <div className="md:col-span-6">
+      {/*
+        Tres celdas explícitas en vez de dos columnas. En mobile el orden del
+        DOM manda —encabezado, teléfono, pasos— para que la pantalla quede
+        pegada a los pasos que ilustra: antes caía un scroll entero por debajo
+        y el emparejamiento que hace funcionar la sección no ocurría nunca.
+        En desktop el teléfono vuelve a la derecha, ocupando las dos filas.
+      */}
+      <div className="grid grid-cols-1 gap-y-12 md:grid-cols-12 md:items-center md:gap-x-16 md:gap-y-0">
+        {/* ── Encabezado ── */}
+        <div className="md:col-span-6 md:col-start-1 md:row-start-1">
           <Eyebrow>Cómo funciona</Eyebrow>
           <h2
             id="como-funciona-title"
@@ -274,12 +324,67 @@ export default function HowItWorks() {
           >
             Tres pasos, y el turno ya está.
           </h2>
+        </div>
 
-          <ol className="mt-14 space-y-1">
+          {/*
+            Un tablist de verdad: antes el vínculo entre un paso y la pantalla
+            de al lado no estaba expuesto en ningún lado, y la pantalla cambiaba
+            en silencio cada 5,2s para quien usa lector de pantalla.
+          */}
+        {/* ── La pantalla ── */}
+        <div
+          id="how-panel"
+          role="tabpanel"
+          aria-labelledby={`how-tab-${steps[active]?.n ?? "01"}`}
+          tabIndex={0}
+          /*
+            En mobile va arriba de los pasos, no debajo: así la pantalla está a
+            la vista mientras rota, que es lo que hace entender la sección.
+            Probé fijarla con `sticky` para que además quedara a la vista al
+            tocar un paso, pero flotaba por encima del texto que pasaba abajo y
+            el rótulo se encimaba con el paso 01: rompía más de lo que resolvía.
+          */
+          className="ring-focus rounded-[2.5rem] md:col-span-6 md:col-start-7 md:row-span-2 md:row-start-1 md:self-center"
+        >
+          {/*
+            Va ARRIBA del teléfono, no debajo. Los locales que muestra están
+            inventados, y leído después el rótulo llega tarde: quien conoce
+            Tandil ya intentó ubicarlos y ya concluyó que la página está
+            rellena. Arriba encuadra lo que va a ver; abajo lo desmiente.
+          */}
+          <p className="mb-5 text-center text-xs text-ink-500 dark:text-bone-300">
+            Pantallas de ejemplo. Los locales que aparecen son ilustrativos.
+          </p>
+
+          <Device>
+            {/* `aria-live` no: el texto de la izquierda ya cuenta los tres pasos */}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={active}
+                variants={stage}
+                initial={reduced ? undefined : "hidden"}
+                animate="show"
+                exit={reduced ? undefined : { opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <Screen />
+              </motion.div>
+            </AnimatePresence>
+          </Device>
+
+        </div>
+        <div className="md:col-span-6 md:col-start-1 md:row-start-2">
+          <ol
+            role="tablist"
+            // El tablist se dibuja apilado; sin esto se declara horizontal.
+            aria-orientation="vertical"
+            aria-label="Los tres pasos, y la pantalla de cada uno"
+            className="space-y-1 md:mt-14"
+          >
             {steps.map((step, index) => {
               const isActive = index === active;
               return (
-                <li key={step.n} className="relative">
+                <li key={step.n} role="presentation" className="relative">
                   {/* La barra ámbar viaja entre pasos: un solo elemento, no tres */}
                   {isActive && !reduced && (
                     <motion.span
@@ -298,9 +403,24 @@ export default function HowItWorks() {
 
                   <button
                     type="button"
-                    onClick={() => setActive(index)}
-                    aria-current={isActive ? "step" : undefined}
-                    className="ring-focus block w-full rounded-sm py-4 pl-7 text-left"
+                    role="tab"
+                    id={`how-tab-${step.n}`}
+                    aria-selected={isActive}
+                    aria-controls="how-panel"
+                    /* Foco itinerante: el tablist entero es una sola parada de tabulación. */
+                    tabIndex={isActive ? 0 : -1}
+                    ref={(node) => {
+                      tabRefs.current[index] = node;
+                    }}
+                    onClick={() => selectStep(index)}
+                    onKeyDown={onTabKeyDown}
+                    className={cn(
+                      // Antes: `cursor: default`, sin fondo, sin borde y sin hover.
+                      // El único control manual de la sección era invisible.
+                      "ring-focus block w-full cursor-pointer rounded-field py-4 pl-7 text-left",
+                      "transition-colors duration-[180ms] ease-out",
+                      "hover:bg-ink-900/[0.035] dark:hover:bg-white/[0.045]",
+                    )}
                   >
                     <span className="flex items-baseline gap-4">
                       <span
@@ -309,7 +429,7 @@ export default function HowItWorks() {
                           "num text-2xl transition-colors duration-500",
                           isActive
                             ? "text-amber-700 dark:text-amber-300"
-                            : "text-ink-500/50 dark:text-bone-300/40",
+                            : "text-ink-500 dark:text-bone-300",
                         )}
                       >
                         {step.n}
@@ -325,19 +445,21 @@ export default function HowItWorks() {
                         >
                           {step.title}
                         </span>
-                        <span
-                          className={cn(
-                            "mt-2 block max-w-[42ch] text-small text-ink-500 transition-opacity duration-500 dark:text-bone-300",
-                            isActive ? "opacity-100" : "opacity-45",
-                          )}
-                        >
+                        {/*
+                          Sin `opacity` para marcar estado: atenuar texto con
+                          opacidad heredada componía 1,82:1 a 14px (AA pide
+                          4,5:1) y Lighthouse no lo detecta. El paso activo se
+                          distingue por el riel ámbar, el color del numeral y
+                          el peso del título — no por volver ilegible al resto.
+                        */}
+                        <span className="mt-2 block max-w-[42ch] text-small text-ink-500 dark:text-bone-300">
                           {step.body}
                         </span>
                       </span>
                     </span>
 
                     {/* Reloj del paso: la única pista de que esto avanza solo */}
-                    {isActive && !reduced && (
+                    {isActive && !reduced && !tookControl && (
                       <span
                         aria-hidden="true"
                         className="mt-4 block h-px w-full origin-left bg-ink-950/8 dark:bg-white/10"
@@ -362,24 +484,6 @@ export default function HowItWorks() {
           </ol>
         </div>
 
-        {/* ── La pantalla ── */}
-        <div className="mt-16 md:col-span-6 md:mt-0">
-          <Device>
-            {/* `aria-live` no: el texto de la izquierda ya cuenta los tres pasos */}
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={active}
-                variants={stage}
-                initial={reduced ? undefined : "hidden"}
-                animate="show"
-                exit={reduced ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <Screen />
-              </motion.div>
-            </AnimatePresence>
-          </Device>
-        </div>
       </div>
     </div>
   );

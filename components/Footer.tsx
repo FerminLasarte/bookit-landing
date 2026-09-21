@@ -7,7 +7,11 @@ import { site } from "@/content/site";
 import { footerLegales, footerProducto, type NavLink as NavLinkType } from "@/content/nav";
 
 const linkClasses =
-  "ring-focus inline-flex items-start gap-1.5 rounded-sm text-small text-bone-300 transition-colors duration-150 hover:text-bone-100";
+  // El mail es un token sin espacios de 193px y a 768px su columna mide 148:
+  // se salía del viewport y metía scroll horizontal. `break-words` no alcanza
+  // acá — no achica el tamaño min-content, así que el ítem de flex anónimo
+  // seguía sin poder encogerse. `overflow-wrap: anywhere` sí lo achica.
+  "ring-focus inline-flex min-w-0 items-start gap-1.5 rounded-sm text-small [overflow-wrap:anywhere] text-bone-300 transition-colors duration-150 hover:text-bone-100";
 
 function FooterLink({ link }: { link: NavLinkType }) {
   if (link.external) {
@@ -47,9 +51,12 @@ export default function Footer() {
               Turnos para barberías, peluquerías y estética.
             </p>
             <p className="mt-6 text-small text-bone-300/80">{site.hq}</p>
-            <p className="mt-4 text-small text-bone-300">
-              Hecho en {site.city} <span aria-hidden="true">🧡</span>
-            </p>
+            {/*
+              Sin emoji: `docs/MARCA.md` ("Voz y tono") registra una sola
+              excepción, el 🎉 de las pantallas de éxito del formulario.
+              `aria-hidden` lo escondía del lector de pantalla, no de la regla.
+            */}
+            <p className="mt-4 text-small text-bone-300">Hecho en {site.city}.</p>
           </div>
 
           <nav aria-label="Producto" className="md:col-span-2">

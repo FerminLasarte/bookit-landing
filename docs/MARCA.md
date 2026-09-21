@@ -194,8 +194,12 @@ Lo que esta web hace distinto del manual, a propósito:
    mono de sistema, sin descarga, para lo que es literalmente un código que
    alguien copia: el código de referido.
 3. **Hay tokens de acento que el manual no tiene** (`amber-300`, `amber-100`,
-   `amber-50`, `cream-100`). La app no los necesita; una landing con secciones
-   sí. Van marcados DERIVADO.
+   `amber-50`, `cream-100`, `ink-850`). La app no los necesita; una landing con
+   secciones sí. Van marcados DERIVADO. `ink-850` (`#1C1A17`) es el par oscuro
+   de `cream-100`: el manual da tres oscuros y `Audiences` ya usa dos en las
+   mitades de su card, así que sin una cuarta banda el modo oscuro se leía como
+   un túnel continuo y los lienzos `marcaProfunda` dejaban de leerse como
+   lienzos.
 4. **El nombre se escribe `Bookit`, no `BooKit`.** El manual v1 §2 pide la K
    mayúscula en prosa. Es un error: la marca es `Bookit`. Pendiente corregirlo
    en el manual; hasta entonces manda esta línea.

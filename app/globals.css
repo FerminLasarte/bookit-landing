@@ -79,6 +79,18 @@
    */
   --color-cream-100: #f1f3f5;
 
+  /*
+   * DERIVADO. El par oscuro de `cream-100`: la superficie alterna de sección
+   * en modo oscuro. El manual da tres oscuros — `marca-profunda` (#140E03),
+   * `ink-950` (#151311) y `ink-800` (#24211e)— y `Audiences` ya usa los dos
+   * últimos en las mitades de su card. Sin una cuarta banda, el oscuro se
+   * leía como un túnel continuo: las secciones no se distinguían entre sí y
+   * los dos lienzos `marca-profunda` dejaban de leerse como lienzos.
+   * Cae entre `ink-950` y `ink-800`, así que la card de `Audiences` sigue
+   * levantando sobre la sección que la contiene.
+   */
+  --color-ink-850: #1c1a17;
+
   /* Borde sobre fondo oscuro. Equivale a `onSurface` al 12% del manual. */
   --color-ink-700: #3a342e;
 
@@ -185,12 +197,6 @@
   /* Animaciones de ambiente (§4.4): lentas, en loop, nunca por encima del texto */
   --animate-aurora: aurora 18s ease-in-out infinite;
   --animate-flow: flow 1.4s linear infinite;
-  /*
-   * El brillo que cruza el CTA principal. Pasa cada 6s y el barrido dura 1,8s:
-   * el resto del ciclo el reflejo está fuera del botón, así se lee como un
-   * destello ocasional y no como un loop nervioso.
-   */
-  --animate-sheen: sheen 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   @keyframes aurora {
     0%,
@@ -211,17 +217,6 @@
     }
   }
 
-  /* Reflejo del CTA: entra por izquierda, cruza, y espera fuera de cuadro. */
-  @keyframes sheen {
-    0%,
-    45% {
-      transform: translateX(-170%) skewX(-14deg);
-    }
-    75%,
-    100% {
-      transform: translateX(170%) skewX(-14deg);
-    }
-  }
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */
@@ -235,6 +230,12 @@
   }
 
   body {
+    /*
+     * Sin esto el navegador computa `color-scheme: normal` y pinta las barras
+     * de scroll, el caret y los controles nativos en claro sobre la página
+     * oscura. Es una de las superficies que el diseño no dibuja pero igual viste.
+     */
+    color-scheme: light;
     background-color: var(--color-cream-50);
     color: var(--color-ink-900);
     font-family: var(--font-sans);
@@ -246,6 +247,7 @@
 
   @media (prefers-color-scheme: dark) {
     body {
+      color-scheme: dark;
       background-color: var(--color-ink-950);
       color: var(--color-bone-100);
     }

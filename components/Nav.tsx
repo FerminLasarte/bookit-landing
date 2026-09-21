@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils";
  * admite el wordmark suelto cuando el isotipo ya está presente en la pieza,
  * que no es el caso de un nav.
  */
-function Logo({ className = "" }: { className?: string }) {
-  return <Wordmark className={className} />;
+function Logo({ className = "", onDark = false }: { className?: string; onDark?: boolean }) {
+  return <Wordmark className={className} onDark={onDark} />;
 }
 
 export default function Nav() {
@@ -35,6 +35,14 @@ export default function Nav() {
 
   // Cerrar el menú al navegar.
   useEffect(() => setOpen(false), [pathname]);
+
+  /*
+   * El hero de la home es un lienzo `marca-profunda` en los dos temas, y el nav
+   * se le monta encima. Arriba de todo el nav se vuelve transparente y viste de
+   * oscuro; apenas se scrollea vuelve a su superficie de siempre. En el resto de
+   * las páginas el tope es claro, así que esto no aplica nunca.
+   */
+  const overDark = pathname === "/" && !scrolled;
 
   // Con el menú abierto: sin scroll de fondo y Esc cierra.
   useEffect(() => {
@@ -62,7 +70,8 @@ export default function Nav() {
 
       <header
         className={cn(
-          "sticky top-0 z-50 bg-cream-50/80 backdrop-blur-md transition-colors duration-300 dark:bg-ink-950/80",
+          "sticky top-0 z-50 backdrop-blur-md transition-colors duration-300",
+          overDark ? "bg-transparent" : "bg-cream-50/80 dark:bg-ink-950/80",
           scrolled ? "border-b border-ink-900/8 dark:border-white/8" : "border-b border-transparent",
         )}
       >
@@ -70,7 +79,7 @@ export default function Nav() {
           {/* Sin `aria-label`: el nombre accesible sale del wordmark ("Bookit"),
               así el texto visible y el nombre accesible coinciden. */}
           <Link href="/" className="ring-focus flex min-h-11 items-center rounded-sm">
-            <Logo className="text-xl" />
+            <Logo className="text-xl" onDark={overDark} />
           </Link>
 
           <ul className="hidden items-center gap-8 md:flex">
@@ -78,7 +87,12 @@ export default function Nav() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="ring-focus rounded-sm text-small font-medium text-ink-500 transition-colors duration-150 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100"
+                  className={cn(
+                    "ring-focus rounded-sm text-small font-medium transition-colors duration-150",
+                    overDark
+                      ? "text-bone-300 hover:text-bone-100"
+                      : "text-ink-500 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100",
+                  )}
                 >
                   {link.label}
                 </Link>
@@ -87,7 +101,12 @@ export default function Nav() {
           </ul>
 
           <div className="hidden md:block">
-            <AnimatedButton text="Sumate a la lista" href="/lista-espera" size="sm" variant="ink" />
+            <AnimatedButton
+              text="Sumate a la lista"
+              href="/lista-espera"
+              size="sm"
+              variant={overDark ? "glass" : "ink"}
+            />
           </div>
 
           <button
@@ -95,7 +114,10 @@ export default function Nav() {
             onClick={() => setOpen(true)}
             aria-label="Abrir menú"
             aria-expanded={open}
-            className="ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill text-ink-900 md:hidden dark:text-bone-100"
+            className={cn(
+              "ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill md:hidden",
+              overDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100",
+            )}
           >
             <Menu className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
           </button>
