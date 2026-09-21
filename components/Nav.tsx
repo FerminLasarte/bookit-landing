@@ -22,6 +22,7 @@ function Logo({ className = "", onDark = false }: { className?: string; onDark?:
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [encimaDeLienzo, setEncimaDeLienzo] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -37,6 +38,19 @@ export default function Nav() {
       const hero = document.querySelector("[data-hero]");
       const umbral = hero ? hero.getBoundingClientRect().height - 72 : 8;
       setScrolled(window.scrollY > umbral);
+
+      /*
+       * ¿Hay un lienzo de marca detrás de la barra? No alcanza con preguntar
+       * si estamos en el hero: `Rewards` y el cierre son los mismos 18px de
+       * `marca-profunda`, y ahí el header `cream-50/80` componía a un gris
+       * medio (#cdcccb) que dejaba los links en 3,02:1.
+       */
+      const banda = 72;
+      const sobreLienzo = Array.from(document.querySelectorAll("[data-canvas]")).some((el) => {
+        const r = el.getBoundingClientRect();
+        return r.top < banda && r.bottom > 0;
+      });
+      setEncimaDeLienzo(sobreLienzo);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -56,7 +70,8 @@ export default function Nav() {
    * oscuro; apenas se scrollea vuelve a su superficie de siempre. En el resto de
    * las páginas el tope es claro, así que esto no aplica nunca.
    */
-  const overDark = pathname === "/" && !scrolled;
+  // Viste de oscuro siempre que tenga un lienzo detrás, esté donde esté.
+  const overDark = encimaDeLienzo;
 
   /*
    * Scrollspy. Cuatro anclas sobre una página de ~8.000px y ninguna señal de

@@ -133,7 +133,11 @@ export default function Audiences() {
                   <strong className="font-semibold text-amber-300">
                     Precio fundador de por vida.
                   </strong>{" "}
-                  Cupos limitados para los primeros locales que se suman antes del lanzamiento.
+                  {/* Sin "cupos limitados": confirmado el 21/9/2026 que no hay un
+                      número detrás. Era la única afirmación no verificable que
+                      quedaba en una página que borra lo que no puede sostener.
+                      "Los primeros" sí es cierto por definición del beneficio. */}
+                  Es para los primeros locales que se suman antes del lanzamiento en Tandil.
                 </p>
 
                 <div className="mt-auto pt-10">

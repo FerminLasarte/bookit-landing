@@ -38,7 +38,10 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: "¿Cómo funcionan los puntos?",
-    a: "Sumás puntos por cada turno y los canjeás en los siguientes. Por anotarte a la lista te llevás 500 de regalo para el primero.",
+    // El valor del punto no es fijo (confirmado 21/9/2026). Decirlo es mejor que
+    // dejar el hueco: una moneda sin valor declarado es el clásico indicio de
+    // que el beneficio no existe, y esta página ya admite lo que no sabe.
+    a: "Sumás puntos por cada turno y los canjeás en los siguientes. Por anotarte a la lista te llevás 500 de regalo para el primero. Un punto no tiene un valor fijo en pesos.",
   },
   {
     q: "¿Cómo funcionan los referidos?",

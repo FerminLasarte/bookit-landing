@@ -119,6 +119,7 @@ function ReferralFlow() {
 export default function Rewards() {
   return (
     <section
+      data-canvas
       id="puntos"
       aria-labelledby="recompensas-title"
       className="relative isolate overflow-hidden py-32 md:py-44"

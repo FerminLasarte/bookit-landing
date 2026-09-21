@@ -44,7 +44,7 @@ export default function Home() {
         CTA hacia arriba es comprimir lo que tiene encima. En pantallas altas
         el ritmo generoso queda intacto.
       */}
-      <section data-hero className="relative isolate -mt-18 flex min-h-svh flex-col justify-center overflow-hidden pt-28 pb-44 [@media(max-height:820px)]:pt-24 [@media(max-height:820px)]:pb-32">
+      <section data-hero data-canvas className="relative isolate -mt-18 flex min-h-svh flex-col justify-center overflow-hidden pt-28 pb-44 [@media(max-height:820px)]:pt-24 [@media(max-height:820px)]:pb-32">
         {/*
          * El lienzo del hero: `marca-profunda`, el negro con tinte ámbar del
          * manual. Es el mismo en claro y en oscuro, igual que el de `Rewards`:

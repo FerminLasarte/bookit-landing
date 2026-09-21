@@ -52,6 +52,8 @@ export default function Section({
   return (
     <section
       id={id}
+      // El nav lee esto para saber cuándo tiene un lienzo de marca detrás.
+      data-canvas={tone === "canvas" ? "" : undefined}
       aria-labelledby={labelledBy}
       className={cn("relative isolate", rhythmClasses[rhythm], className)}
     >

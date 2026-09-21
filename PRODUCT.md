@@ -109,6 +109,16 @@ fallback. Hay links de invitación circulando hoy.
   `flags.inAppPayments: true` ya está en `content/site.ts`, pero un booleano no alcanza para
   representar "efectivo o Mercado Pago, a criterio del local": el copy tiene que decirlo.
 
+- **Los Puntos Bookit no tienen un valor fijo en pesos.** Confirmado el 21 de
+  septiembre de 2026. Ninguna superficie puede declarar una equivalencia ni una
+  tasa de acumulación por turno: no existen. La landing lo dice explícitamente
+  en la FAQ en vez de dejar el hueco.
+- **"Cupos limitados" no tiene un número detrás.** Confirmado el 21 de
+  septiembre de 2026, y por eso se eliminó de toda la web. El precio fundador
+  es para los primeros locales que se suman antes del lanzamiento —eso sí es
+  cierto por definición del beneficio— pero no hay una cantidad de cupos que
+  se pueda anunciar ni agotar. No reintroducir la escasez sin un número real.
+
 **Contratos técnicos que no se pueden romper** (detalle en `docs/LANDING_BRIEF.md` §2):
 
 1. `/.well-known/apple-app-site-association` servido como `application/json`, sin extensión.

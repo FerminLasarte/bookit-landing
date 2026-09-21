@@ -57,7 +57,7 @@ const beneficios = [
     figure: "∞",
     Icon: IconStore,
     title: "Precio fundador de por vida",
-    body: "Si tenés un local, los cupos de fundador son para los primeros que se suman antes del lanzamiento.",
+    body: "Si tenés un local, el precio fundador es para los primeros que se suman antes del lanzamiento.",
   },
 ] as const;
 
