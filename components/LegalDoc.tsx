@@ -66,9 +66,16 @@ function Block({ block }: { block: LegalBlock }) {
         </ol>
       );
 
+    /*
+     * Sin `bg-amber-50` en claro: `ink-500` sobre ese lavado daba 4,49:1 —
+     * falla AA por una centésima, y el tinte que está DEBAJO del texto es lo
+     * que lo cuesta. Sobre la superficie pelada da 4,71:1. El tick ámbar del
+     * borde sigue marcándolo como aviso. En oscuro el lavado se mantiene,
+     * que ahí no resta contraste.
+     */
     case "note":
       return (
-        <p className="mt-5 border-l-2 border-amber-500 bg-amber-50 py-3 pl-4 text-small text-ink-500 dark:bg-amber-500/8 dark:text-bone-300">
+        <p className="mt-5 border-l-2 border-amber-500 py-3 pl-4 text-small text-ink-500 dark:bg-amber-500/8 dark:text-bone-300">
           {block.text}
         </p>
       );

@@ -43,8 +43,19 @@ export default function ReferralCode({ code }: { code: string }) {
       <button
         type="button"
         onClick={copy}
-        aria-label={`Copiar el código de invitación ${code}`}
-        className="ring-focus group w-full rounded-card border border-dashed border-amber-500/40 bg-amber-50 px-6 py-6 text-left transition-colors duration-150 hover:border-amber-500 hover:bg-amber-100/60 dark:bg-amber-500/8 dark:hover:bg-amber-500/12"
+        /*
+         * Sin `aria-label`. WCAG 2.5.3 (Label in Name) pide que el nombre
+         * accesible CONTENGA el texto visible, y cualquier etiqueta que
+         * escribamos a mano se desincroniza del contenido — la anterior
+         * ("Copiar el código de invitación ABC123") no incluía ni "Tocá para
+         * copiar" ni el encabezado, así que quien maneja el navegador por voz
+         * decía lo que ve y no activaba nada. Dejando que el nombre salga del
+         * contenido, la regla se cumple por construcción y el código va
+         * incluido. El ícono ya está en `aria-hidden`.
+         */
+        // Sin `bg-amber-50` en claro: el texto chico de abajo daba 4,49:1 sobre ese
+        // lavado y 4,71:1 sin él. El borde punteado ámbar ya marca la caja.
+        className="ring-focus group w-full rounded-card border border-dashed border-amber-500/40 px-6 py-6 text-left transition-colors duration-150 hover:border-amber-500 hover:bg-amber-50 dark:bg-amber-500/8 dark:hover:bg-amber-500/12"
       >
         <Eyebrow>¡Te regalaron una invitación!</Eyebrow>
         <span className="mt-3 flex items-center gap-3">
