@@ -53,7 +53,7 @@ export default function AudienceSwitch({
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-field peer-focus-visible:ring-2 peer-focus-visible:ring-amber-500 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-cream-50 dark:peer-focus-visible:ring-offset-ink-900"
+                className="pointer-events-none absolute inset-0 rounded-field peer-focus-visible:ring-2 peer-focus-visible:ring-amber-500 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-cream-50 dark:peer-focus-visible:ring-offset-ink-950"
               />
               <span className="text-small font-semibold text-ink-900 dark:text-bone-100">
                 {copy.tab}

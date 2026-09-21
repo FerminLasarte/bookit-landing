@@ -35,7 +35,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-ink-900 text-bone-100">
+    <footer className="bg-ink-950 text-bone-100">
       <Hairline onDark />
 
       <div className="wrap py-16 md:py-20">

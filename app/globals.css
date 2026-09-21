@@ -1,69 +1,185 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Marca — NO TOCAR ────────────────────────────────────────────── */
-  --color-amber-500: #d78a1d; /* primary */
-  --color-amber-600: #c67d19; /* hover */
-  /* Derivados */
+  /* ══════════════════════════════════════════════════════════════════
+   * Tokens de marca · fuente: Manual de marca Bookit v1 (sept. 2026).
+   * La normativa en prosa vive en `docs/MARCA.md`.
+   *
+   *   CANÓNICO — está en el manual. No se edita acá: se corrige el
+   *              manual primero y después este archivo.
+   *   DERIVADO — la web lo necesita y el manual no lo cubre (el manual
+   *              está escrito para la app). Ajustable con criterio,
+   *              dejando anotado el contraste.
+   *
+   * Regla del manual §3: el contraste se mide contra el fondo REAL, no
+   * contra blanco por costumbre. 4,5:1 texto · 3:1 texto grande,
+   * íconos y bordes.
+   * ════════════════════════════════════════════════════════════════ */
+
+  /* ── Marca — CANÓNICO ─────────────────────────────────────────────── */
+
   /*
-   * SOLO para texto/links chicos sobre papel (contraste AA).
-   * El #A9660F del brief se quedaba corto justo en el caso que tiene que cubrir:
-   * daba 4,35:1 sobre cream-50 y 3,96:1 sobre cream-100, por debajo de 4.5.
-   * #96590C da 5,63 / 5,35 / 4,87 sobre paper / cream-50 / cream-100.
+   * `primary`. El ámbar de interfaz. Mismo hex en claro y en oscuro: la
+   * marca no cambia de color con el tema. Relleno de CTA, elegido, acento.
+   * Sobre superficie clara da 2,64:1 — NO se usa como texto ahí (§11).
    */
-  --color-amber-700: #96590c;
-  --color-amber-300: #e8b45f; /* acento sobre fondos oscuros */
+  --color-amber-500: #d78a1d;
+
+  /*
+   * `marcaTexto`. El mismo tono (37° de matiz) con la luminosidad bajada,
+   * para cuando el ámbar tiene que LEERSE: links, texto de acento, bordes
+   * de foco sobre papel. Da 4,9:1 sobre `cream-50`.
+   * Sobre fondo oscuro no hace falta: ahí el ámbar ya pasa con 6,3:1.
+   */
+  --color-amber-700: #9d6515;
+
+  /*
+   * `marcaProfunda`. El fondo del cartel: un negro con el tinte del ámbar,
+   * no un negro neutro. No cambia con el tema (§10).
+   */
+  --color-marca-profunda: #140e03;
+
+  /*
+   * El naranja saturado del LOGO. Sólo logo, ícono de app y splash. Nunca
+   * como color de interfaz: no aguanta de relleno de un botón (§2). La
+   * landing lo toca únicamente a través de los SVG de `public/brand/`.
+   */
+  --color-logo-naranja: #fd7d03;
+
+  /* ── Superficies y tinta — CANÓNICO (ColorScheme de la app) ───────── */
+
+  --color-paper: #ffffff; /* surfaceContainerHighest claro: cards, nav */
+  --color-cream-50: #fbfcfd; /* surface claro. Off-white, no gris */
+  --color-ink-950: #151311; /* surface oscuro */
+  --color-ink-800: #24211e; /* surfaceContainerHighest oscuro */
+  --color-ink-900: #1f2937; /* onSurface claro: el texto principal */
+  --color-ink-500: #6b7280; /* onSurfaceVariant claro: texto secundario */
+  --color-bone-100: #e8e2d9; /* onSurface oscuro */
+  --color-bone-300: #d9c6b4; /* onSurfaceVariant oscuro */
+
+  /* ── Semánticos — CANÓNICO (§3, la lista está cerrada) ────────────── */
+
+  --color-error: #ba1a1a; /* claro */
+  --color-error-dark: #ffb4ab; /* oscuro */
+  --color-alerta: #f59e0b; /* pide atención, no está roto */
+  --color-exito: #16a34a;
+
+  /* Niveles de Puntos Bookit. Los usa `Rewards`. */
+  --color-nivel-bronce: #cd7f32;
+  --color-nivel-plata: #b4b4b4;
+  --color-nivel-oro: #ffd700;
+  --color-nivel-vip: #673ab7;
+
+  /* ── DERIVADO — la web los necesita, el manual no los cubre ───────── */
+
+  /*
+   * Superficie alterna de sección. El manual no define un tercer nivel
+   * claro (la app no lo usa). Sale de bajarle luz a `cream-50` sin
+   * moverle la temperatura, para que no reaparezca el crema viejo.
+   */
+  --color-cream-100: #f1f3f5;
+
+  /* Borde sobre fondo oscuro. Equivale a `onSurface` al 12% del manual. */
+  --color-ink-700: #3a342e;
+
+  /* Hover del CTA. El manual define estados por opacidad, no por tono. */
+  --color-amber-600: #c67d19;
+
+  /*
+   * Acento sobre fondos oscuros. El manual usaría `primary` tal cual (ya
+   * pasa 6,3:1); este tono más claro existe para separar dos niveles de
+   * acento dentro de una misma sección oscura.
+   */
+  --color-amber-300: #e8b45f;
+
   --color-amber-100: #f6e7ce; /* rellenos suaves, bordes */
   --color-amber-50: #fdf6ea; /* wash de sección */
 
-  /* ── Papel (light) ───────────────────────────────────────────────── */
-  --color-paper: #ffffff;
-  --color-cream-50: #fbf9f5; /* fondo de página */
-  --color-cream-100: #f3eee5; /* superficie alterna */
-
-  /* ── Tinta (dark + texto) — heredados de la app ──────────────────── */
-  --color-ink-900: #151311; /* fondo dark / texto fuerte sobre papel */
-  --color-ink-800: #24211e; /* superficie dark */
-  --color-ink-700: #3a342e; /* bordes sobre dark */
-  --color-ink-500: #6b6257; /* texto muted sobre papel */
-  --color-bone-100: #e8e2d9; /* texto sobre dark */
-  --color-bone-300: #d9c6b4; /* texto muted sobre dark */
-
-  --radius-pill: 48px;
-  --radius-card: 28px;
-  --radius-field: 16px;
-
-  /* ── Tipografía ──────────────────────────────────────────────────── */
-  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+  /* ── Forma — CANÓNICO (§5) ────────────────────────────────────────── */
   /*
-   * Cifras. Pila de sistema (SF Pro en Apple, sin descarga) con Manrope de
-   * respaldo: minimal, sin adorno, en vez del serif editorial anterior.
-   * Se aplica sólo desde la utilidad `num`, nunca suelta.
+   * Cuatro radios y una fórmula: al anidar,
+   * radio exterior = radio interior + padding.
    */
-  --font-numeric: -apple-system, BlinkMacSystemFont, var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --radius-field: 12px;
+  --radius-toast: 16px;
+  --radius-card: 24px;
+  --radius-pill: 50px;
 
+  /*
+   * Sombra canónica: `shadow` al 10%, blur 10, desplazada 4 hacia abajo.
+   * Sombra O borde, nunca los dos. Los campos y las píldoras no llevan
+   * sombra nunca (§5).
+   */
+  --shadow-card: 0 4px 10px rgb(31 41 55 / 0.1);
+  --shadow-card-dark: 0 4px 10px rgb(0 0 0 / 0.45);
+
+  /* ── Tipografía — CANÓNICO: una sola familia (§4) ─────────────────── */
+  /*
+   * Plus Jakarta Sans para todo. `--font-display` y `--font-sans` apuntan
+   * a la misma familia a propósito: el nombre se conserva porque lo usan
+   * los componentes, no porque haya dos tipografías.
+   * Pesos del manual: 400 · 500 · 600 · 700 · 800.
+   */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  /*
+   * DERIVADO. Cifras: la misma Jakarta con `tnum` para que las columnas no
+   * bailen. Se aplica sólo desde la utilidad `num`, nunca suelta.
+   */
+  --font-numeric: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  /*
+   * DERIVADO. Pila de sistema, sin descarga. Sólo para lo que es
+   * literalmente un código que alguien copia (el código de referido).
+   */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  /*
+   * La escala del manual sale del ancho de pantalla (es de la app). Acá son
+   * `clamp()`, pero el tracking es el del manual: negativo y fuerte arriba,
+   * 0 abajo — apretar una letra chica la vuelve ilegible (§4).
+   */
   --text-display-xl: clamp(2.75rem, 6.5vw, 5.5rem);
   --text-display-xl--line-height: 0.95;
-  --text-display-xl--letter-spacing: -0.035em;
+  --text-display-xl--letter-spacing: -0.045em;
 
   --text-display-lg: clamp(2rem, 3.8vw, 3.25rem);
   --text-display-lg--line-height: 1.05;
-  --text-display-lg--letter-spacing: -0.025em;
+  --text-display-lg--letter-spacing: -0.03em;
 
   --text-h3: clamp(1.25rem, 1.6vw, 1.5rem);
   --text-h3--line-height: 1.2;
-  --text-h3--letter-spacing: -0.01em;
+  --text-h3--letter-spacing: -0.015em;
 
   --text-body: 1.0625rem; /* 17px */
-  --text-body--line-height: 1.65;
+  --text-body--line-height: 1.55;
 
   --text-small: 0.875rem; /* 14px */
   --text-small--line-height: 1.55;
 
 
-  /* Curvas del sistema */
+  /* ── Movimiento — CANÓNICO (§8) ───────────────────────────────────── */
+  /*
+   * Corto y físico. Nada rebota de más, nada gira esperando. El manual da
+   * una curva —`easeOutCubic`— y cuatro duraciones; esto es su traducción.
+   */
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+  --duration-chico: 180ms; /* algo chico cambia */
+  --duration-entrada: 300ms; /* algo entra o sale */
+  --duration-tab: 220ms; /* cambio de tab: fundido que sube 6px */
+  --duration-reveal: 560ms; /* contenido que aparece: sube 16px, escalonado */
+
+  /* Tap: si tiene superficie se hunde a 0.97; si no, se apaga a 0.4. */
+  --scale-tap: 0.97;
+  --opacity-tap: 0.4;
+
+  /*
+   * DERIVADO. La curva de los reveals de scroll de la web. Es más larga de
+   * cola que `easeOutCubic` porque acá el recorrido es mayor que en un
+   * teléfono; el resto del sitio usa la canónica.
+   */
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Animaciones de ambiente (§4.4): lentas, en loop, nunca por encima del texto */
@@ -130,7 +246,7 @@
 
   @media (prefers-color-scheme: dark) {
     body {
-      background-color: var(--color-ink-900);
+      background-color: var(--color-ink-950);
       color: var(--color-bone-100);
     }
   }
@@ -231,7 +347,7 @@
   @media (prefers-color-scheme: dark) {
     &:focus-visible {
       box-shadow:
-        0 0 0 2px var(--color-ink-900),
+        0 0 0 2px var(--color-ink-950),
         0 0 0 4px var(--color-amber-500);
     }
   }

@@ -92,7 +92,7 @@ export default function Audiences() {
             <article
               id="locales"
               aria-labelledby="locales-title"
-              className="relative flex flex-col overflow-hidden bg-ink-900 p-8 md:p-12"
+              className="relative flex flex-col overflow-hidden bg-ink-950 p-8 md:p-12"
             >
               {/*
                * Dos capas de calor. Sobre papel el corte ya lo hace el color de

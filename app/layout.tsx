@@ -1,30 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, JetBrains_Mono, Manrope } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { site } from "@/content/site";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({
+/*
+ * Una sola familia para todo (manual de marca §4). `--font-display` y
+ * `--font-sans` apuntan a esta misma variable desde `globals.css`: el nombre
+ * display se conserva porque lo usan los componentes, no porque haya dos
+ * tipografías.
+ *
+ * Los cinco pesos son los que el manual declara disponibles. En la app la
+ * fuente va empaquetada; acá va por `next/font`, que la self-hostea en el
+ * build — no hay request a Google en runtime.
+ */
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
-  weight: ["600", "700", "800"],
-  variable: "--font-bricolage",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-manrope",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["500"],
-  variable: "--font-jetbrains",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
 });
 
 export const metadata: Metadata = {
@@ -102,7 +98,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="es-AR"
-      className={`${bricolage.variable} ${manrope.variable} ${jetbrains.variable}`}
+      className={jakarta.variable}
     >
       <body className="flex min-h-dvh flex-col">
         <script

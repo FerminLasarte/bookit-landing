@@ -78,7 +78,7 @@ export default function ReferralCode({ code }: { code: string }) {
       >
         <p
           className={cn(
-            "mb-8 rounded-pill bg-ink-900 px-6 py-3 text-small font-semibold text-bone-100 shadow-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] dark:bg-bone-100 dark:text-ink-900",
+            "mb-8 rounded-pill bg-ink-950 px-6 py-3 text-small font-semibold text-bone-100 shadow-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] dark:bg-bone-100 dark:text-ink-900",
             toast ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0",
           )}
         >
