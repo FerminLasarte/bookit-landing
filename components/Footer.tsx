@@ -7,7 +7,11 @@ import { site } from "@/content/site";
 import { footerLegales, footerProducto, type NavLink as NavLinkType } from "@/content/nav";
 
 const linkClasses =
-  "ring-focus inline-flex items-start gap-1.5 rounded-sm text-small text-bone-300 transition-colors duration-150 hover:text-bone-100";
+  // El mail es un token sin espacios de 193px y a 768px su columna mide 148:
+  // se salía del viewport y metía scroll horizontal. `break-words` no alcanza
+  // acá — no achica el tamaño min-content, así que el ítem de flex anónimo
+  // seguía sin poder encogerse. `overflow-wrap: anywhere` sí lo achica.
+  "ring-focus inline-flex min-w-0 items-start gap-1.5 rounded-sm text-small [overflow-wrap:anywhere] text-bone-300 transition-colors duration-150 hover:text-bone-100";
 
 function FooterLink({ link }: { link: NavLinkType }) {
   if (link.external) {
@@ -25,9 +29,18 @@ function FooterLink({ link }: { link: NavLinkType }) {
   );
 }
 
-function ColumnTitle({ children }: { children: string }) {
+/*
+ * Rótulo de columna, no encabezado de sección. Era un `<h2>` de 13px, así que
+ * "Producto", "Legales" y "Contacto" entraban al esquema del documento al mismo
+ * nivel que los títulos reales de la página — un lector de pantalla los
+ * anunciaba como tres secciones más de contenido. El nombre accesible de cada
+ * columna ya lo da el `aria-label` de su `<nav>`.
+ */
+function ColumnTitle({ children, id }: { children: string; id?: string }) {
   return (
-    <h2 className="text-[0.8125rem] font-semibold tracking-[-0.01em] text-bone-300">{children}</h2>
+    <p id={id} className="text-[0.8125rem] font-semibold tracking-[-0.01em] text-bone-300">
+      {children}
+    </p>
   );
 }
 
@@ -47,9 +60,12 @@ export default function Footer() {
               Turnos para barberías, peluquerías y estética.
             </p>
             <p className="mt-6 text-small text-bone-300/80">{site.hq}</p>
-            <p className="mt-4 text-small text-bone-300">
-              Hecho en {site.city} <span aria-hidden="true">🧡</span>
-            </p>
+            {/*
+              Sin emoji: `docs/MARCA.md` ("Voz y tono") registra una sola
+              excepción, el 🎉 de las pantallas de éxito del formulario.
+              `aria-hidden` lo escondía del lector de pantalla, no de la regla.
+            */}
+            <p className="mt-4 text-small text-bone-300">Hecho en {site.city}.</p>
           </div>
 
           <nav aria-label="Producto" className="md:col-span-2">
@@ -74,9 +90,11 @@ export default function Footer() {
             </ul>
           </nav>
 
+          {/* Sin `<nav>`: son datos de contacto, no navegación. El nombre
+              accesible de la lista sale del rótulo, vía `aria-labelledby`. */}
           <div className="md:col-span-3">
-            <ColumnTitle>Contacto</ColumnTitle>
-            <ul className="mt-5 space-y-3">
+            <ColumnTitle id="footer-contacto">Contacto</ColumnTitle>
+            <ul aria-labelledby="footer-contacto" className="mt-5 space-y-3">
               <li>
                 <a href={`mailto:${site.email}`} className={linkClasses}>
                   <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />

@@ -1,4 +1,4 @@
-import { flags, site } from "./site";
+import { flags, payments, site } from "./site";
 
 /**
  * Contenido legal en objetos tipados. Es un checklist de contenido cumplido,
@@ -90,11 +90,15 @@ export const terminos: LegalDoc = {
             "El uso reiterado de reservas sin presentarse puede derivar en la suspensión de la cuenta.",
           ],
         },
-        ...(flags.inAppPayments
+        ...(payments.mercadoPagoEnApp
           ? ([
               {
                 type: "p",
-                text: "El turno se paga desde la app al reservar, por el precio y las condiciones que el local informa antes de que confirmes. Bookit gestiona ese cobro; el servicio lo presta el local, que sigue siendo el responsable de prestarlo.",
+                text: "Cada local define cómo se cobra su turno: puede cobrarlo en el local, como siempre, o habilitar el pago por Mercado Pago dentro de Bookit. Cuál de las dos vías acepta lo ves antes de confirmar la reserva.",
+              },
+              {
+                type: "p",
+                text: "Cuando el turno se paga por Mercado Pago dentro de Bookit, Bookit gestiona ese cobro por el precio y las condiciones que el local informa antes de que confirmes. El servicio lo presta el local, que sigue siendo el responsable de prestarlo.",
               },
               {
                 type: "p",
@@ -570,11 +574,15 @@ export const botonArrepentimiento: LegalDoc = {
       id: "estado-actual",
       heading: "2. Situación actual de Bookit",
       blocks: [
-        ...(flags.inAppPayments
+        ...(payments.mercadoPagoEnApp
           ? ([
               {
                 type: "p",
-                text: "Los turnos que reservás por Bookit se pagan dentro de la app. Eso es una contratación a distancia, así que el derecho aplica de lleno y no es una explicación para el futuro: si pagaste un turno por la plataforma, podés revocar esa contratación dentro de los 10 días corridos, sin costo y sin justificar el motivo.",
+                text: "Hay turnos que se pagan dentro de Bookit, por Mercado Pago, cuando el local habilita esa vía. Ese pago es una contratación a distancia, así que el derecho aplica de lleno y no es una explicación para el futuro: si pagaste un turno por la plataforma, podés revocar esa contratación dentro de los 10 días corridos, sin costo y sin justificar el motivo.",
+              },
+              {
+                type: "p",
+                text: "Si el local cobra en el local y no por la plataforma, no hubo contratación a distancia con Bookit por ese turno: la cancelación se rige por la política del local y por tus derechos como consumidor frente a él.",
               },
               {
                 type: "p",
@@ -582,7 +590,7 @@ export const botonArrepentimiento: LegalDoc = {
               },
               {
                 type: "p",
-                text: "La suscripción mensual de los locales todavía no se cobra online. Cuando habilitemos ese cobro, el mismo derecho y el mismo canal aplican a esa contratación.",
+                text: "La suscripción mensual de los locales también se cobra por Mercado Pago. Es igualmente una contratación a distancia, así que el mismo derecho y el mismo canal aplican a esa contratación.",
               },
             ] as const)
           : ([

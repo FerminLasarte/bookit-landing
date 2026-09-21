@@ -25,7 +25,10 @@ const fieldClasses =
 
 const labelClasses = "block text-small font-semibold text-ink-900 dark:text-bone-100";
 
-const invalidClasses = "border-red-500 dark:border-red-400";
+// `--color-error` / `--color-error-dark` son los semánticos del manual y estaban
+// sin usar mientras el formulario tiraba de los rojos de fábrica de Tailwind.
+// Es el mismo "hex suelto en un componente", escrito como clase utilitaria.
+const invalidClasses = "border-error dark:border-error-dark";
 
 function Required() {
   return <span className="text-amber-700 dark:text-amber-300">*</span>;
@@ -343,7 +346,7 @@ export default function WaitlistForm({
             className={cn(
               // 24px: el mínimo de target que pide WCAG 2.2 para un control chico.
               "ring-focus mt-0.5 h-6 w-6 shrink-0 rounded-sm accent-amber-500",
-              invalid.has("consent") && "outline-2 outline-red-500",
+              invalid.has("consent") && "outline-2 outline-error dark:outline-error-dark",
             )}
           />
           <label
@@ -366,7 +369,7 @@ export default function WaitlistForm({
           />
         </div>
 
-        <p aria-live="polite" className="min-h-5 text-center text-small font-semibold text-red-600 dark:text-red-400">
+        <p aria-live="polite" className="min-h-5 text-center text-small font-semibold text-error dark:text-error-dark">
           {formError}
         </p>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
@@ -16,34 +16,128 @@ import { cn } from "@/lib/utils";
  * admite el wordmark suelto cuando el isotipo ya está presente en la pieza,
  * que no es el caso de un nav.
  */
-function Logo({ className = "" }: { className?: string }) {
-  return <Wordmark className={className} />;
+function Logo({ className = "", onDark = false }: { className?: string; onDark?: boolean }) {
+  return <Wordmark className={className} onDark={onDark} />;
 }
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [encimaDeLienzo, setEncimaDeLienzo] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // El hairline inferior aparece recién cuando se scrollea.
+  /*
+   * El nav cambia de superficie cuando deja de tener el hero detrás, no a los
+   * 8px. Con el umbral viejo, en la home se volvía `cream-50/80` con blur
+   * mientras todavía estaba sobre el lienzo negro: quedaba una banda lechosa
+   * con el contenido de atrás emborronado. En el resto de las páginas, donde
+   * no hay hero oscuro, sigue siendo el gesto mínimo de siempre.
+   */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      const hero = document.querySelector("[data-hero]");
+      const umbral = hero ? hero.getBoundingClientRect().height - 72 : 8;
+      setScrolled(window.scrollY > umbral);
+
+      /*
+       * ¿Hay un lienzo de marca detrás de la barra? No alcanza con preguntar
+       * si estamos en el hero: `Rewards` y el cierre son los mismos 18px de
+       * `marca-profunda`, y ahí el header `cream-50/80` componía a un gris
+       * medio (#cdcccb) que dejaba los links en 3,02:1.
+       */
+      const banda = 72;
+      const sobreLienzo = Array.from(document.querySelectorAll("[data-canvas]")).some((el) => {
+        const r = el.getBoundingClientRect();
+        return r.top < banda && r.bottom > 0;
+      });
+      setEncimaDeLienzo(sobreLienzo);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   // Cerrar el menú al navegar.
   useEffect(() => setOpen(false), [pathname]);
 
-  // Con el menú abierto: sin scroll de fondo y Esc cierra.
+  /*
+   * El hero de la home es un lienzo `marca-profunda` en los dos temas, y el nav
+   * se le monta encima. Arriba de todo el nav se vuelve transparente y viste de
+   * oscuro; apenas se scrollea vuelve a su superficie de siempre. En el resto de
+   * las páginas el tope es claro, así que esto no aplica nunca.
+   */
+  // Viste de oscuro siempre que tenga un lienzo detrás, esté donde esté.
+  const overDark = encimaDeLienzo;
+
+  /*
+   * Scrollspy. Cuatro anclas sobre una página de ~8.000px y ninguna señal de
+   * dónde estás. No anima nada: sólo marca el link de la sección visible.
+   */
+  const [activa, setActiva] = useState<string | null>(null);
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const ids = navLinks
+      .map((l) => l.href.split("#")[1])
+      .filter((x): x is string => Boolean(x));
+    const nodos = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    if (!nodos.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActiva(visible.target.id);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+    );
+    nodos.forEach((n) => obs.observe(n));
+    return () => obs.disconnect();
+  }, [pathname]);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * Con el menú abierto: sin scroll de fondo, Esc cierra, y el foco queda
+   * adentro. Declaraba `aria-modal="true"` pero el tabulador seguía caminando
+   * hacia la página de atrás: para quien navega con teclado o lector de
+   * pantalla, el menú decía ser modal y no lo era.
+   */
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    const focosDe = () =>
+      Array.from(
+        menuRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((el) => el.offsetParent !== null);
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focos = focosDe();
+      if (!focos.length) return;
+      const primero = focos[0]!;
+      const ultimo = focos[focos.length - 1]!;
+      const actual = document.activeElement;
+      if (e.shiftKey && (actual === primero || !menuRef.current?.contains(actual))) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && actual === ultimo) {
+        e.preventDefault();
+        primero.focus();
+      }
     };
+
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
@@ -62,7 +156,8 @@ export default function Nav() {
 
       <header
         className={cn(
-          "sticky top-0 z-50 bg-cream-50/80 backdrop-blur-md transition-colors duration-300 dark:bg-ink-950/80",
+          "sticky top-0 z-50 backdrop-blur-md transition-colors duration-300",
+          overDark ? "bg-transparent" : "bg-cream-50/80 dark:bg-ink-950/80",
           scrolled ? "border-b border-ink-900/8 dark:border-white/8" : "border-b border-transparent",
         )}
       >
@@ -70,7 +165,7 @@ export default function Nav() {
           {/* Sin `aria-label`: el nombre accesible sale del wordmark ("Bookit"),
               así el texto visible y el nombre accesible coinciden. */}
           <Link href="/" className="ring-focus flex min-h-11 items-center rounded-sm">
-            <Logo className="text-xl" />
+            <Logo className="text-xl" onDark={overDark} />
           </Link>
 
           <ul className="hidden items-center gap-8 md:flex">
@@ -78,7 +173,19 @@ export default function Nav() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="ring-focus rounded-sm text-small font-medium text-ink-500 transition-colors duration-150 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100"
+                  aria-current={
+                    activa && link.href.endsWith(`#${activa}`) ? "location" : undefined
+                  }
+                  className={cn(
+                    "ring-focus rounded-sm text-small font-medium transition-colors duration-150",
+                    overDark
+                      ? "text-bone-300 hover:text-bone-100"
+                      : "text-ink-500 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100",
+                    // La sección en la que estás: color pleno, no un subrayado.
+                    activa &&
+                      link.href.endsWith(`#${activa}`) &&
+                      (overDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100"),
+                  )}
                 >
                   {link.label}
                 </Link>
@@ -87,7 +194,15 @@ export default function Nav() {
           </ul>
 
           <div className="hidden md:block">
-            <AnimatedButton text="Sumate a la lista" href="/lista-espera" size="sm" variant="ink" />
+            {/* Misma etiqueta que los CTA del cuerpo: eran dos nombres para
+                la misma acción. El destino queda neutro a propósito — desde el
+                nav no sabemos de qué lado del mostrador está quien hace clic. */}
+            <AnimatedButton
+              text="Sumate a la lista VIP"
+              href="/lista-espera"
+              size="sm"
+              variant={overDark ? "glass" : "ink"}
+            />
           </div>
 
           <button
@@ -95,7 +210,10 @@ export default function Nav() {
             onClick={() => setOpen(true)}
             aria-label="Abrir menú"
             aria-expanded={open}
-            className="ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill text-ink-900 md:hidden dark:text-bone-100"
+            className={cn(
+              "ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill md:hidden",
+              overDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100",
+            )}
           >
             <Menu className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
           </button>
@@ -105,6 +223,7 @@ export default function Nav() {
       {/* Menú mobile full-screen: links en display-lg, mucho aire (§6.1) */}
       {open && (
         <div
+          ref={menuRef}
           role="dialog"
           aria-modal="true"
           aria-label="Menú"
@@ -137,7 +256,7 @@ export default function Nav() {
               ))}
             </ul>
             <AnimatedButton
-              text="Sumate a la lista"
+              text="Sumate a la lista VIP"
               href="/lista-espera"
               size="lg"
               variant="primary"

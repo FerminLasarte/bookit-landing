@@ -57,7 +57,7 @@ const beneficios = [
     figure: "∞",
     Icon: IconStore,
     title: "Precio fundador de por vida",
-    body: "Si tenés un local, los cupos de fundador son para los primeros que se suman antes del lanzamiento.",
+    body: "Si tenés un local, el precio fundador es para los primeros que se suman antes del lanzamiento.",
   },
 ] as const;
 
@@ -92,8 +92,9 @@ export default async function ListaEsperaPage({
   searchParams: Promise<{ tipo?: string }>;
 }) {
   const { tipo } = await searchParams;
-  // `?tipo=local` preselecciona el público (§6.2).
-  const initialAudience: Audience | null = tipo === "local" ? "local" : null;
+  // `?tipo=local` / `?tipo=cliente` preselecciona el público (§6.2).
+  const initialAudience: Audience | null =
+    tipo === "local" ? "local" : tipo === "cliente" ? "cliente" : null;
 
   return (
     <>

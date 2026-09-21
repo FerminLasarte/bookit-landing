@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 type Rhythm = "normal" | "breath";
 /** Color de fondo de la sección. `paper` = el fondo de la página, sin capa. */
-type Tone = "paper" | "tint";
+type Tone = "paper" | "tint" | "canvas";
 
 const rhythmClasses: Record<Rhythm, string> = {
   // Ritmo vertical estándar (§4.3)
@@ -14,7 +14,17 @@ const rhythmClasses: Record<Rhythm, string> = {
 
 const toneClasses: Record<Tone, string> = {
   paper: "",
-  tint: "bg-cream-100 dark:bg-ink-800/40",
+  // En oscuro va sólido sobre `ink-850`, no `ink-800/40`: al 40% sobre
+  // `ink-950` la diferencia era de un par de puntos de luminancia y la
+  // sección no se distinguía de la página.
+  tint: "bg-cream-100 dark:bg-ink-850",
+  /*
+   * El lienzo de marca: `marcaProfunda`, el mismo en los dos temas. Es el
+   * dispositivo que `docs/MARCA.md` describe en "Piezas fuera de la app", y la
+   * página lo usa en el hero y en el cierre. Vive acá y no suelto en cada
+   * sección porque ya iba por la tercera copia.
+   */
+  canvas: "bg-marca-profunda",
 };
 
 /**
@@ -42,6 +52,8 @@ export default function Section({
   return (
     <section
       id={id}
+      // El nav lee esto para saber cuándo tiene un lienzo de marca detrás.
+      data-canvas={tone === "canvas" ? "" : undefined}
       aria-labelledby={labelledBy}
       className={cn("relative isolate", rhythmClasses[rhythm], className)}
     >
@@ -49,7 +61,9 @@ export default function Section({
         <div
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute inset-0 -z-10 fade-y",
+            "pointer-events-none absolute inset-0 -z-10",
+            // El lienzo corta neto; el tinte entra y sale con degradé.
+            tone === "canvas" ? "" : "fade-y",
             // El degradé arranca donde termina el padding: el texto nunca cae
             // sobre la parte semitransparente.
             rhythm === "breath" ? "[--fade-y:8rem]" : "[--fade-y:6rem]",

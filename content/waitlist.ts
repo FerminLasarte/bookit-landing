@@ -45,12 +45,13 @@ export const waitlistCopy: Record<Audience, AudienceCopy> = {
     desc: {
       before: "Anotate en la lista VIP y accedé a ",
       strong: "precio fundador de por vida",
-      after: ": cupos limitados para los primeros locales que se sumen antes del lanzamiento.",
+      // Sin "cupos limitados": no hay un número detrás (confirmado 21/9/2026).
+      after: ": es para los primeros locales que se sumen antes del lanzamiento.",
     },
     button: "Quiero mi lugar como fundador",
     success: {
       lead: "Tu local ya está en la lista VIP de fundadores.",
-      body: "Te vamos a contactar por WhatsApp o email con los detalles del precio fundador antes de que se agoten los cupos.",
+      body: "Te vamos a contactar por WhatsApp o email con los detalles del precio fundador.",
     },
   },
 };
