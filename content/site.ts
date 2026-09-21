@@ -39,17 +39,18 @@ export const site = {
 } as const;
 
 /**
- * Decisiones de producto todavía sin confirmar (§11 del brief).
- * Están acá y no hardcodeadas para que confirmarlas sea cambiar una línea.
+ * Decisiones de producto de la §11 del brief. Algunas siguen siendo supuestos;
+ * las ya confirmadas viven acá igual, para que el sitio entero lea el dato de
+ * un solo lugar y confirmarlas sea cambiar una línea.
  */
 export const flags = {
   /**
-   * ¿Se paga el turno dentro de la app en el lanzamiento?
-   * Asumido `false`: el pago se hace en el local. Afecta FAQ, Términos y
-   * si el Botón de arrepentimiento aplica ya o sólo se explica.
-   * TODO: confirmar antes de publicar.
+   * ¿Se paga el turno dentro de la app?
+   * `true` — **hecho confirmado el 21 de septiembre de 2026**, no un supuesto.
+   * Ver `PRODUCT.md`, "Capabilities and Constraints". Afecta la FAQ, Términos §3
+   * y el Botón de arrepentimiento, que con pagos in-app aplica de verdad.
    */
-  inAppPayments: false,
+  inAppPayments: true,
   /**
    * ¿Ya hay links de App Store / Google Play?
    * Mientras sea `false`, todo CTA de descarga manda a la lista de espera
@@ -61,4 +62,4 @@ export const flags = {
 } as const;
 
 /** Fecha de última actualización de los textos legales. */
-export const legalUpdatedAt = "17 de agosto de 2026";
+export const legalUpdatedAt = "21 de septiembre de 2026";

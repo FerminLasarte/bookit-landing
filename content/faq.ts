@@ -22,9 +22,9 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: "¿Se paga el turno por la app?",
-    // Ver `flags.inAppPayments` en content/site.ts — asumido "se paga en el local".
+    // Ver `flags.inAppPayments` en content/site.ts — confirmado: sí se paga en la app.
     a: flags.inAppPayments
-      ? "Sí, podés pagar el turno desde la app al reservar."
+      ? "Sí. Reservás y pagás el turno desde la app, en el mismo paso. El precio y las condiciones te las informa el local antes de que confirmes."
       : "No. El turno lo reservás por Bookit y el servicio lo pagás en el local, como siempre.",
   },
   {
