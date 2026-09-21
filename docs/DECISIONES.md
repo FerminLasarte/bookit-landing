@@ -87,6 +87,36 @@ y no buscar por todo el repo. Cuando una decisión se confirma, la fila queda ac
 | 11.4 | ¿Razón social, CUIT, domicilio fiscal? | **Falta** | `content/legal.ts` | Hay un bloque `note` visible en Términos §10 y Privacidad §1 avisando que falta |
 | 11.7 | ¿Screenshots reales de la app? | No hay: la página se resuelve con tipografía y los motivos de §4.6 | — | Hero (sin mockup, que era la opción preferida del brief) |
 
+## 3 bis. El modo oscuro: decisión tomada, no deuda olvidada
+
+En modo oscuro los tres lienzos `marca-profunda` se distinguen del fondo de la
+página por **1,036:1**. El mismo par en claro da **17:1**. O sea que el
+dispositivo que sostiene la composición —la alternancia entre papel y cartel—
+existe sólo en el tema claro, y en oscuro la página se lee como un scroll
+continuo casi negro.
+
+**No es un descuido: es el rango del manual.** Las tres superficies oscuras
+canónicas van de `marca-profunda` (#140E03) a `ink-800` (#24211E), 1,2:1 de
+punta a punta. Dentro de ese rango no hay redistribución que separe un lienzo
+de la página, y bajar el lienzo en oscuro violaría §10, que fija que
+`marcaProfunda` no cambia con el tema.
+
+**Lo que se hizo:** un filo de 1px al 12% arriba y abajo de cada lienzo, sólo
+en oscuro. Compone a `rgb(48,43,33)` y rinde 1,34:1 — más que cualquier escalón
+de relleno disponible, sin tocar un color canónico. Y `ink-850` subió a #201D19,
+el valor más alto que puede tomar sin alcanzar a `ink-800`.
+
+**Lo que se decidió NO hacer, el 21 de septiembre de 2026:** introducir una
+superficie por encima de `ink-800` para las secciones de la web en modo oscuro.
+Sería el mismo argumento por el que existen `cream-100` e `ink-850`, y
+resolvería el problema de verdad — pero alejaría el modo oscuro de la web del
+de la app Flutter, y la jerarquía del manual dice que ahí gana la app. Se eligió
+conservar la consistencia con la app y aceptar que el oscuro marque sus
+secciones con bordes en vez de con rellenos.
+
+Si alguna vez se retoma, es una decisión de marca y necesita a una persona, no
+un cambio de implementación.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol
