@@ -35,7 +35,16 @@ export default function Home() {
         en su base — invisible para Lighthouse, porque el fondo es un gradiente
         detrás de un elemento translúcido. Ahora el contenido despeja el fade.
       */}
-      <section className="relative isolate -mt-18 flex min-h-svh flex-col justify-center overflow-hidden pt-28 pb-44">
+      {/*
+        Los `@media (max-height)` no son cosmética: a 1280x700 —un portátil
+        cualquiera— el contenido del hero más el `pt-28` sumaban 723px antes de
+        llegar al CTA, así que el botón quedaba 24px cortado bajo el pliegue.
+        Bajar el padding de abajo no lo arregla: con el contenido más alto que
+        el viewport, `justify-center` ya no centra nada y lo único que mueve el
+        CTA hacia arriba es comprimir lo que tiene encima. En pantallas altas
+        el ritmo generoso queda intacto.
+      */}
+      <section data-hero className="relative isolate -mt-18 flex min-h-svh flex-col justify-center overflow-hidden pt-28 pb-44 [@media(max-height:820px)]:pt-24 [@media(max-height:820px)]:pb-32">
         {/*
          * El lienzo del hero: `marca-profunda`, el negro con tinte ámbar del
          * manual. Es el mismo en claro y en oscuro, igual que el de `Rewards`:
@@ -56,7 +65,7 @@ export default function Home() {
          */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-cream-50)_92%)] dark:bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-ink-950)_92%)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 [@media(max-height:820px)]:h-28 bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-cream-50)_92%)] dark:bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-ink-950)_92%)]"
         />
 
         <div className="wrap relative w-full">
@@ -80,7 +89,7 @@ export default function Home() {
                 sección sin ningún dispositivo estructural: el trabajo emocional
                 lo hacía un destello detrás del texto. Ahora lo hace el sistema.
               */}
-              <Hairline onDark className="mt-12 max-w-[32rem]" />
+              <Hairline onDark className="mt-12 max-w-[32rem] [@media(max-height:820px)]:mt-8" />
 
               {/*
                 La aclaración va ANTES del botón. Debajo, el orden de lectura era
@@ -188,6 +197,11 @@ export default function Home() {
                 <span className="num font-semibold text-amber-300">500</span> Puntos Bookit de
                 regalo, guardados para tu primer turno.
               </p>
+              {/* Qué pasa después del clic. Antes no lo decía ninguno de los
+                  dos lados, y es el momento de mayor compromiso de la página. */}
+              <p className="mt-3 max-w-[32ch] text-xs text-bone-300/80">
+                Te avisamos por email cuando abramos. Un nombre y un correo: no pedimos tarjeta.
+              </p>
               {/* `mt-auto`: los dos CTA caen en la misma línea de base, como en `Audiences` */}
               <div className="mt-auto pt-8">
                 <AnimatedButton
@@ -206,6 +220,13 @@ export default function Home() {
               </Eyebrow>
               <p className="mt-4 max-w-[30ch] text-bone-300">
                 Precio fundador de por vida, para los primeros locales de Tandil.
+              </p>
+              {/* El dueño de local llegaba acá sin una sola línea de qué sigue,
+                  en el clic de más riesgo de la página. El dato ya existía en
+                  el copy de éxito del formulario; faltaba donde se decide. */}
+              <p className="mt-3 max-w-[32ch] text-xs text-bone-300/80">
+                Te contactamos por WhatsApp o email con los detalles. Anotarte no te compromete a
+                nada.
               </p>
               <div className="mt-auto pt-8">
                 <AnimatedButton

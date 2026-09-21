@@ -113,8 +113,12 @@ export default function Audiences() {
 
               <div className="relative flex flex-1 flex-col">
                 <IconStore className="h-7 w-7 text-amber-300" />
+                {/* "Para tu local", no "Para comercios": el sitio entero dice
+                    *local* —el nav, el CTA del hero, el cierre— y este era el
+                    único lugar donde cambiaba, justo en la sección escrita
+                    para ese público. `PRODUCT.md` lo fija como terminología. */}
                 <Eyebrow className="mt-6" onDark>
-                  Para comercios
+                  Para tu local
                 </Eyebrow>
                 <h3
                   id="locales-title"

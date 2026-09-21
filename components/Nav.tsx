@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
@@ -25,13 +25,27 @@ export default function Nav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // El hairline inferior aparece recién cuando se scrollea.
+  /*
+   * El nav cambia de superficie cuando deja de tener el hero detrás, no a los
+   * 8px. Con el umbral viejo, en la home se volvía `cream-50/80` con blur
+   * mientras todavía estaba sobre el lienzo negro: quedaba una banda lechosa
+   * con el contenido de atrás emborronado. En el resto de las páginas, donde
+   * no hay hero oscuro, sigue siendo el gesto mínimo de siempre.
+   */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      const hero = document.querySelector("[data-hero]");
+      const umbral = hero ? hero.getBoundingClientRect().height - 72 : 8;
+      setScrolled(window.scrollY > umbral);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   // Cerrar el menú al navegar.
   useEffect(() => setOpen(false), [pathname]);
@@ -44,14 +58,71 @@ export default function Nav() {
    */
   const overDark = pathname === "/" && !scrolled;
 
-  // Con el menú abierto: sin scroll de fondo y Esc cierra.
+  /*
+   * Scrollspy. Cuatro anclas sobre una página de ~8.000px y ninguna señal de
+   * dónde estás. No anima nada: sólo marca el link de la sección visible.
+   */
+  const [activa, setActiva] = useState<string | null>(null);
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const ids = navLinks
+      .map((l) => l.href.split("#")[1])
+      .filter((x): x is string => Boolean(x));
+    const nodos = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    if (!nodos.length) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActiva(visible.target.id);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+    );
+    nodos.forEach((n) => obs.observe(n));
+    return () => obs.disconnect();
+  }, [pathname]);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * Con el menú abierto: sin scroll de fondo, Esc cierra, y el foco queda
+   * adentro. Declaraba `aria-modal="true"` pero el tabulador seguía caminando
+   * hacia la página de atrás: para quien navega con teclado o lector de
+   * pantalla, el menú decía ser modal y no lo era.
+   */
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    const focosDe = () =>
+      Array.from(
+        menuRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((el) => el.offsetParent !== null);
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focos = focosDe();
+      if (!focos.length) return;
+      const primero = focos[0]!;
+      const ultimo = focos[focos.length - 1]!;
+      const actual = document.activeElement;
+      if (e.shiftKey && (actual === primero || !menuRef.current?.contains(actual))) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && actual === ultimo) {
+        e.preventDefault();
+        primero.focus();
+      }
     };
+
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
@@ -87,11 +158,18 @@ export default function Nav() {
               <li key={link.href}>
                 <Link
                   href={link.href}
+                  aria-current={
+                    activa && link.href.endsWith(`#${activa}`) ? "location" : undefined
+                  }
                   className={cn(
                     "ring-focus rounded-sm text-small font-medium transition-colors duration-150",
                     overDark
                       ? "text-bone-300 hover:text-bone-100"
                       : "text-ink-500 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100",
+                    // La sección en la que estás: color pleno, no un subrayado.
+                    activa &&
+                      link.href.endsWith(`#${activa}`) &&
+                      (overDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100"),
                   )}
                 >
                   {link.label}
@@ -101,8 +179,11 @@ export default function Nav() {
           </ul>
 
           <div className="hidden md:block">
+            {/* Misma etiqueta que los CTA del cuerpo: eran dos nombres para
+                la misma acción. El destino queda neutro a propósito — desde el
+                nav no sabemos de qué lado del mostrador está quien hace clic. */}
             <AnimatedButton
-              text="Sumate a la lista"
+              text="Sumate a la lista VIP"
               href="/lista-espera"
               size="sm"
               variant={overDark ? "glass" : "ink"}
@@ -127,6 +208,7 @@ export default function Nav() {
       {/* Menú mobile full-screen: links en display-lg, mucho aire (§6.1) */}
       {open && (
         <div
+          ref={menuRef}
           role="dialog"
           aria-modal="true"
           aria-label="Menú"
@@ -159,7 +241,7 @@ export default function Nav() {
               ))}
             </ul>
             <AnimatedButton
-              text="Sumate a la lista"
+              text="Sumate a la lista VIP"
               href="/lista-espera"
               size="lg"
               variant="primary"
