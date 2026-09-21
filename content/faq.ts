@@ -1,4 +1,4 @@
-import { flags } from "./site";
+import { payments } from "./site";
 
 export type FaqItem = {
   q: string;
@@ -22,14 +22,19 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: "¿Se paga el turno por la app?",
-    // Ver `flags.inAppPayments` en content/site.ts — confirmado: sí se paga en la app.
-    a: flags.inAppPayments
-      ? "Sí. Reservás y pagás el turno desde la app, en el mismo paso. El precio y las condiciones te las informa el local antes de que confirmes."
-      : "No. El turno lo reservás por Bookit y el servicio lo pagás en el local, como siempre.",
+    // `payments` en content/site.ts. Tres estados, tres ramas: mientras el pago
+    // lo elija el local, ninguna de las dos vías puede contarse como la regla.
+    a: payments.loEligeElLocal
+      ? "Depende del local. Algunos cobran en el local, como siempre; otros activan el pago por Mercado Pago dentro de Bookit. Antes de confirmar el turno ves cuál acepta ese local."
+      : payments.mercadoPagoEnApp
+        ? "Sí. Reservás y pagás por Mercado Pago dentro de Bookit, en el mismo paso. El precio y las condiciones te las informa el local antes de que confirmes."
+        : "No. El turno lo reservás por Bookit y el servicio lo pagás en el local, como siempre.",
   },
   {
     q: "¿En qué ciudades está?",
-    a: "Arrancamos en Tandil y vamos ciudad por ciudad.",
+    // Antes: "Arrancamos en Tandil y vamos ciudad por ciudad" — presente, contra
+    // un hero que dice "Todavía no lanzamos". El visitante nota el tiempo verbal.
+    a: "Todavía en ninguna: estamos por lanzar. Arrancamos por Tandil y después vamos ciudad por ciudad.",
   },
   {
     q: "¿Cómo funcionan los puntos?",

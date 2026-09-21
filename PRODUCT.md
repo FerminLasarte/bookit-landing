@@ -94,12 +94,20 @@ fallback. Hay links de invitación circulando hoy.
   Hay variante para comercios.
 - **Agenda del local** — se actualiza sola, recordatorios automáticos, ficha e historial por
   cliente, link propio para compartir en Instagram.
-- **Pago del turno dentro de la app — SÍ, confirmado el 21 de septiembre de 2026.** Revirtió el
-  supuesto contrario con el que se construyó la landing. Ya está aplicado en el código
-  (`flags.inAppPayments: true` en `content/site.ts`) y registrado en `docs/DECISIONES.md` §3 y §4:
-  alcanzó a la FAQ "¿Se paga el turno por la app?", a Términos §3 y al **Botón de arrepentimiento**
-  (Ley 24.240), que con pagos in-app aplica de verdad y ya no sólo se explica. Lo que queda es
-  **revisión legal** de esos dos documentos antes de publicar — detalle en `docs/DECISIONES.md` §4.
+- **Pago del turno — mixto, y lo decide el local.** Confirmado el 21 de septiembre de 2026.
+  El cliente puede pagar **en efectivo en el local** o **por Mercado Pago a través de Bookit**, y es
+  **el comercio el que ofrece o no** la opción online: no es una política de Bookit aplicada a todos
+  por igual. O sea que la landing no puede decir ni "se paga en el local" ni "se paga por la app"
+  como si fueran la regla — las dos conviven y la que rige depende del local.
+- **La suscripción mensual de los locales se cobra por Mercado Pago.** Confirmado el 21 de
+  septiembre de 2026. Esto cierra el punto que `docs/DECISIONES.md` §4 dejaba sin verificar: el
+  texto vigente del Botón de arrepentimiento §2 dice que la suscripción todavía no se cobra online,
+  y **está desactualizado**.
+- **Consecuencia.** Bookit cobra y el servicio lo presta el local, así que el reparto de
+  responsabilidad del reintegro (Términos §1 y §3) y el mecanismo del **Botón de arrepentimiento**
+  (Ley 24.240) siguen necesitando **revisión de una persona con formación legal** antes de publicar.
+  `flags.inAppPayments: true` ya está en `content/site.ts`, pero un booleano no alcanza para
+  representar "efectivo o Mercado Pago, a criterio del local": el copy tiene que decirlo.
 
 **Contratos técnicos que no se pueden romper** (detalle en `docs/LANDING_BRIEF.md` §2):
 

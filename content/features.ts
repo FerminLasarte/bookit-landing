@@ -24,5 +24,9 @@ export const featuresLocal: readonly Feature[] = [
   "Menos ausencias, con recordatorios automáticos.",
   "La ficha de cada cliente y su historial.",
   "Tu link propio para compartir en Instagram.",
-  "Clientes nuevos que ya están buscando en Bookit.",
+  // Antes decía "clientes nuevos que ya están buscando en Bookit": presente
+  // sobre demanda que en pre-lanzamiento no existe. El tiempo verbal es el
+  // arreglo — la capacidad es real, el "ya" no lo era.
+  "Cuando lancemos en Tandil, tu local aparece en las búsquedas desde el primer día.",
+  "Vos decidís si cobrás en el local o por Mercado Pago.",
 ] as const;

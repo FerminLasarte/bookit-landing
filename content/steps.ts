@@ -9,7 +9,7 @@ export const steps: readonly Step[] = [
   {
     n: "01",
     title: "Encontrá tu local.",
-    body: "Todos los locales de tu ciudad en un mismo lugar, con sus servicios, precios y horarios reales.",
+    body: "Los locales de Tandil en un mismo lugar, con sus servicios, precios y horarios reales.",
   },
   {
     n: "02",

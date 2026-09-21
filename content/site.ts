@@ -39,18 +39,36 @@ export const site = {
 } as const;
 
 /**
+ * Cómo se paga un turno. Hecho confirmado el 21 de septiembre de 2026
+ * (`PRODUCT.md`, "Capabilities and Constraints").
+ *
+ * **Esto no es un booleano a propósito.** Antes era `flags.inAppPayments`, y
+ * un booleano tiene dos ramas para una verdad de tres estados: conviven el
+ * efectivo y Mercado Pago, y cuál acepta cada turno **lo decide el local**.
+ * Cualquiera de las dos ramas que eligiera ese booleano mentía — la rama
+ * `true` llegó a publicarse diciendo "reservás y pagás desde la app, en el
+ * mismo paso", que no es la regla.
+ *
+ * Mientras `loEligeElLocal` sea `true`, ningún texto del sitio puede presentar
+ * una de las dos vías como *la* forma de pagar.
+ */
+export const payments = {
+  /** El cliente puede pagar el turno en el local, como siempre. */
+  efectivoEnLocal: true,
+  /** El cliente puede pagar el turno por Mercado Pago, dentro de Bookit. */
+  mercadoPagoEnApp: true,
+  /** Cuál de las dos vías acepta cada turno lo decide el local, no Bookit. */
+  loEligeElLocal: true,
+  /** La suscripción mensual de los locales se cobra por Mercado Pago. */
+  suscripcionOnline: true,
+} as const;
+
+/**
  * Decisiones de producto de la §11 del brief. Algunas siguen siendo supuestos;
  * las ya confirmadas viven acá igual, para que el sitio entero lea el dato de
  * un solo lugar y confirmarlas sea cambiar una línea.
  */
 export const flags = {
-  /**
-   * ¿Se paga el turno dentro de la app?
-   * `true` — **hecho confirmado el 21 de septiembre de 2026**, no un supuesto.
-   * Ver `PRODUCT.md`, "Capabilities and Constraints". Afecta la FAQ, Términos §3
-   * y el Botón de arrepentimiento, que con pagos in-app aplica de verdad.
-   */
-  inAppPayments: true,
   /**
    * ¿Ya hay links de App Store / Google Play?
    * Mientras sea `false`, todo CTA de descarga manda a la lista de espera
