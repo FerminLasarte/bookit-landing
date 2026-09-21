@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import Eyebrow from "./Eyebrow";
 import { IconPoints, IconReferral } from "./icons";
 import { site } from "@/content/site";
@@ -27,39 +27,34 @@ import { site } from "@/content/site";
  * El número real va en un `sr-only` aparte: un lector de pantalla tiene que
  * leer "500", no la cuenta entera fotograma a fotograma.
  */
-function CountUp({ to, duration = 1.8 }: { to: number; duration?: number }) {
+/**
+ * La cifra entra, no cuenta.
+ *
+ * Antes era un odómetro de 0 a 500 en 1,8s con `easeOutExpo`. Tres problemas:
+ * mostraba valores que no son —lo agarré en 492 y en 140— cuando el hero acaba
+ * de prometer 500 exactos; un contador animado es la gramática visual de una
+ * métrica en vivo, y esto es un regalo fijo en un producto que no tiene ninguna
+ * métrica real; y `docs/MARCA.md` (Movimiento) pide movimiento "corto y físico",
+ * con 300ms para algo que entra. 1,8s de números girando no es ninguna de las
+ * dos cosas.
+ *
+ * Ahora sube 16px y aparece, con la misma curva que usa el resto de la página.
+ * El número es el número desde el primer frame, así que tampoco hace falta el
+ * `sr-only` que antes existía para que el lector no leyera la cuenta.
+ */
+function CountUp({ to }: { to: number }) {
   const reduced = useReducedMotion();
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    if (reduced) {
-      setValue(to);
-      return;
-    }
-
-    let frame = 0;
-    const started = performance.now();
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - started) / (duration * 1000), 1);
-      // easeOutExpo: arranca rápido y se estaciona, como un contador real.
-      const eased = progress === 1 ? 1 : 1 - 2 ** (-10 * progress);
-      setValue(Math.round(eased * to));
-      if (progress < 1) frame = requestAnimationFrame(tick);
-    };
-
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [inView, reduced, to, duration]);
 
   return (
-    <span ref={ref}>
-      <span className="sr-only">{to}</span>
-      <span aria-hidden="true">{value}</span>
-    </span>
+    <motion.span
+      className="inline-block"
+      initial={reduced ? undefined : { opacity: 0, y: 16 }}
+      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.6 }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {to}
+    </motion.span>
   );
 }
 

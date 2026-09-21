@@ -21,19 +21,19 @@ const variantClasses: Record<SecondaryVariant, { base: string; panel: string; ho
   {
     // CTA secundario sólido sobre papel: tinta → invierte a ámbar
     ink: {
-      base: "border-ink-900 bg-ink-950 text-bone-100 dark:border-bone-100 dark:bg-bone-100 dark:text-ink-900",
+      base: "border border-ink-900 bg-ink-950 text-bone-100 dark:border-bone-100 dark:bg-bone-100 dark:text-ink-900",
       panel: "bg-amber-500",
       hoverText: "text-ink-900",
     },
     // Sobre el hero oscuro / imagen: vidrio → invierte a papel
     glass: {
-      base: "border-white/20 bg-white/10 text-white backdrop-blur-md",
+      base: "border border-white/20 bg-white/10 text-white backdrop-blur-md",
       panel: "bg-cream-50",
       hoverText: "text-ink-900",
     },
     // Terciario: sólo contorno, para acciones de bajo peso
     quiet: {
-      base: "border-ink-900/15 bg-transparent text-ink-900 dark:border-white/20 dark:text-bone-100",
+      base: "border border-ink-900/15 bg-transparent text-ink-900 dark:border-white/20 dark:text-bone-100",
       panel: "bg-ink-950 dark:bg-bone-100",
       hoverText: "text-bone-100 dark:text-ink-900",
     },
@@ -48,16 +48,25 @@ const variantClasses: Record<SecondaryVariant, { base: string; panel: string; ho
  * del papel. En hover sube 2px, la sombra crece, y en `active` vuelve a apoyar:
  * el botón se siente como un objeto físico que se puede apretar.
  *
- * El texto va en tinta y no en blanco: blanco sobre #D78A1D da 2,78:1 y no pasa
- * AA a 16px. Tinta sobre el mismo ámbar da 6,75:1 sin tocar la marca.
+ * El texto va en tinta y no en blanco: blanco sobre el ámbar de marca da 2,78:1
+ * y no pasa AA a 16px.
+ *
+ * Contraste real de la tinta sobre el degradé, medido por franjas: la banda que
+ * ocupan las mayúsculas va del 40% al 60% del alto, y ahí da **5,07 a 5,71:1**.
+ * (El comentario anterior decía 6,75:1, que es el número contra el ámbar plano,
+ * no contra este gradiente. El borde inferior baja a 4,08:1, pero ahí no hay
+ * texto: la descendente más larga no llega.)
+ *
+ * Sin borde: `docs/MARCA.md` dice "Sombra o borde. Nunca los dos", y acá había
+ * un borde de 1px bajo una sombra de 20px. El canto lo dibujan los dos `inset`.
  */
 const primaryClasses = [
-  "border-[#a9660f]/35 text-ink-900",
-  "bg-[linear-gradient(180deg,#f0ac42_0%,#d78a1d_52%,#be770f_100%)]",
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(107,60,0,0.28),0_8px_20px_-10px_rgba(190,119,15,0.7),0_2px_6px_-2px_rgba(21,19,17,0.16)]",
+  "text-ink-900",
+  "bg-[linear-gradient(180deg,var(--color-cta-luz)_0%,var(--color-amber-500)_52%,var(--color-cta-sombra)_100%)]",
+  "shadow-cta",
   "transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
   "hover:-translate-y-0.5",
-  "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(107,60,0,0.32),0_18px_38px_-14px_rgba(190,119,15,0.85),0_5px_14px_-6px_rgba(21,19,17,0.22)]",
+  "hover:shadow-cta-hover",
   "active:translate-y-0 active:scale-[0.985] active:duration-100",
   "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
 ].join(" ");
@@ -97,7 +106,9 @@ export default function AnimatedButton({
   const isExternal = external ?? (!!href && /^(https?:|mailto:|tel:)/.test(href));
 
   const rootClasses = [
-    "group relative inline-flex items-center justify-center overflow-hidden rounded-pill border font-bold",
+    // Sin `border` acá: alcanzaba también al `primary`, que no lleva borde
+    // (sombra o borde, nunca los dos). Cada variante secundaria declara el suyo.
+    "group relative inline-flex items-center justify-center overflow-hidden rounded-pill font-bold",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50 dark:focus-visible:ring-offset-ink-950",
     "disabled:pointer-events-none disabled:opacity-55",
     isPrimary

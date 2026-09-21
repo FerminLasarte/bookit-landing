@@ -176,10 +176,17 @@ function ScreenHorarios() {
   );
 }
 
-/** Paso 03 — el saldo de puntos, como se ve en la app. */
+/**
+ * Paso 03 — el saldo de puntos, como se ve en la app.
+ *
+ * Sin cifras por turno. Antes decía "+50" dos veces, y esa tasa no existe en
+ * `PRODUCT.md` ni en ningún otro lado del sitio: la página se la estaba
+ * inventando, y encima en la única pantalla que el visitante lee como un dato
+ * real de su cuenta. Los 500 de bienvenida sí son un hecho confirmado.
+ */
 const ledger = [
-  { label: "Corte en Estudio Norte", amount: "+50" },
-  { label: "Uñas en Sala Bruna", amount: "+50" },
+  { label: "Corte en Estudio Norte", amount: "+ puntos" },
+  { label: "Uñas en Sala Bruna", amount: "+ puntos" },
   { label: "Bienvenida a la lista VIP", amount: "+500" },
 ] as const;
 
@@ -235,7 +242,13 @@ function Device({ children }: { children: ReactNode }) {
     // `overflow-x: visible`, así que metía scroll horizontal.
     <div className="relative">
 
-      <div className="relative mx-auto max-w-[22rem] rounded-[2.5rem] border border-ink-900/10 bg-paper p-3 shadow-[0_32px_80px_-32px_rgba(21,19,17,0.35)] dark:border-white/10 dark:bg-ink-800">
+      {/*
+        Sombra sola, sin borde: `docs/MARCA.md` fija "Sombra o borde. Nunca los
+        dos", y una superficie de contenido lleva la sombra. Acá había un borde
+        de 1px bajo una sombra de 80px de blur. El marco se sigue leyendo como
+        teléfono por la forma, la muesca y el cambio de superficie.
+      */}
+      <div className="relative mx-auto max-w-[22rem] rounded-[2.5rem] bg-paper p-3 shadow-[0_32px_80px_-32px_rgba(21,19,17,0.35)] dark:bg-ink-800">
         {/* Muesca: dos trazos, sin dibujar un iPhone entero */}
         <div
           aria-hidden="true"

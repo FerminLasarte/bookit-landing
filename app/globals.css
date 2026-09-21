@@ -107,6 +107,17 @@
   --color-amber-100: #f6e7ce; /* rellenos suaves, bordes */
   --color-amber-50: #fdf6ea; /* wash de sección */
 
+  /*
+   * DERIVADO. Los dos extremos del biselado del CTA. No son pasos de la escala
+   * ámbar: son la luz y la sombra que le dan volumen a la cápsula, derivados a
+   * ojo del ámbar de marca. Vivían sueltos dentro de `AnimatedButton`, que es
+   * justo lo que el manual prohíbe ("Nunca un hex suelto en un componente").
+   * Los valores son los que ya tenía el botón: esto los mueve de lugar, no los
+   * cambia.
+   */
+  --color-cta-luz: #f0ac42;
+  --color-cta-sombra: #be770f;
+
   /* ── Forma — CANÓNICO (§5) ────────────────────────────────────────── */
   /*
    * Cuatro radios y una fórmula: al anidar,
@@ -122,6 +133,19 @@
    * Sombra O borde, nunca los dos. Los campos y las píldoras no llevan
    * sombra nunca (§5).
    */
+  /*
+   * La elevación del CTA principal. Dos `inset` que hacen el biselado —la luz
+   * arriba, el canto abajo— y dos sombras externas: una ámbar que lo despega
+   * del papel y una neutra que lo apoya. Vivían escritas a mano dentro de
+   * `AnimatedButton`, con cuatro `rgba()` sueltos.
+   */
+  --shadow-cta:
+    inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -1px 0 rgb(107 60 0 / 0.28),
+    0 8px 20px -10px rgb(190 119 15 / 0.7), 0 2px 6px -2px rgb(21 19 17 / 0.16);
+  --shadow-cta-hover:
+    inset 0 1px 0 rgb(255 255 255 / 0.6), inset 0 -1px 0 rgb(107 60 0 / 0.32),
+    0 18px 38px -14px rgb(190 119 15 / 0.85), 0 5px 14px -6px rgb(21 19 17 / 0.22);
+
   --shadow-card: 0 4px 10px rgb(31 41 55 / 0.1);
   --shadow-card-dark: 0 4px 10px rgb(0 0 0 / 0.45);
 

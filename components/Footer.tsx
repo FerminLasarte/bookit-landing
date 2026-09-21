@@ -29,9 +29,18 @@ function FooterLink({ link }: { link: NavLinkType }) {
   );
 }
 
-function ColumnTitle({ children }: { children: string }) {
+/*
+ * Rótulo de columna, no encabezado de sección. Era un `<h2>` de 13px, así que
+ * "Producto", "Legales" y "Contacto" entraban al esquema del documento al mismo
+ * nivel que los títulos reales de la página — un lector de pantalla los
+ * anunciaba como tres secciones más de contenido. El nombre accesible de cada
+ * columna ya lo da el `aria-label` de su `<nav>`.
+ */
+function ColumnTitle({ children, id }: { children: string; id?: string }) {
   return (
-    <h2 className="text-[0.8125rem] font-semibold tracking-[-0.01em] text-bone-300">{children}</h2>
+    <p id={id} className="text-[0.8125rem] font-semibold tracking-[-0.01em] text-bone-300">
+      {children}
+    </p>
   );
 }
 
@@ -81,9 +90,11 @@ export default function Footer() {
             </ul>
           </nav>
 
+          {/* Sin `<nav>`: son datos de contacto, no navegación. El nombre
+              accesible de la lista sale del rótulo, vía `aria-labelledby`. */}
           <div className="md:col-span-3">
-            <ColumnTitle>Contacto</ColumnTitle>
-            <ul className="mt-5 space-y-3">
+            <ColumnTitle id="footer-contacto">Contacto</ColumnTitle>
+            <ul aria-labelledby="footer-contacto" className="mt-5 space-y-3">
               <li>
                 <a href={`mailto:${site.email}`} className={linkClasses}>
                   <Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
