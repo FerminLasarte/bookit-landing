@@ -55,7 +55,9 @@ export default function Home() {
          */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda"
+          // El filo inferior sólo en oscuro: en claro el hero se disuelve en la
+          // página con el degradé de salida, que ahí sí se ve.
+          className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda dark:border-b dark:border-white/12"
         />
 
         {/*

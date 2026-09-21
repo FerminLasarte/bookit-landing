@@ -24,7 +24,17 @@ const toneClasses: Record<Tone, string> = {
    * página lo usa en el hero y en el cierre. Vive acá y no suelto en cada
    * sección porque ya iba por la tercera copia.
    */
-  canvas: "bg-marca-profunda",
+  /*
+   * En oscuro lleva además un filo arriba y abajo. Todo el rango de superficies
+   * oscuras del manual vive entre `marca-profunda` (#140E03) e `ink-800`
+   * (#24211E): 1,2:1 de punta a punta. Dentro de ese rango, ningún relleno
+   * separa un lienzo de la página —el par real da 1,036:1— y bajar el lienzo
+   * en oscuro violaría el manual, que fija que `marcaProfunda` no cambia con
+   * el tema. El borde no toca ningún color canónico y rinde 1,34:1, más que
+   * cualquier escalón de relleno disponible. En claro no hace falta: ahí el
+   * mismo par da 17:1.
+   */
+  canvas: "bg-marca-profunda dark:border-y dark:border-white/12",
 };
 
 /**
