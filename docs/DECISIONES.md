@@ -217,6 +217,13 @@ existe para que la escala esté escrita en un lugar, no para sumar nombres, y
 
 ## 3 quinquies. El header tiene tres estados porque dos no alcanzan
 
+> **Superada el 22/9/2026 por la §3 septies.** Los tres estados se sacaron: el
+> cambio de vestido era demasiado visible y el estado `borde` dibujaba una banda
+> crema opaca sobre el hero negro. Lo que sigue se conserva porque su medición
+> del degradé sigue siendo válida y explica por qué la salida nueva tuvo que
+> hacer que los lienzos corten neto.
+
+
 D1 de la auditoría, resuelto el 22 de septiembre de 2026. Queda anotado porque
 la solución obvia —arreglar el predicado y dejar dos estados— no funciona, y
 alguien va a querer volver a intentarla.
@@ -408,6 +415,110 @@ quemó dos veces con márgenes así.
 **La lección, por tercera vez:** el contraste se mide sobre el píxel finalmente
 pintado. Acá la card no era decoración, era la capa que separaba el texto del
 lavado — y quitarla es un cambio de contraste aunque no se toque un color.
+
+## 3 septies. El header no tiene superficie; los links sí
+
+Reemplaza a la §3 quinquies, que describía tres estados del header. Esa solución
+se sacó el 22/9/2026 a pedido: el cambio de color era demasiado visible y, peor,
+el estado `borde` dibujaba una **banda crema opaca sobre el hero negro** en el
+cuadro más visible del sitio. Queda anotado por qué la solución obvia —dejar la
+barra transparente y elegir un color de texto— tampoco funciona.
+
+### Una barra transparente no puede tener un solo color de texto
+
+Dos mediciones, las dos en contra:
+
+**Una, el degradé.** Mientras los lienzos se disolvían, por detrás del header
+pasaba toda la rampa de `marca-profunda` a `cream-50`. A mitad de camino el
+fondo es `#787570`, un gris medio, y ahí no hay color que sirva: eligiendo
+siempre el **mejor** de los dos vestidos, el peor punto del degradé da
+**1,71:1** con `bone-300`/`ink-500` y **3,38:1** con el par más fuerte
+(`bone-100`/`ink-900`). Esto se arregla haciendo que los lienzos corten neto.
+
+**Dos, y ésta no se arregla con un interruptor: el fondo puede estar PARTIDO.**
+La mitad oscura de la card de `#publico` (`ink-950`) cruza la banda del header
+durante unos **680 px de scroll**, y deja claro a la izquierda y oscuro a la
+derecha al mismo tiempo. Medido: con el vestido claro, "Puntos" y "Soporte"
+quedan en **1,31:1**; dándolo vuelta, los dos links de la izquierda quedan en
+**1,61:1** sobre la mitad clara. El problema no es *cuándo* cambia el vestido,
+es que hay dos fondos a la vez bajo una misma barra.
+
+### La salida: que el contraste no dependa del fondo
+
+De una referencia que trajo el usuario (el sitio de Oxford). Dos movimientos:
+
+**Los links viajan con su propia superficie.** Van dentro de una píldora con
+relleno y borde de 1 px al 10 % — el borde *acompaña* a un relleno, así que le
+corresponde el 10 % del manual y no el 3:1 de la *Divergencia 6*; y sin sombra,
+porque es una píldora. Con eso el número es constante en toda la página:
+
+| | Claro | Oscuro |
+|---|---|---|
+| Link sobre la píldora | **14,68:1** | **9,68:1** |
+
+**El hero deja de meterse debajo del header.** Pasa a ser un lienzo con
+esquinas, apoyado dentro del `wrap`. En reposo el nav está sobre la página, no
+sobre el negro, que es de donde salía la banda crema.
+
+### Lo único que todavía cambia de vestido es el lockup
+
+Va suelto a la izquierda, y ahí el cambio **sí** es seguro, porque en esa
+posición nunca hay fondo partido: la mitad oscura de `Audiences` arranca en el
+medio del `wrap`, y todo lo demás que pasa por detrás —el hero, `#puntos`,
+`#cierre` y el footer— ocupa el ancho entero.
+
+- con lienzo: `bone-100` sobre `marca-profunda` — **14,91:1**
+- sin lienzo: `ink-900` sobre `cream-50` — **14,29:1**
+
+**El lienzo del hero arranca en el borde de contenido del `wrap`, que es
+exactamente donde arranca el lockup.** No es casualidad y hay que conservarlo:
+es lo que garantiza que, cuando el hero pasa por detrás del header, el lockup
+tenga negro pleno debajo y no medio borde. Verificado a 1280 y a 1440.
+
+### Lo que se borró
+
+Los tres estados, la lectura en vivo de máscaras y de alturas de degradé, la
+tolerancia `EPS`, el loop por cuadro con `getBoundingClientRect`, el estado
+`scrolled` y el filete al scrollear. Queda un `IntersectionObserver` cuya raíz
+es una franja de 72 px pegada arriba, que sólo alimenta el vestido del lockup.
+`Nav.tsx` pasó de 384 a 298 líneas.
+
+**El footer se marcó `data-canvas`.** Es `ink-950` en los dos temas, o sea una
+superficie oscura más, y el header viejo lo tapaba con su banda translúcida sin
+que nadie lo notara. Sin eso, al final de **cualquier** página el lockup se
+vestía de claro sobre oscuro: 1,31:1.
+
+### Verificación
+
+Ocho posiciones de la home —tope, hero, salida del hero, `#como-funciona`,
+la mitad oscura de `#publico`, `#puntos`, `#cierre` y el pie—, en los dos temas:
+el vestido del lockup coincidió con el fondo real en las ocho, y el link se
+mantuvo en 14,68:1 en todas. Y el CTA del hero entra sobre el pliegue a 375×812,
+1280×700 y 1440×900, sin scroll horizontal.
+
+### Lo que se decidió NO hacer
+
+- **Que el header se vaya al scrollear.** Resolvía todo sin JavaScript, pero en
+  una página de ~8.000 px con cuatro anclas deja el menú y el CTA fuera de
+  alcance.
+- **Una barra oscura fija.** Era la otra forma de tener un solo vestido. Sobre
+  la página clara es un elemento pesado y tapa la mitad del gesto de marca.
+- **Tocar la card de `#publico`** para que su mitad oscura no cruce la barra.
+  Es la pieza que la auditoría llama la mejor compuesta del sitio; no se toca
+  para arreglar otra cosa.
+
+### Consecuencia abierta
+
+Los lienzos hoy cortan neto: se sacó el degradé de salida del hero y el `fade-y`
+de `#puntos`, que eran el dispositivo §4.3 de "el color entra y sale sin borde".
+Con la píldora, el degradé ya sólo expone al lockup, que necesita 3:1 y en el
+peor punto tiene 3,38:1 — o sea que **se pueden reponer**. Se dejaron cortando
+porque el hero ahora tiene un borde real de card y la página quedó coherente,
+pero es una decisión de composición de la Fase C, no una restricción.
+
+Y queda la pregunta que abre la referencia: si el hero es una card con esquinas,
+`#puntos` y `#cierre` —que siguen a sangre— deberían decidir si acompañan. Es
+Fase C.
 
 ## 4. Lo que queda pendiente de una persona, no de código
 

@@ -38,10 +38,18 @@ El isotipo es un corchete que se cierra sobre un check: lo que se abre, se
 agenda y se cumple.
 
 **Archivos.** `public/brand/logo_bookit_completo.svg` (lockup) y
-`logo_bookit_isotipo.svg`. Los trazos en tinta salen en `currentColor`; el
-naranja sale de `--logo-naranja` y los huecos de la palabra de `--logo-hueco`.
-En React se usa siempre [`components/Wordmark.tsx`](../components/Wordmark.tsx),
-nunca un `<img>` al SVG: un `<img>` no hereda el color y rompe el modo oscuro.
+`logo_bookit_isotipo.svg`. Los trazos en tinta salen en `currentColor` y el
+naranja de `--logo-naranja`. En React se usa siempre
+[`components/Wordmark.tsx`](../components/Wordmark.tsx), nunca un `<img>` al
+SVG: un `<img>` no hereda el color y rompe el modo oscuro.
+
+**Los huecos de la `B` y de las dos `o` van calados, no tapados.** Se dibujan
+con `fill-rule="evenodd"` sobre el mismo contorno. Existía un token
+`--logo-hueco` que los pintaba del color del fondo y había que setearlo a mano
+en cada sitio de uso; se eliminó el 22/9/2026. Era una trampa: el logo sólo
+quedaba bien sobre exactamente `cream-50` o `ink-950`, y sobre un lienzo, un
+degradé o una captura los tapones se veían de otro color que el fondo. Calado,
+el logo deja de depender de lo que tenga detrás.
 
 **Los dos naranjas.** No es una inconsistencia:
 
@@ -290,6 +298,16 @@ Lo que esta web hace distinto del manual, a propósito:
 - `public/brand/` conserva `icon.png`, `icon.jpeg`, `lockup.png` y
   `lockup.jpeg`, anteriores a los SVG. Hay que confirmar quién los consume
   (metadata, OG) antes de borrarlos.
+- **El archivo maestro del lockup arrastra dos defectos**, y el SVG del repo ya
+  está corregido pero el maestro no — así que un re-export los reintroduce.
+  Verificado el 22/9/2026 contra
+  `Documents/Data Apps/Bookit/Logos/logo_bookit_completo.svg`: el dibujo es
+  idéntico al del repo (los doce paths y los cinco círculos coinciden), pero
+  (a) los huecos de la `B` y de las `o` están tapados con tres casi-blancos
+  distintos —`#FEFDFD`, `#FDFDFD`, `#FEFEFD`—, o sea que el logo sólo funciona
+  sobre blanco, y (b) tiene **dos** naranjas, `#FD8003` en casi todo y
+  `#FD8102` sólo en el punto de la `i`, y ninguno es el `#FD7D03` canónico.
+  Hay que corregir el maestro.
 - Quedan `rgba()` del ámbar escritos a mano en los gradientes de `page.tsx`,
   `Audiences`, `Rewards` y el destello de `/invite` —que el inventario anterior
   no contaba—. Son el hex canónico, pero el manual pide que ningún

@@ -141,7 +141,10 @@ export default function Rewards() {
       <div
         aria-hidden="true"
         data-canvas-capa
-        className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda fade-y [--fade-y:6rem] dark:border-y dark:border-white/12 dark:[--fade-y:0rem]"
+        // Sin `fade-y`: el degradé de entrada y salida de este lienzo también
+        // pasaba por detrás del header, con el mismo gris medio del hero. En
+        // oscuro ya valía 0, así que ahora los dos temas cortan igual.
+        className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda dark:border-y dark:border-white/12"
       />
 
       {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto */}
