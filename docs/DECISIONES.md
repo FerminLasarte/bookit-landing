@@ -501,6 +501,14 @@ el vestido del lockup coincidió con el fondo real en las ocho, y el link se
 mantuvo en 14,68:1 en todas. Y el CTA del hero entra sobre el pliegue a 375×812,
 1280×700 y 1440×900, sin scroll horizontal.
 
+> **Las ocho posiciones se verificaron en escritorio, y ahí faltaba una.** En
+> anchos donde las dos mitades de `#publico` se **apilan**, la oscura ocupa el
+> ancho entero y pasa por debajo del lockup, que se quedaba en `ink-900` sobre
+> `ink-950`: **1,26:1**, o sea el D1 otra vez. Partida no pasa, porque esta
+> mitad arranca en el medio del `wrap` — que es justamente el supuesto sobre el
+> que se apoya todo lo de arriba, y que sólo vale mientras haya dos columnas.
+> Medido y cerrado en la Fase C, en la §3 duodecies.
+
 ### Lo que se decidió NO hacer
 
 - **Que el header se vaya al scrollear.** Resolvía todo sin JavaScript, pero en
@@ -1117,6 +1125,208 @@ fuerza es la misma que la de la app.
   pliegue, y con `<picture>` el `preload` además volvería a bajar las dos.
 - **Mantener las capturas en `public/` para no mover archivos.** Se despliegan
   13 MB para usar 1,9.
+
+## 3 duodecies. `#publico`: un díptico, y el D1 que quedaba vivo
+
+Fase C, el 22 de septiembre de 2026, después de `#como-funciona` y del hero.
+Es la primera sección del rediseño donde el trabajo es **sumar**, no recomponer:
+la auditoría llama a esta pieza lo mejor compuesto del sitio —*"la única con una
+idea estructural propia: un objeto, dos mitades, el borde exterior sin
+cortar"*— y la §3 septies pide explícitamente no tocarla para arreglarle
+problemas a otra cosa. Lo que le faltaba es lo único que la auditoría le
+reprocha: ni un visual, y en la mitad de los locales ninguno en absoluto.
+
+### Dos cosas que no se movieron, y por qué
+
+**Las mitades siguen siendo 50/50**, aunque el contrato habilite romperlo
+nombrando esta card. Lo decide una medición: el `wrap` da 1100 px de contenido,
+cada mitad 550 y, descontado su padding, **454 px**. Ahí la captura muestra la
+app a escala **0,376** y su texto de cuerpo queda en ~15 px. Con una partición
+7/5 la mitad angosta cae a ~330 px y a ~11 px. La asimetría le costaría
+legibilidad justamente a las dos capturas que son el punto de este paso — y una
+comparación se lee cuando los dos objetos miden lo mismo.
+
+**La mitad oscura sigue a la derecha.** La §3 septies se apoya en que el lockup,
+que vive en el borde izquierdo del `wrap`, nunca tenga fondo partido debajo,
+y eso vale porque esta mitad arranca en el **medio** del `wrap` (medido: x=720 a
+1440). Darla vuelta rompería el nav.
+
+### Las dos capturas, y un recorte que sirve para las dos
+
+| Mitad | Captura | Qué muestra el encuadre |
+|---|---|---|
+| Cliente | `01_cliente_inicio` | El saludo con la ciudad, el buscador y el próximo turno con la **foto real del local** — lo que la auditoría pide y el sitio no tenía en ninguna parte |
+| Local | `15_comercio_crecimiento` | "Crecimiento": turnos por mes en un gráfico de doce meses, con el total y el promedio, y los rótulos de "Mejor mes" y "Más vendido" |
+
+Las dos van recortadas de **y=160 a y=1438**, y la coincidencia no se buscó: se
+eligió cada corte por dónde terminaba su contenido —en `01`, debajo de la card
+del próximo turno y antes de la fila de íconos, que arranca en y=1442; en `15`,
+con los dos rótulos de abajo ya visibles y por encima de sus cifras— y las dos
+filas cayeron en el mismo lugar. Que compartan proporción (1206 × 1278, **0,944**)
+es lo que convierte al objeto en un **díptico**: las dos pantallas arrancan y
+terminan en la misma línea, verificado a 1024, 1180 y 1440 px.
+
+Arrancan en y=160 como todas: ahí se va la barra de estado, cuya batería es
+`#34C759` y está en las 30 capturas entre las filas 75 y 120.
+
+**Verificación de color, píxel a píxel sobre las cuatro** (dos capturas × dos
+temas), dentro del recorte y no sobre el archivo entero:
+
+| Captura | Píxeles cromáticos fuera de la familia cálida |
+|---|---|
+| `15_comercio_crecimiento`, los dos temas | **0** |
+| `01_cliente_inicio`, los dos temas | Ninguno fuera de la foto: todos los tonos ajenos caen dentro de y 741–1124, x 67–1139, que es el rectángulo de la fotografía del local |
+
+El verde `exito` y el rojo `error` de los indicadores de `15` —los tres
+tokenizados— quedan **fuera** del encuadre, debajo de la fila 1438, así que la
+captura no depende de ellos. Y la regla vale para la interfaz, no para la
+fotografía: los marrones del local de `01` son contenido, que es exactamente
+por lo que la auditoría eligió esa captura.
+
+### El escalón del h3: `display-sm`, y recién ahora
+
+Las dos mitades escribían `md:text-[1.75rem]` a mano — el **piso** de
+`display-sm` congelado—. La §3 octies midió las dos alternativas y las descartó
+a las dos, y dejó la elección para cuando la card se recompusiera, que es acá.
+Lo que cambió es el contexto, no el número:
+
+- **`display-sm` (40 px) ya no compite.** La objeción era que a 1,30 del
+  `display-lg` de la sección el título de la card le disputa la jerarquía. Con
+  la captura debajo, el título dejó de ser lo más pesado de su mitad: es el
+  rótulo de una pantalla.
+- **`h3` (24 px) sería peor que antes.** Entraba en un renglón y se leía como
+  una oración; con una imagen debajo se leería como su epígrafe.
+
+Medido: a 1024, 1180 y 1440 px los dos títulos rompen en **dos renglones** sin
+que haga falta forzarlos, que es lo que mantiene las dos capturas a la misma
+altura. El `max-w-[22ch]` que llevan no trabaja ahí —computa 623 px contra una
+columna de 452— y sí cuando las mitades se apilan, donde evita que el título
+corra hasta 624 px mientras la captura topea en 416.
+
+De paso pasan a **700**, que es lo que el manual pide de `h3` para arriba y esta
+card no cumplía: estaban en 600.
+
+**Y se fueron los dos íconos.** `IconSlot` e `IconStore` abrían cada mitad y no
+los usaba nadie más; se borran de [`icons.tsx`](../components/icons.tsx). Donde
+había un símbolo de la cosa va la cosa — el mismo movimiento que borró el
+teléfono dibujado a mano, y el mismo criterio con el que la §3 octies le sacó el
+ícono a cada beneficio de `/lista-espera`.
+
+### `Captura` aprende `onDark`: la superficie manda sobre el tema
+
+El `<picture>` de la §3 undecies elige por `prefers-color-scheme`, o sea por el
+tema de quien mira. Es correcto mientras la captura se apoye sobre una
+superficie que **también** cambia con el tema. Acá no: la mitad oscura es
+`ink-950` en los dos temas, y en modo claro el `<picture>` le metía la captura
+**clara** — un rectángulo blanco dentro del medio negro de la card, más luminoso
+que la mitad clara de al lado, que es justo lo contrario de lo que el corte de
+color de esta pieza tiene que decir.
+
+La salida es la que el sitio ya usa en `Button`, `Eyebrow` y `Hairline`: la
+superficie se declara. Con `onDark` no hay `<picture>` ni elección, va la oscura
+siempre, y el tipo **prohíbe** pasar la clara para que no quede un import
+muerto. Medido en el build: se emiten 7 archivos y la `15` clara (104.548 B) no
+es uno de ellos.
+
+Con el scroll en cero, un pedido por captura en los dos temas: **3 pedidos,
+181 KB en claro y 179 KB en oscuro**. Ninguna lleva `preload` ni
+`loading="eager"`; las cuatro salen en `lazy`, sin `fetchpriority`.
+
+### La partición baja a `lg`, y destapa un defecto viejo
+
+Se partía en `md` (768 px), y ahí cada mitad deja **246 px** de contenido. En
+246 px no entra el CTA de la mitad local: la píldora mide **321 px** y se salía
+26 px de la card, recortada por el `overflow-hidden`. Es un defecto **anterior**
+a este paso —el botón y el padding no cambiaron y `main` tiene las mismas
+clases— que la franja de 768 a 913 px arrastraba desde siempre y que ninguna de
+las tres auditorías midió. Las capturas sólo lo pusieron a la vista, porque a
+246 px la app se muestra a escala 0,20 y su texto queda en ~8 px.
+
+No hay ajuste de padding que lo salve: la mitad entera mide 344 px a 768, así
+que entrar pediría dejar el padding en 11 px. Partida en `lg` arranca en 374 px
+—el botón entra con 102 px de sobra dentro de la card, medido a 1024— la captura
+sube a escala 0,31 y los dos h3 rompen en dos renglones. Entre 768 y 1023 las
+mitades se apilan, que es lo que ya hacían en móvil: el objeto sigue siendo uno
+solo porque el borde exterior nunca se parte. Apilada, la captura topea en
+26 rem, porque a sangre mediría 624 × 660 px y convertiría la tablet en dos
+pantallas de scroll por mitad.
+
+### El D1 que quedaba vivo
+
+**Apiladas, esta mitad oscura ocupa el ancho entero y pasa por debajo del
+lockup.** El nav busca `[data-canvas]` para saber si tiene una superficie oscura
+detrás, y esta mitad no lo estaba, así que el lockup se quedaba en `ink-900`
+sobre `ink-950`: **1,26:1**. Es el D1 de la auditoría —*"en móvil es donde más
+se nota: la palabra Bookit desaparece y queda sólo el corchete naranja"*— vivo
+en el último lugar donde le quedaba sitio, y **anterior a este paso**: en móvil
+las mitades ya se apilaban. La §3 septies no lo vio porque verificó las ocho
+posiciones de la home en escritorio, donde esta mitad arranca en el medio del
+`wrap` y el problema no existe.
+
+La mitad se marca `data-canvas` con un marcador propio que lleva `lg:hidden`, y
+el `lg:hidden` **es la regla, no un ajuste**: partida, esta mitad no es un
+lienzo para el nav —el lockup queda sobre la mitad clara— y marcarla ahí
+produciría la falla inversa, `bone-100` sobre `cream-50`. Un elemento en
+`display:none` no interseca nunca, así que el marcador existe exactamente en el
+rango de anchos donde la regla vale.
+
+Verificado en cinco puntos, con la pieza correspondiente detrás de la banda de
+72 px del header:
+
+| Ancho | Layout | Detrás del lockup | Lockup | |
+|---|---|---|---|---|
+| 390 px | apilada | mitad oscura | `bone-100` | **14,40:1** |
+| 900 px | apilada | mitad oscura | `bone-100` | **14,40:1** |
+| 900 px | apilada | mitad clara | `ink-900` | 14,68:1 |
+| 1440 px | partida | mitad clara | `ink-900` | 14,68:1 |
+| 1440 px | partida | mitad clara | link del nav `ink-900` sobre la píldora | 14,68:1 |
+
+La píldora del nav no dependía de esto y sigue sin depender: su link da 14,68:1
+en las cinco.
+
+> Una nota de método: el `IntersectionObserver` del nav **no entrega** mientras
+> la pestaña está oculta, así que medir el vestido del lockup con la vista
+> cerrada da siempre el valor de reposo y parece un defecto donde no lo hay.
+> Las cinco lecturas de arriba se tomaron forzando un pintado antes de leer.
+
+### La regla de tinta de la banda, y qué alcanza
+
+La sección va en `tone="tint"`, así que en claro se compone en tinta plena. Lo
+que cae **directamente** sobre `cream-100` es el encabezado, y va entero en
+`ink-900` (13,20:1): ni bajadas en `ink-500`, ni letra chica, ni acento a tamaño
+de lectura.
+
+Adentro de la card el piso es `paper`, y ahí la regla no aplica: los ítems van
+en `ink-900` (14,68:1) y su tilde en `amber-600` (3,31:1, y pide 3:1 por ser un
+ícono). No es una excepción a la §3 octies sino su consecuencia — esta card
+existe por la **primera** cláusula de la §3 sexies, porque se compara, no por el
+fondo que tiene detrás. La única que existía por su fondo era la de beneficios
+de `/lista-espera`, y se fue en el mismo paso que escribió la regla.
+
+### Lo que se decidió NO hacer
+
+- **Romper el 50/50**, que es lo único que el contrato nombra por su nombre para
+  esta card. Cuesta legibilidad en las dos capturas y desmiente la comparación.
+  Está medido arriba.
+- **Recomponer el encabezado de la sección.** Sigue siendo rótulo +
+  `display-lg`, que es la apertura que la auditoría cuenta cinco veces. Acá la
+  varianza la mueve el cuerpo: la página pasa a tener una sección que es un
+  díptico de dos pantallas reales, y no hay otra que se le parezca. Rehacer
+  además la apertura sería recomponer la pieza que el encuadre de este paso
+  manda no rehacer.
+- **Sangrar las capturas contra el borde de la card.** Es la composición más
+  fuerte de todas las que se probaron en papel, y pide una variante de `Captura`
+  sin marco para un solo uso. El contrato dice que el rediseño reduce el
+  catálogo de primitivas; `onDark` entra porque es la convención que el sitio ya
+  tiene en otras tres, un marco opcional no.
+- **Tocar `ring-focus`.** Sigue en 2,78:1 sobre la card de `paper`. Es deuda de
+  toda la web, necesita su propia medición contra los cinco fondos y está
+  anotada en la *Deuda conocida* de `MARCA.md`. No se arregla de costado.
+- **Sacarles el ámbar a los diez tildes de las dos listas.** Se miró, porque las
+  capturas traen su propio ámbar y el comentario de la mitad oscura promete
+  "una sola cosa por pieza". A tamaño real los tildes se leen como marcas de
+  lista y no como acento, y bajarlos a tinta es un cambio de la pieza que este
+  paso no tiene que rehacer. Queda anotado, no ejecutado.
 
 ## 4. Lo que queda pendiente de una persona, no de código
 

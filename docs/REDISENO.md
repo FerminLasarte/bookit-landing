@@ -109,6 +109,15 @@ Permisos explícitos, para no tener que pedirlos de nuevo en cada sesión:
   medido. Y ninguna se recorta de modo que quede dentro un color de interfaz sin
   tokenizar — la fotografía de un local no cuenta, es contenido.
 
+  **Sobre una superficie fija en oscuro va `onDark`**, y entonces no hay
+  `<picture>`: va la captura oscura en los dos temas. El `<picture>` elige por
+  el tema de quien mira, que es correcto mientras la superficie de abajo también
+  cambie con el tema; donde no cambia —la mitad oscura de `Audiences` es
+  `ink-950` siempre— en claro metía la captura clara y dejaba un rectángulo
+  blanco dentro del negro. Es la misma convención que `Button`, `Eyebrow` y
+  `Hairline`: la superficie se declara, no se adivina. Ver `DECISIONES.md`
+  §3 duodecies.
+
   Ese color existe y está localizado: el `#3B82F6` del estado "Confirmado"
   aparece **sólo en `10_comercio_agenda_dia`**, en los dos temas, 12.580 px
   entre las filas y=855 e y=2209 de 2622. O se tokeniza documentándolo —la lista
@@ -210,8 +219,8 @@ de `app/og/` quedan como están: `ImageResponse` no ve el `@theme`. Queda un sol
 `HowItWorks`, que se van con él en la Fase C.
 
 **Fase C · Secciones,** sobre las primitivas ya nuevas: ~~`#como-funciona`~~ →
-~~hero~~ → `#publico` → `#cierre` → `Rewards` → `#faq` → `Nav` (composición, ya
-arreglado su contraste en B) y [`Footer`](../components/Footer.tsx).
+~~hero~~ → ~~`#publico`~~ → `#cierre` → `Rewards` → `#faq` → `Nav` (composición,
+ya arreglado su contraste en B) y [`Footer`](../components/Footer.tsx).
 `#como-funciona` primero porque es la que más cambia: se saca el carrusel y el
 teléfono dibujado, y entran las capturas. Después `#cierre`, que con el hero son
 los dos lienzos y fijan el techo del lenguaje.
@@ -224,6 +233,18 @@ los dos lienzos y fijan el techo del lenguaje.
 > con la perilla `--lavado-y` arreglada para que se pueda girar desde la
 > sección. Cerró además la última deuda de `MARCA.md` —el `rgba()` suelto y los
 > dos radios arbitrarios— porque los tres eran del teléfono que se borró.
+
+> **`#publico` hecho el 22/9/2026**, en `DECISIONES.md` §3 duodecies. Es el
+> primer paso de la Fase C donde el trabajo es sumar y no recomponer: entran
+> las dos capturas que la auditoría le asigna, con el mismo encuadre (160–1438,
+> proporción 0,944), y el objeto pasa a ser un díptico de dos pantallas reales
+> a la misma altura. El escalón que la B0 había dejado abierto se cierra en
+> `display-sm`, y las mitades siguen 50/50 por medición. Salieron además tres
+> cosas que las secciones siguientes heredan: `Captura` aprende `onDark` —sobre
+> una superficie fija en oscuro va la captura oscura en los dos temas, y la
+> clara ni se importa—; la partición de la card baja a `lg`, porque en `md` la
+> mitad daba 246 px y el CTA del local mide 321 y se salía; y se cerró el
+> último resto del D1, que seguía vivo con las mitades apiladas.
 
 > **El hero se adelantó al paso 5**, el 22/9/2026, contra este orden. No por
 > gusto: la card con esquinas del paso 4 le cambió las proporciones y lo dejó
@@ -257,6 +278,9 @@ El de la skill, filtrado por el manual. Antes de cerrar cualquier rama:
       tenga tokenizado. La fotografía de un local es contenido, no paleta; lo
       que se mira es el color de UI. La barra de estado se recorta siempre: su
       batería es `#34C759` y está en las 30.
-- [ ] Cada captura va en su versión de tema y por `Captura`, que resuelve el
-      tema con un `<picture>` y baja una sola. Ninguna lleva `preload` ni
-      `loading="eager"`: eso bajaría las dos.
+- [ ] Cada captura va por `Captura` y baja una sola: con `<picture>` si la
+      superficie de abajo cambia con el tema, con `onDark` si está fija en
+      oscuro. Ninguna lleva `preload` ni `loading="eager"`: eso bajaría las dos.
+- [ ] Ningún texto ni botón se sale de su contenedor en el rango de anchos donde
+      hay dos columnas. El CTA más largo del sitio mide 321 px, y una partición
+      que deje la columna por debajo de eso lo recorta en silencio.

@@ -10,24 +10,20 @@ type IconProps = {
 
 const base = "h-full w-full";
 
-/** Marco de calendario con un hueco marcado: "hay lugar". */
-export function IconSlot({ className = "" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className || base}>
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="16"
-        rx="3"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="7" y="13" width="5" height="4" rx="1" fill="currentColor" />
-    </svg>
-  );
-}
+/*
+ * SE FUERON `IconSlot` (un marco de calendario con un hueco marcado) e
+ * `IconStore` (una persiana de local). Abrían las dos mitades de `Audiences` y
+ * no los usaba nadie más. En la Fase C cada mitad pasó a abrir con la captura
+ * real de la pantalla que le toca: donde había un símbolo de la cosa, va la
+ * cosa. Es el mismo movimiento que borró el teléfono dibujado a mano de
+ * `HowItWorks`, y el mismo criterio con el que la §3 octies le sacó el ícono a
+ * cada beneficio de `/lista-espera` — un bloque que ya muestra lo que es no
+ * necesita además un glifo que lo represente.
+ *
+ * Se borran en vez de quedarse sin lectores: un export que no usa nadie es la
+ * forma más segura de que alguien lo use mal (§3 sexies, sobre los dos tokens
+ * de sombra).
+ */
 
 /** Tijera — el rubro. */
 export function IconShears({ className = "" }: IconProps) {
@@ -67,27 +63,6 @@ export function IconReferral({ className = "" }: IconProps) {
         strokeWidth="1.5"
         strokeLinecap="round"
       />
-    </svg>
-  );
-}
-
-/** Persiana de local. */
-export function IconStore({ className = "" }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className || base}>
-      <path
-        d="M4 9.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M3 9.5 5.2 4.6A1 1 0 0 1 6.1 4h11.8a1 1 0 0 1 .9.6L21 9.5H3Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <path d="M9.5 20v-5.5h5V20" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }

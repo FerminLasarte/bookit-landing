@@ -65,26 +65,50 @@ import { cn } from "@/lib/utils";
  * borde reservados, así que no hay salto de layout, y lo que se ve mientras
  * carga es un panel vacío. Es literalmente lo que pide el manual — "si tarda
  * menos de 400 ms no se dibuja nada para no hacer un parpadeo gris".
+ *
+ * ── `onDark`: la superficie manda sobre el tema ──────────────────────────
+ *
+ * El `<picture>` elige por `prefers-color-scheme`, o sea por el tema de quien
+ * mira. Eso es correcto mientras la captura se apoye sobre una superficie que
+ * TAMBIÉN cambia con el tema, que es el caso normal. No lo es cuando la
+ * superficie está fija: la mitad oscura de `Audiences` es `ink-950` en los dos
+ * temas, y ahí, en claro, el `<picture>` metía la captura clara —un rectángulo
+ * blanco dentro del medio negro de la card, más luminoso que la mitad clara de
+ * al lado, que es justo lo que el corte de color de esa pieza tiene que decir.
+ *
+ * Así que la superficie se declara, igual que en `Button`, `Eyebrow` y
+ * `Hairline`: con `onDark` no hay `<picture>` ni elección, va la captura
+ * oscura siempre. Y como la clara deja de importarse, tampoco se emite en el
+ * build — el tipo la prohíbe para que no quede un import muerto.
  */
-export default function Captura({
-  claro,
-  oscuro,
-  alt,
-  recorte,
-  sizes,
-  className = "",
-}: {
-  claro: StaticImageData;
-  oscuro: StaticImageData;
+type Comun = {
   alt: string;
   /** Ventana vertical en píxeles del archivo original. */
   recorte: { top: number; bottom: number };
   /** Ancho de render, para que el `srcset` no baje una imagen de 1206 px. */
   sizes: string;
   className?: string;
-}) {
+};
+
+/**
+ * Sobre una superficie que cambia con el tema van las dos y elige el
+ * `<picture>`; sobre una superficie fija en oscuro va sólo la oscura, y la
+ * clara no se puede pasar para que no se importe un archivo que nadie emite.
+ */
+type Props = Comun & { oscuro: StaticImageData } & (
+    | { onDark: true; claro?: never }
+    | { onDark?: false; claro: StaticImageData }
+  );
+
+export default function Captura(props: Props) {
+  const { oscuro, alt, recorte, sizes, className = "" } = props;
+  // La desestructuración pierde la discriminación de la unión, así que la
+  // fuente se elige sobre `props`, que es donde el tipo todavía sabe cuál de
+  // las dos formas llegó.
+  const onDark = props.onDark === true;
+  const fuente = props.onDark ? oscuro : props.claro;
   const alto = recorte.bottom - recorte.top;
-  const sobrante = claro.height - alto;
+  const sobrante = fuente.height - alto;
   /*
    * `object-cover` escala por el ancho —el archivo es más angosto que la
    * ventana— y deja `sobrante` píxeles de desborde vertical. El porcentaje de
@@ -94,8 +118,14 @@ export default function Captura({
   const posicion = sobrante > 0 ? (recorte.top / sobrante) * 100 : 0;
 
   const comun = { alt, fill: true, sizes };
-  const { props: enClaro } = getImageProps({ ...comun, src: claro });
-  const { props: enOscuro } = getImageProps({ ...comun, src: oscuro });
+  const { props: base } = getImageProps({ ...comun, src: fuente });
+  const pixeles = (
+    <img
+      {...base}
+      className="object-cover"
+      style={{ ...base.style, objectPosition: `50% ${posicion}%` }}
+    />
+  );
 
   return (
     <div
@@ -110,16 +140,20 @@ export default function Captura({
         "relative overflow-hidden rounded-card border border-ink-900/10 dark:border-white/10",
         className,
       )}
-      style={{ aspectRatio: `${claro.width} / ${alto}` }}
+      style={{ aspectRatio: `${fuente.width} / ${alto}` }}
     >
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcSet={enOscuro.srcSet} sizes={sizes} />
-        <img
-          {...enClaro}
-          className="object-cover"
-          style={{ ...enClaro.style, objectPosition: `50% ${posicion}%` }}
-        />
-      </picture>
+      {onDark ? (
+        pixeles
+      ) : (
+        <picture>
+          <source
+            media="(prefers-color-scheme: dark)"
+            srcSet={getImageProps({ ...comun, src: oscuro }).props.srcSet}
+            sizes={sizes}
+          />
+          {pixeles}
+        </picture>
+      )}
     </div>
   );
 }
