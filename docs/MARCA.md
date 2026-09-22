@@ -232,6 +232,22 @@ Voseo rioplatense, frases cortas, sin jerga. El imperativo lleva tilde:
 **Un vacío por causa.** Nunca "No hay nada para mostrar": cada vacío dice qué
 pasó y sugiere una salida.
 
+**Un error por campo.** El mismo criterio vale para un formulario: el mensaje va
+pegado al campo que falló y dice qué le pasa a *ese* campo. Un único aviso al
+pie —"Revisá los campos marcados"— es el *Error inesperado* de la tabla de
+arriba, deja al color como único portador del dato y, para quien usa un lector
+de pantalla, no dice nada: `aria-invalid` sin `aria-describedby` anuncia que
+algo está mal y no qué. Es WCAG 3.3.1 y son dos reglas de este manual. Lo
+garantiza la primitiva [`Field`](../components/Field.tsx), que no deja declarar
+un campo sin su mensaje.
+
+**El emoji de la pantalla de éxito es la única excepción**, y es de fondo: el
+🎉 de "¡Adentro!" es un mensaje de celebración, no iconografía de interfaz.
+Está decidido en el brief (§6.2) y el código lo dice desde siempre —
+[`Footer.tsx`](../components/Footer.tsx) llegó a citar "la única excepción que
+registra `MARCA.md`"—, sólo que acá nunca se había escrito. Queda escrito: es
+ese emoji, en esa pantalla y en el correo que la acompaña, y ninguno más.
+
 **Lo que la marca no dice.** Sin emojis en la interfaz. Sin "¡Ups!" ni
 disculpas de más. No llama "usuario" al usuario ni "ítem" a un turno. No promete
 lo que no controla. No grita: sin mayúsculas sostenidas ni signos repetidos.
@@ -253,7 +269,9 @@ Cada uno de estos ya rompió la consistencia en algún lado:
 - Sombra y borde juntos.
 - Sombra en un campo o en una píldora.
 - Chips con relleno de marca dentro de una lista.
-- Cards de opción con borde naranja y tilde.
+- Cards de opción con borde naranja y tilde. Lo elegido se marca con tinta: el
+  borde ámbar sobre un relleno claro da 2,59:1 y no llega a los 3:1 que pide la
+  señal visual de un estado.
 - El rótulo de un bloque en ámbar. Llegó a haber catorce, uno abriendo cada
   sección: un acento que aparece catorce veces no es un acento.
 - Una card puesta para levantar el contraste de lo que tiene adentro. El

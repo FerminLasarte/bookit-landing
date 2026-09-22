@@ -1,20 +1,11 @@
 import { z } from "zod";
 
-/**
- * Mensajes de error del endpoint. Los seis primeros son contrato: ya circulan
- * en producción y el formulario los muestra tal cual. NO cambiar el texto.
- */
-export const WAITLIST_ERRORS = {
-  method: "Método no permitido",
-  missing: "Faltan datos obligatorios.",
-  consent: "Es necesario aceptar recibir novedades para continuar.",
-  category: "Contanos la categoría de tu comercio.",
-  duplicate: "Este correo ya está en la lista VIP.",
-  unexpected: "Hubo un error al procesar tu solicitud. Intentá de nuevo.",
-  // Agregados en la migración (endurecen sin romper los de arriba):
-  email: "Revisá el correo electrónico: no parece válido.",
-  rateLimit: "Probá de nuevo en un minuto.",
-} as const;
+// Los mensajes viven en `waitlist-errors.ts`, que no importa `zod`: el
+// formulario es un componente de cliente y los muestra tal cual, y leerlos
+// desde acá le metía la librería entera en el bundle. Se re-exportan para que
+// el endpoint siga teniendo una sola fuente.
+export { WAITLIST_ERRORS } from "./waitlist-errors";
+import { WAITLIST_ERRORS } from "./waitlist-errors";
 
 export const userTypes = ["cliente", "local"] as const;
 export type UserType = (typeof userTypes)[number];

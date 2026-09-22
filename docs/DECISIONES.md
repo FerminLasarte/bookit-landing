@@ -758,6 +758,109 @@ cortan neto y es una decisión, no una restricción heredada. Lo que sigue abier
 para la Fase C es la otra mitad de esa pregunta — si `#puntos` y `#cierre` pasan
 a ser lienzos con esquinas como el hero.
 
+## 3 decies. El error tiene que estar en el campo
+
+Fase B paso 4, el 22 de septiembre de 2026. Es el paso que el contrato pedía
+—"campo y formulario: label arriba, error abajo, sin placeholder como label"— y
+que se había saltado: el paso 3 tocó `WaitlistForm` sólo por D3 y el 5 sólo por
+los bordes. Dos de las tres cosas ya estaban bien. La tercera no estaba.
+
+### Lo que faltaba: el error
+
+El formulario marcaba el campo inválido con un borde rojo y un `aria-invalid`, y
+ponía un único mensaje al pie: **"Revisá los campos marcados para continuar."**
+Eso rompe tres cosas a la vez, y ninguna de las tres auditorías lo marcó:
+
+- **WCAG 3.3.1.** Un error tiene que estar descrito *en texto*. Un borde no es
+  texto. Y `aria-invalid` sin `aria-describedby` le dice a un lector de pantalla
+  que algo está mal sin decirle qué: el campo anunciaba "inválido" y nada más.
+- **"El color nunca es el único portador de un dato."** El borde rojo lo era.
+- **"El error dice qué pasó."** "Revisá los campos marcados" es exactamente el
+  *Error inesperado* de la columna derecha de la tabla de Voz.
+
+**La salida es que el error deje de ser algo que el formulario agrega y pase a
+ser parte del campo.** De ahí sale la primitiva [`Field`](../components/Field.tsx):
+rótulo arriba, control, mensaje abajo, y el control se declara con una función
+que recibe `id`, `className`, `aria-invalid` y `aria-describedby` ya atados
+entre sí. Si no se los esparce, el campo no tiene ni id ni estilo — o sea que la
+única forma de escribir un campo es la que queda bien cableada. Un mensaje que
+se puede olvidar se olvida; éste no se puede.
+
+Los textos van en `lib/waitlist-errors.ts`, separados del schema porque el
+schema importa `zod` y el formulario es un componente de cliente: leerlos desde
+ahí metía la librería entera en el bundle del navegador para usar ocho strings.
+Son enunciados y no órdenes —"Falta tu correo", no "Escribí tu correo"—: el
+imperativo dice qué hacer, y el que está del otro lado ya sabe que tiene que
+escribir.
+
+Tres cosas más que salieron de mirar el flujo completo:
+
+- **El formato del correo se chequea también en el cliente.** Era el único error
+  del formulario que costaba un viaje al servidor para volver como un mensaje al
+  pie. El texto que se muestra es el mismo que devuelve el endpoint.
+- **El error del servidor que habla de un campo va al campo.** El más frecuente
+  en producción —"Este correo ya está en la lista VIP"— es un problema del
+  correo y se mostraba al pie como si fuera de la página entera.
+- **El error se limpia al tocar el campo.** Dejarlo rojo mientras se lo corrige,
+  hasta el próximo envío, es de las cosas que el manual llama gritar.
+
+Y el aviso que queda al pie —sólo red y servidor— pasa a ir **arriba** del
+botón. Debajo, aparecía después del control que acababas de apretar, fuera del
+orden de lectura del gesto, y reservaba alto con `min-h-5` para un hueco que en
+la enorme mayoría de los envíos está vacío.
+
+### Tres números que había que medir igual
+
+**El `bg-amber-50` del control de público, por cuarta vez.** La opción elegida se
+marcaba con relleno `amber-50` y borde `amber-500`, con la aclaración encima en
+`ink-500`: **4,500:1**, AA al ras. Ese par exacto ya se había sacado del repo
+**tres veces** —`LegalDoc`, `ReferralCode` y `HowItWorks` documentan cada una, y
+la §5 cuenta dos más a 4,49:1—. Era la cuarta y seguía ahí. Peor: el borde
+`amber-500` daba **2,59:1** sobre ese relleno y **2,78:1** sobre la card, contra
+los 3:1 que WCAG 1.4.11 pide para la señal visual de un estado, o sea que lo que
+marcaba la elección no llegaba a verse. Y es, literalmente, el patrón que el
+manual nombra en *Lo que no se hace*: "cards de opción con borde naranja".
+
+Lo elegido pasa a marcarse con **tinta plena**: 14,68:1 en claro y 12,44:1 en
+oscuro, contra el 1,205:1 del filete al 10% de la que no está elegida, más un
+salto de peso para que el estado no dependa sólo del color. Es el mismo recurso
+con el que el nav marca la sección activa.
+
+**El placeholder a `ink-500/60`: 2,33:1.** Acá el placeholder no es decoración
+sino un ejemplo que se lee —"Ej: 2494…" dice el formato del teléfono—, así que
+es texto y pide 4,5:1. Va en la tinta secundaria entera: 4,83:1, y sigue
+distinguiéndose de lo tipeado, que va en `ink-900` con 14,68:1. Es el mismo par
+de tintas que separa un cuerpo de su bajada.
+
+**Los asteriscos.** Los llevaban los cinco campos obligatorios, en ámbar, y el
+único opcional decía además "(opcional)": la marca estaba puesta dos veces y del
+lado que no hacía falta. Marcar el opcional alcanza para WCAG 3.3.2, y saca
+cinco acentos ámbar de un formulario donde el ámbar tiene que ser el botón —la
+misma cuenta que la §3 octies hizo con los catorce rótulos—. El atributo
+`required` sigue en cada control, así que un lector de pantalla lo anuncia.
+
+### Una excepción que existía y no estaba escrita
+
+Mirando la pantalla de éxito apareció el 🎉 de "¡Adentro!", que el manual
+prohíbe en una línea sin matices ("Sin emojis en la interfaz"). No es un defecto:
+el brief lo decide explícitamente (§6.2, *"es un mensaje de celebración, no
+iconografía de UI"*) y `Footer.tsx` llegó a citar "la única excepción que
+registra `MARCA.md`" — sólo que en `MARCA.md` no estaba. El emoji se queda y la
+excepción queda escrita donde el comentario decía que estaba.
+
+### Lo que se decidió NO hacer
+
+- **Tocar el anillo de foco.** Medido de paso: `ring-focus` pinta 2px de
+  `cream-50` y 4px de `amber-500`, y el ámbar contra la card de `paper` da
+  **2,78:1** — por debajo de los 3:1 con los que se suele leer WCAG 1.4.11 para
+  un indicador de foco. Es real y es de toda la web, no del formulario: cambiarlo
+  toca cada elemento enfocable del sitio y es una decisión de primitiva, con su
+  propia medición contra los cinco fondos. Queda anotado como lo que es, una
+  deuda medida, y no se arregla de costado en el paso del formulario.
+- **Un resumen de errores al pie.** Con el mensaje en cada campo, el foco yendo
+  al primero que falló y un `aria-live` encima, el resumen se anunciaría por
+  duplicado.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol

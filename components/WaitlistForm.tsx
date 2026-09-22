@@ -4,9 +4,16 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import Button from "./Button";
 import AudienceSwitch from "./AudienceSwitch";
+import Field, { FieldError } from "./Field";
 import { IconCheck, IconInstagram } from "./icons";
 import { categoriasFormulario } from "@/content/categorias";
 import { site } from "@/content/site";
+import {
+  CAMPO_DEL_ERROR,
+  WAITLIST_ERRORS,
+  WAITLIST_FIELD_ERRORS,
+  pareceEmail,
+} from "@/lib/waitlist-errors";
 import {
   submittingLabel,
   successTitle,
@@ -20,19 +27,31 @@ type Status = "idle" | "submitting" | "success";
 /** Campos que pueden quedar marcados como inválidos. */
 type FieldName = "name" | "email" | "userType" | "category" | "categoryOther" | "consent";
 
-const fieldClasses =
-  "ring-focus min-h-11 w-full rounded-field border border-ink-900/10 bg-paper px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-500/60 transition-colors duration-150 hover:border-ink-900/25 focus:border-amber-500 dark:border-white/10 dark:bg-ink-800 dark:text-bone-100 dark:placeholder:text-bone-300/50 dark:hover:border-white/25";
+/** Campo → su mensaje. Vacío es "no hay nada mal". */
+type FieldErrors = Partial<Record<FieldName, string>>;
 
-const labelClasses = "block text-small font-semibold text-ink-900 dark:text-bone-100";
+/**
+ * El `name` del control, para poder limpiar su error mientras se corrige.
+ * Marcar un campo en rojo y dejarlo rojo hasta el próximo envío es de las
+ * cosas que el manual llama gritar: el error ya se está arreglando.
+ */
+const porNombre: Record<string, FieldName> = {
+  name: "name",
+  email: "email",
+  user_type: "userType",
+  category: "category",
+  category_other: "categoryOther",
+  consent: "consent",
+};
 
-// `--color-error` / `--color-error-dark` son los semánticos del manual y estaban
-// sin usar mientras el formulario tiraba de los rojos de fábrica de Tailwind.
-// Es el mismo "hex suelto en un componente", escrito como clase utilitaria.
-const invalidClasses = "border-error dark:border-error-dark";
-
-function Required() {
-  return <span className="text-amber-700 dark:text-amber-300">*</span>;
-}
+/**
+ * NO HAY ASTERISCOS. Los llevaban los cinco campos obligatorios, en ámbar, y
+ * el único opcional decía además "(opcional)" — o sea que la marca estaba
+ * puesta dos veces y del lado que no hacía falta. Marcar el opcional alcanza
+ * para WCAG 3.3.2, no deja ningún rótulo sin explicar y saca cinco acentos
+ * ámbar de un formulario donde el ámbar tiene que ser el botón. El atributo
+ * `required` sigue en cada control, así que un lector de pantalla lo anuncia.
+ */
 
 export default function WaitlistForm({
   /** Preselección desde `?tipo=local`. */
@@ -53,8 +72,9 @@ export default function WaitlistForm({
   const [fading, setFading] = useState(false);
 
   const [status, setStatus] = useState<Status>("idle");
+  /** Sólo lo que devuelve el servidor o la red. Lo de cada campo va en el campo. */
   const [formError, setFormError] = useState<string | null>(null);
-  const [invalid, setInvalid] = useState<Set<FieldName>>(new Set());
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   const [category, setCategory] = useState("");
   const mountedAt = useRef(Date.now());
@@ -97,8 +117,21 @@ export default function WaitlistForm({
     if (status === "success") successRef.current?.focus();
   }, [status]);
 
-  function markInvalid(fields: FieldName[]) {
-    setInvalid(new Set(fields));
+  /** Limpia el error de un campo en cuanto se lo toca. */
+  function handleInput(event: FormEvent<HTMLFormElement>) {
+    const target = event.target as HTMLInputElement | null;
+    const field = target?.name ? porNombre[target.name] : undefined;
+    if (!field) return;
+    setErrors((previous) => {
+      if (!previous[field]) return previous;
+      const next = { ...previous };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function markInvalid(fields: FieldErrors) {
+    setErrors(fields);
     const focusOrder: Array<[FieldName, HTMLElement | null]> = [
       ["name", nameRef.current],
       ["email", emailRef.current],
@@ -108,7 +141,7 @@ export default function WaitlistForm({
       ["consent", consentRef.current],
     ];
     for (const [field, element] of focusOrder) {
-      if (fields.includes(field) && element) {
+      if (fields[field] && element) {
         element.focus();
         return;
       }
@@ -128,22 +161,31 @@ export default function WaitlistForm({
     const categoryOther = String(data.get("category_other") ?? "").trim();
     const consent = data.get("consent") === "on";
 
-    // Validación propia para poder enfocar el primer campo con error (§4.5).
-    const failures: FieldName[] = [];
-    if (!name) failures.push("name");
-    if (!email) failures.push("email");
-    if (!audience) failures.push("userType");
-    if (isLocal && !category) failures.push("category");
-    if (isOtherCategory && !categoryOther) failures.push("categoryOther");
-    if (!consent) failures.push("consent");
+    /*
+     * Validación propia para poder enfocar el primer campo que falló (§4.5) y,
+     * ahora, para decirle a cada uno qué le pasa. El formato del correo se
+     * chequea acá además del servidor: mandarlo, esperar el viaje y recibir un
+     * mensaje al pie era el único error del formulario que costaba un round
+     * trip, y el texto que se muestra es el mismo que devuelve el endpoint.
+     */
+    const failures: FieldErrors = {};
+    if (!name) failures.name = WAITLIST_FIELD_ERRORS.name;
+    if (!email) failures.email = WAITLIST_FIELD_ERRORS.email;
+    else if (!pareceEmail(email)) failures.email = WAITLIST_ERRORS.email;
+    if (!audience) failures.userType = WAITLIST_FIELD_ERRORS.userType;
+    if (isLocal && !category) failures.category = WAITLIST_FIELD_ERRORS.category;
+    if (isOtherCategory && !categoryOther) failures.categoryOther = WAITLIST_FIELD_ERRORS.categoryOther;
+    if (!consent) failures.consent = WAITLIST_ERRORS.consent;
 
-    if (failures.length > 0 || !audience) {
-      setFormError("Revisá los campos marcados para continuar.");
+    if (Object.keys(failures).length > 0 || !audience) {
+      // Sin resumen al pie: cada campo ya dice lo suyo, el foco va al primero
+      // que falló y un `aria-live` encima lo anunciaría por duplicado.
+      setFormError(null);
       markInvalid(failures);
       return;
     }
 
-    setInvalid(new Set());
+    setErrors({});
     setFormError(null);
     setStatus("submitting");
 
@@ -177,7 +219,12 @@ export default function WaitlistForm({
 
       setStatus("success");
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : "Ocurrió un error al registrarte.");
+      const message =
+        error instanceof Error ? error.message : "Ocurrió un error al registrarte.";
+      // Si el servidor habla de un campo, el mensaje va al campo.
+      const field = CAMPO_DEL_ERROR[message];
+      if (field) markInvalid({ [field]: message });
+      else setFormError(message);
       setStatus("idle");
     }
   }
@@ -238,106 +285,87 @@ export default function WaitlistForm({
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
-        <div>
-          <label htmlFor="wl-name" className={labelClasses}>
-            Nombre y apellido <Required />
-          </label>
-          <input
-            ref={nameRef}
-            id="wl-name"
-            name="name"
-            type="text"
-            autoComplete="name"
-            required
-            placeholder="Ej: Martín"
-            aria-invalid={invalid.has("name") || undefined}
-            className={cn(fieldClasses, "mt-2", invalid.has("name") && invalidClasses)}
-          />
-        </div>
+      <form onSubmit={handleSubmit} onInput={handleInput} noValidate className="mt-8 space-y-5">
+        <Field id="wl-name" label="Nombre y apellido" error={errors.name}>
+          {(props) => (
+            <input
+              {...props}
+              ref={nameRef}
+              name="name"
+              type="text"
+              autoComplete="name"
+              required
+              placeholder="Ej: Martín"
+            />
+          )}
+        </Field>
 
-        <div>
-          <label htmlFor="wl-email" className={labelClasses}>
-            Correo electrónico <Required />
-          </label>
-          <input
-            ref={emailRef}
-            id="wl-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            placeholder="tu@correo.com"
-            aria-invalid={invalid.has("email") || undefined}
-            className={cn(fieldClasses, "mt-2", invalid.has("email") && invalidClasses)}
-          />
-        </div>
+        <Field id="wl-email" label="Correo electrónico" error={errors.email}>
+          {(props) => (
+            <input
+              {...props}
+              ref={emailRef}
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              placeholder="tu@correo.com"
+            />
+          )}
+        </Field>
 
-        <div>
-          <label htmlFor="wl-whatsapp" className={labelClasses}>
-            WhatsApp{" "}
-            <span className="font-normal text-ink-500 dark:text-bone-300">(opcional)</span>
-          </label>
-          <input
-            id="wl-whatsapp"
-            name="whatsapp"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder="Ej: 2494..."
-            className={cn(fieldClasses, "mt-2")}
-          />
-        </div>
+        <Field id="wl-whatsapp" label="WhatsApp" optional>
+          {(props) => (
+            <input
+              {...props}
+              name="whatsapp"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="Ej: 2494..."
+            />
+          )}
+        </Field>
 
         <div ref={userTypeRef} tabIndex={-1} className="ring-focus pt-1">
-          <AudienceSwitch value={audience} onChange={setAudience} />
+          <AudienceSwitch value={audience} onChange={setAudience} error={errors.userType} />
         </div>
 
         {isLocal && (
-          <div>
-            <label htmlFor="wl-category" className={labelClasses}>
-              Categoría de tu comercio <Required />
-            </label>
-            <select
-              ref={categoryRef}
-              id="wl-category"
-              name="category"
-              required
-              value={category}
-              onChange={(event) => setCategory(event.target.value)}
-              aria-invalid={invalid.has("category") || undefined}
-              className={cn(fieldClasses, "mt-2", invalid.has("category") && invalidClasses)}
-            >
-              <option value="">Seleccioná una opción</option>
-              {categoriasFormulario.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Field id="wl-category" label="Categoría de tu comercio" error={errors.category}>
+            {(props) => (
+              <select
+                {...props}
+                ref={categoryRef}
+                name="category"
+                required
+                value={category}
+                onChange={(event) => setCategory(event.target.value)}
+              >
+                <option value="">Seleccioná una opción</option>
+                {categoriasFormulario.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          </Field>
         )}
 
         {isOtherCategory && (
-          <div>
-            <label htmlFor="wl-category-other" className={labelClasses}>
-              Contanos cuál <Required />
-            </label>
-            <input
-              ref={categoryOtherRef}
-              id="wl-category-other"
-              name="category_other"
-              type="text"
-              required
-              placeholder="Ej: Depilación láser"
-              aria-invalid={invalid.has("categoryOther") || undefined}
-              className={cn(
-                fieldClasses,
-                "mt-2",
-                invalid.has("categoryOther") && invalidClasses,
-              )}
-            />
-          </div>
+          <Field id="wl-category-other" label="Contanos cuál" error={errors.categoryOther}>
+            {(props) => (
+              <input
+                {...props}
+                ref={categoryOtherRef}
+                name="category_other"
+                type="text"
+                required
+                placeholder="Ej: Depilación láser"
+              />
+            )}
+          </Field>
         )}
 
         {/* Honeypot invisible: un humano nunca lo completa. */}
@@ -346,28 +374,46 @@ export default function WaitlistForm({
           <input id="wl-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
         </div>
 
-        <div className="flex items-start gap-3 pt-1">
-          <input
-            ref={consentRef}
-            id="wl-consent"
-            name="consent"
-            type="checkbox"
-            required
-            aria-invalid={invalid.has("consent") || undefined}
-            className={cn(
-              // 24px: el mínimo de target que pide WCAG 2.2 para un control chico.
-              "ring-focus mt-0.5 h-6 w-6 shrink-0 rounded-pill accent-amber-500",
-              invalid.has("consent") && "outline-2 outline-error dark:outline-error-dark",
-            )}
-          />
-          <label
-            htmlFor="wl-consent"
-            className="text-xs leading-relaxed text-ink-500 dark:text-bone-300"
-          >
-            Acepto recibir novedades de Bookit por email y/o WhatsApp, y que mis datos sean tratados
-            conforme a la Ley 25.326 de Protección de Datos Personales. <Required />
-          </label>
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <input
+              ref={consentRef}
+              id="wl-consent"
+              name="consent"
+              type="checkbox"
+              required
+              aria-invalid={errors.consent ? true : undefined}
+              aria-describedby={errors.consent ? "wl-consent-error" : undefined}
+              className={cn(
+                // 24px: el mínimo de target que pide WCAG 2.2 para un control chico.
+                "ring-focus mt-0.5 h-6 w-6 shrink-0 rounded-pill accent-amber-500",
+                errors.consent && "outline-2 outline-error dark:outline-error-dark",
+              )}
+            />
+            <label
+              htmlFor="wl-consent"
+              className="text-xs leading-relaxed text-ink-500 dark:text-bone-300"
+            >
+              Acepto recibir novedades de Bookit por email y/o WhatsApp, y que mis datos sean
+              tratados conforme a la Ley 25.326 de Protección de Datos Personales.
+            </label>
+          </div>
+          <FieldError id="wl-consent-error" message={errors.consent} />
         </div>
+
+        {/*
+          El error del servidor va ARRIBA del botón, no debajo. Debajo, el único
+          mensaje del formulario aparecía después del control que acababas de
+          apretar, o sea fuera del orden de lectura del gesto. Y ya no reserva
+          alto con `min-h-5`: como sólo carga los errores de red y de servidor,
+          en el 99% de los envíos ese hueco estaba vacío.
+        */}
+        <p
+          aria-live="polite"
+          className="text-small font-medium text-error empty:hidden dark:text-error-dark"
+        >
+          {formError}
+        </p>
 
         <div className="pt-3">
           <Button
@@ -377,10 +423,6 @@ export default function WaitlistForm({
             text={status === "submitting" ? submittingLabel : copy.button}
           />
         </div>
-
-        <p aria-live="polite" className="min-h-5 text-center text-small font-semibold text-error dark:text-error-dark">
-          {formError}
-        </p>
 
         <p className="text-center text-xs text-ink-500 dark:text-bone-300">
           Al anotarte aceptás nuestros{" "}

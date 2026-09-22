@@ -154,7 +154,12 @@ la Fase B y la Fase C lo consumen:
 3. Card y superficie — qué es card y qué no, ahora que dejó de ser el default.
    Incluye sacar la sombra donde ya hay borde (D3).
 4. Campo y formulario — [`WaitlistForm`](../components/WaitlistForm.tsx):
-   label arriba, error abajo, sin placeholder como label.
+   label arriba, error abajo, sin placeholder como label. **Hecho el
+   22/9/2026**, después del paso 5, en `DECISIONES.md` §3 decies. De las tres
+   cosas, dos ya estaban; la que faltaba era el error, que no existía por campo
+   — un borde rojo y un aviso genérico al pie—. Sale una primitiva,
+   [`Field`](../components/Field.tsx), que no deja declarar un campo sin su
+   mensaje.
 5. [`Section`](../components/Section.tsx), [`Eyebrow`](../components/Eyebrow.tsx),
    [`Hairline`](../components/Hairline.tsx), [`Reveal`](../components/Reveal.tsx)
    — el vocabulario de composición que la Fase C va a consumir. **Hecho el
