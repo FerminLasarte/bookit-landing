@@ -43,13 +43,28 @@ naranja de `--logo-naranja`. En React se usa siempre
 [`components/Wordmark.tsx`](../components/Wordmark.tsx), nunca un `<img>` al
 SVG: un `<img>` no hereda el color y rompe el modo oscuro.
 
-**Los huecos de la `B` y de las dos `o` van calados, no tapados.** Se dibujan
-con `fill-rule="evenodd"` sobre el mismo contorno. Existía un token
-`--logo-hueco` que los pintaba del color del fondo y había que setearlo a mano
-en cada sitio de uso; se eliminó el 22/9/2026. Era una trampa: el logo sólo
-quedaba bien sobre exactamente `cream-50` o `ink-950`, y sobre un lienzo, un
-degradé o una captura los tapones se veían de otro color que el fondo. Calado,
-el logo deja de depender de lo que tenga detrás.
+**Los huecos de la `B` y de las dos `o` van calados, no tapados.** Son subpaths
+del mismo path compuesto, así que el `fill-rule` por defecto ya los abre.
+Existía un token `--logo-hueco` que los pintaba del color del fondo y había que
+setearlo a mano en cada sitio de uso; se eliminó el 22/9/2026. Era una trampa:
+el logo sólo quedaba bien sobre exactamente `cream-50` o `ink-950`, y sobre un
+lienzo, un degradé o una captura los tapones se veían de otro color que el
+fondo. Calado, el logo deja de depender de lo que tenga detrás.
+
+**La palabra se redibujó el 22/9/2026.** El maestro pasó a tener los contornos
+creados, y con eso el lockup cambió de dibujo: las dos `o` eran círculos
+geométricos y el punto de la `i` un círculo sobre un rectángulo redondeado, y
+ahora son contornos tipográficos. **El isotipo no cambió**: sus siete paths son
+los mismos, verificado uno por uno. El `viewBox` tampoco, así que la proporción
+del lockup y el mínimo de 96 × 28 px siguen valiendo.
+
+**Al sincronizar desde el maestro hay que corregir dos cosas**, porque
+Illustrator las vuelve a escribir en cada export:
+
+1. **La tinta va en `currentColor`.** El export la deja sin `fill`, o sea negra
+   fija, y así el lockup es invisible sobre `marca-profunda`.
+2. **El naranja va en `--logo-naranja`.** El export escribe `#FD8003`; el
+   canónico es `#FD7D03`.
 
 **Los dos naranjas.** No es una inconsistencia:
 
@@ -298,16 +313,16 @@ Lo que esta web hace distinto del manual, a propósito:
 - `public/brand/` conserva `icon.png`, `icon.jpeg`, `lockup.png` y
   `lockup.jpeg`, anteriores a los SVG. Hay que confirmar quién los consume
   (metadata, OG) antes de borrarlos.
-- **El archivo maestro del lockup arrastra dos defectos**, y el SVG del repo ya
-  está corregido pero el maestro no — así que un re-export los reintroduce.
-  Verificado el 22/9/2026 contra
-  `Documents/Data Apps/Bookit/Logos/logo_bookit_completo.svg`: el dibujo es
-  idéntico al del repo (los doce paths y los cinco círculos coinciden), pero
-  (a) los huecos de la `B` y de las `o` están tapados con tres casi-blancos
-  distintos —`#FEFDFD`, `#FDFDFD`, `#FEFEFD`—, o sea que el logo sólo funciona
-  sobre blanco, y (b) tiene **dos** naranjas, `#FD8003` en casi todo y
-  `#FD8102` sólo en el punto de la `i`, y ninguno es el `#FD7D03` canónico.
-  Hay que corregir el maestro.
+- **El maestro sigue escribiendo el naranja equivocado.** Los contornos ya están
+  creados —eso quedó resuelto el 22/9/2026— pero el export usa `#FD8003` y deja
+  la tinta sin `fill`. Las dos correcciones están listadas arriba, en *Logo*, y
+  hay que reaplicarlas cada vez que se sincronice. El camino que NO funcionó, y
+  conviene no repetirlo: exportar la palabra como `<text>` en
+  `Plus Jakarta Display`. Esa familia está instalada en la máquina de diseño
+  pero no es la que sirve el sitio (`Plus Jakarta Sans`, por `next/font`), no
+  existe en Google Fonts, y el `tspan` que separa "Book" de "it" está calculado
+  para sus métricas exactas. Renderizado en un navegador daba una tipografía
+  distinta en cada intento.
 - Quedan `rgba()` del ámbar escritos a mano en los gradientes de `page.tsx`,
   `Audiences`, `Rewards` y el destello de `/invite` —que el inventario anterior
   no contaba—. Son el hex canónico, pero el manual pide que ningún
