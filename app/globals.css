@@ -106,7 +106,54 @@
   --color-amber-300: #e8b45f;
 
   --color-amber-100: #f6e7ce; /* rellenos suaves, bordes */
-  --color-amber-50: #fdf6ea; /* wash de sección */
+
+  /*
+   * Relleno ámbar mínimo. El comentario anterior lo llamaba "wash de sección"
+   * y no lo es: con `ink-500` encima da 4,50:1, justo sobre la línea de AA, y
+   * por eso `bg-amber-50` en claro se sacó TRES veces —`LegalDoc`,
+   * `ReferralCode` y `HowItWorks` documentan cada vez—. El lavado de sección
+   * es `--color-lavado-*` más abajo, con la utilidad `lavado`.
+   */
+  --color-amber-50: #fdf6ea;
+
+  /* ── El lavado cálido — DERIVADO ─────────────────────────────────────
+   *
+   * El dispositivo que la app apoya detrás de cada encabezado y la web no
+   * tenía en ningún lado. Es la causa del desbalance que midió la auditoría:
+   * en oscuro la web se lee como Bookit y en claro se leía como un sitio gris
+   * con acentos ámbar, porque en claro no había NINGUNA superficie cálida.
+   *
+   * Medido pixel a pixel sobre `Capturas Web/{claro,oscuro}`, en
+   * `01_cliente_inicio` y `10_comercio_agenda_dia` (idénticas entre sí;
+   * `09_bienvenida` está dos escalones más profunda).
+   *
+   * No es una superficie plana: es un degradé anclado en la esquina superior
+   * IZQUIERDA. Estos dos valores son su PICO, y se pintan únicamente desde la
+   * utilidad `lavado`. Nunca con `bg-`: no existe ningún cálido plano que
+   * sostenga `ink-500` a 4,5:1 y además se vea —el cruce cae en R-B = +8—, y
+   * de ahí sale la regla de colocación que documenta la utilidad.
+   */
+
+  /*
+   * Claro. Pico #F1D9B7; a mitad del borde superior la app da #F4E5D0, que es
+   * de donde salen los #EFE1CD → #F0E1CB que anotó la auditoría.
+   * Sobre el pico: `ink-900` 10,73:1 y `amber-700` 3,56:1 —que pasa a 24px o
+   * más, y NO pasa a tamaño de eyebrow—. NO van encima `ink-500` (3,53:1) ni
+   * `amber-500` como texto (2,03:1). Una card de `paper` levanta 1,37:1 sobre
+   * el lavado; sobre `cream-50` pelado es 1,00:1, o sea invisible sin borde.
+   */
+  --color-lavado-calido: #f1d9b7;
+
+  /*
+   * Oscuro. Pico #604117; a mitad del borde superior la app da #453015, que es
+   * el valor que anotó la auditoría. Acá el lavado casi no restringe:
+   * `bone-100` 7,20:1, `bone-300` 5,60:1 y `amber-300` 4,91:1 pasan todos.
+   * La única pérdida es `amber-500` como texto de lectura, que cae a 3,33:1:
+   * ahí va `amber-300`. Separa 2,00:1 contra `ink-950`.
+   * No es el claro invertido: en claro el lavado limita qué texto puede ir
+   * encima, en oscuro no.
+   */
+  --color-lavado-profundo: #604117;
 
   /*
    * DERIVADO. Los dos extremos del biselado del CTA. No son pasos de la escala
@@ -176,7 +223,31 @@
    * La escala del manual sale del ancho de pantalla (es de la app). Acá son
    * `clamp()`, pero el tracking es el del manual: negativo y fuerte arriba,
    * 0 abajo — apretar una letra chica la vuelve ilegible (§4).
+   *
+   * Cinco pasos. `display-2xl` y `display-sm` son de la Fase B0 del rediseño:
+   * salen de los `clamp()` que `Rewards` y `Audiences` escribían a mano (D8 de
+   * la auditoría), no de valores nuevos.
    */
+
+  /*
+   * DERIVADO. El paso de cartel, por encima de `display-xl`: los titulares que
+   * el contrato del rediseño habilita "donde la sección lo justifique".
+   *
+   * El techo (8,5rem) es el que `Rewards` ya escribía a mano para su cifra. La
+   * pendiente baja de 11vw a 10vw para que tope a 1360px, junto con
+   * `display-xl` (1354px), y no a 1236px. El piso es 3,75rem y no los 4,5rem
+   * de `Rewards` porque ese piso estaba calibrado para tres dígitos ("500"):
+   * una frase corta a 72px en un viewport de 375px envuelve a cuatro líneas.
+   * A 375px la cifra pasa a 60px —sigue siendo casi el doble que el título de
+   * su sección— y en desktop queda idéntica.
+   *
+   * El tracking es medio paso y no uno entero (la cadencia daría -0.06em): a
+   * 136px, -0.055em ya aprieta más en absoluto que -0.045em a 88px.
+   */
+  --text-display-2xl: clamp(3.75rem, 10vw, 8.5rem);
+  --text-display-2xl--line-height: 0.92;
+  --text-display-2xl--letter-spacing: -0.055em;
+
   --text-display-xl: clamp(2.75rem, 6.5vw, 5.5rem);
   --text-display-xl--line-height: 0.95;
   --text-display-xl--letter-spacing: -0.045em;
@@ -184,6 +255,21 @@
   --text-display-lg: clamp(2rem, 3.8vw, 3.25rem);
   --text-display-lg--line-height: 1.05;
   --text-display-lg--letter-spacing: -0.03em;
+
+  /*
+   * DERIVADO. El paso que faltaba entre `display-lg` y `h3`. No es un valor
+   * nuevo: es el `clamp(1.75rem, 3vw, 2.5rem)` que `Rewards` escribía a mano
+   * para su h3, y su piso es el `md:text-[1.75rem]` de `Audiences` — a 768px
+   * los dos dan los mismos 28px. El tracking -0.02em también es el que ya
+   * estaba escrito ahí, y cae justo entre el de `display-lg` y el de `h3`.
+   *
+   * Es el escalón más corto de la escalera (0,77 contra ~0,60 del resto). Se
+   * conserva así a propósito: sale de una composición real, no de una razón
+   * geométrica.
+   */
+  --text-display-sm: clamp(1.75rem, 3vw, 2.5rem);
+  --text-display-sm--line-height: 1.1;
+  --text-display-sm--letter-spacing: -0.02em;
 
   --text-h3: clamp(1.25rem, 1.6vw, 1.5rem);
   --text-h3--line-height: 1.2;
@@ -359,6 +445,51 @@
     #000 calc(100% - var(--fade-y)),
     transparent 100%
   );
+}
+
+@utility lavado {
+  /*
+   * El lavado cálido de superficie. Fase B0 del rediseño.
+   *
+   * GEOMETRÍA, derivada de la app. En las capturas el lavado nace en la
+   * esquina superior izquierda, llega a la superficie base a 393 pt sobre el
+   * borde izquierdo (45 % del alto de pantalla) y, sobre el borde superior,
+   * todavía conserva un tercio de su fuerza al llegar al otro extremo —o sea
+   * que su radio horizontal es ~1,5 veces el ancho—. Las dos paradas de esta
+   * rampa reproducen ese apagado con menos de 8,4 puntos de desvío, que en
+   * color son unas 5 unidades de R-B: no se distingue del original.
+   *
+   * A diferencia de `fade-y`, esta utilidad SÍ puede ir en el mismo elemento
+   * que contiene el texto: es un `background-image`, no una máscara, así que
+   * no afecta a los hijos. Se apoya sobre el `background-color` que la sección
+   * ya tenga —`cream-50`, `cream-100` o `paper`—.
+   *
+   * REGLA DE COLOCACIÓN, en claro. Sobre la parte fuerte del lavado van
+   * `ink-900` y los pasos de display, que ahí dan 10,73:1. NO van la bajada en
+   * `ink-500` (3,53:1) ni un eyebrow `amber-700` a tamaño de lectura (3,56:1
+   * contra los 4,5:1 que pide). El texto chico va sobre una card de `paper`,
+   * donde `ink-500` vuelve a 4,71:1, o más abajo, donde el lavado ya se apagó.
+   * En oscuro la regla se relaja: ahí `bone-300` da 5,60:1.
+   *
+   * La perilla por sección es `--lavado-y`, o sea el ALCANCE, que se pisa por
+   * clase (`[--lavado-y:14rem]`). Nunca la opacidad: un solo cálido en todo el
+   * sitio con varios alcances es lo que evita terminar con seis lavados
+   * parecidos, que es justo lo que el manual prohíbe.
+   */
+  --lavado-y: 24rem;
+  background-image: radial-gradient(
+    150% var(--lavado-y) at 0% 0%,
+    var(--color-lavado-calido) 0%,
+    transparent 100%
+  );
+
+  @media (prefers-color-scheme: dark) {
+    background-image: radial-gradient(
+      150% var(--lavado-y) at 0% 0%,
+      var(--color-lavado-profundo) 0%,
+      transparent 100%
+    );
+  }
 }
 
 @utility ring-focus {
