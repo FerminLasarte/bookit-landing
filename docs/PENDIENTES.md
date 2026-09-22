@@ -60,11 +60,22 @@ que es el default de Tailwind usado a mano. Se contaron diez usos; `#cierre`
 (§3 terdecies) y `#puntos` (§3 quaterdecies) sacaron los suyos y los pasaron a
 `text-small`.
 
-**Quedan siete**, todos fuera de la home: `WaitlistForm` (2), `LegalDoc`,
-`Footer`, `AudienceSwitch`, `ReferralCode`, y el rótulo de cada nodo del
-diagrama de referidos —ése es un epígrafe dentro de un dibujo, que es otra cosa
-y probablemente se quede—. Es una pregunta de densidad de todo el sitio, no de
-una sección.
+~~**Quedan siete**, todos fuera de la home~~ — **la cuenta estaba mal en las
+dos mitades, corregida el 22/9/2026.** Eran **ocho**, porque faltaba el tamaño
+`compact` de [`Button`](../components/Button.tsx), que es el CTA del header y
+por lo tanto renderiza en **todas** las páginas; y no estaban todos fuera de la
+home, porque el `Footer` y el rótulo del diagrama de referidos también
+renderizan ahí.
+
+El paso del nav y el pie (§3 sedecies) se llevó dos: el `compact` del botón
+—donde además el rótulo del CTA era más chico que el de los links que tiene al
+lado— y el del copyright del footer.
+
+**Quedan seis:** `WaitlistForm` (2), `LegalDoc`, `AudienceSwitch`,
+`ReferralCode` y el rótulo de cada nodo del diagrama de referidos. De los seis,
+el único que renderiza en la home es el último, y la §3 quaterdecies ya decidió
+que se queda: es un epígrafe dentro de un dibujo, y el nodo mide 96 px. Los
+otros cinco son una pregunta de densidad de todo el sitio, no de una sección.
 
 ### 5 · El hero es el único lienzo que no pasa por `Section`
 
@@ -95,6 +106,63 @@ mejor. Medido: el balanceo elige el mismo corte a cinco anchos distintos, porque
 es el que parte la frase más cerca de la mitad, así que conseguir el otro pide
 apagar el balanceo para ese titular y elegirle un `max-w` a medida. Es una
 excepción local a una regla tipográfica de todo el sitio a cambio de un renglón.
+
+### 9 · `prefers-reduced-motion` corta seco, no funde
+
+El manual dice que con *Reducir movimiento* **"las animaciones quedan en
+fundidos"**, y el pre-flight del contrato repite la frase. Lo que el sitio hace
+es más fuerte y no es lo mismo: el bloque global de
+[`globals.css`](../app/globals.css) lleva toda animación **y toda transición** a
+0,01 ms, o sea corte seco, y la utilidad `reveal` cuelga entera de
+`no-preference`, así que ni siquiera pinta su estado inicial.
+
+Lo que la regla protege está cubierto —nada se mueve y nada queda invisible,
+verificado— pero un fundido *es* una transición de opacidad, y el bloque global
+también la mata: los hovers de color del sitio cortan en vez de fundirse.
+
+Y hay un caso testigo que lo vuelve una decisión y no un ajuste: el cambio de
+público de [`WaitlistForm`](../components/WaitlistForm.tsx) baja el bloque a
+`opacity-0`, espera **150 ms con un `setTimeout`** y lo vuelve a subir. Con
+*Reducir movimiento* el fundido desaparece pero el temporizador no, así que lo
+que queda son 150 ms de bloque **en blanco** — que es peor que el fundido que se
+quiso evitar.
+
+**Por qué no se hizo:** es la regla global de todo el sitio, no la de una
+sección, y arreglarla bien pide resolver a la vez el caso de `WaitlistForm`, que
+está en otra página. Medido y verificado en la pasada del pre-flight
+(`DECISIONES.md` §3 septendecies).
+
+### 10 · El `#333` de `lib/emails.ts`
+
+El correo de bienvenida escribe su cuerpo en `color: #333`, que no es ningún
+token del sitio (`ink-900` es `#1F2937`). Los otros dos hex del archivo sí son
+canónicos — el ámbar y la tinta del botón, con su comentario explicando por qué
+el rótulo va en tinta.
+
+Un HTML de correo es una de las cinco piezas que no ven el `@theme`, así que el
+hex literal es inherente; lo que no es inherente es que el **valor** no exista
+en la paleta.
+
+**Por qué no se hizo:** un correo se verifica en clientes de correo, no en el
+navegador. Visto en la pasada del pre-flight.
+
+### 11 · Los dos `rounded-card` anidados de `#publico`
+
+Los dos paneles de [`Captura`](../components/Captura.tsx) del díptico llevan
+radio 24 y borde al 10 %, dentro de la card de
+[`Audiences`](../components/Audiences.tsx), que lleva lo mismo. Es lo único del
+sitio donde un 24 vive dentro de otro 24.
+
+No viola nada, y por eso queda acá y no en `DECISIONES.md`: la §3 sexies ya dice
+que **`rounded-card` no es sinónimo de card** —el radio nombra un tamaño, no un
+rol— y que la fórmula concéntrica sólo vale cuando el hijo toca el padding, que
+acá no pasa (hay 49 px de aire). Pero son dos rectángulos redondeados con borde,
+uno dentro del otro, que es exactamente la forma que la §3 quaterdecies le sacó
+al panel de Referidos.
+
+**Por qué no se hizo:** `#publico` es la pieza que la auditoría llama la mejor
+compuesta del sitio, el encuadre de esas dos capturas está medido en la
+§3 duodecies, y el paso de esta fase era verificar, no recomponer.
 
 ## Deuda ya registrada en otro lado
 

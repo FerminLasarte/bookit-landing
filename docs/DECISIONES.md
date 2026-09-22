@@ -1609,6 +1609,390 @@ se ve igual en claro y en oscuro; lo que cambia es la página que la rodea.
   cifra mide 136 px—, y en la de Referidos el filete y el rótulo ya lo
   subordinan.
 
+## 3 quindecies. `#faq`: la última que partía en `md`
+
+Fase C, el 22 de septiembre de 2026. Es la última sección de la home, y la que
+menos cambia: su composición se conserva entera.
+
+### Lo que NO se tocó, y por qué
+
+**El acordeón sigue siendo `<details>` nativo.** La auditoría lo cuenta entre
+los bloques que trabajan: accesible por teclado, sin JS, y el estado abierto lo
+lleva el navegador. Nada de lo que hace falta acá justifica escribirlo a mano.
+
+**La composición tampoco.** Es título anclado en cuatro columnas contra un
+cuerpo largo en siete, y después de `#puntos` es la **única sección de la home
+donde el encabezado va al costado y no arriba**. La tabla de la §3 quaterdecies
+ya la tenía marcada como pendiente de recomponer, y la pasada la deja: el dial
+`DESIGN_VARIANCE` está en su objetivo y ninguna composición se repite, así que
+recomponerla sería sacar una variante, no sumarla.
+
+Lo que sí queda a la vista es que la columna del título termina con unos 340 px
+vacíos debajo, y eso también se conserva: es el mismo recurso que
+`#como-funciona` usa al revés —*"la asimetría la hace el vacío, no otra
+columna"*—, y es la forma natural de un cuerpo alto contra un encabezado corto.
+
+### Parte en `lg`, y el margen era cero
+
+Era la última de la home que partía en `md`. La §3 quaterdecies había dejado
+escrito que la página queda con **una sola regla de partición, dos columnas de
+1024 para arriba**, y esta sección la desmentía. No es sólo consistencia:
+
+| Ancho | Columna del título | El titular |
+|---|---|---|
+| 768 px | **208 px** | "preguntarnos." mide **209** |
+| 1024 px | 293 px | dos renglones |
+| 1180 px | 345 px | dos renglones |
+
+A 768 px el renglón más largo del titular es un solo píxel más ancho que su
+columna, a los 32 px del piso de `display-lg`. No mete scroll horizontal porque
+se come el canalón de la columna 5 —la partición deja una vacía entre las dos—,
+o sea que el defecto no tiene síntoma: es exactamente el *"lo recorta en
+silencio"* que el pre-flight del contrato nombra. Y un margen de 1 px no es un
+margen; este repo ya decidió tres veces que con 0,07 y 0,14 de margen no alcanza.
+
+Por debajo de `lg` el título ocupa el ancho entero y sale en un solo renglón
+—411 px de glifos en los 688 del `wrap`—, que es mejor que las dos líneas
+apretadas que tenía.
+
+### El `+` pierde el ámbar
+
+Son ocho, apilados en una columna. Es la misma cuenta que la §3 octies le hizo a
+los rótulos de sección —eran catorce y *"un acento que aparece catorce veces no
+es un acento"*— y el manual lo dice en una línea: *"en una pantalla bien resuelta
+hay muy poco naranja"*.
+
+La sección tiene un acento legítimo y es otro: el link *Ver Política de
+Privacidad* de la última respuesta, `amber-700` sobre la página pelada, 4,75:1.
+Es precisamente el uso que `MARCA.md` le dejó a `marcaTexto` cuando le sacó los
+rótulos — *"links y texto de acento sobre la página, que es donde su 4,75:1
+alcanza"*. Con el `+` en tinta, la sección queda con un solo ámbar, que es lo
+que el manual pide por pieza.
+
+Y no se pierde información. El color nunca fue el portador del estado: lo que
+dice abierto o cerrado es la rotación del `+` a `×`, que es forma. Es la regla
+*"el color nunca es el único portador de un dato"*, cumplida desde antes.
+
+| | Contraste | Pide |
+|---|---|---|
+| `ink-500` sobre `cream-50` | 4,71:1 | 3:1 (es un ícono) |
+| `bone-300` sobre `ink-950` | 11,20:1 | 3:1 |
+
+Es el mismo par con el que `HowItWorks` pinta sus ordinales: la pregunta manda
+en `ink-900` y la marca de estado la acompaña.
+
+### El anillo de foco era la única esquina viva del sitio
+
+El `summary` no tiene relleno ni borde propios —los filetes son del `<li>`—, así
+que su radio no se ve nunca **salvo** cuando `ring-focus` dibuja sus dos anillos
+de `box-shadow`, que toman la forma del elemento. Y dibujaba un rectángulo de
+628 × 76 px con las esquinas a **0**.
+
+El D5 cerró en cuatro radios más `rounded-full`, y el 0 no es ninguno de los
+cuatro. Va `rounded-card`, por la regla de la §3 sexies: **el radio nombra un
+tamaño, no un rol**, y una fila de 76 px de alto es una pieza grande. La píldora
+que `MARCA.md` fija para el foco es para *"un link de texto"*, o sea una palabra
+en línea, que no es esto.
+
+### Verificación
+
+768 · 1024 · 1180 · 1440, los dos temas. Sin scroll horizontal, el ancla `#faq`
+y el `aria-labelledby` intactos, el acordeón abre y cierra con Enter y con
+Espacio, y un link dentro de un `<details>` cerrado no recibe foco al tabular
+(verificado con Tab real, no con la lista de enfocables).
+
+### Lo que se decidió NO hacer
+
+- **Pasar el `+` al lado izquierdo de la pregunta**, pegado a su rótulo. Se ve
+  lejos a 628 px de columna, pero no es un huérfano: el área de clic es la fila
+  entera, así que el `+` es una marca de estado al final del renglón, como la
+  flecha de una lista de ajustes. Ningún número lo decide, y el criterio de este
+  tramo es medir sólo cuando un número decide.
+- **Hacer pegajosa la columna del título** para usar los 340 px vacíos. El
+  contrato prohíbe el pin de sección, y una columna pegajosa es la versión
+  suave de lo mismo: no vale la pena discutirlo por un hueco que la composición
+  usa a propósito.
+- **Meterle algo a esa columna.** Lo único que entraría es texto nuevo, y el
+  contrato prohíbe escribir copy.
+
+## 3 sedecies. El header y el pie, que son la misma pieza vista de los dos lados
+
+Fase C, el 22 de septiembre de 2026. Las dos últimas piezas, en una sola rama
+porque las dos son lo mismo: el marco de la página. Y en las dos el trabajo de
+fondo ya estaba hecho — el D1 del nav cerró en la Fase B y la §3 septies, y el
+D10 del footer en la §3 terdecies—, así que acá sólo queda composición.
+
+### La barra de escritorio aparece en `lg`
+
+La barra tiene tres piezas y dos de ellas son de ancho fijo: el lockup (96 px,
+que es el mínimo del manual) y el CTA. A 768 px el `wrap` da 688, los dos huecos
+de `gap-8` se llevan 64, y a la píldora de links le quedan **366 px** cuando
+mide **424**. El navegador no tiene otra: la encoge, y "Cómo funciona" y "Para
+locales" se parten **en dos renglones dentro de la píldora**.
+
+Un rótulo de nav envuelto a mitad de frase es el mismo defecto que el pre-flight
+le prohíbe a un botón, y las salidas que no sirven son dos:
+
+- **Apretar el padding.** Faltan 58 px y la píldora ya está en `p-1.5` con links
+  de `px-3.5`. No hay de dónde.
+- **Un tercer estado de la barra.** La §3 septies sacó los tres que tenía y
+  escribió por qué. No se reponen para esto.
+
+A 1024 la barra entra con 180 px de sobra y la píldora nunca se encoge. Por
+debajo ya existe el menú a pantalla completa, que es exactamente lo que
+corresponde a un ancho donde la navegación no entra. Y de paso el header deja de
+ser la excepción a la regla única de partición de la home.
+
+### El menú a pantalla completa estaba mal en cualquier teléfono
+
+Lo destapó el cambio de breakpoint —a 1023 px salta a la vista— pero el defecto
+estaba desde siempre y es de una línea. El diálogo es un `flex flex-col`, y la
+utilidad `wrap` lleva `margin-inline: auto`: sobre una página normal eso centra
+una caja que **ya ocupa el ancho**, pero un ítem de flex con `margin-inline:auto`
+deja de estirarse, pasa a `fit-content` y se centra.
+
+Medido a 390 px, con el viewport en 390:
+
+| Fila | Ancho |
+|---|---|
+| Lockup + cerrar | **180 px** |
+| Links + CTA | **280 px** |
+
+O sea que en cualquier teléfono el lockup y la × estaban amontonados en el medio
+en vez de en los bordes, los links flotaban centrados de hecho, y el botón que
+pide `fullWidth` no era de ancho completo. Con `w-full` el ítem vuelve a ocupar
+la línea y el `max-width` de 1180 px del `wrap` vuelve a ser el que manda.
+
+**Es el mismo tipo de error que este repo ya cometió con `--lavado-y`** (§3
+undecies): una utilidad escrita para un contexto se comporta distinto en otro, y
+sólo se nota cuando alguien la usa en el segundo.
+
+### El CTA del header era lo más chico de la barra
+
+| | Antes | Ahora |
+|---|---|---|
+| Rótulo del CTA | 12 px | **14 px** |
+| Rótulo de los links | 14 px | 14 px |
+| Píldora del CTA | 40 px | **48 px** |
+| Píldora de los links | 50 px | 50 px |
+
+La acción más importante del header estaba escrita en el cuerpo más chico del
+header, y su píldora era 10 px más baja que la que tiene al lado. No fue una
+decisión: el tamaño `compact` del botón nació con `text-xs`, que es 12 px, o sea
+**el escalón que el `@theme` no declara** (`--text-small` es 14) puesto a mano.
+Es el mismo movimiento que ya hicieron `#cierre` (§3 terdecies) y `#puntos`
+(§3 quaterdecies) con sus `text-xs`.
+
+Quedan 48 contra 50, que es 1 px arriba y 1 px abajo: a esa escala no se
+distingue, y `min-h-12` es un valor de la escala en vez de un `[3.125rem]`
+inventado para clavar la diferencia. El tamaño `compact` no tiene otro sitio de
+uso en todo el sitio — existe para convivir con estos links, así que medirlo
+contra esta píldora es literalmente su trabajo.
+
+### El rótulo de columna del footer era la segunda etiqueta del sitio
+
+"Producto", "Legales" y "Contacto" eran un componente propio, `ColumnTitle`, con
+los mismos 13 px que `Eyebrow` y tres diferencias, las tres en contra:
+
+- **`font-semibold`** contra el `font-bold` del rótulo del sitio.
+- **`tracking-[-0.01em]`**, cuando el manual (§4) pide 0 en texto chico —
+  *"apretar una letra chica la vuelve ilegible"*—. Es exactamente la corrección
+  que la §3 octies ya le había hecho a `Eyebrow`.
+- **`bone-300`**, la misma tinta que los links que tiene debajo, así que la
+  jerarquía de la columna la sostenía sólo el peso.
+
+El pre-flight pide **una etiqueta por intención**, y desde la §3 octies esa
+etiqueta es `Eyebrow`: una sola, en tinta, sin variantes. Pasa a usarla, con
+`onDark` — el footer es `ink-950` fijo en los dos temas, donde `bone-100` da
+14,40:1—, y ahí el rótulo manda sobre su columna en vez de confundirse con ella.
+
+Sigue siendo un `<p>`: fue un `<h2>` de 13 px y metía tres secciones falsas en el
+esquema del documento. Lo único que `ColumnTitle` hacía y `Eyebrow` no era
+aceptar un `id`, que la lista de contacto necesita para su `aria-labelledby`
+—no es navegación, así que no tiene `<nav>` de donde sacar el nombre—. `Eyebrow`
+lo aprende, y con eso se retira la primitiva que reemplaza, que es el otro ítem
+del pre-flight.
+
+### El filete del footer entra al `wrap`
+
+Era el único `Hairline` del sitio fuera de su caja de contenido. Los tres
+lienzos lo ponen adentro, `#como-funciona` y `#puntos` también; acá iba a
+sangre, con lo cual su tick ámbar —los 40 px que marcan dónde empieza el
+contenido— colgaba en **x = 0**, contra el borde crudo del viewport, mientras
+todo lo demás de la página arranca a 40.
+
+Y ya no tiene que separar nada. Ésa era su función cuando el cierre era una
+banda a sangre pegada al footer, que es el D10, y la §3 terdecies lo resolvió
+con geometría: 176 px de página y las esquinas de la card. Lo que queda es lo
+que el filete es en todas las otras piezas — **la línea con la que un bloque
+abre**.
+
+Se miró el costo en oscuro, que es donde el footer y la página son el mismo
+`ink-950` y la línea es lo único que los separa: con el filete metido, a 1440
+cubre 1100 px de los 1440, igual que cualquier otro filete de la página al mismo
+ancho. Mirado, el ojo lo lee como un bloque que abre, no como una línea flotando.
+
+### Y los dos últimos valores a mano del pie
+
+- **`bone-300/80`** en la línea de HQ: un sexto valor de tinta puesto a mano,
+  justo al lado de "Hecho en Tandil.", que es el mismo tipo de dato a la misma
+  escala y va en `bone-300` pleno. Dos grises distintos sin nada que los
+  distinga. **7,49:1 → 11,20:1.** Es el mismo arreglo de la §3 terdecies.
+- **El `text-xs` del copyright**, que era el último de la home.
+
+### Lo que se decidió NO hacer
+
+- **Centrar la píldora del nav.** Con `justify-between` su centro cae 33 px a la
+  izquierda del centro del `wrap`, porque el lockup (96) pesa menos que el CTA
+  (181). Centrarla exacto la correría a la derecha ópticamente, y el desbalance
+  actual compensa justamente esa diferencia de peso. No hay número que lo decida
+  y mirado está bien.
+- **Igualar la píldora del CTA a los 50 px de la de links.** Pide un
+  `min-h-[3.125rem]`, o sea un valor arbitrario, contra 2 px que no se ven.
+- **Recomponer la grilla 4 / 2 / 3 / 3 del footer.** Es asimétrica, no repite
+  ninguna composición de la página, y desde la §3 terdecies el trabajo del
+  footer es ser el piso: plano y callado.
+
+## 3 septendecies. El pre-flight, corrido de punta a punta
+
+Fase C, el 22 de septiembre de 2026, con las tres piezas anteriores adentro.
+Hasta acá el contrato se había verificado **por sección**, y eso deja afuera
+justo los ítems que sólo se ven mirando el sitio entero. Ésta es la pasada
+completa, y encontró dos cosas.
+
+### Lo que encontró: el hero se recortaba en silencio
+
+En la banda de abajo del hero, los dos CTA piden **434 px** —232 + 12 de hueco
++ 190— y la celda que los contiene no siempre los tiene:
+
+| Ancho | Celda | Sobra / falta |
+|---|---|---|
+| 768 px | 288 px | **−146** |
+| 900 px | 354 px | **−80** |
+| 1024 px | 416 px | **−18** |
+| 1060 px | 434 px | 0 — entran exactos |
+| 1180 px | 494 px | +60 |
+
+Y como el botón lleva `whitespace-nowrap` por encima de `sm`, el segundo no
+puede encogerse: se salía de su celda y el `overflow-hidden` del lienzo le
+cortaba **106 px** a 768. O sea que "Tengo un local" aparecía **partido al
+medio**, en el cuadro más visible del sitio, en todo el rango de 768 a 1059 px.
+
+Es literalmente el último ítem del pre-flight —*"ningún texto ni botón se sale
+de su contenedor en el rango de anchos donde hay dos columnas"*— y no lo había
+visto nadie porque cada sección se había verificado sola, y la del hero se
+verificó cuando todavía partía en `md` como todas.
+
+**La causa es una afirmación que era falsa.** La §3 quaterdecies escribió que la
+home queda con *"una sola regla de partición: dos columnas de 1024 para
+arriba"*, y contó las tres secciones que tienen dos columnas en el cuerpo. Se
+olvidó de dos: la banda del hero y `#faq`. Las dos partían en `md`, y las dos
+son las que el pre-flight encontró rotas. Con esta pasada y la §3 quindecies, la
+frase pasa a ser cierta.
+
+El arreglo son dos movimientos y el segundo importa:
+
+1. **La banda parte en `lg`.** Entre 768 y 1023 se apila y los dos CTA entran
+   cómodos en los 608 px del lienzo.
+2. **La fila de botones lleva `flex-wrap`.** Cubre los 36 px que la partición
+   sola no: entre 1024 y 1059 la celda sigue quedando corta, y ahí el segundo
+   botón baja a su propio renglón en vez de recortarse. Es el mismo principio
+   que la §3 terdecies le aplicó al **rótulo** de un botón, ahora aplicado a la
+   **fila**: lo que no entra envuelve, no se desborda.
+
+### Lo que encontró: un color huérfano en el manifiesto
+
+`app/manifest.ts` declaraba `background_color: "#FBF9F5"`, un crema **cálido**
+que no es ningún token del sitio — `cream-50` es `#FBFCFD`, con R−B = −2—. Es el
+fondo del splash de la PWA instalada, o sea lo que se ve el cuadro anterior al
+primer pintado de la página, y estaba en un color de una paleta anterior. Pasa a
+`cream-50`. El `theme_color` del mismo archivo ya era el canónico.
+
+**Y de paso queda escrita la lista completa de excepciones inherentes**, porque
+el contrato nombraba una sola. Son las piezas que no ven el `@theme` porque no
+son CSS:
+
+| Pieza | Por qué |
+|---|---|
+| `app/og/` y `opengraph-image.tsx` | `ImageResponse` renderiza fuera del navegador |
+| `app/manifest.ts` | Un manifiesto de PWA es JSON |
+| `viewport.themeColor` en `app/layout.tsx` | Metadato del navegador, no una regla |
+| `lib/emails.ts` | HTML de correo: los clientes no cargan hojas de estilo |
+
+En las cuatro primeras cada hex es un token del manual escrito literal. En
+`lib/emails.ts` hay uno que no —un `#333` de cuerpo de texto— y queda anotado en
+`PENDIENTES.md`: un correo se verifica en clientes de correo, no acá, y arreglarlo
+de costado en el paso de otra cosa es justo lo que este repo no hace.
+
+### Lo que la pasada verificó y estaba bien
+
+Medido sobre el DOM ya pintado, en la home y en `/soporte`, `/lista-espera`,
+`/legal/privacidad`, `/descargar` e `/invite/…`; en claro y en oscuro; a 320,
+390, 640, 768, 1024, 1060, 1180 y 1440.
+
+| Ítem del contrato | Resultado |
+|---|---|
+| Contraste contra el fondo real | **416 nodos de texto** con su fondo compuesto capa por capa. **Ninguno falla.** |
+| Nada se sale de su contenedor | Limpio en los ocho anchos, después del hero. Sin scroll horizontal en ninguno |
+| Ninguna superficie con sombra **y** borde | Cero |
+| Ningún campo ni píldora con sombra | Cero |
+| Radios | Sólo `12 · 16 · 24 · 50` y `rounded-full`. Ningún arbitrario |
+| Radios concéntricos donde hay anidado | Cinco pares en la home, seis en `/lista-espera`. Todos exactos o bajo la *Divergencia 8* |
+| Una etiqueta por intención | Queda **un** `text-[0.8125rem]` en todo el repo: el de `Eyebrow` |
+| `focus-visible` en todo lo enfocable | 36 elementos, ninguno sin anillo |
+| Sin regresiones de teclado | Ningún `tabindex` positivo; el orden de foco es el del DOM |
+| Slugs, anclas y labels de nav | Las ocho anclas presentes, los cuatro labels intactos |
+| Esquema de encabezados | Un solo `h1`; `h1 → h2 → h3` sin saltos ni secciones falsas |
+| Las capturas | Ninguna `<Image>` fuera de `Captura`; ningún `priority`, `eager` ni `preload`; `public/` sin capturas |
+
+**Tres falsos positivos, verificados uno por uno**, que conviene dejar escritos
+para que el próximo barrido no los vuelva a levantar: los dos radios `sr-only`
+de `AudienceSwitch` (el anillo lo dibuja un hermano con `peer-focus-visible`),
+el honeypot de `WaitlistForm` (`tabindex="-1"` en una caja de 0 × 0) y el input
+espejo de `ReferralCode`, que existe para `execCommand('copy')`. Y un cuarto: el
+link dentro de un `<details>` cerrado aparece en la lista estática de enfocables
+porque el navegador le conserva la caja, pero **no recibe foco** — comprobado
+tabulando de verdad desde el último `summary`, que salta directo a `#cierre`.
+
+### Lo que la pasada NO puede afirmar, y hay que decirlo
+
+**El barrido de contraste no ve los degradés.** Compone el fondo real subiendo
+por los ancestros, y los cuatro degradés del sitio —`lavado`, `fade-y`,
+`destello` y `calor`— viven a propósito en capas **hermanas**, detrás del
+contenido. O sea que el barrido mide el texto contra la superficie plana de
+abajo y el degradé no entra en la cuenta. No es un agujero nuevo: cada uno de
+los cuatro está medido aparte, sobre el píxel finalmente pintado, en la §3 ter,
+la §3 sexies y la §3 undecies, y de esas mediciones salieron las reglas de
+colocación que hoy viven junto a los tokens. Lo que hay que saber es que **el
+barrido no las reemplaza**.
+
+### `prefers-reduced-motion`: cumple de más, no de menos
+
+El contrato pide que *"deje todo en fundidos"*. Lo que el sitio hace es más
+fuerte: el bloque global de `globals.css` lleva toda animación y toda transición
+a 0,01 ms, o sea **corte seco**, y la utilidad `reveal` cuelga entera de
+`no-preference`, así que con *Reducir movimiento* no hace nada — ni siquiera su
+estado inicial—. Verificado leyendo el CSS, que acá es determinista: no hay un
+solo elemento cuyo estado visible dependa de que una animación corra.
+
+O sea que nada queda invisible y nada se mueve, que es lo que la regla protege.
+Pero **la letra no se cumple**: un fundido es una transición de opacidad, y el
+bloque global también la mata, así que los hovers de color cortan en vez de
+fundirse. Cambiarlo es tocar la regla global de todo el sitio, no una sección, y
+tiene un caso concreto asociado que lo hace una decisión y no un ajuste: queda
+en `PENDIENTES.md`.
+
+### Lo que se decidió NO hacer
+
+- **Cambiar el bloque global de `prefers-reduced-motion`.** Es lo de arriba: una
+  decisión de todo el sitio, con un caso testigo que hay que resolver junto con
+  ella. No se arregla de costado en la pasada de verificación.
+- **Tocar `lib/emails.ts`.** Su `#333` es real, pero un correo se verifica en
+  clientes de correo.
+- **Cambiar la banda 5 | 6 del hero** para que los dos CTA entraran a 1024. La
+  §3 terdecies eligió esa asimetría a propósito —*"el hero es una voz hablándole
+  a dos personas"*— y el `flex-wrap` resuelve los 36 px sin tocarla.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol

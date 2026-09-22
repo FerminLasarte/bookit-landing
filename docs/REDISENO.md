@@ -223,9 +223,9 @@ de `app/og/` quedan como están: `ImageResponse` no ve el `@theme`. Queda un sol
 `HowItWorks`, que se van con él en la Fase C.
 
 **Fase C · Secciones,** sobre las primitivas ya nuevas: ~~`#como-funciona`~~ →
-~~hero~~ → ~~`#publico`~~ → ~~`#cierre`~~ → ~~`Rewards`~~ → `#faq` → `Nav`
-(composición, ya arreglado su contraste en B) y
-[`Footer`](../components/Footer.tsx).
+~~hero~~ → ~~`#publico`~~ → ~~`#cierre`~~ → ~~`Rewards`~~ → ~~`#faq`~~ →
+~~`Nav`~~ (composición, ya arreglado su contraste en B) y ~~`Footer`~~.
+**Cerrada el 22/9/2026**, con la pasada completa del pre-flight de más abajo.
 `#como-funciona` primero porque es la que más cambia: se saca el carrusel y el
 teléfono dibujado, y entran las capturas. Después `#cierre`, que con el hero son
 los dos lienzos y fijan el techo del lenguaje.
@@ -263,6 +263,40 @@ los dos lienzos y fijan el techo del lenguaje.
 > del esquema del documento. Y con sus filas partiendo en `lg`, la home queda
 > con **una sola regla de partición: dos columnas de 1024 para arriba**.
 
+> **`#faq` hecho el 22/9/2026**, en `DECISIONES.md` §3 quindecies. Es la
+> sección que menos cambia de toda la fase: se conservan el acordeón `<details>`
+> nativo y la composición —título anclado al costado contra un cuerpo largo, la
+> única así de la home ahora que ninguna se repite—. Lo que cambia es que parte
+> en `lg` y no en `md`, y está medido: a 768 px la columna del título deja 208 px
+> y la palabra más larga del titular mide 209, o sea margen cero, y lo que se
+> come es el canalón de la columna vacía sin que nada lo avise. Salen además los
+> ocho `+` ámbar —la cuenta de la §3 octies otra vez, en una sección cuyo único
+> acento legítimo es el link de la última respuesta— y el anillo de foco del
+> `summary`, que era la única esquina a 0 del sitio.
+
+> **`Nav` y `Footer` hechos el 22/9/2026**, en `DECISIONES.md` §3 sedecies. Van
+> juntos porque son la misma pieza vista de los dos lados, y en los dos el
+> trabajo de fondo ya estaba hecho: el D1 cerró en la Fase B y el D10 en la
+> §3 terdecies. La barra de escritorio pasa a aparecer en `lg`, porque entre 768
+> y 1023 px la píldora de links tiene 366 px y mide 424, y el navegador la
+> encoge hasta partir dos rótulos en dos renglones. Ahí se destapó un defecto
+> anterior a todo esto: el menú a pantalla completa estaba mal en **cualquier**
+> teléfono, porque `margin-inline: auto` sobre un ítem de flex lo vuelve
+> `fit-content` — a 390 px sus dos filas medían 180 y 280. El CTA del header
+> deja de ser lo más chico de la barra, el rótulo de columna del footer deja de
+> ser la segunda etiqueta del sitio y pasa a `Eyebrow`, y el filete del footer
+> entra al `wrap`, que era el único del sitio fuera de su caja de contenido.
+
+> **El pre-flight completo, el 22/9/2026**, en `DECISIONES.md` §3 septendecies.
+> Hasta ahí el contrato se había verificado por sección, que deja afuera justo
+> los ítems que sólo se ven mirando el sitio entero. Encontró dos cosas: los dos
+> CTA del hero, que piden 434 px y tenían 288 a 768 —el segundo se salía y el
+> `overflow-hidden` del lienzo le cortaba 106 px, en todo el rango de 768 a
+> 1059—, y un crema huérfano en el manifiesto de la PWA. Y dejó escrito que la
+> §3 quaterdecies afirmaba algo falso: la home **no** tenía una sola regla de
+> partición, porque la banda del hero y `#faq` seguían en `md`. Con las dos
+> movidas, ahora sí.
+
 > **`#cierre` hecho el 22/9/2026**, en `DECISIONES.md` §3 terdecies. Cierra la
 > última pregunta abierta de la §3 nonies: **los lienzos de marca pasan a ser
 > objetos con esquinas dentro del `wrap`**, los tres. De ahí sale una gramática
@@ -291,31 +325,45 @@ están en el historial.
 
 ## Pre-flight del proyecto
 
-El de la skill, filtrado por el manual. Antes de cerrar cualquier rama:
+El de la skill, filtrado por el manual. Antes de cerrar cualquier rama.
 
-- [ ] Ningún hex ni `rgba()` suelto fuera de `@theme`.
-- [ ] Claro y oscuro, los dos mirados. El oscuro no es el claro invertido.
-- [ ] Contraste medido contra el fondo **real**: 4,5:1 texto · 3:1 texto grande,
+> **Corrido de punta a punta el 22/9/2026**, sobre la página terminada y sobre
+> las otras cinco rutas, en claro y en oscuro, a 320 · 390 · 640 · 768 · 1024 ·
+> 1060 · 1180 · 1440. Las marcas de abajo son el resultado de esa pasada, con
+> sus dos hallazgos y su salvedad anotados en `DECISIONES.md` §3 septendecies.
+> Cada rama nueva vuelve a correrlo.
+
+- [x] Ningún hex ni `rgba()` suelto fuera de `@theme`. Las excepciones son
+      **inherentes** y son cinco, porque ninguna de esas piezas es CSS:
+      `app/og/` y `opengraph-image.tsx` (los renderiza `ImageResponse`),
+      `app/manifest.ts` (es JSON), el `themeColor` de `app/layout.tsx` (es un
+      metadato) y `lib/emails.ts` (los clientes de correo no cargan hojas de
+      estilo). En las cuatro primeras cada hex es un token del manual escrito
+      literal; el `#333` de `lib/emails.ts` queda en `PENDIENTES.md`.
+- [x] Claro y oscuro, los dos mirados. El oscuro no es el claro invertido.
+- [x] Contraste medido contra el fondo **real**: 4,5:1 texto · 3:1 texto grande,
       íconos y bordes. Cada CTA y cada campo, uno por uno.
-- [ ] Ningún texto de botón envuelve a dos líneas en desktop — y ninguno se
+- [x] Ningún texto de botón envuelve a dos líneas en desktop — y ninguno se
       **desborda** de su píldora en un teléfono, que es el defecto opuesto y el
       que de verdad aparece: el CTA más largo del sitio pide 321 px y una mitad
       de card a 390 px deja 278. Envolver ahí es lo correcto.
-- [ ] Una etiqueta por intención en toda la página.
-- [ ] Ninguna superficie con sombra y borde a la vez. Ningún campo ni píldora
+- [x] Una etiqueta por intención en toda la página.
+- [x] Ninguna superficie con sombra y borde a la vez. Ningún campo ni píldora
       con sombra.
-- [ ] Radios concéntricos donde hay anidado.
-- [ ] `prefers-reduced-motion` deja todo en fundidos.
-- [ ] `focus-visible` en todo lo enfocable, sin regresiones de teclado.
-- [ ] Ninguna primitiva nueva sin retirar la que reemplaza.
-- [ ] Slugs, anclas, labels de nav y nombres de campo, intactos.
-- [ ] Ninguna captura de la app deja ver un color de **interfaz** que la web no
+- [x] Radios concéntricos donde hay anidado.
+- [~] `prefers-reduced-motion`: el sitio cumple de más, no de menos — corta
+      seco en vez de fundir, y nada queda invisible. La letra de la regla no se
+      cumple y es una decisión de todo el sitio: `PENDIENTES.md`.
+- [x] `focus-visible` en todo lo enfocable, sin regresiones de teclado.
+- [x] Ninguna primitiva nueva sin retirar la que reemplaza.
+- [x] Slugs, anclas, labels de nav y nombres de campo, intactos.
+- [x] Ninguna captura de la app deja ver un color de **interfaz** que la web no
       tenga tokenizado. La fotografía de un local es contenido, no paleta; lo
       que se mira es el color de UI. La barra de estado se recorta siempre: su
       batería es `#34C759` y está en las 30.
-- [ ] Cada captura va por `Captura` y baja una sola: con `<picture>` si la
+- [x] Cada captura va por `Captura` y baja una sola: con `<picture>` si la
       superficie de abajo cambia con el tema, con `onDark` si está fija en
       oscuro. Ninguna lleva `preload` ni `loading="eager"`: eso bajaría las dos.
-- [ ] Ningún texto ni botón se sale de su contenedor en el rango de anchos donde
+- [x] Ningún texto ni botón se sale de su contenedor en el rango de anchos donde
       hay dos columnas. El CTA más largo del sitio mide 321 px, y una partición
       que deje la columna por debajo de eso lo recorta en silencio.

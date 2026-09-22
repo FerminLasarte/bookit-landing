@@ -105,16 +105,44 @@ export default function Home() {
               de proporciones. El orden de lectura se conserva —bajada, después
               la aclaración y el botón—, porque leer una fila es de izquierda a
               derecha.
+
+              LA BANDA PARTE EN `lg`, Y ES UN ARREGLO, NO UN AJUSTE DE AIRE.
+              Partía en `md`, y ahí la celda de los CTA deja 288 px para dos
+              botones que juntos piden 434 —232 + 12 de hueco + 190—. Con el
+              `whitespace-nowrap` que el botón lleva por encima de `sm`, el
+              segundo no puede encogerse: se salía 146 px de su celda y el
+              `overflow-hidden` del lienzo le cortaba 106. O sea que "Tengo un
+              local" aparecía partido al medio, en el cuadro más visible del
+              sitio, en todo el rango de 768 a 1059 px. Es exactamente el ítem
+              del pre-flight que dice que ningún texto se sale de su contenedor
+              donde hay dos columnas, y lo destapó la pasada completa: hasta
+              ahora el contrato se había verificado por sección, y la banda del
+              hero es la única que se había quedado en `md` cuando `#publico`,
+              `#cierre` y `#puntos` bajaron a `lg`.
+
+              Con esto la §3 quaterdecies pasa a ser cierta: la home queda con
+              UNA sola regla de partición, dos columnas de 1024 para arriba.
+              Entre 768 y 1023 la banda se apila y los dos CTA entran cómodos
+              en los 608 px del lienzo.
+
+              Y la fila de botones lleva `flex-wrap`, que cubre lo que la
+              partición sola no: a 1024 la celda deja 416 px contra los 434 que
+              los dos piden, y el cruce cae exacto en 1060, donde la celda mide
+              434. En esos 36 px el segundo baja a su propio renglón en vez de
+              recortarse. Es el
+              mismo principio que la §3 terdecies le aplicó al rótulo de un
+              botón — lo que no entra envuelve, no se desborda—, ahora para la
+              fila.
             */}
-            <div className="mt-8 md:grid md:grid-cols-12 md:gap-8 [@media(max-height:820px)]:mt-7">
+            <div className="mt-8 lg:grid lg:grid-cols-12 lg:gap-8 [@media(max-height:820px)]:mt-7">
               {/* Medida propia: `measure` (64ch) dejaba renglones de 91 caracteres acá. */}
-              <p className="text-bone-300 md:col-span-5">
+              <p className="text-bone-300 lg:col-span-5">
                 Barberías, peluquerías, uñas, depilación y estética de Tandil en una sola app.
                 Reservá cuando se te ocurra, sin cadenas de WhatsApp ni llamados en horario de
                 trabajo.
               </p>
 
-              <div className="mt-8 md:col-span-6 md:col-start-7 md:mt-0">
+              <div className="mt-8 lg:col-span-6 lg:col-start-7 lg:mt-0">
                 {/*
                   La aclaración va ANTES del botón. Debajo, el orden de lectura era
                   ilusión → clic → decepción; acá encuadra la decisión en vez de
@@ -133,7 +161,7 @@ export default function Home() {
                   aparecía hasta dos secciones más abajo, con riesgo de cerrar la
                   pestaña antes. Un solo ámbar: el CTA que de verdad funciona.
                 */}
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   <Button
                     text="Sumate a la lista VIP"
                     href="/lista-espera?tipo=cliente"
