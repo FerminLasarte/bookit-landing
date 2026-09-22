@@ -3,7 +3,7 @@
 Complemento de `LANDING_BRIEF.md`. Acá queda registrado **en qué me aparté del brief y por qué**,
 y qué supuestos tomé sobre las decisiones pendientes de la §11.
 
-Última actualización: 21 de septiembre de 2026
+Última actualización: 22 de septiembre de 2026
 
 ---
 
@@ -116,6 +116,80 @@ secciones con bordes en vez de con rellenos.
 
 Si alguna vez se retoma, es una decisión de marca y necesita a una persona, no
 un cambio de implementación.
+
+## 3 ter. El lavado cálido: un degradé con regla, no una superficie
+
+Hermana de la anterior. La §3 bis documenta el dispositivo de composición que
+le falta al modo **oscuro**; esto documenta el que le faltaba al **claro**, y
+que la auditoría v3 nombró como su hallazgo central: en claro la web no tenía
+ni una superficie cálida, así que el oscuro se leía como Bookit y el claro como
+un sitio gris con acentos ámbar.
+
+**El dispositivo de la app no es una superficie, es un degradé.** Medido pixel a
+pixel sobre `Capturas Web/{claro,oscuro}`: nace en la esquina superior
+izquierda, con pico `#F1D9B7` en claro y `#604117` en oscuro, llega a la
+superficie base a 393 pt sobre el borde izquierdo y conserva un tercio de su
+fuerza al llegar al otro extremo del borde superior. Los `#EFE1CD` → `#F0E1CB`
+que anotó la auditoría son un punto intermedio de esa rampa, no su pico.
+
+**Y como superficie plana no entra a ninguna intensidad.** No existe un valor
+cálido que sostenga `ink-500` a 4,5:1 y además se vea: el cruce cae en R−B =
++8, que ya no se distingue del papel. Esto no era una hipótesis, ya estaba
+descubierto en el repo sin figurar en ningún documento — `amber-50` da
+**4,50:1** con `ink-500`, justo sobre la línea de AA, y `bg-amber-50` en claro
+se sacó **tres veces**, con el motivo documentado cada vez en `LegalDoc`,
+`ReferralCode` y `HowItWorks`. El comentario del token lo llamaba "wash de
+sección" y no lo era.
+
+**Lo que se hizo, el 22 de septiembre de 2026:** entra como lo que la app
+realmente hace —detrás de los encabezados—. Dos tokens de pico
+(`--color-lavado-calido`, `--color-lavado-profundo`) y una utilidad `lavado`
+que los pinta, con la geometría derivada de las capturas y la regla de
+colocación escrita adentro:
+
+- Sobre la parte fuerte van `ink-900` y los pasos de display, que ahí dan
+  **10,73:1**.
+- **No** van la bajada en `ink-500` (3,53:1) ni un eyebrow `amber-700` a tamaño
+  de lectura (3,56:1 contra los 4,5:1 que pide).
+- El texto chico va sobre una card de `paper`, donde `ink-500` vuelve a 4,71:1,
+  o más abajo, donde el lavado ya se apagó.
+- La perilla por sección es `--lavado-y`, o sea el **alcance**, nunca la
+  opacidad: un solo cálido con varios alcances es lo que evita terminar con
+  seis lavados parecidos.
+
+Van los dos temas. El oscuro casi no restringe —`bone-300` da 5,60:1— y el
+claro sí: otra vez, el oscuro no es el claro invertido. El par oscuro se
+incluyó igual para que el día que una sección lo necesite el valor esté en el
+`@theme` y no se escriba a mano en un componente.
+
+**Lo que se decidió NO hacer:** exponerlo como un color de fondo. Si alguien
+"arregla" esto pintándolo con `bg-lavado-calido`, `ink-500` vuelve a fallar AA
+por cuarta vez. El token es el pico de un degradé, no una superficie.
+
+**Consecuencia abierta para la Fase B:** sobre el lavado, el eyebrow
+`amber-700` da 3,56:1 — peor que los 4,38:1 que ya tenía sobre `cream-100`
+(D2 de la auditoría). D2 hay que resolverlo antes de que alguna sección ponga
+un eyebrow sobre lavado.
+
+## 3 quater. El piso de `display-2xl` lo fija el titular, no la cifra
+
+La Fase B0 también sacó del componente los `clamp()` de display que `Rewards` y
+`Audiences` escribían a mano (D8). `display-sm` salió idéntico al valor que ya
+estaba escrito, pero `display-2xl` tuvo que elegir entre dos usos que piden
+pisos distintos, y conviene que quede anotado por qué perdió uno.
+
+La cifra de Puntos usaba `clamp(4.5rem, 11vw, 8.5rem)`: un piso de 72px
+calibrado para tres dígitos ("500"). Ese mismo piso aplicado a un **titular**
+—que es para lo que el contrato habilita el paso por encima de `display-xl`—
+hace que una frase corta a 72px en un viewport de 375px envuelva a cuatro
+líneas. El token quedó con piso de 3,75rem.
+
+**Consecuencia:** la cifra pasa de 72px a 60px en móvil —sigue siendo casi el
+doble que el título de su sección— y en desktop queda idéntica.
+
+**Lo que se decidió NO hacer:** agregar un tercer token sólo para cifras. B0
+existe para que la escala esté escrita en un lugar, no para sumar nombres, y
+`Rewards` se recompone completa en la Fase C.
 
 ## 4. Lo que queda pendiente de una persona, no de código
 
