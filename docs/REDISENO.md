@@ -7,6 +7,10 @@ este archivo, la skill vuelve a inferirlos en cada sesión y la landing zigzague
 > **Autoridad.** Manda [`MARCA.md`](MARCA.md). Este archivo sólo decide en la
 > capa que el manual no cubre, y declara qué reglas de la skill quedan pisadas.
 > Si algo de acá contradice el manual, gana el manual y se corrige acá.
+>
+> Lo que se ve mientras se trabaja y se deja afuera a propósito se anota en
+> [`PENDIENTES.md`](PENDIENTES.md), que no decide nada: es el registro para que
+> no dependa de que alguien se acuerde.
 
 ## Design read
 
