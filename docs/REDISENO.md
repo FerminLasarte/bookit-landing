@@ -95,10 +95,38 @@ Permisos explícitos, para no tener que pedirlos de nuevo en cada sesión:
   sección. La card se usa cuando la elevación dice algo; si no, agrupa el aire.
 - Que dos secciones contiguas tengan densidades distintas a propósito.
 - Más de dos lienzos `marcaProfunda`, si el ritmo lo pide.
-- **Imágenes.** Las 15 capturas de la app (`Capturas Web/{claro,oscuro}`, los dos
-  temas) son material aprobado. Van optimizadas por `next/image`, con el tema que
-  corresponda, y ninguna se recorta de modo que quede dentro un color sin
-  tokenizar — hoy, el `#3B82F6` del estado "Confirmado".
+- **Imágenes.** Las 15 capturas de la app, en los dos temas, son material
+  aprobado. **Ya están en el repo**, en `public/capturas/{claro,oscuro}/`, con
+  el mismo nombre de archivo que el original. Van por `next/image`, con el tema
+  que corresponda, y ninguna se recorta de modo que quede dentro un color sin
+  tokenizar.
+
+  Ese color existe y está localizado: el `#3B82F6` del estado "Confirmado"
+  aparece **sólo en `10_comercio_agenda_dia`**, en los dos temas, 12.580 px
+  entre las filas y=855 e y=2209 de 2622. O se tokeniza documentándolo —la lista
+  de excepciones del manual está cerrada— o el encuadre lo deja afuera.
+
+  **Están en WebP sin pérdida, y eso es una decisión, no un default.** Pesan 15 MB
+  contra los 29 MB de los PNG; con `near_lossless` bajaban a 10 MB, pero ahí el
+  desvío llega a 2 unidades por canal y eso mueve una razón de contraste medida
+  hasta **0,22** — este repo decidió cosas con márgenes de 0,01, y un asset que
+  no se puede medir es una trampa. Sin pérdida son idénticas píxel a píxel a los
+  PNG (verificado, las 30, desvío 0), así que son la fuente: de ellas salió el
+  lavado cálido y de ellas sale lo que haga falta remedir. Los bytes que baja el
+  visitante no dependen de esto, porque `next/image` re-codifica.
+
+  Los originales siguen en `~/Documents/Data Apps/Bookit/Capturas Web/`, fuera
+  del repo. Para resincronizar:
+
+  ```
+  cwebp -lossless -z 9 -metadata none <origen>.png -o public/capturas/<tema>/<nombre>.webp
+  ```
+
+  Las 30 miden 1206 × 2622 (iPhone @3x). Están en `public/`, o sea que se
+  referencian por URL y hay que pasarle `width` y `height` a `next/image` — son
+  los mismos para todas. Si en la Fase C conviene el `import` estático (alto y
+  ancho automáticos, `placeholder="blur"`, hash de contenido), hay que moverlas
+  fuera de `public/`; es un `git mv` y una decisión de esa fase.
 - **Un lavado cálido de superficie en claro**, derivado del que la app ya usa
   detrás de sus encabezados. Es la única forma de que el modo claro se lea como
   Bookit; ver la auditoría.
