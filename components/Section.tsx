@@ -44,32 +44,61 @@ const toneClasses: Record<Tone, string> = {
    */
   tint: "bg-cream-100 dark:bg-ink-850",
   /*
-   * El lienzo de marca: `marcaProfunda`, el mismo en los dos temas. Es el
-   * dispositivo que `docs/MARCA.md` describe en "Piezas fuera de la app", y la
-   * página lo usa en el hero y en el cierre. Vive acá y no suelto en cada
-   * sección porque ya iba por la tercera copia.
+   * El lienzo no se pinta acá: es un OBJETO, no una capa. Ver `LIENZO` abajo.
+   * Queda vacío para que la tabla siga teniendo los tres tonos y nadie busque
+   * el lienzo entre las capas de fondo.
    */
-  /*
-   * En oscuro lleva además un filo arriba y abajo. Todo el rango de superficies
-   * oscuras del manual vive entre `marca-profunda` (#140E03) e `ink-800`
-   * (#24211E): 1,2:1 de punta a punta. Dentro de ese rango, ningún relleno
-   * separa un lienzo de la página —el par real da 1,036:1— y bajar el lienzo
-   * en oscuro violaría el manual, que fija que `marcaProfunda` no cambia con
-   * el tema. El borde no toca ningún color canónico y rinde 1,24:1 al 10%, más
-   * que cualquier escalón de relleno disponible (el mejor es `ink-800` sobre
-   * `ink-950`, 1,157:1). §3 bis lo había puesto al 12% (1,32:1); el 10% es el
-   * valor del manual y sigue cumpliendo el criterio con el que se eligió, así
-   * que D4 cierra sin excepciones. En claro no hace falta: ahí el par da 17:1.
-   */
-  canvas: "bg-marca-profunda dark:border-y dark:border-white/10",
+  canvas: "",
 };
+
+/**
+ * EL LIENZO DE MARCA ES UN OBJETO CON ESQUINAS, NO UNA BANDA A SANGRE.
+ *
+ * Es la respuesta a la pregunta que la §3 nonies dejó abierta — "si el hero es
+ * una card con esquinas, `#puntos` y `#cierre` tienen que decidir si
+ * acompañan"— y es que sí. Con esto la página queda con una gramática de dos
+ * palabras, y las dos se pueden enunciar:
+ *
+ *   El color que SE DISUELVE es un campo: va a sangre y entra y sale con
+ *   `fade-y`. En la página eso es el tinte de sección.
+ *
+ *   El color que CORTA es un objeto: vive dentro del `wrap`, tiene esquinas y
+ *   se apoya sobre la página. En la página eso son los tres `marca-profunda`.
+ *
+ * Y resuelve de paso el D10 de la auditoría —"el final de la página es un solo
+ * bloque oscuro"—, que no era un problema de color sino de geometría: `#cierre`
+ * y el footer daban 1,03:1 y eran dos bandas a sangre pegadas. Con el cierre
+ * hecho objeto, el footer pasa a ser el piso sobre el que se apoya, y lo que
+ * los separa deja de ser un filete: son los márgenes laterales de la card.
+ *
+ * El filo sólo en oscuro. Todo el rango de superficies oscuras del manual vive
+ * entre `marca-profunda` (#140E03) e `ink-800` (#24211E): 1,2:1 de punta a
+ * punta, y contra `ink-950` el lienzo da **1,036:1**. Dentro de ese rango
+ * ningún relleno lo separa de la página, y bajarlo violaría el manual, que fija
+ * que `marcaProfunda` no cambia con el tema. El borde al 10% compone 1,236:1
+ * contra `ink-950`, más que el mejor escalón de relleno disponible (`ink-800`
+ * sobre `ink-950`, 1,157:1). En claro no hace falta: ahí el par da **18,69:1**.
+ *
+ * El padding es el del hero, que es el otro lienzo de la página y no pasa por
+ * acá porque tiene su propio alto de pantalla. Los tres miden lo mismo por
+ * dentro.
+ */
+const LIENZO =
+  "relative isolate overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/10";
 
 /**
  * Envoltorio de sección: aplica el ritmo vertical y el container.
  *
- * El color va en una capa aparte, detrás del contenido, con `fade-y`: el fondo
- * entra y sale con un degradé en vez de cortar con una línea recta. Por eso el
- * color no puede ir en el `<section>` — la máscara se heredaría al texto.
+ * DOS FORMAS, y el `tone` elige. El **tinte** es un campo: va a sangre, en una
+ * capa aparte detrás del contenido, y entra y sale con `fade-y` en vez de
+ * cortar con una línea recta — por eso el color no puede ir en el `<section>`,
+ * la máscara se heredaría al texto. El **lienzo** es un objeto: vive dentro del
+ * `wrap`, tiene esquinas y corta neto. Ver `LIENZO` arriba.
+ *
+ * El ritmo vertical significa lo mismo en los dos casos, pero cae en lugares
+ * distintos: en el tinte es el aire entre el borde de la banda y su texto; en
+ * el lienzo es el hueco de página que queda ALREDEDOR de la card, porque el
+ * aire de adentro lo pone la card y es el mismo que el del hero.
  */
 export default function Section({
   id,
@@ -103,18 +132,37 @@ export default function Section({
   className?: string;
   labelledBy?: string;
 }) {
+  /*
+   * `data-canvas` va en la CARD, no en la sección. El nav lo lee para saber si
+   * tiene una superficie oscura detrás del header, y la sección es más alta que
+   * la card: marcarla ahí vestiría el lockup de claro mientras por detrás
+   * todavía hay página. Es lo mismo que hace el hero con su lienzo.
+   */
+  if (tone === "canvas") {
+    return (
+      <section
+        id={id}
+        aria-labelledby={labelledBy}
+        className={cn("relative isolate", rhythmClasses[rhythm], className)}
+      >
+        <div className="wrap">
+          <div data-canvas className={LIENZO}>
+            {children}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       id={id}
-      // El nav lee esto para saber cuándo tiene un lienzo de marca detrás.
-      data-canvas={tone === "canvas" ? "" : undefined}
       aria-labelledby={labelledBy}
       className={cn("relative isolate", rhythmClasses[rhythm], className)}
     >
       {(tone !== "paper" || lavado) && (
         <div
           aria-hidden="true"
-          data-canvas-capa
           className={cn(
             "pointer-events-none absolute inset-0 -z-10",
             // El lavado se apoya sobre el color que la sección ya tenga; en

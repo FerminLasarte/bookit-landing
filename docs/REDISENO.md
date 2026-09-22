@@ -219,8 +219,9 @@ de `app/og/` quedan como están: `ImageResponse` no ve el `@theme`. Queda un sol
 `HowItWorks`, que se van con él en la Fase C.
 
 **Fase C · Secciones,** sobre las primitivas ya nuevas: ~~`#como-funciona`~~ →
-~~hero~~ → ~~`#publico`~~ → `#cierre` → `Rewards` → `#faq` → `Nav` (composición,
-ya arreglado su contraste en B) y [`Footer`](../components/Footer.tsx).
+~~hero~~ → ~~`#publico`~~ → ~~`#cierre`~~ → `Rewards` → `#faq` → `Nav`
+(composición, ya arreglado su contraste en B) y
+[`Footer`](../components/Footer.tsx).
 `#como-funciona` primero porque es la que más cambia: se saca el carrusel y el
 teléfono dibujado, y entran las capturas. Después `#cierre`, que con el hero son
 los dos lienzos y fijan el techo del lenguaje.
@@ -246,6 +247,21 @@ los dos lienzos y fijan el techo del lenguaje.
 > mitad daba 246 px y el CTA del local mide 321 y se salía; y se cerró el
 > último resto del D1, que seguía vivo con las mitades apiladas.
 
+> **`#cierre` hecho el 22/9/2026**, en `DECISIONES.md` §3 terdecies. Cierra la
+> última pregunta abierta de la §3 nonies: **los lienzos de marca pasan a ser
+> objetos con esquinas dentro del `wrap`**, los tres. De ahí sale una gramática
+> de dos palabras para toda la página — el color que se disuelve es un campo y
+> va a sangre (el tinte); el color que corta es un objeto y vive en el `wrap`
+> (los `marca-profunda`)— y de ahí sale también el cierre del **D10**, que no
+> era un problema de color sino de geometría: el rango oscuro del manual mide
+> 1,2:1 de punta a punta y el footer en oscuro es el fondo de la página, así que
+> ningún relleno los separa; una esquina y un margen sí, y en los dos temas.
+> `Section` aprende a pintarlo y `Rewards` cambia de lienzo sin que se le toque
+> el contenido, que tiene su propio paso. Salió además un arreglo de primitiva:
+> el botón deja que un rótulo largo envuelva en un teléfono en vez de salirse de
+> su píldora —321 px contra los 278 que deja una mitad de card a 390 px—, y la
+> banda del cierre se parte en `lg` por el mismo número que la de `#publico`.
+
 > **El hero se adelantó al paso 5**, el 22/9/2026, contra este orden. No por
 > gusto: la card con esquinas del paso 4 le cambió las proporciones y lo dejó
 > mal ejecutado —titular en tres renglones, un tercio del lienzo vacío—, o sea
@@ -265,7 +281,10 @@ El de la skill, filtrado por el manual. Antes de cerrar cualquier rama:
 - [ ] Claro y oscuro, los dos mirados. El oscuro no es el claro invertido.
 - [ ] Contraste medido contra el fondo **real**: 4,5:1 texto · 3:1 texto grande,
       íconos y bordes. Cada CTA y cada campo, uno por uno.
-- [ ] Ningún texto de botón envuelve a dos líneas en desktop.
+- [ ] Ningún texto de botón envuelve a dos líneas en desktop — y ninguno se
+      **desborda** de su píldora en un teléfono, que es el defecto opuesto y el
+      que de verdad aparece: el CTA más largo del sitio pide 321 px y una mitad
+      de card a 390 px deja 278. Envolver ahí es lo correcto.
 - [ ] Una etiqueta por intención en toda la página.
 - [ ] Ninguna superficie con sombra y borde a la vez. Ningún campo ni píldora
       con sombra.

@@ -55,9 +55,22 @@ type Size = "default" | "compact";
  * era el que ya usaban 13 de los 17 llamados. El compacto existe sólo para el
  * nav, que es el único lugar donde el botón convive con links de 15px.
  */
+/*
+ * `min-h`, no `h`, y con padding vertical propio. El alto es el mismo mientras
+ * el rótulo entra en un renglón —60 px de contenido: 24 de texto más 24 de
+ * padding, por debajo del mínimo—, así que en escritorio no cambia nada. Lo que
+ * cambia es que un rótulo que NO entra ya no se sale del botón.
+ *
+ * Está medido y pasaba: "Quiero mi lugar como fundador" pide 321 px (241 de
+ * glifos más los 80 del padding) y a 390 px la mitad local de `Audiences` deja
+ * 278 — el `whitespace-nowrap` dejaba el texto colgando fuera de la píldora, y
+ * ni el padding más apretado lo salva, porque a 375 px la mitad deja 263. El
+ * pre-flight del contrato prohíbe que un rótulo envuelva **en escritorio**; en
+ * un teléfono, envolver es lo correcto y lo otro es un defecto.
+ */
 const sizeClasses: Record<Size, string> = {
-  default: "h-15 px-10 text-base",
-  compact: "h-10 px-6 text-xs",
+  default: "min-h-15 px-10 py-3 text-base",
+  compact: "min-h-10 px-6 py-2 text-xs",
 };
 
 /**
@@ -129,7 +142,16 @@ export default function Button({
   const isExternal = external ?? (!!href && /^(https?:|mailto:|tel:)/.test(href));
 
   const classes = cn(
-    "inline-flex items-center justify-center gap-2.5 rounded-pill font-bold whitespace-nowrap",
+    /*
+     * El rótulo no envuelve, SALVO en un teléfono. Sin el `nowrap` el botón
+     * pasa a poder encogerse dentro de un `flex-row` —medido: los dos CTA del
+     * hero caían a tres renglones a 768 px—, y con él puesto siempre, un
+     * rótulo largo se sale de su propia píldora en una pantalla angosta. La
+     * línea la pone `sm` (640 px), que es donde todas las filas de botones del
+     * sitio ya se apilan: por debajo cada botón tiene el ancho entero de su
+     * columna y envolver es lo correcto.
+     */
+    "inline-flex items-center justify-center gap-2.5 rounded-pill text-center font-bold text-balance whitespace-nowrap max-sm:whitespace-normal",
     // 180ms: "algo chico cambia" en la tabla de Movimiento del manual. Sólo
     // `colors` y `transform`, que son las dos propiedades que no reflowean.
     //

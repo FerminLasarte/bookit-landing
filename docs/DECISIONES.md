@@ -1328,6 +1328,170 @@ de `/lista-espera`, y se fue en el mismo paso que escribió la regla.
   lista y no como acento, y bajarlos a tinta es un cambio de la pieza que este
   paso no tiene que rehacer. Queda anotado, no ejecutado.
 
+## 3 terdecies. El lienzo es un objeto, y con eso cierra el D10
+
+Fase C, el 22 de septiembre de 2026, después de `#publico`. Contesta la última
+pregunta que la §3 nonies dejó abierta —*"si el hero es una card con esquinas,
+`#puntos` y `#cierre` tienen que decidir si acompañan"*— y resulta que esa
+pregunta y el D10 de la auditoría eran la misma.
+
+### La regla, en dos palabras
+
+El hero se volvió una card con esquinas en la §3 septies por un motivo de
+contraste, no de composición: apoyado dentro del `wrap`, el nav deja de cruzar
+un degradé donde ningún color de texto llega a 4,5:1. Quedaba la mitad
+compositiva: los otros dos lienzos seguían a sangre. Acompañan, y con eso la
+página queda con una gramática que se puede enunciar:
+
+- **El color que se disuelve es un campo.** Va a sangre y entra y sale con
+  `fade-y`. En la home eso es el tinte de sección, y sólo eso.
+- **El color que corta es un objeto.** Vive dentro del `wrap`, tiene esquinas y
+  se apoya sobre la página. En la home eso son los tres `marca-profunda`.
+
+Es la lectura que la §3 nonies ya había empezado sin nombrarla, cuando decidió
+que los disolvidos no volvían porque *"el hero ya no es una banda, es un
+objeto"* y *"un degradé de salida en una forma con esquinas redondeadas disuelve
+el borde de abajo y deja los costados duros"*. Lo que faltaba era aplicarla a
+los otros dos.
+
+La pinta [`Section`](../components/Section.tsx) con `tone="canvas"`, que era la
+tercera copia del mismo lienzo escrita a mano. El padding de adentro es el del
+hero, así que los tres miden lo mismo por dentro; el `rhythm` pasa a ser el
+hueco de página que queda **alrededor** de la card.
+
+### El D10 no era de color, era de geometría
+
+La auditoría lo midió así: `#cierre` es `marca-profunda` y el footer es
+`ink-950`, **1,03:1** entre los dos, y en los dos temas las últimas dos
+pantallas eran un bloque continuo separado sólo por el filete del footer. *"La
+composición más importante de la página —donde se decide— no tiene borde."*
+
+Buscarle un arreglo de color no tiene salida, y está medido desde la §3 bis: el
+rango entero de superficies oscuras del manual mide 1,2:1 de punta a punta, y el
+footer en modo oscuro **es** el fondo de la página. No hay par de rellenos que
+separe esas dos piezas.
+
+La geometría sí, y funciona en los dos temas porque una esquina y un margen no
+dependen de la luz:
+
+| | Claro | Oscuro |
+|---|---|---|
+| Lienzo contra la página | **18,69:1** | 1,036:1 — por eso lleva filo |
+| Filo del lienzo al 10 % contra la página | — | **1,236:1**, más que el mejor relleno disponible (`ink-800` sobre `ink-950`, 1,157:1) |
+| Lo que separa el cierre del footer | 176 px de página entre los dos, más los márgenes laterales de la card | los mismos 176 px y los mismos márgenes |
+
+En claro el cierre pasa a ser un objeto negro apoyado sobre papel y el footer
+una banda aparte: el bloque continuo desaparece. En oscuro los tres valores
+siguen siendo oscuros —no hay forma de que no lo sean— pero el cierre ya no es
+una banda pegada al footer sino una card con esquinas, borde y margen a los
+costados, y el footer es el piso sobre el que se apoya. **Lo que los separa dejó
+de ser un filete y pasó a ser una forma.**
+
+### `#cierre`: el contenido toma el lienzo
+
+Con el lienzo hecho objeto vuelve a aplicar, literal, la medición del hero de la
+§3 nonies. El contenido vivía en un `max-w-4xl` centrado dentro de un lienzo a
+sangre de 1440 px: **270 px de negro muerto a cada lado**. Ese ancho era la
+distancia al borde de la *pantalla*, y ya no hay borde de pantalla — el lienzo
+es el margen. El contenido toma la card entera (1020 px por dentro), el titular
+se va a la izquierda y pasa de tres renglones centrados a dos.
+
+**El huérfano sube.** "Todavía no lanzamos. Te avisamos antes que a nadie." era
+la última línea de la página, centrada y sola debajo de las dos columnas. Pasa a
+ser la bajada del titular, a tamaño de cuerpo, y el cierre termina en los dos
+CTA — que es donde tiene que terminar la última decisión de la página.
+
+**Y se va el `text-xs` con la tinta al 80 %.** Las dos líneas de "qué pasa
+después del clic" iban en `text-bone-300/80` a 12 px: un sexto valor de tinta
+puesto a mano para algo que el sitio ya resuelve con un token. Pasan a
+`text-small text-bone-300`, que es exactamente lo que el hero usa para su
+aclaración, y el número sube de **7,68:1** a **11,60:1**. No era una falla de
+contraste; era un valor inventado en el archivo donde hizo falta.
+
+**El parecido con el hero es deliberado.** Son los dos lienzos que enmarcan la
+home, los dos con titular a lo ancho, filete de lado a lado y una banda de a dos
+abajo. Lo que los separa es la simetría, y significa algo: el hero es una voz
+hablándole a dos personas y su banda es 5 | 6; el cierre son dos ofertas que
+tienen que pesar lo mismo, y la suya es 6 | 6. La auditoría castiga una
+composición usada seis veces, no que la apertura y el cierre rimen.
+
+### `#puntos` cambia de lienzo y nada más
+
+[`Rewards`](../components/Rewards.tsx) pasa a `Section` con `tone="canvas"`: se
+va su capa de fondo propia, su `overflow-hidden` y su `data-canvas-capa`. La
+aurora queda recortada por las esquinas de la card, que es lo que la vuelve un
+resplandor dentro de una pieza en vez de una mancha sobre la página.
+
+**Su contenido no se tocó.** En el orden del contrato `Rewards` viene después de
+`#cierre` y tiene su propia lista —la auditoría le marca las tres líneas de
+"01 · 02 · 03" que repiten `#como-funciona` y los dos párrafos de `text-xs` del
+final—. Esto es un cambio de superficie de página, no la recomposición de esa
+sección.
+
+**`data-canvas` se mudó a la card.** El nav lo lee para saber si tiene una
+superficie oscura detrás del header, y la sección es más alta que la card:
+dejarlo en la sección vestiría el lockup de oscuro mientras por detrás todavía
+hay página. Es lo que el hero ya hacía. Verificado en las dos piezas, entrando,
+adentro y saliendo: `ink-900` antes, `bone-100` adentro, `ink-900` al salir.
+
+Y se borró **`data-canvas-capa`**, que no lo leía nadie desde que la §3 septies
+sacó la lectura en vivo de máscaras y alturas de degradé.
+
+### El botón: un rótulo que no entra envuelve, no se desborda
+
+Lo destapó el lienzo del cierre, y estaba desde antes. "Quiero mi lugar como
+fundador" pide **321 px** —241 de glifos más los 80 del padding— y el
+`whitespace-nowrap` del botón hacía que, donde no entraba, el texto colgara
+fuera de su propia píldora. Medido a 390 px: la mitad local de `Audiences` deja
+278 px y la píldora medía 276 con el rótulo saliéndose. No es arreglable
+apretando el padding — a 375 px esa mitad deja 263.
+
+El botón pasa a `min-h` con padding vertical propio, y el rótulo puede envolver
+**sólo por debajo de `sm`**. Los dos detalles importan:
+
+- `min-h-15` en vez de `h-15` deja el alto idéntico mientras el rótulo entra en
+  un renglón (24 px de texto + 24 de padding = 48, por debajo del mínimo de 60),
+  así que en escritorio no cambia un píxel. Lo que cambia es que un rótulo que
+  no entra hace crecer la píldora en vez de salirse.
+- El corte en `sm` (640 px) no es arbitrario. Sin `nowrap`, un botón dentro de
+  un `flex-row` puede encogerse por debajo de su contenido: medido, los dos CTA
+  del hero caían a **tres renglones a 768 px**. Por debajo de `sm` todas las
+  filas de botones del sitio ya se apilan, así que cada botón tiene el ancho
+  entero de su columna y envolver es lo correcto.
+
+El pre-flight del contrato prohíbe que un rótulo envuelva **en escritorio**; en
+un teléfono, envolver es lo correcto y desbordar es el defecto.
+
+De paso, la banda del cierre se parte en `lg` y no en `md`, por el mismo número
+que la de `#publico`: a 768 px cada columna deja 248 px y a 1024 deja 376.
+
+### Verificación
+
+Seis anchos —390 · 640 · 768 · 1024 · 1180 · 1440—, los dos temas. Ningún botón
+se desborda ni envuelve en escritorio, ninguna página con scroll horizontal, y
+el único renglón partido es el CTA largo en un teléfono. El nav, en las dos
+piezas nuevas: `ink-900` antes de la card, `bone-100` adentro, `ink-900` al
+salir. `npm run build` y `tsc --noEmit`, limpios.
+
+### Lo que se decidió NO hacer
+
+- **Subir el titular del cierre a `display-xl`.** Entra, y son tres renglones
+  contra los dos del hero al mismo paso: el cierre terminaría gritando más que
+  la apertura. El contrato habilita pasar de `display-xl` "donde la sección lo
+  justifique", y acá lo que hace de cartel es el lienzo, no un escalón más de
+  tipografía.
+- **Forzarle el corte de renglón al titular.** `text-wrap: balance` está puesto
+  en todos los `h1/h2/h3` del sitio y parte "Cuando Bookit abra en / Tandil…",
+  que no es el corte más lindo — el de la coma lo sería—. Conseguirlo pide
+  apagar el balanceo para este titular y elegirle un `max-w` a medida: una
+  excepción local a una regla tipográfica de todo el sitio, a cambio de un
+  renglón. Se probaron cinco anchos y el balanceo elige siempre el mismo corte,
+  porque es el que parte la frase más cerca de la mitad.
+- **Recomponer `Rewards`.** Tiene su paso y su lista propia.
+- **Buscarle un color al D10.** No existe: el rango oscuro del manual mide
+  1,2:1 de punta a punta y el footer en oscuro es el fondo de la página. Está
+  medido desde la §3 bis, y cambiarlo sería una decisión de marca.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol
