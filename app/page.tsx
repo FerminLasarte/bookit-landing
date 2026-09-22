@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AnimatedButton from "@/components/AnimatedButton";
+import Button from "@/components/Button";
 import Audiences from "@/components/Audiences";
 import Eyebrow from "@/components/Eyebrow";
 import Faq from "@/components/Faq";
@@ -112,13 +112,12 @@ export default function Home() {
                 pestaña antes. Un solo ámbar: el CTA que de verdad funciona.
               */}
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <AnimatedButton
+                <Button
                   text="Sumate a la lista VIP"
                   href="/lista-espera?tipo=cliente"
-                  variant="primary"
-                  size="lg"
+                  onDark
                 />
-                <AnimatedButton text="Tengo un local" href="/#locales" variant="glass" size="lg" />
+                <Button text="Tengo un local" href="/#locales" variant="secondary" onDark />
               </div>
             </div>
           </div>
@@ -206,11 +205,10 @@ export default function Home() {
               </p>
               {/* `mt-auto`: los dos CTA caen en la misma línea de base, como en `Audiences` */}
               <div className="mt-auto pt-8">
-                <AnimatedButton
+                <Button
                   text="Sumate a la lista VIP"
                   href="/lista-espera?tipo=cliente"
-                  variant="primary"
-                  size="lg"
+                  onDark
                 />
               </div>
             </div>
@@ -231,11 +229,11 @@ export default function Home() {
                 nada.
               </p>
               <div className="mt-auto pt-8">
-                <AnimatedButton
+                <Button
                   text="Quiero mi lugar como fundador"
                   href="/lista-espera?tipo=local"
-                  variant="primary"
-                  size="lg"
+                  variant="secondary"
+                  onDark
                 />
               </div>
             </div>

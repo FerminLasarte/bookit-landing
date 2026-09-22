@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
-import AnimatedButton from "./AnimatedButton";
+import Button from "./Button";
 import Wordmark from "./Wordmark";
 import { navLinks } from "@/content/nav";
 import { cn } from "@/lib/utils";
@@ -197,11 +197,12 @@ export default function Nav() {
             {/* Misma etiqueta que los CTA del cuerpo: eran dos nombres para
                 la misma acción. El destino queda neutro a propósito — desde el
                 nav no sabemos de qué lado del mostrador está quien hace clic. */}
-            <AnimatedButton
+            <Button
               text="Sumate a la lista VIP"
               href="/lista-espera"
-              size="sm"
-              variant={overDark ? "glass" : "ink"}
+              size="compact"
+              variant="secondary"
+              onDark={overDark}
             />
           </div>
 
@@ -255,11 +256,9 @@ export default function Nav() {
                 </li>
               ))}
             </ul>
-            <AnimatedButton
+            <Button
               text="Sumate a la lista VIP"
               href="/lista-espera"
-              size="lg"
-              variant="primary"
               fullWidth
             />
           </div>

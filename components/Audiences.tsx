@@ -1,4 +1,4 @@
-import AnimatedButton from "./AnimatedButton";
+import Button from "./Button";
 import Eyebrow from "./Eyebrow";
 import Reveal from "./Reveal";
 import { IconCheck, IconSlot, IconStore } from "./icons";
@@ -79,13 +79,12 @@ export default function Audiences() {
 
               {/* `mt-auto`: las dos mitades apoyan el botón en la misma línea */}
               <div className="mt-auto pt-10">
-                <AnimatedButton
+                <Button
                   text="Sumate a la lista VIP"
                   // El lado local ya llevaba su `?tipo=`; este lo tiraba y
                   // obligaba a volver a declarar lo recién declarado.
                   href="/lista-espera?tipo=cliente"
-                  variant="ink"
-                  size="md"
+                  variant="secondary"
                 />
               </div>
             </article>
@@ -141,11 +140,11 @@ export default function Audiences() {
                 </p>
 
                 <div className="mt-auto pt-10">
-                  <AnimatedButton
+                  <Button
                     text="Quiero mi lugar como fundador"
                     href="/lista-espera?tipo=local"
-                    variant="glass"
-                    size="md"
+                    variant="secondary"
+                    onDark
                   />
                 </div>
               </div>

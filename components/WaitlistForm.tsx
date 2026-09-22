@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
-import AnimatedButton from "./AnimatedButton";
+import Button from "./Button";
 import AudienceSwitch from "./AudienceSwitch";
 import { IconCheck, IconInstagram } from "./icons";
 import { categoriasFormulario } from "@/content/categorias";
@@ -198,10 +198,10 @@ export default function WaitlistForm({
         <p className="mt-4 font-medium text-ink-900 dark:text-bone-100">{success.lead}</p>
         <p className="measure mt-2 text-small text-ink-500 dark:text-bone-300">{success.body}</p>
         <div className="mt-8">
-          <AnimatedButton
+          <Button
             text="Seguinos en Instagram"
             href={site.instagram.url}
-            variant="ink"
+            variant="secondary"
             icon={<IconInstagram className="h-4 w-4" />}
           />
         </div>
@@ -359,10 +359,8 @@ export default function WaitlistForm({
         </div>
 
         <div className="pt-3">
-          <AnimatedButton
+          <Button
             type="submit"
-            variant="primary"
-            size="lg"
             fullWidth
             disabled={status === "submitting"}
             text={status === "submitting" ? submittingLabel : copy.button}

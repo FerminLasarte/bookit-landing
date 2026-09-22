@@ -77,10 +77,18 @@ El ámbar `#D78A1D` es el mismo hex en claro y en oscuro: la marca no cambia de
 color con el tema, y es lo único con saturación en una pantalla que por lo demás
 es papel y tinta.
 
-`primary` sobre superficie clara da **2,64:1**. No llega al 3:1 de un borde ni
-al 4,5:1 de un texto chico. Por eso existe `marcaTexto` (`#9D6515`, 4,9:1): el
-mismo tono con la luminosidad bajada, para cuando el color tiene que *leerse*.
-Sobre fondo oscuro no hace falta — ahí el ámbar ya pasa con 6,3:1.
+`primary` sobre superficie clara da **2,71:1** sobre `cream-50` y **2,78:1**
+sobre `paper`. No llega al 3:1 de un borde ni al 4,5:1 de un texto chico. Por
+eso existe `marcaTexto` (`#9D6515`, **4,75:1** sobre `cream-50`): el mismo tono
+con la luminosidad bajada, para cuando el color tiene que *leerse*. Sobre
+`cream-100` ese mismo tono da 4,38:1 y no pasa, que es el D2 de la auditoría.
+Sobre fondo oscuro no hace falta — ahí el ámbar pasa con **6,66:1**.
+
+Con la tinta **encima** del ámbar, en cambio, da **5,27:1**, y es lo que
+habilita el botón de acción. Los cuatro números de este párrafo se remidieron el
+22/9/2026 contra los valores WCAG publicados; los anteriores (2,64 · 4,9 · 6,3 y
+un 6,66 transpuesto en `DECISIONES.md` §1.1) estaban mal. Ver la tabla de
+*Los números de contraste, remedidos* en `DECISIONES.md`.
 
 **Reglas:**
 
@@ -124,6 +132,10 @@ no son concéntricas y la card se ve hecha a mano.
 **Sombra o borde. Nunca los dos.** Una superficie de contenido lleva
 `--shadow-card`. Una acción secundaria lleva borde de 1 px de `ink-900` al 10 %.
 Los campos y las píldoras no llevan sombra nunca.
+
+El 10 % vale para un borde que **acompaña** a un relleno. Un borde que tiene que
+sostener solo un control necesita 3:1 y no llega ni cerca: ver la *Divergencia
+6*, que es por qué el botón secundario de la web es una píldora llena.
 
 ## Movimiento
 
@@ -205,14 +217,39 @@ Lo que esta web hace distinto del manual, a propósito:
    en el manual; hasta entonces manda esta línea.
 5. **Los estados de turno no están tokenizados.** Son seis y son de producto; la
    landing no muestra turnos.
+6. **El botón es una pieza web, no una derivación del de la app.** Decidido el
+   22/9/2026, y es la única divergencia que se aparta de la *jerarquía de
+   autoridad* de arriba en vez de completarla. El motivo es que el botón de la
+   app no se puede importar: medido sobre las capturas, pone rótulo **blanco**
+   sobre el ámbar, y eso da **2,78:1**. Es la misma composición que pedía el
+   brief y que `DECISIONES.md` §1.1 ya había rechazado por accesibilidad, así
+   que aplicar la jerarquía al pie de la letra importaría una falla conocida.
+   De la app se conservan la paleta, el relleno plano —sin biselado, sin
+   degradé, sin sombra, como está medido— y la sensación al apretar; la tinta y
+   los estados se resolvieron acá. Es el mismo razonamiento que ya se aplicó al
+   ámbar a tamaño display, donde la app da 2,71:1 y la web tampoco lo importó.
+
+   Y **la acción secundaria es una píldora llena, no un contorno**, contra lo
+   que dice *Espacio y forma* más arriba. Medido: si el borde fuera la única
+   señal del control, necesitaría 3:1 para cumplir WCAG 1.4.11, o sea `ink-900`
+   al **50 %** sobre claro y blanco al **34 %** sobre oscuro. Sería la línea más
+   oscura de todo el sitio, cinco veces el 10 % que fija el manual. Llena, en
+   cambio, separa 18,0:1 contra `cream-50` y 14,9:1 contra `marca-profunda`. El
+   10 % del manual sigue valiendo para bordes que acompañan a un relleno; no
+   para un borde que tiene que sostener solo un control.
+
+   De paso, **el botón de la app conviene arreglarlo allá**: es la segunda falla
+   de contraste medida en el producto, junto con el ámbar a tamaño display.
+   Cambiar el rótulo a tinta lo lleva a 5,27:1 sin tocar el color de marca.
 
 ## Deuda conocida
 
 - `public/brand/` conserva `icon.png`, `icon.jpeg`, `lockup.png` y
   `lockup.jpeg`, anteriores a los SVG. Hay que confirmar quién los consume
   (metadata, OG) antes de borrarlos.
-- Quedan `rgba()` del ámbar escritos a mano en los gradientes de `HeroGlow`,
-  `page.tsx` y `Rewards`. Son el hex canónico, pero el manual pide que ningún
-  color se escriba suelto.
+- Quedan `rgba()` del ámbar escritos a mano en los gradientes de `page.tsx`,
+  `Audiences` y `Rewards`. Son el hex canónico, pero el manual pide que ningún
+  color se escriba suelto. (`HeroGlow` ya no existe; los dos gradientes que
+  vivían dentro del botón se fueron con `AnimatedButton` el 22/9/2026.)
 - Los bordes usan `ink-900/8`, `/10`, `/12` según el componente. El manual fija
   **10 %**. Falta unificar.
