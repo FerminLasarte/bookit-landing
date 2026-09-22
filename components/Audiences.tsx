@@ -143,7 +143,7 @@ export default function Audiences() {
             <article
               id="clientes"
               aria-labelledby="clientes-title"
-              className="flex flex-col border-b border-ink-900/10 bg-paper p-8 lg:border-r lg:border-b-0 lg:p-12 dark:border-white/10 dark:bg-ink-800"
+              className="flex flex-col border-b border-ink-900/10 bg-paper p-8 [--ring-hueco:var(--color-paper)] dark:[--ring-hueco:var(--color-ink-800)] lg:border-r lg:border-b-0 lg:p-12 dark:border-white/10 dark:bg-ink-800"
             >
               <Eyebrow>Para quien saca turnos</Eyebrow>
               {/*
@@ -216,7 +216,7 @@ export default function Audiences() {
               // `scroll-mt` generoso: se llega acá desde el nav y desde el CTA
               // "Tengo un local" del hero, y con el margen chico se aterrizaba
               // a mitad de card, con el h2 de la sección ya pasado.
-              className="relative flex scroll-mt-32 flex-col overflow-hidden bg-ink-950 p-8 md:scroll-mt-40 lg:p-12"
+              className="relative flex scroll-mt-32 flex-col overflow-hidden bg-ink-950 p-8 [--ring-hueco:var(--color-ink-950)] md:scroll-mt-40 lg:p-12"
             >
               {/*
                * Dos capas de calor. Sobre papel el corte ya lo hace el color de

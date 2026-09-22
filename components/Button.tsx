@@ -128,7 +128,8 @@ interface ButtonProps {
   /**
    * El botón se apoya sobre un lienzo `marca-profunda`. Lo declara quien lo
    * usa, igual que en `Eyebrow`: la alternativa tiene que invertir su tono o
-   * desaparece, y el anillo de foco necesita el color real de atrás.
+   * desaparece. El anillo de foco ya no lo necesita — su hueco lo hereda de
+   * la superficie, que lo declara con `--ring-hueco`.
    */
   onDark?: boolean;
   fullWidth?: boolean;
@@ -178,12 +179,20 @@ export default function Button({
     // superficie, así que ninguna usa la caída a opacidad 0.4.
     "active:scale-tap",
     "motion-reduce:transition-none motion-reduce:active:scale-100",
-    // El anillo de foco necesita el color REAL de atrás para su primer tramo.
-    // Sobre lienzo es `marca-profunda` en los dos temas.
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2",
-    onDark
-      ? "focus-visible:ring-offset-marca-profunda"
-      : "focus-visible:ring-offset-cream-50 dark:focus-visible:ring-offset-ink-950",
+    /*
+     * EL ANILLO DE FOCO ES EL DEL SITIO, no uno propio. El botón se pintaba su
+     * propio `ring-2 ring-amber-500` con su propio `ring-offset`, o sea el
+     * mismo indicador escrito dos veces — y con el mismo defecto medido: contra
+     * una card de `paper`, `amber-500` da 2,78:1 y WCAG 1.4.11 pide 3:1. Con
+     * `ring-focus` hay un solo anillo en todo el sitio y un solo lugar donde
+     * viven sus números.
+     *
+     * Y el `onDark` deja de hacer falta PARA ESTO: el hueco del anillo se
+     * hereda de la superficie, que lo declara una vez con `--ring-hueco`. El
+     * botón sigue necesitando `onDark` para su relleno, que es lo que la prop
+     * siempre declaró.
+     */
+    "ring-focus",
     "disabled:pointer-events-none disabled:opacity-55",
     onDark ? variantClasses[variant].onDark : variantClasses[variant].onLight,
     sizeClasses[size],

@@ -70,7 +70,7 @@ export default function Home() {
            */}
           <div
             data-canvas
-            className="relative isolate flex min-h-[calc(100svh-6.5rem)] flex-col justify-center overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/10 [@media(max-height:820px)]:min-h-[calc(100svh-5rem)] [@media(max-height:820px)]:py-14"
+            className="relative isolate flex min-h-[calc(100svh-6.5rem)] flex-col justify-center overflow-hidden rounded-card bg-marca-profunda px-5 py-14 [--ring-hueco:var(--color-marca-profunda)] md:px-10 md:py-24 dark:border dark:border-white/10 [@media(max-height:820px)]:min-h-[calc(100svh-5rem)] [@media(max-height:820px)]:py-14"
           >
             {/*
               EL TÍTULO OCUPA EL LIENZO ENTERO, y eso es lo que arregla las dos

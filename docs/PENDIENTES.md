@@ -168,9 +168,9 @@ compuesta del sitio, el encuadre de esas dos capturas está medido en la
 
 No se repite acá, se apunta dónde vive:
 
-- **El anillo de foco no llega a 3:1.** `ring-focus` pinta 4 px de `amber-500` y
-  contra la card de `paper` da **2,78:1**. Es de toda la web y necesita su propia
-  medición contra los cinco fondos. `MARCA.md`, *Deuda conocida*.
+- ~~**El anillo de foco no llega a 3:1.**~~ **Cerrado el 22/9/2026**: se midió
+  contra los cinco fondos y pasó a `amber-700`, con el hueco declarado por la
+  superficie. `DECISIONES.md` §3 duodevicies.
 - **El maestro del logo escribe el naranja equivocado** (`#FD8003` en vez de
   `#FD7D03`) y deja la tinta sin `fill`. `MARCA.md`, *Deuda conocida*.
 - **`public/brand/` conserva los PNG y JPEG anteriores a los SVG.** Hay que

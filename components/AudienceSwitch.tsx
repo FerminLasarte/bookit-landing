@@ -72,9 +72,23 @@ export default function AudienceSwitch({
                 onChange={() => onChange(option)}
                 className="peer sr-only"
               />
+              {/*
+                EL ÚNICO ANILLO DEL SITIO QUE NO PUEDE USAR `ring-focus`, y no
+                es por gusto: el radio de verdad es un `<input>` con `sr-only`,
+                así que quien se enfoca no es quien se pinta. La utilidad
+                cuelga de `&:focus-visible` sobre el propio elemento y acá hace
+                falta `peer-focus-visible:` sobre un hermano.
+
+                Los valores son los mismos y tienen que seguir siéndolo:
+                `amber-700` de anillo —el único ámbar que pasa 3:1 sobre las
+                cinco superficies del sitio— y el hueco del color de la
+                superficie, que acá es la card de `WaitlistForm` (`paper` en
+                claro, `ink-800` en oscuro). La medición vive junto a
+                `ring-focus`, en `globals.css`.
+              */}
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-field peer-focus-visible:ring-2 peer-focus-visible:ring-amber-500 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-cream-50 dark:peer-focus-visible:ring-offset-ink-950"
+                className="pointer-events-none absolute inset-0 rounded-field peer-focus-visible:ring-2 peer-focus-visible:ring-amber-700 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-paper forced-colors:peer-focus-visible:outline forced-colors:peer-focus-visible:outline-2 dark:peer-focus-visible:ring-offset-ink-800"
               />
               <span
                 className={cn(

@@ -69,7 +69,7 @@ export default function Footer() {
     // header es una superficie oscura más. Sin esto, al final de cualquier
     // página el nav se vestía de claro sobre el footer (1,31:1). Antes no se
     // notaba porque el header tenía una superficie crema translúcida encima.
-    <footer data-canvas className="bg-ink-950 text-bone-100">
+    <footer data-canvas className="bg-ink-950 text-bone-100 [--ring-hueco:var(--color-ink-950)]">
       {/*
         EL FILETE ENTRA AL `wrap`. Era el único `Hairline` del sitio fuera de su
         caja de contenido: los tres lienzos, `#como-funciona` y `#puntos` lo

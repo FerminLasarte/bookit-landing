@@ -84,7 +84,7 @@ const toneClasses: Record<Tone, string> = {
  * dentro.
  */
 const LIENZO =
-  "relative isolate overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/10";
+  "relative isolate overflow-hidden rounded-card bg-marca-profunda px-5 py-14 [--ring-hueco:var(--color-marca-profunda)] md:px-10 md:py-24 dark:border dark:border-white/10";
 
 /**
  * Envoltorio de sección: aplica el ritmo vertical y el container.
