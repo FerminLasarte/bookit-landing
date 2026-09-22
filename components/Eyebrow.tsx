@@ -32,19 +32,30 @@ import { cn } from "@/lib/utils";
  * vuelve a 0 porque apretar una letra chica la vuelve ilegible (§4 del manual).
  *
  * `onDark` declara la superficie, igual que en `Button`: sobre lienzo
- * `marca-profunda` el rótulo es `bone-100` (14,91:1) en los dos temas.
+ * `marca-profunda` el rótulo es `bone-100` (14,91:1) en los dos temas. Sirve
+ * igual para el footer, que es `ink-950` fijo en los dos temas: ahí el mismo
+ * `bone-100` da 14,40:1.
+ *
+ * EL `id` EXISTE PARA `aria-labelledby`. Lo pide el footer, donde una lista que
+ * no es navegación toma su nombre accesible del rótulo que tiene encima. Es la
+ * razón por la que el footer tenía su propio rótulo de 13px escrito a mano —con
+ * otro peso y otro tracking que éste— y por la que el sitio tenía dos etiquetas
+ * para la misma intención, contra el pre-flight del contrato.
  */
 export default function Eyebrow({
   children,
+  id,
   className = "",
   onDark = false,
 }: {
   children: ReactNode;
+  id?: string;
   className?: string;
   onDark?: boolean;
 }) {
   return (
     <p
+      id={id}
       className={cn(
         "text-[0.8125rem] font-bold tracking-normal",
         onDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100",

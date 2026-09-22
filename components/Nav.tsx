@@ -50,6 +50,26 @@ function Logo({ className = "", onDark = false }: { className?: string; onDark?:
  * Y el hero ya no se mete debajo del header: es un lienzo con esquinas, apoyado
  * dentro del `wrap`. Por eso en reposo el nav está sobre la página y no sobre
  * el negro, que es de donde salía la banda crema que había que dibujar antes.
+ *
+ * ── La composición, Fase C ──────────────────────────────────────────────
+ *
+ * LA BARRA DE ESCRITORIO APARECE EN `lg`, NO EN `md`. El contraste del nav se
+ * arregló en la Fase B y no se toca; esto es geometría, y estaba medido mal.
+ * Entre 768 y 1023 px la barra tiene tres piezas de ancho fijo —lockup 96,
+ * CTA 162 y dos huecos de 32— y le quedan 366 px a una píldora que mide 424:
+ * el navegador la encoge y "Cómo funciona" y "Para locales" se parten en dos
+ * renglones DENTRO de la píldora. Un rótulo de nav envuelto a mitad de frase es
+ * el mismo defecto que el pre-flight del contrato le prohíbe a un botón.
+ *
+ * No se arregla apretando el padding: la píldora necesita sus 424 px y en 768
+ * no hay de dónde sacar 58. Y la salida tampoco es inventarle un tercer estado
+ * a la barra — la §3 septies sacó los tres estados que tenía—. A 1024 la barra
+ * entra con 180 px de sobra, y por debajo ya existe el menú a pantalla
+ * completa, que es lo que corresponde a un ancho donde la navegación no entra.
+ *
+ * De paso, es el mismo número con el que parte toda la home: la §3 quaterdecies
+ * dejó "dos columnas de 1024 para arriba" como regla única de la página, y el
+ * header pasa a ser parte de esa regla en vez de una excepción.
  */
 
 const BANDA = 72; // alto del header: `h-18`
@@ -205,7 +225,7 @@ export default function Nav() {
             así que le corresponde el 10% del manual y no el 3:1 de un borde que
             sostiene solo un control (Divergencia 6). Sin sombra: es una píldora.
           */}
-          <ul className="hidden items-center gap-1 rounded-pill border border-ink-900/10 bg-paper p-1.5 md:flex dark:border-white/10 dark:bg-ink-800">
+          <ul className="hidden items-center gap-1 rounded-pill border border-ink-900/10 bg-paper p-1.5 lg:flex dark:border-white/10 dark:bg-ink-800">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
@@ -232,7 +252,7 @@ export default function Nav() {
             ))}
           </ul>
 
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             {/* Misma etiqueta que los CTA del cuerpo: eran dos nombres para
                 la misma acción. El destino queda neutro a propósito — desde el
                 nav no sabemos de qué lado del mostrador está quien hace clic. */}
@@ -251,7 +271,7 @@ export default function Nav() {
             aria-label="Abrir menú"
             aria-expanded={open}
             className={cn(
-              "ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill transition-colors duration-300 md:hidden",
+              "ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill transition-colors duration-300 lg:hidden",
               overDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100",
             )}
           >
@@ -267,9 +287,22 @@ export default function Nav() {
           role="dialog"
           aria-modal="true"
           aria-label="Menú"
-          className="fixed inset-0 z-90 flex flex-col bg-cream-50 md:hidden dark:bg-ink-950"
+          className="fixed inset-0 z-90 flex flex-col bg-cream-50 lg:hidden dark:bg-ink-950"
         >
-          <div className="wrap flex h-18 shrink-0 items-center justify-between">
+          {/*
+            `w-full` en los dos `wrap`, y no es cosmética: es un defecto que
+            estaba desde antes y que el cambio de breakpoint deja a la vista.
+            El diálogo es un `flex flex-col`, y el `margin-inline: auto` de la
+            utilidad `wrap` —que sobre una página normal centra una caja que ya
+            ocupa el ancho— convierte a un ítem de flex en fit-content y lo
+            centra. Medido a 390 px: la fila del lockup medía 180 px y la de
+            los links 280, dentro de un viewport de 390. O sea que en cualquier
+            teléfono el lockup y la × estaban amontonados en el medio en vez de
+            en los bordes, y el botón de `fullWidth` no era de ancho completo.
+            Con `w-full` el ítem vuelve a ocupar la línea y el `max-width` de
+            1180 px del `wrap` vuelve a ser el que manda.
+          */}
+          <div className="wrap flex h-18 w-full shrink-0 items-center justify-between">
             <Logo className="text-xl" />
             <button
               type="button"
@@ -282,7 +315,7 @@ export default function Nav() {
             </button>
           </div>
 
-          <div className="wrap flex flex-1 flex-col justify-center gap-10 pb-20">
+          <div className="wrap flex w-full flex-1 flex-col justify-center gap-10 pb-20">
             <ul className="space-y-6">
               {navLinks.map((link) => (
                 <li key={link.href}>

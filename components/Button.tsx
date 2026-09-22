@@ -53,7 +53,21 @@ type Size = "default" | "compact";
 /**
  * Dos tamaños, no tres. El de 60px es el alto que mide el botón de la app, y
  * era el que ya usaban 13 de los 17 llamados. El compacto existe sólo para el
- * nav, que es el único lugar donde el botón convive con links de 15px.
+ * nav, que es el único lugar donde el botón convive con links de 14px.
+ *
+ * EL COMPACTO SE MIDE CONTRA LA PÍLDORA DE LINKS, que es lo único que tiene al
+ * lado. Estaba en `text-xs` y `min-h-10`, o sea 12px de rótulo en una píldora
+ * de 40px contra links de 14px en una de 50: el CTA del header —la acción más
+ * importante de la barra— era el texto MÁS CHICO de la barra, y su píldora la
+ * más baja. Además 12px es un escalón que el `@theme` no declara (`--text-small`
+ * es 14px), o sea el default de Tailwind puesto a mano; es el mismo movimiento
+ * que ya hicieron `#cierre` (§3 terdecies) y `#puntos` (§3 quaterdecies).
+ *
+ * En `text-small` y `min-h-12` el rótulo iguala al de los links y la píldora
+ * mide 48 contra los 50 de la de links — 1px arriba y 1px abajo, que a esa
+ * escala no se distingue—. El alto sigue siendo cómodo para el puntero, que es
+ * lo único que lo usa: desde este mismo paso la barra de escritorio aparece
+ * recién en `lg`.
  */
 /*
  * `min-h`, no `h`, y con padding vertical propio. El alto es el mismo mientras
@@ -70,7 +84,7 @@ type Size = "default" | "compact";
  */
 const sizeClasses: Record<Size, string> = {
   default: "min-h-15 px-10 py-3 text-base",
-  compact: "min-h-10 px-6 py-2 text-xs",
+  compact: "min-h-12 px-6 py-2 text-small",
 };
 
 /**

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Mail, Phone } from "lucide-react";
 import Wordmark from "./Wordmark";
+import Eyebrow from "./Eyebrow";
 import Hairline from "./Hairline";
 import { IconInstagram } from "./icons";
 import { site } from "@/content/site";
@@ -30,19 +31,35 @@ function FooterLink({ link }: { link: NavLinkType }) {
 }
 
 /*
- * Rótulo de columna, no encabezado de sección. Era un `<h2>` de 13px, así que
- * "Producto", "Legales" y "Contacto" entraban al esquema del documento al mismo
- * nivel que los títulos reales de la página — un lector de pantalla los
- * anunciaba como tres secciones más de contenido. El nombre accesible de cada
- * columna ya lo da el `aria-label` de su `<nav>`.
+ * EL PISO DE LA PÁGINA. Desde la §3 terdecies los tres lienzos de marca son
+ * objetos con esquinas apoyados dentro del `wrap`, así que el footer dejó de
+ * ser la segunda de dos bandas oscuras pegadas —el D10— y pasó a ser la
+ * superficie sobre la que el cierre se apoya. Eso ya está resuelto y no se
+ * rehace acá; lo que sigue es composición.
+ *
+ * ── El rótulo de columna es el del sitio ────────────────────────────────
+ *
+ * "Producto", "Legales" y "Contacto" eran un componente propio de 13px con
+ * `font-semibold` y `tracking-[-0.01em]`, o sea la SEGUNDA etiqueta del sitio
+ * para la misma intención: rotular el bloque que viene abajo. El pre-flight del
+ * contrato pide una etiqueta por intención, y `Eyebrow` ya es ésa desde la
+ * §3 octies. De paso arregla dos cosas que el rótulo propio hacía mal:
+ *
+ *   - El tracking. El manual (§4) pide 0 en texto chico, "apretar una letra
+ *     chica la vuelve ilegible", y éste llevaba -0.01em. `Eyebrow` lo devuelve
+ *     a 0, que es exactamente la corrección que la §3 octies ya le había hecho.
+ *   - El color. Iba en `bone-300`, la misma tinta que los links de abajo, así
+ *     que la jerarquía la sostenía sólo el peso. En `bone-100` (14,40:1 sobre
+ *     `ink-950`) el rótulo manda sobre su columna y los links quedan debajo,
+ *     que es la misma relación que el rótulo tiene con su título en el cuerpo
+ *     de la página.
+ *
+ * Lo que NO cambia es que sigue siendo un `<p>`: fue un `<h2>` de 13px y metía
+ * tres secciones falsas en el esquema del documento. El nombre accesible de
+ * cada columna lo da el `aria-label` de su `<nav>`, y el de la lista de
+ * contacto —que no es navegación— sale de este rótulo por `aria-labelledby`,
+ * que es para lo que `Eyebrow` aprende un `id`.
  */
-function ColumnTitle({ children, id }: { children: string; id?: string }) {
-  return (
-    <p id={id} className="text-[0.8125rem] font-semibold tracking-[-0.01em] text-bone-300">
-      {children}
-    </p>
-  );
-}
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -53,7 +70,22 @@ export default function Footer() {
     // página el nav se vestía de claro sobre el footer (1,31:1). Antes no se
     // notaba porque el header tenía una superficie crema translúcida encima.
     <footer data-canvas className="bg-ink-950 text-bone-100">
-      <Hairline onDark />
+      {/*
+        EL FILETE ENTRA AL `wrap`. Era el único `Hairline` del sitio fuera de su
+        caja de contenido: los tres lienzos, `#como-funciona` y `#puntos` lo
+        ponen adentro, y acá iba a sangre, con lo cual su tick ámbar —que marca
+        dónde empieza el contenido— colgaba en x=0, contra el borde crudo del
+        viewport, a 40 px del único sitio de la página donde algo arranca.
+
+        Y la línea ya no tiene que hacer de separador: ésa era su función cuando
+        el cierre era una banda a sangre pegada al footer, que es el D10. La
+        §3 terdecies lo resolvió con geometría —176 px de página y las esquinas
+        de la card—, así que lo que queda es lo que el filete es en todas las
+        otras piezas: la línea con la que el bloque abre.
+      */}
+      <div className="wrap">
+        <Hairline onDark />
+      </div>
 
       <div className="wrap py-16 md:py-20">
         {/* Grilla asimétrica 4 / 2 / 3 / 3 (§7) */}
@@ -63,7 +95,13 @@ export default function Footer() {
             <p className="mt-4 max-w-[28ch] text-small text-bone-300">
               Turnos para barberías, peluquerías y estética.
             </p>
-            <p className="mt-6 text-small text-bone-300/80">{site.hq}</p>
+            {/* Sin el `/80`: era un sexto valor de tinta puesto a mano para una
+                línea que el sitio ya resuelve con un token, y al lado de "Hecho
+                en Tandil." —la misma clase de dato, a la misma escala— dejaba
+                dos grises distintos sin que nada los distinguiera. Es el mismo
+                arreglo que hizo `#cierre` en la §3 terdecies. El número sube de
+                7,49:1 a 11,20:1. */}
+            <p className="mt-6 text-small text-bone-300">{site.hq}</p>
             {/*
               Sin emoji: `docs/MARCA.md` ("Voz y tono") registra una sola
               excepción, el 🎉 de las pantallas de éxito del formulario.
@@ -73,7 +111,7 @@ export default function Footer() {
           </div>
 
           <nav aria-label="Producto" className="md:col-span-2">
-            <ColumnTitle>Producto</ColumnTitle>
+            <Eyebrow onDark>Producto</Eyebrow>
             <ul className="mt-5 space-y-3">
               {footerProducto.map((link) => (
                 <li key={link.href}>
@@ -84,7 +122,7 @@ export default function Footer() {
           </nav>
 
           <nav aria-label="Legales" className="md:col-span-3">
-            <ColumnTitle>Legales</ColumnTitle>
+            <Eyebrow onDark>Legales</Eyebrow>
             <ul className="mt-5 space-y-3">
               {footerLegales.map((link) => (
                 <li key={link.href}>
@@ -97,7 +135,7 @@ export default function Footer() {
           {/* Sin `<nav>`: son datos de contacto, no navegación. El nombre
               accesible de la lista sale del rótulo, vía `aria-labelledby`. */}
           <div className="md:col-span-3">
-            <ColumnTitle id="footer-contacto">Contacto</ColumnTitle>
+            <Eyebrow onDark id="footer-contacto">Contacto</Eyebrow>
             <ul aria-labelledby="footer-contacto" className="mt-5 space-y-3">
               <li>
                 <a href={`mailto:${site.email}`} className={linkClasses}>
@@ -126,8 +164,13 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* La línea de abajo sale de `text-xs`. 12px es un escalón que el
+            `@theme` no declara —`--text-small` es 14— o sea el default de
+            Tailwind puesto a mano, y de los diez usos que `PENDIENTES.md`
+            contó, `#cierre` y `#puntos` ya pasaron los suyos a `text-small`.
+            Éste era el último que quedaba en la home. */}
         <div className="mt-14 border-t border-white/10 pt-6">
-          <div className="flex flex-col gap-2 text-xs text-bone-300 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-2 text-small text-bone-300 md:flex-row md:items-center md:justify-between">
             <p>
               © <span className="num">{year}</span> Bookit. Todos los derechos reservados.
             </p>
