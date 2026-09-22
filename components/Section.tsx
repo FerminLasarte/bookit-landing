@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type Rhythm = "normal" | "breath";
+type Rhythm = "normal" | "breath" | "apoyo";
 /** Color de fondo de la sección. `paper` = el fondo de la página, sin capa. */
 type Tone = "paper" | "tint" | "canvas";
 
@@ -10,6 +10,16 @@ const rhythmClasses: Record<Rhythm, string> = {
   normal: "py-24 md:py-36",
   // La única sección de respiro, antes del CTA final
   breath: "py-32 md:py-44",
+  /*
+   * La sección que arranca PEGADA al borde de la pieza de arriba y se queda
+   * con el aire de las dos. Existe por el lavado cálido: un degradé anclado en
+   * una esquina se corta en el borde que la define, así que su canto de arriba
+   * tiene que coincidir con un canto que ya exista —en la home, el borde de
+   * abajo del lienzo del hero—. Para eso la pieza de arriba entrega su padding
+   * y la sección lo recibe, y el hueco entre las dos sigue siendo mayor al
+   * doble del hueco interno que pide el manual.
+   */
+  apoyo: "pt-32 pb-24 md:pt-48 md:pb-36",
 };
 
 const toneClasses: Record<Tone, string> = {
@@ -66,6 +76,7 @@ export default function Section({
   children,
   rhythm = "normal",
   tone = "paper",
+  lavado = false,
   className = "",
   labelledBy,
 }: {
@@ -73,6 +84,22 @@ export default function Section({
   children: ReactNode;
   rhythm?: Rhythm;
   tone?: Tone;
+  /**
+   * El lavado cálido detrás del encabezado — el dispositivo que la app apoya
+   * bajo cada título y que la Fase B0 construyó para que el modo claro se lea
+   * como Bookit. Va acá y no suelto en una sección porque su REGLA DE
+   * COLOCACIÓN es la misma que la del tinte: quien elige la superficie es
+   * quien tiene que leerla.
+   *
+   * EN CLARO, SOBRE LA PARTE FUERTE VAN `ink-900` Y LOS PASOS DE DISPLAY
+   * (10,73:1). No van la bajada en `ink-500` (3,53:1) ni un rótulo a tamaño de
+   * lectura. El alcance es `--lavado-y` —24rem por default, pisable por clase—,
+   * así que en la práctica la regla se cumple dejando el texto chico por debajo
+   * de ese alcance; los números están junto al token en `globals.css`.
+   *
+   * En oscuro casi no restringe: `bone-300` sobre el pico da 5,60:1.
+   */
+  lavado?: boolean;
   className?: string;
   labelledBy?: string;
 }) {
@@ -84,17 +111,25 @@ export default function Section({
       aria-labelledby={labelledBy}
       className={cn("relative isolate", rhythmClasses[rhythm], className)}
     >
-      {tone !== "paper" && (
+      {(tone !== "paper" || lavado) && (
         <div
           aria-hidden="true"
           data-canvas-capa
           className={cn(
             "pointer-events-none absolute inset-0 -z-10",
-            // El lienzo corta neto; el tinte entra y sale con degradé.
-            tone === "canvas" ? "" : "fade-y",
+            // El lavado se apoya sobre el color que la sección ya tenga; en
+            // `paper` eso es la página pelada, que es como lo hace la app.
+            lavado && "lavado",
+            /*
+             * El lienzo corta neto; el tinte entra y sale con degradé. El
+             * lavado tampoco lleva máscara, y no es un detalle: `fade-y`
+             * difumina justo el borde de ARRIBA, que es donde el lavado nace,
+             * así que lo apagaría exactamente donde tiene que verse.
+             */
+            tone === "tint" && "fade-y",
             // El degradé arranca donde termina el padding: el texto nunca cae
             // sobre la parte semitransparente.
-            rhythm === "breath" ? "[--fade-y:8rem]" : "[--fade-y:6rem]",
+            tone === "tint" && (rhythm === "breath" ? "[--fade-y:8rem]" : "[--fade-y:6rem]"),
             toneClasses[tone],
           )}
         />

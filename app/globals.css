@@ -492,21 +492,26 @@
    * donde `ink-500` vuelve a 4,71:1, o más abajo, donde el lavado ya se apagó.
    * En oscuro la regla se relaja: ahí `bone-300` da 5,60:1.
    *
-   * La perilla por sección es `--lavado-y`, o sea el ALCANCE, que se pisa por
-   * clase (`[--lavado-y:14rem]`). Nunca la opacidad: un solo cálido en todo el
-   * sitio con varios alcances es lo que evita terminar con seis lavados
-   * parecidos, que es justo lo que el manual prohíbe.
+   * La perilla por sección es `--lavado-y`, o sea el ALCANCE. Nunca la
+   * opacidad: un solo cálido en todo el sitio con varios alcances es lo que
+   * evita terminar con seis lavados parecidos, que es justo lo que el manual
+   * prohíbe.
+   *
+   * Va como `var(--lavado-y, 24rem)` y no como una declaración propia. La Fase
+   * C encontró por qué importa: el lavado se pinta en una capa de fondo, y
+   * quien elige el alcance es la SECCIÓN, que está un nivel más arriba.
+   * Declarándolo acá, el valor local ganaba siempre y la perilla no llegaba a
+   * girar. Con el fallback, `[--lavado-y:34rem]` funciona en los dos lados.
    */
-  --lavado-y: 24rem;
   background-image: radial-gradient(
-    150% var(--lavado-y) at 0% 0%,
+    150% var(--lavado-y, 24rem) at 0% 0%,
     var(--color-lavado-calido) 0%,
     transparent 100%
   );
 
   @media (prefers-color-scheme: dark) {
     background-image: radial-gradient(
-      150% var(--lavado-y) at 0% 0%,
+      150% var(--lavado-y, 24rem) at 0% 0%,
       var(--color-lavado-profundo) 0%,
       transparent 100%
     );
@@ -604,11 +609,11 @@
    * nueve radios a cinco —`field`, `toast`, `card`, `pill` y `rounded-full`
    * cuando es un círculo y no una esquina— sin inventar ninguno.
    *
-   * Quedan dos arbitrarios, `rounded-[2.5rem]` y `rounded-[1.75rem]`, y son los
-   * del teléfono dibujado a mano de `HowItWorks`: cumplen la fórmula
-   * concéntrica exacta (28 + 12 = 40) y se van con el teléfono cuando la Fase C
-   * ponga las capturas reales. Si alguna pieza los volviera a necesitar, ahí sí
-   * se tokenizan.
+   * Los dos arbitrarios que quedaban —`rounded-[2.5rem]` y `rounded-[1.75rem]`,
+   * el marco del teléfono dibujado a mano— se fueron con el teléfono en la Fase
+   * C, junto con el último `rgba()` suelto. El sitio queda en CUATRO radios más
+   * `rounded-full`, que es la lista del manual. Las capturas de la app van en un
+   * panel de `rounded-card`: el radio nombra un tamaño, no un rol.
    */
   &:focus-visible {
     outline: none;

@@ -861,6 +861,263 @@ excepción queda escrita donde el comentario decía que estaba.
   al primero que falló y un `aria-live` encima, el resumen se anunciaría por
   duplicado.
 
+## 3 undecies. Las capturas, y la sección que más cambia
+
+Fase C, primer paso, el 22 de septiembre de 2026. `#como-funciona` es la
+sección que el contrato pone primera porque es la que más cambia: se va el
+carrusel con el teléfono dibujado a mano y entran las capturas reales de la
+app. Son también las primeras imágenes del sitio, así que acá se deciden de una
+vez cómo entran todas las que vengan después.
+
+### Lo que se borró
+
+`HowItWorks` pasa de 612 a 136 líneas, y deja de ser un componente de cliente.
+Se fueron el `useState`, el `useInView`, el `AnimatePresence`, el `tablist` con
+foco itinerante, el reloj de progreso, el `lucide`, las tres pantallas dibujadas
+en HTML con locales inventados y el descargo que las acompañaba — *"Pantallas de
+ejemplo. Los locales que aparecen son ilustrativos."*
+
+Ese descargo es el mejor argumento de todos: existía para tapar un problema de
+credibilidad que el propio dibujo creaba. Con capturas reales no hay nada que
+descargar.
+
+Y cierra la última deuda de `MARCA.md`: con el marco del teléfono se van el
+único `rgba()` suelto que quedaba y los dos radios arbitrarios
+(`rounded-[2.5rem]` y `rounded-[1.75rem]`). El sitio queda en cuatro radios más
+`rounded-full`, que es exactamente la lista del manual, y sin un solo color
+fuera del `@theme` afuera de `app/og/`, que es la excepción inherente que ya
+estaba declarada.
+
+**Efecto colateral en el manual:** la *Divergencia 8* usaba ese marco como su
+único ejemplo de anidado apretado (28 + 12 = 40). El ejemplo ya no existe, pero
+la regla sí; queda anotado ahí que su caso testigo se fue con la Fase C.
+
+### La composición: bandas, no dos columnas
+
+El único dial que falta recorrer es `DESIGN_VARIANCE`, de 4 a 7, y la auditoría
+midió de dónde sale el 4: 5 de 6 secciones abren con rótulo + `display-lg`, y
+4 de 6 resuelven el cuerpo con una partición en dos columnas. La página tiene
+una composición, usada seis veces.
+
+Ésta deja de usarla. En vez de título a la izquierda y pieza a la derecha:
+
+1. **Encabezado a lo ancho**, con el titular en `max-w-[14ch]` para que rompa en
+   dos renglones cortos y deje la mitad derecha abierta. La asimetría la hace el
+   vacío, no otra columna — es el recurso del hero puesto al revés.
+2. **Los pasos 01 y 02, escalonados en diagonal.** El 01 arranca en el borde
+   izquierdo del `wrap`; el 02 arranca 7 rem más abajo y se apoya en el borde
+   derecho. Las dos capturas tienen formatos y anchos distintos a propósito —una
+   alta y angosta a 20 rem, otra más corta y ancha a 26 rem— y con eso terminan
+   a **3 px** una de otra pese a empezar desparejas. Es el `mt-auto` de
+   `Audiences` al revés.
+3. **El paso 03 como una banda que cruza la página**, con filete arriba, el
+   ordinal y el título a la izquierda y la bajada a tamaño de cuerpo a la
+   derecha.
+
+### Por qué el paso 03 no tiene captura
+
+De las 15 capturas ninguna muestra la pantalla de Puntos. No es un faltante que
+haya que tapar: los dos primeros pasos son cosas que se hacen **dentro** de la
+app y tienen pantalla, y el tercero es lo que queda después del turno, que esta
+sección anuncia y `#puntos` cuenta entero dos secciones más abajo. Prestarle
+otra pantalla sería mostrar otra cosa.
+
+Que sea el único paso a lo ancho y en tipografía sola es lo que hace que esa
+diferencia se lea como el final de la cuenta y no como un hueco. Es el mismo
+criterio con el que se decidió **no** usar `09_bienvenida` en ningún lado
+cercano al hero: repite el titular de la home con otras palabras y, puestos
+cerca, confunden.
+
+### El encuadre: qué se recorta y por qué
+
+**La barra de estado se va de todas.** Su batería es `#34C759`, un verde que la
+web no tiene tokenizado —`exito` es `#16A34A`— y está en las 30 capturas, entre
+las filas y=75 e y=120. Medido acá, no heredado. El recorte arranca en y=160:
+saca la barra con 60 px de margen y no toca el contenido de la app, que en la
+más alta empieza en y=221. De paso se va el "9:41", que es cromo de sistema.
+
+**El fondo muerto se va donde lo hay.** `04_cliente_elegir_horario` tiene el
+40 % de abajo en superficie vacía: encuadrada de 160 a 1720 queda en
+1206 × 1560, y dos capturas de formatos distintos componen mejor que dos
+rectángulos iguales.
+
+**La regla de color vale para la interfaz, no para la fotografía.** El
+pre-flight del contrato dice "ninguna captura deja ver un color que la web no
+tenga tokenizado", y leído al pie de la letra ninguna captura pasaría: las fotos
+de locales de `01` y `02` traen 66.000 píxeles de marrones y verdes de un local
+real. Son material aprobado por la auditoría justamente por eso — *"trae
+fotografía real de locales, que es lo que hoy no aparece en ninguna parte"*. Lo
+que no puede aparecer es un color de **UI** que el `@theme` no tenga.
+
+Con esa lectura, y recortadas, las dos capturas de esta sección quedan limpias.
+Verificado píxel a píxel sobre las cuatro (dos capturas × dos temas):
+
+| Captura | Colores de UI fuera del ámbar y de `ink-900` |
+|---|---|
+| `04_cliente_elegir_horario`, oscuro | **0** |
+| `04_cliente_elegir_horario`, claro | 526 px, todos antialiasing de `ink-900` |
+| `02_cliente_cerca_tuyo`, los dos | ninguno; lo que hay son las fotos |
+
+Y se confirmó el dato que la auditoría dejó anotado: el `#3B82F6` de
+"Confirmado" de `10_comercio_agenda_dia` son exactamente **12.580 px entre las
+filas y=855 e y=2209** de 2622, en los dos temas. No hay encuadre que lo deje
+afuera sin quedarse con el encabezado solo, así que esa captura **no se usa**
+hasta que el azul se tokenice — que es una decisión de la lista cerrada de
+excepciones y no de esta sección.
+
+De paso, `15_comercio_crecimiento` —la que la auditoría quiere para `#publico`—
+quedó verificada también: sus dos colores fuertes son `#16A34A` (`exito`) y
+`#BA1A1A` / `#FFB4AB` (`error` y su par oscuro). Los tres están en la lista.
+
+### Las capturas salen de `public/` y entran por `import`
+
+El contrato dejaba la decisión para esta fase. Es `import` estático, con un
+`git mv` de `public/capturas/` a `assets/capturas/`. Tres motivos, el último
+medido:
+
+1. **Los 1206 × 2622 dejan de escribirse a mano en cada sitio de uso.** Un
+   número mal tipeado ahí es un salto de layout, no un error de compilación.
+2. **El hash de contenido** en el nombre del archivo, o sea caché inmutable.
+3. **Sólo viaja lo que se usa.** En `public/` los 13 MB de las 30 capturas se
+   despliegan y se sirven estén o no referenciadas. Fuera de `public/`, el build
+   emite únicamente las importadas: hoy **1,9 MB, cuatro archivos**.
+
+Lo que cuesta: hay que mover los archivos. Los originales sin pérdida siguen
+siendo la fuente y el comando de resincronización del contrato no cambia; sólo
+cambia la carpeta de destino.
+
+### El tema: un `<picture>`, no dos `<Image>`
+
+El sitio elige tema con `prefers-color-scheme` y sin estado en JS, así que cada
+captura existe dos veces y hay que bajar una. `next/image` no renderiza
+`<picture>`, y su receta documentada para esto —dos `<Image>`, una con
+`display: none`— **baja las dos**.
+
+La doc lo da por resuelto: *"el `loading="lazy"` por default garantiza que sólo
+se cargue la imagen correcta"*. Medido en esta página, no alcanza. Con el scroll
+en cero, en claro, salen **cuatro** pedidos: 47 + 45 + 36 + 36 = **164 KB**, de
+los cuales 81 KB son del tema que no se ve. El motivo es que el diferido de
+Chrome arranca recién a más de ~1200 px del pliegue y esta sección empieza a
+880 px, así que las cuatro imágenes entran igual. A 390 px de ancho, donde la
+sección cae más abajo, el diferido sí actúa — o sea que el ahorro dependía del
+viewport, que es otra forma de decir que no existía.
+
+La salida es `getImageProps`, que devuelve el `srcSet` que `next/image` armaría
+y deja meterlo en un `<picture>` de verdad:
+
+```tsx
+<source media="(prefers-color-scheme: dark)" srcSet={enOscuro.srcSet} sizes={sizes} />
+<img {...enClaro} />
+```
+
+Ahí la elección la hace el algoritmo de selección del navegador, que baja
+exactamente una. No es una heurística de carga, es la regla del formato.
+Verificado con el scroll en cero en los dos temas: **2 pedidos, 83 KB en claro y
+81 KB en oscuro**. La mitad. Y verificado también que al cambiar el tema en
+caliente el `<picture>` re-selecciona y baja la otra.
+
+El `<img>` conserva el tema claro como fallback, que es el mismo default que el
+`color-scheme` de `globals.css`.
+
+**Lo que cuesta:** `getImageProps` no admite `placeholder="blur"` —el
+placeholder no se quitaría nunca—. No es pérdida. La caja tiene su
+`aspect-ratio` y su borde reservados, así que no hay salto de layout, y lo que
+se ve mientras carga es un panel vacío: literalmente lo que pide el manual, *"si
+tarda menos de 400 ms no se dibuja nada para no hacer un parpadeo gris"*.
+
+**Y ninguna captura puede llevar `preload` ni `loading="eager"`**, que bajaría
+las dos otra vez. No hace falta: ninguna captura del sitio está sobre el
+pliegue, y el LCP sigue siendo el `h1` del hero.
+
+### La captura es un panel, no un teléfono
+
+Sale una primitiva, [`Captura`](../components/Captura.tsx), que reemplaza al
+`Device` que se borró. Borde al 10 %, `rounded-card` y adentro los píxeles.
+
+No vuelve a dibujar un marco, por dos razones: sería reponer lo que se acaba de
+sacar, y un marco obliga a mostrar la pantalla entera, que es justo lo que el
+encuadre evita. `rounded-card` nombra un tamaño y no un rol (§3 sexies): esto es
+un panel.
+
+**El borde hace falta, y es medible.** La superficie clara de la app es
+`#FBFCFD`, que es exactamente `cream-50` — la auditoría ya lo había anotado como
+coincidencia exacta. Sin borde, en claro, la captura no tiene canto contra la
+página. Es el mismo 1,208:1 de la *Divergencia 7*: en claro la pieza **es** su
+borde.
+
+### El lavado cálido, usado por primera vez
+
+La Fase B0 construyó el lavado y no lo consumía nadie. Va acá, que es la sección
+que muestra las pantallas de la app: el calor que la app tiene detrás de sus
+encabezados aparece de los dos lados del marco.
+
+**Un degradé anclado en una esquina necesita un canto del que nacer.** Puesto
+tal cual, el lavado arrancaba en medio de la página pelada y dibujaba una línea
+horizontal dura a lo ancho: arriba cortaba y abajo se apagaba, y esa asimetría
+se lee como una banda mal terminada, no como una decisión. En la app el problema
+no existe porque arriba del lavado está el borde de la pantalla.
+
+La salida es de composición: **el hero entrega su padding de abajo y
+`#como-funciona` lo recibe**, así que el borde de abajo del lienzo es el borde
+de arriba de la sección y el corte desaparece debajo de un canto que ya estaba.
+De ahí sale un tercer ritmo en [`Section`](../components/Section.tsx), `apoyo`
+(`pt-32 pb-24 md:pt-48 md:pb-36`), que es el de la sección que arranca pegada a
+la pieza de arriba y se queda con el aire de las dos. El hueco entre el lienzo y
+el rótulo queda en 192 px contra los 96 px del hueco interno, o sea que sigue
+cumpliendo el doble que pide el manual.
+
+**Y hubo que arreglar la perilla, que no giraba.** La utilidad declaraba
+`--lavado-y: 24rem` en el mismo elemento que pinta el degradé, así que el valor
+local ganaba siempre y `[--lavado-y:…]` puesto en la sección no llegaba nunca.
+Pasa a `var(--lavado-y, 24rem)`: con el fallback, el alcance se puede fijar
+desde la sección, que es quien lo elige, y el default no cambia.
+
+**El alcance, medido.** En el borde de **arriba** de cada elemento, que es su
+peor punto, a 375 · 768 · 1024 · 1440 px:
+
+| Elemento | Tinta | Tamaño | Lavado | Contraste | Pide |
+|---|---|---|---|---|---|
+| Rótulo | `ink-900` | 13 px | 49–60 % | 12,06–12,45:1 | 4,5 |
+| Titular | `ink-900` | 32–52 px | 39–47 % | 12,55–12,78:1 | 3 |
+| Ordinal `01` | `ink-500` | 28–40 px | 0–6 % | 4,63–4,71:1 | 3 |
+| Bajadas | `ink-500` | 14 px | **0 % en las cuatro** | 4,71:1 | 4,5 |
+
+O sea: sobre el lavado hay tinta plena y un ordinal a tamaño de display, y el
+texto chico cae entero fuera del degradé. La regla de colocación se cumple como
+**estructura**, no como ajuste de color — que es la misma forma en que se
+resolvieron D2 y la banda con tinte.
+
+**El alcance es responsive y eso no es cosmética:** el degradé no escala con el
+texto, y en móvil la sección se aprieta. Con el mismo valor, a 375 px la bajada
+recibe un 26,5 % de lavado y `ink-500` cae a **4,37:1**. Queda en
+`[--lavado-y:20rem] md:[--lavado-y:24rem]`.
+
+Valores descartados, para no volver a probarlos: **32rem** deja la bajada en
+4,64:1 a 1024 px y **34rem** en 4,67:1 a 1440 px. Los dos pasan, con 0,14 y 0,17
+de margen, y este repo ya se quemó tres veces con márgenes así — 4,457, 4,49 y
+4,29. La cuarta vez la lección es la misma y la salida también: se corre el
+degradé, no la tinta.
+
+En oscuro el lavado no restringe nada: el peor número es `bone-300` sobre el
+pico compuesto, **8,34:1**. Comparado contra `01_cliente_inicio` en oscuro, la
+fuerza es la misma que la de la app.
+
+### Lo que se decidió NO hacer
+
+- **Reponer un marco de teléfono alrededor de la captura.** Es lo primero que se
+  quiere hacer al ver una captura suelta, y es volver a dibujar lo que se acaba
+  de borrar: el marco vuelve a traer un radio propio, una sombra y la obligación
+  de mostrar la pantalla entera.
+- **Recortar `10_comercio_agenda_dia` para esquivar el azul.** El `#3B82F6`
+  ocupa de la fila 855 a la 2209 de 2622: lo que queda afuera del azul es el
+  encabezado solo. O se tokeniza el color —y eso es abrir la lista cerrada de
+  excepciones del manual, que se discute aparte— o la captura no entra.
+- **Poner una captura prestada en el paso 03.** Ver arriba.
+- **`preload` o `fetchPriority` en las capturas.** Ninguna está sobre el
+  pliegue, y con `<picture>` el `preload` además volvería a bajar las dos.
+- **Mantener las capturas en `public/` para no mover archivos.** Se despliegan
+  13 MB para usar 1,9.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol

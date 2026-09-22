@@ -96,10 +96,18 @@ Permisos explícitos, para no tener que pedirlos de nuevo en cada sesión:
 - Que dos secciones contiguas tengan densidades distintas a propósito.
 - Más de dos lienzos `marcaProfunda`, si el ritmo lo pide.
 - **Imágenes.** Las 15 capturas de la app, en los dos temas, son material
-  aprobado. **Ya están en el repo**, en `public/capturas/{claro,oscuro}/`, con
-  el mismo nombre de archivo que el original. Van por `next/image`, con el tema
-  que corresponda, y ninguna se recorta de modo que quede dentro un color sin
-  tokenizar.
+  aprobado. Están en el repo, en `assets/capturas/{claro,oscuro}/`, con el mismo
+  nombre de archivo que el original. **Fuera de `public/` desde la Fase C**: van
+  por `import` estático, que da alto y ancho automáticos y hash de contenido, y
+  que además emite en el build sólo las que se usan — en `public/` se
+  despliegan los 13 MB completos estén referenciadas o no. Ver `DECISIONES.md`
+  §3 undecies.
+
+  Van por [`Captura`](../components/Captura.tsx), nunca por `<Image>` suelta: la
+  primitiva es la que sabe el encuadre y la que resuelve el tema con un
+  `<picture>` de verdad. Dos `<Image>` con `dark:hidden` **bajan las dos**,
+  medido. Y ninguna se recorta de modo que quede dentro un color de interfaz sin
+  tokenizar — la fotografía de un local no cuenta, es contenido.
 
   Ese color existe y está localizado: el `#3B82F6` del estado "Confirmado"
   aparece **sólo en `10_comercio_agenda_dia`**, en los dos temas, 12.580 px
@@ -119,14 +127,14 @@ Permisos explícitos, para no tener que pedirlos de nuevo en cada sesión:
   del repo. Para resincronizar:
 
   ```
-  cwebp -lossless -z 9 -metadata none <origen>.png -o public/capturas/<tema>/<nombre>.webp
+  cwebp -lossless -z 9 -metadata none <origen>.png -o assets/capturas/<tema>/<nombre>.webp
   ```
 
-  Las 30 miden 1206 × 2622 (iPhone @3x). Están en `public/`, o sea que se
-  referencian por URL y hay que pasarle `width` y `height` a `next/image` — son
-  los mismos para todas. Si en la Fase C conviene el `import` estático (alto y
-  ancho automáticos, `placeholder="blur"`, hash de contenido), hay que moverlas
-  fuera de `public/`; es un `git mv` y una decisión de esa fase.
+  Las 30 miden 1206 × 2622 (iPhone @3x). **Decidido en la Fase C:** el `import`
+  estático, con el `git mv` que lo habilita. `placeholder="blur"` quedó afuera
+  —`getImageProps` no lo admite, y el `<picture>` del tema lo necesita— y no es
+  pérdida: la caja reserva su `aspect-ratio` y su borde, así que lo que se ve
+  mientras carga es un panel vacío, que es lo que pide el manual.
 - **Un lavado cálido de superficie en claro**, derivado del que la app ya usa
   detrás de sus encabezados. Es la única forma de que el modo claro se lea como
   Bookit; ver la auditoría.
@@ -201,12 +209,21 @@ de `app/og/` quedan como están: `ImageResponse` no ve el `@theme`. Queda un sol
 `rgba()` y dos radios arbitrarios, los tres del teléfono dibujado a mano de
 `HowItWorks`, que se van con él en la Fase C.
 
-**Fase C · Secciones,** sobre las primitivas ya nuevas: `#como-funciona` →
+**Fase C · Secciones,** sobre las primitivas ya nuevas: ~~`#como-funciona`~~ →
 ~~hero~~ → `#publico` → `#cierre` → `Rewards` → `#faq` → `Nav` (composición, ya
 arreglado su contraste en B) y [`Footer`](../components/Footer.tsx).
 `#como-funciona` primero porque es la que más cambia: se saca el carrusel y el
 teléfono dibujado, y entran las capturas. Después `#cierre`, que con el hero son
 los dos lienzos y fijan el techo del lenguaje.
+
+> **`#como-funciona` hecho el 22/9/2026**, en `DECISIONES.md` §3 undecies.
+> Salieron de ahí tres cosas que las secciones siguientes heredan: la primitiva
+> [`Captura`](../components/Captura.tsx) con su encuadre y su `<picture>`; el
+> ritmo `apoyo` de `Section`, para la sección que recibe el padding de la pieza
+> de arriba; y el lavado cálido usado por primera vez, con su alcance medido y
+> con la perilla `--lavado-y` arreglada para que se pueda girar desde la
+> sección. Cerró además la última deuda de `MARCA.md` —el `rgba()` suelto y los
+> dos radios arbitrarios— porque los tres eran del teléfono que se borró.
 
 > **El hero se adelantó al paso 5**, el 22/9/2026, contra este orden. No por
 > gusto: la card con esquinas del paso 4 le cambió las proporciones y lo dejó
@@ -236,6 +253,10 @@ El de la skill, filtrado por el manual. Antes de cerrar cualquier rama:
 - [ ] `focus-visible` en todo lo enfocable, sin regresiones de teclado.
 - [ ] Ninguna primitiva nueva sin retirar la que reemplaza.
 - [ ] Slugs, anclas, labels de nav y nombres de campo, intactos.
-- [ ] Ninguna captura de la app deja ver un color que la web no tenga
-      tokenizado.
-- [ ] Cada captura va en su versión de tema y por `next/image`.
+- [ ] Ninguna captura de la app deja ver un color de **interfaz** que la web no
+      tenga tokenizado. La fotografía de un local es contenido, no paleta; lo
+      que se mira es el color de UI. La barra de estado se recorta siempre: su
+      batería es `#34C759` y está en las 30.
+- [ ] Cada captura va en su versión de tema y por `Captura`, que resuelve el
+      tema con un `<picture>` y baja una sola. Ninguna lleva `preload` ni
+      `loading="eager"`: eso bajaría las dos.

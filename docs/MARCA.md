@@ -355,10 +355,14 @@ Lo que esta web hace distinto del manual, a propósito:
    `WaitlistForm` tiene 24 px de radio, 24–40 px de padding y campos de 12, y la
    fórmula pediría entre 36 y 52 px de radio exterior — más que la píldora. Con
    28–40 px de aire entre un borde y el otro las esquinas no se leen como
-   concéntricas, se leen como dos formas sueltas. Donde el anidado sí es
-   apretado el sitio la cumple exacto: el marco del teléfono de `HowItWorks`,
-   40 px de radio con 12 px de padding sobre una pantalla de 28. La regla es
-   que vale mientras el hijo toque el padding.
+   concéntricas, se leen como dos formas sueltas. La regla es que vale mientras
+   el hijo toque el padding.
+
+   Su caso testigo era el marco del teléfono de `HowItWorks` —40 px de radio con
+   12 px de padding sobre una pantalla de 28, la fórmula exacta— y **se fue con
+   el teléfono en la Fase C**. La regla sigue valiendo; hoy no tiene ejemplo en
+   el código, porque las capturas de la app van en un panel sin nada anidado
+   adentro.
 
 ## Deuda conocida
 
@@ -375,11 +379,17 @@ Lo que esta web hace distinto del manual, a propósito:
   existe en Google Fonts, y el `tspan` que separa "Book" de "it" está calculado
   para sus métricas exactas. Renderizado en un navegador daba una tipografía
   distinta en cada intento.
-- Queda **un** `rgba()` suelto: la sombra del teléfono dibujado a mano de
-  `HowItWorks`, que se va con el teléfono cuando la Fase C ponga las capturas
-  reales. Los otros salieron a las utilidades `destello` y `calor` el 22/9/2026,
-  con el mismo criterio que `lavado`. (`HeroGlow` ya no existe; los dos
-  gradientes que vivían dentro del botón se fueron con `AnimatedButton`.)
-- Quedan **dos** radios arbitrarios, `rounded-[2.5rem]` y `rounded-[1.75rem]`, y
-  son del mismo teléfono. Cumplen la fórmula concéntrica exacta (28 + 12 = 40) y
-  se van con él; si otra pieza los necesitara, ahí se tokenizan.
+- ~~El `rgba()` suelto y los dos radios arbitrarios.~~ **Cerrados el 22/9/2026**,
+  en la Fase C: eran los tres del teléfono dibujado a mano de `HowItWorks` y se
+  fueron con él cuando entraron las capturas reales de la app. El sitio queda en
+  cuatro radios más `rounded-full` —la lista de este manual— y sin un color
+  fuera del `@theme` afuera de `app/og/`, que es la excepción inherente ya
+  declarada. Los otros `rgba()` habían salido antes a las utilidades `destello`
+  y `calor`, con el mismo criterio que `lavado`. (`HeroGlow` ya no existe; los
+  dos gradientes que vivían dentro del botón se fueron con `AnimatedButton`.)
+- **El anillo de foco no llega a 3:1.** `ring-focus` pinta 2 px de `cream-50` y
+  4 px de `amber-500`, y el ámbar contra la card de `paper` da **2,78:1**, por
+  debajo de lo que se le pide a un indicador de foco (WCAG 1.4.11). Es de toda
+  la web, no de una sección: tocarlo es una decisión de primitiva y necesita su
+  propia medición contra los cinco fondos. Medido el 22/9/2026 y anotado en
+  `DECISIONES.md` §3 decies; no se arregla de costado en el paso de otra cosa.

@@ -44,7 +44,18 @@ export default function Home() {
         que el viewport, `justify-center` ya no centra nada y lo único que mueve
         el CTA hacia arriba es comprimir lo que tiene encima.
       */}
-      <section data-hero className="pt-2 pb-24 md:pt-3 md:pb-36">
+      {/*
+        SIN PADDING ABAJO, y no es un ajuste de aire: el hueco después del
+        lienzo lo pone ahora el padding de `#como-funciona`, así que el borde de
+        abajo de la card ES el borde de arriba de la sección siguiente. Eso es
+        lo que le da al lavado cálido un canto del que nacer. Un degradé
+        anclado en una esquina se corta en el borde que define esa esquina; si
+        ese borde no existe —si el lavado arranca en medio de la página pelada—
+        el corte se lee como una banda mal terminada, porque arriba corta y
+        abajo se apaga. Apoyado contra el negro del hero, el corte desaparece
+        debajo de un canto que ya estaba.
+      */}
+      <section data-hero className="pt-2 md:pt-3">
         <div className="wrap">
           {/*
            * El lienzo del hero: `marca-profunda`, el negro con tinte ámbar del
@@ -137,7 +148,42 @@ export default function Home() {
       </section>
 
       {/* ───────────────────── 2. Cómo funciona ───────────────────── */}
-      <Section id="como-funciona" labelledBy="como-funciona-title">
+      {/*
+        Primera sección después del lienzo del hero, y la primera del sitio que
+        usa el lavado cálido: el dispositivo que la Fase B0 construyó y que
+        todavía no consumía nadie. Va acá porque es la sección que muestra las
+        pantallas de la app, o sea el lugar donde el calor que la app tiene
+        detrás de sus encabezados aparece de los dos lados del marco.
+      */}
+      <Section
+        id="como-funciona"
+        labelledBy="como-funciona-title"
+        rhythm="apoyo"
+        lavado
+        /*
+          EL ALCANCE, que es la única perilla del lavado por sección — nunca
+          la opacidad—. En móvil va más corto: el degradé no escala con el
+          texto, y ahí la sección se aprieta, así que el mismo valor le llega a
+          la bajada. Medido en el borde de ARRIBA de cada elemento, que es su
+          peor punto, a 375 · 768 · 1024 · 1440:
+
+            rótulo   ink-900 13px   49-60 % de lavado   12,06-12,45:1
+            titular  ink-900        39-47 %             12,55-12,78:1
+            "01"     ink-500 28-40px  0-6 %              4,63-4,71:1  (pide 3)
+            bajadas  ink-500 14px     0 % en las cuatro  4,71:1
+
+          O sea: sobre el lavado sólo hay tinta plena y un ordinal a tamaño de
+          display, y el texto chico cae entero fuera del degradé — que es lo
+          que la regla de colocación pide, resuelto como estructura y no como
+          ajuste de color.
+
+          Los valores descartados, para no volver a probarlos: 32rem deja la
+          bajada en 4,64:1 a 1024 y 34rem en 4,67:1 a 1440. Pasan, con 0,14 y
+          0,17 de margen, y este repo ya se quemó tres veces con márgenes así.
+          Y 24rem en móvil le da a la bajada un 26,5 %, o sea 4,37:1: falla.
+        */
+        className="[--lavado-y:20rem] md:[--lavado-y:24rem]"
+      >
         <HowItWorks />
       </Section>
 
