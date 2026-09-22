@@ -162,20 +162,42 @@ export default async function ListaEsperaPage({
           </h2>
         </Reveal>
 
+        {/*
+         * Por contenido esto NO es una card: son tres textos con un ícono, se
+         * leen, no se toman, y el criterio de `docs/DECISIONES.md` §3 sexies
+         * los mandaría a agruparse por aire. La card se queda igual, y por un
+         * motivo medido que no es de composición: ESTA SECCIÓN TIENE TINTE.
+         *
+         * Sobre `cream-100`, el cuerpo en `ink-500` da 4,35:1 y la cifra y el
+         * ícono en `amber-600` dan 2,97:1 — los tres fallan. Sobre la card de
+         * `paper` vuelven a 4,83:1 y 3,31:1. O sea que acá la card no decora:
+         * es lo que sostiene el contraste, y es la segunda cláusula de la
+         * regla. En oscuro no haría falta (`bone-300` sobre `ink-850` da
+         * 10,14:1); es una restricción del tema claro, como todas las de
+         * `cream-100`.
+         *
+         * Cuando el paso 5 resuelva D2 —que es este mismo token— esto se
+         * vuelve a mirar: es el primer caso que se destraba.
+         */}
         <ul className="mt-14 grid gap-4 md:grid-cols-3 md:gap-5">
           {beneficios.map((beneficio, index) => (
             <Reveal
               as="li"
               key={beneficio.title}
               index={index}
-              className="flex h-full flex-col rounded-card border border-ink-900/8 bg-paper p-7 shadow-[0_1px_0_rgba(0,0,0,0.03)] md:p-8 dark:border-white/8 dark:bg-ink-800"
+              className="flex h-full flex-col rounded-card border border-ink-900/10 bg-paper p-7 md:p-8 dark:border-white/10 dark:bg-ink-800"
             >
               <beneficio.Icon className="h-6 w-6 text-amber-600 dark:text-amber-300" />
 
-              {/* La cifra, en la tipografía de números: es el motivo de la card */}
+              {/* La cifra, en la tipografía de números: es la pieza gráfica del ítem.
+                  `display-sm` y no el `text-[3.5rem]` que estaba escrito a mano: es
+                  el token que la Fase B0 creó justo para este escalón (D8), y queda
+                  por debajo del `display-lg` del título de la sección, que es quien
+                  manda. Sobre `paper` da 3,31:1, que es lo que pide una cifra a
+                  este tamaño. */}
               <p
                 aria-hidden="true"
-                className="num mt-7 text-[3.5rem] leading-none text-amber-600 dark:text-amber-300"
+                className="num mt-7 text-display-sm text-amber-600 dark:text-amber-300"
               >
                 {beneficio.figure}
               </p>

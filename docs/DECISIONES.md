@@ -270,6 +270,145 @@ Verificado barriendo la home entera en un Chrome real, 280 posiciones cada 20px
 en los dos temas: **ninguna por debajo de 4,5:1**. Peor caso por estado, en
 claro 11,60 / 4,71 / 4,71 y en oscuro 11,60 / 11,20 / 11,20.
 
+## 3 sexies. Qué es card y qué no
+
+Fase B paso 3, el 22 de septiembre de 2026. El contrato de rediseño sacó a
+`rounded-card` + borde de su puesto de contenedor por default y dejó abierta la
+pregunta de qué lo reemplaza. Esto la contesta, y de paso cierra D3.
+
+### La regla, en dos cláusulas
+
+**Primera, de contenido: es card lo que se toma.** Algo que se completa, que se
+copia, o que se compara con lo que tiene al lado. Lo que sólo se lee se agrupa
+por aire y un filete, que es lo que el manual pide por default —*"un grupo se
+lee por su aire, no por su borde"*— y para lo que ya existe
+[`Hairline`](../components/Hairline.tsx), cuyo docstring dice desde siempre
+"reemplaza a las cards cuando sólo hace falta separar".
+
+**Segunda, de contraste, y pisa a la primera: en claro, el texto chico sobre una
+sección con tinte va en card de `paper`.** No por composición: porque
+`cream-100` no lo sostiene. Los números están más abajo. En oscuro la cláusula
+no aplica.
+
+Con eso, las cards del sitio son **cuatro**, cada una por un motivo distinto:
+
+| Card | Cláusula | Por qué |
+|---|---|---|
+| [`WaitlistForm`](../components/WaitlistForm.tsx) (vacío y éxito) | 1ª | Se completa. Y es la misma card en dos estados: si cambiara de forma al enviar, el envío se leería como una navegación |
+| [`Audiences`](../components/Audiences.tsx) | 1ª | Se compara. Un objeto, dos mitades, el borde exterior sin cortar |
+| [`ReferralCode`](../components/ReferralCode.tsx) | 1ª | Se copia. El borde punteado es lo que la separa de las otras tres, y es deliberado: lee como algo que se arranca |
+| Beneficios de [`/lista-espera`](../app/lista-espera/page.tsx) | **2ª** | Por contenido no sería card. Se queda porque la sección tiene tinte |
+
+Y se fue una: la de `/invite`.
+
+**`rounded-card` no es sinónimo de card.** El radio nombra un tamaño, no un rol:
+una pieza grande lleva 24 px sea card o panel. El panel de Referidos de
+[`Rewards`](../components/Rewards.tsx) usa `rounded-card` y no es una card —
+sobre un lienzo no hay cards, porque no hay sombra posible y un `paper` ahí
+sería violento—. Contar `rounded-card` en el repo da cinco usos y cuatro cards.
+
+### D3: la sombra que se sacó no se veía
+
+Las cuatro superficies que llevaban sombra y borde a la vez —`WaitlistForm`
+(dos), `/invite` y los beneficios de `/lista-espera`— no llevaban
+`--shadow-card` sino un `0 1px 0 rgba(0,0,0,0.03)` escrito a mano. Medido, ese
+negro al 3 % compone **1,068:1** sobre `cream-50` y **1,005:1** sobre `ink-950`.
+Para comparar: §3 bis trata 1,036:1 como indistinguible. O sea que la infracción
+al manual era real y su costo visual, cero: sacarla no cambia un píxel que se
+note. Las cuatro quedan con borde, y al 10 %, que es el valor del manual.
+
+### Por qué el filo de la card es el borde y no la sombra
+
+El manual dice que una superficie de contenido lleva `--shadow-card`. La web
+hace lo contrario, y queda como *Divergencia 7* en [`MARCA.md`](MARCA.md). Se
+decide con dos números:
+
+| | Sombra canónica | Borde al 10 % | Relleno solo |
+|---|---|---|---|
+| Claro, card sobre `cream-50` | **1,208:1** | **1,208:1** | 1,027:1 |
+| Oscuro, card sobre `ink-950` | 1,064:1 | 1,357:1 | 1,157:1 |
+
+En claro los dos filos dan **el mismo número** —las dos son `ink-900` al 10 %
+compuesto—, así que ahí la medición no los separa y la elección es de carácter.
+En oscuro sí decide: `--shadow-card-dark` rinde **menos que el propio relleno de
+la card**, o sea que no dibuja nada, mientras que el borde es el filo más fuerte
+disponible. Un filo que existe en un tema y no en el otro no puede ser la regla
+de un sitio cuyo pre-flight pide los dos temas diseñados.
+
+De paso: el relleno claro no separa nada (1,027:1). En claro la card **es** su
+borde; en oscuro el borde acompaña a un relleno que ya se ve. No es el claro
+invertido.
+
+**Los dos tokens de sombra no se borran: se les dio su único uso legítimo.**
+Estaban en `@theme` sin que los leyera nadie, que es la forma más segura de que
+alguien los use mal. Ahora los usa la única superficie del sitio que de verdad
+flota por encima de la página: el toast de `ReferralCode`. Que además estaba
+escrito como **píldora con `shadow-lg`**, rompiendo dos reglas del manual a la
+vez —el toast tiene radio propio (16 px) y las píldoras no llevan sombra nunca—.
+Ninguna de las tres auditorías lo había marcado.
+
+### `cream-100` no sostiene texto chico, y no se arregla aclarándolo
+
+Es el hallazgo que obligó a la segunda cláusula. Al sacarle la card a los
+beneficios de `/lista-espera`, el texto quedaba sobre el tinte:
+
+| Sobre `paper` (la card) | Sobre `cream-100` (el tinte) | Pide |
+|---|---|---|
+| `ink-500` cuerpo **4,83:1** | **4,35:1** | 4,5 |
+| `amber-600` cifra e ícono **3,31:1** | **2,97:1** | 3,0 |
+| `ink-900` título 14,68:1 | 13,20:1 | 4,5 |
+
+Los dos primeros fallan. Y **aclarar `cream-100` no es salida**: para sostener
+`ink-500` a 4,5:1 tiene que llegar a `#F6F8FA`, y ahí separa **1,04:1** contra
+`cream-50`, o sea que deja de verse como banda. Es exactamente la trampa de la
+§3 ter con el lavado cálido —no existe un valor que sea legible y además se
+vea—, sólo que en el eje de la luminosidad en vez del de la temperatura.
+
+**Consecuencia para D2.** La auditoría llamó D2 al eyebrow `amber-700` a 4,38:1
+sobre `cream-100` y lo dejó para el paso 5. Esto lo agranda: no son un eyebrow y
+un token mal calibrado, es que **en claro una sección con tinte no puede llevar
+texto chico directamente**. El paso 5 tiene que resolverlo como estructura, no
+como un ajuste de color, y los beneficios de `/lista-espera` son el primer caso
+que se destraba cuando lo haga.
+
+### La fórmula concéntrica vale en anidados apretados
+
+`radio exterior = radio interior + padding` no sobrevive al padding de la web, y
+conviene anotarlo antes de que alguien "arregle" los radios con ella. La card de
+`WaitlistForm` tiene 24 px de radio, 24–40 px de padding y campos de 12: la
+fórmula pediría 36–52 px de radio exterior, y 52 px es más que la píldora. Con
+28–40 px de aire entre un borde y el otro, las dos esquinas no se leen como
+concéntricas: se leen como dos formas independientes.
+
+Donde el anidado **sí** es apretado, el sitio ya la cumple exacto: el marco del
+teléfono de `HowItWorks` es 40 px de radio con 12 px de padding sobre una
+pantalla de 28 — 28 + 12 = 40. La regla es esa: vale mientras el hijo toque el
+padding.
+
+Fue además el segundo argumento para sacar la card de `/invite`, que envolvía el
+contenido entero de la página —no se levantaba por encima de nada— y anidaba la
+card punteada de `ReferralCode`, pidiendo 24 + 28 = 52 px y teniendo 24.
+
+### Sacar esa card destapó un lavado debajo del texto, otra vez
+
+`/invite` tiene un destello ámbar detrás del lockup. Mientras el contenido vivía
+dentro de una card de `paper`, la card lo tapaba. Sin ella, la cola del destello
+llegaba al eyebrow con un **6,92 %** de ámbar encima, y ahí `amber-700` da
+**4,457:1**: falla AA por poco, que es la misma forma en que ya fallaron los
+otros tres lavados de este repo (`LegalDoc`, `ReferralCode`, `HowItWorks`).
+
+Medido en vivo sobre el DOM, no estimado: se lee la geometría real del círculo y
+se evalúa el alfa en el punto de cada texto más cercano al centro. El destello
+se subió de `-top-48` a `-top-72`, con lo que el eyebrow queda en **1,65 %**
+(≈ 4,64:1) a 375 px y en **0 %** en escritorio, y el lockup conserva el 14,3 %
+que es para lo que el destello existe. `-top-64`, que fue el primer intento,
+dejaba el caso móvil en 4,29 % — pasaba con 0,07 de margen, y este repo ya se
+quemó dos veces con márgenes así.
+
+**La lección, por tercera vez:** el contraste se mide sobre el píxel finalmente
+pintado. Acá la card no era decoración, era la capa que separaba el texto del
+lavado — y quitarla es un cambio de contraste aunque no se toque un color.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol

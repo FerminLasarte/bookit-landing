@@ -87,9 +87,20 @@ export default function ReferralCode({ code }: { code: string }) {
         aria-live="polite"
         className="pointer-events-none fixed inset-x-0 bottom-0 z-60 flex justify-center px-6"
       >
+        {/*
+         * Es un toast, y estaba escrito como una píldora con `shadow-lg`: el
+         * manual le da radio propio (16px) y prohíbe la sombra en las píldoras,
+         * así que el elemento rompía las dos reglas a la vez.
+         *
+         * Con `rounded-toast` y `--shadow-card` queda en la forma que le
+         * corresponde, y de paso esos dos tokens de sombra dejan de estar sin
+         * usar: es la única superficie del sitio que de verdad flota por encima
+         * de la página, o sea el único lugar donde una sombra dice algo.
+         * Ver `docs/DECISIONES.md` §3 sexies.
+         */}
         <p
           className={cn(
-            "mb-8 rounded-pill bg-ink-950 px-6 py-3 text-small font-semibold text-bone-100 shadow-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] dark:bg-bone-100 dark:text-ink-900",
+            "mb-8 rounded-toast bg-ink-950 px-6 py-3 text-small font-semibold text-bone-100 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] dark:bg-bone-100 dark:text-ink-900 dark:shadow-card-dark",
             toast ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0",
           )}
         >
