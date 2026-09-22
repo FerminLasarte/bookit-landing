@@ -235,7 +235,7 @@ export default function WaitlistForm({
       <div
         ref={successRef}
         tabIndex={-1}
-        className="ring-focus rounded-card border border-ink-900/10 bg-paper p-8 md:p-10 dark:border-white/10 dark:bg-ink-800"
+        className="ring-focus rounded-card border border-ink-900/10 bg-paper p-8 [--ring-hueco:var(--color-paper)] dark:[--ring-hueco:var(--color-ink-800)] md:p-10 dark:border-white/10 dark:bg-ink-800"
       >
         <IconCheck className="h-9 w-9 text-amber-500" />
         {/* Mismo nivel de heading que el título que reemplaza. */}
@@ -268,7 +268,7 @@ export default function WaitlistForm({
      * propio relleno de la card (1,157:1). Una regla que funciona en un tema y
      * no en el otro no es la regla.
      */
-    <div className="rounded-card border border-ink-900/10 bg-paper p-6 md:p-10 dark:border-white/10 dark:bg-ink-800">
+    <div className="rounded-card border border-ink-900/10 bg-paper p-6 [--ring-hueco:var(--color-paper)] dark:[--ring-hueco:var(--color-ink-800)] md:p-10 dark:border-white/10 dark:bg-ink-800">
       <div
         className={cn(
           "transition-opacity duration-150 motion-reduce:transition-none",

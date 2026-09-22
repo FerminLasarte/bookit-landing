@@ -225,7 +225,7 @@ export default function Nav() {
             así que le corresponde el 10% del manual y no el 3:1 de un borde que
             sostiene solo un control (Divergencia 6). Sin sombra: es una píldora.
           */}
-          <ul className="hidden items-center gap-1 rounded-pill border border-ink-900/10 bg-paper p-1.5 lg:flex dark:border-white/10 dark:bg-ink-800">
+          <ul className="hidden items-center gap-1 rounded-pill border border-ink-900/10 bg-paper p-1.5 lg:flex dark:border-white/10 dark:bg-ink-800 [--ring-hueco:var(--color-paper)] dark:[--ring-hueco:var(--color-ink-800)]">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link

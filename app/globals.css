@@ -34,7 +34,14 @@
    * de foco sobre papel. Da 4,75:1 sobre `cream-50` — pasa, pero con menos
    * margen del que decía este comentario (4,9:1). Sobre `cream-100` da 4,38:1
    * y NO pasa: es el D2 de la auditoría.
-   * Sobre fondo oscuro no hace falta: ahí el ámbar pasa con 6,66:1.
+   * Sobre fondo oscuro no hace falta PARA TEXTO: ahí el ámbar pasa con 6,66:1.
+   *
+   * El anillo de foco es la excepción a esa última línea, y recién lo usa desde
+   * el 22/9/2026 — la deuda que este mismo comentario nombraba como "bordes de
+   * foco sobre papel" y que `ring-focus` nunca había consumido. Ahí va en los
+   * DOS temas, porque un anillo no puede elegir por tema: dos de las cinco
+   * superficies que el sitio tiene debajo de algo enfocable son oscuras también
+   * en el tema claro. Ver `ring-focus`, más abajo.
    */
   --color-amber-700: #9d6515;
 
@@ -614,20 +621,93 @@
    * C, junto con el último `rgba()` suelto. El sitio queda en CUATRO radios más
    * `rounded-full`, que es la lista del manual. Las capturas de la app van en un
    * panel de `rounded-card`: el radio nombra un tamaño, no un rol.
+   *
+   * ── EL ANILLO VA EN `amber-700`, NO EN `amber-500` ────────────────────
+   *
+   * Era la última deuda medida de `docs/MARCA.md`: el anillo pintaba 2px de
+   * hueco y 2px de `amber-500`, y contra una card de `paper` eso da 2,78:1,
+   * por debajo de los 3:1 que WCAG 1.4.11 le pide a un indicador de foco.
+   *
+   * El anillo se pinta sobre CINCO superficies, y están medidas —no estimadas—
+   * recorriendo todo lo enfocable del sitio y componiendo el fondo real que
+   * queda por detrás de cada caja:
+   *
+   *                          amber-500   amber-600   amber-700
+   *   cream-50   la página        2,71        3,22        4,75
+   *   paper      card clara       2,78        3,31        4,88
+   *   marca-prof. lienzo          6,90        5,80        3,94
+   *   ink-950    página oscura    6,66        5,60        3,80
+   *   ink-800    card oscura      5,75        4,84        3,28
+   *
+   * `amber-700` es el único que pasa las cinco, con 3,28:1 en el peor caso.
+   * `amber-600` pasa las cinco por poco (3,22) y se cae en cuanto algo
+   * enfocable aterrice sobre el tinte (2,97) o sobre el lavado cálido (2,42);
+   * `amber-700` aguanta también esas dos (4,38 y 3,56), que es lo que hace que
+   * la regla siga valiendo mañana.
+   *
+   * Y no es un color nuevo: es `marcaTexto`, cuyo comentario en este mismo
+   * archivo dice, literal, "para cuando el ámbar tiene que LEERSE: links,
+   * texto de acento, **bordes de foco sobre papel**". El token estaba escrito
+   * para esto y el anillo era el único que no lo usaba.
+   *
+   * UN SOLO VALOR EN LOS DOS TEMAS, y eso es deliberado. El manual dice que
+   * sobre oscuro el ámbar pasa sin bajarle la luz, pero un anillo no puede
+   * elegir por tema: `marca-profunda` e `ink-950` aparecen TAMBIÉN en el tema
+   * claro —los lienzos, el footer, la mitad oscura de `Audiences`—, así que un
+   * `@media` de tema le erraría al vestido justo ahí. Es la misma salida de la
+   * §3 septies con los links del nav: cuando un elemento tiene que sobrevivir a
+   * varios fondos, se deja de elegir el color por fondo y se lo saca de la
+   * ecuación.
+   *
+   * ── EL HUECO LO DECLARA LA SUPERFICIE ─────────────────────────────────
+   *
+   * Los 2px de adentro no son decoración: son lo que despega el anillo del
+   * elemento, y por eso tienen que ser del color de la superficie que el
+   * elemento tiene debajo. Con el hueco clavado por tema, en el tema CLARO el
+   * anillo dibujaba un halo `cream-50` de 18:1 alrededor de cualquier link del
+   * footer, de los lienzos o de la mitad oscura de `Audiences`, que son oscuras
+   * en los dos temas.
+   *
+   * Así que la superficie se declara, como ya hacen `Button`, `Eyebrow`,
+   * `Hairline` y `Captura` con `onDark`. Sólo que acá no hace falta una prop:
+   * `--ring-hueco` es una custom property, o sea que se hereda, y la declara la
+   * superficie UNA vez para todo lo que tenga adentro.
+   *
+   * Va como `var(--ring-hueco, …)` y NO como una declaración propia de la
+   * utilidad. Es la lección de `--lavado-y` (§3 undecies): declarándola acá, el
+   * valor local ganaría siempre y la perilla no llegaría a girar, porque quien
+   * la gira está un nivel más arriba.
    */
   &:focus-visible {
     outline: none;
-    --tw-ring-offset-color: var(--color-cream-50);
     box-shadow:
-      0 0 0 2px var(--color-cream-50),
-      0 0 0 4px var(--color-amber-500);
+      0 0 0 2px var(--ring-hueco, var(--color-cream-50)),
+      0 0 0 4px var(--color-amber-700);
   }
 
   @media (prefers-color-scheme: dark) {
     &:focus-visible {
       box-shadow:
-        0 0 0 2px var(--color-ink-950),
-        0 0 0 4px var(--color-amber-500);
+        0 0 0 2px var(--ring-hueco, var(--color-ink-950)),
+        0 0 0 4px var(--color-amber-700);
+    }
+  }
+
+  /*
+   * EN ALTO CONTRASTE EL ANILLO NO EXISTÍA. En modo de colores forzados
+   * —el alto contraste de Windows— el navegador no pinta `box-shadow`, así que
+   * de los dos anillos no quedaba ninguno; y como la utilidad además apaga el
+   * `outline`, el foco se quedaba sin NINGÚN indicador, justo para quien
+   * enciende ese modo porque lo necesita.
+   *
+   * Acá el color no lo elige el sitio —lo impone el sistema— así que no hay
+   * número que medir: se repone el `outline`, con el mismo grosor y el mismo
+   * hueco que el anillo de arriba para que la forma sea la misma.
+   */
+  @media (forced-colors: active) {
+    &:focus-visible {
+      outline: 2px solid;
+      outline-offset: 2px;
     }
   }
 }

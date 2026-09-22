@@ -187,6 +187,18 @@ tiempo eso se resolvió con el 2px por default de Tailwind — que llegó a ser 
 radio más usado del sitio sin existir en el manual. Es una píldora y no hace
 falta un quinto radio.
 
+**Y va en `marcaTexto`, no en el ámbar de interfaz.** Es el mismo razonamiento
+que el de *Color*: el anillo tiene que leerse, y `primary` sobre las superficies
+claras da 2,71 y 2,78:1, por debajo de los 3:1 que WCAG le pide a un indicador
+de foco. `marcaTexto` pasa sobre las cinco superficies que el sitio tiene debajo
+de algo enfocable, con 3,28:1 en el peor caso. **El mismo valor en los dos
+temas**, y eso no contradice la línea de *Color* que dice que sobre oscuro el
+ámbar pasa solo: la contradice el sitio, donde dos de esas cinco superficies
+—el lienzo y el footer— son oscuras también en el tema claro, así que un anillo
+no puede elegir su color por tema. Los 2 px de hueco que lo despegan del
+elemento van del color de la superficie, que se declara y no se adivina.
+`DECISIONES.md` §3 duodevicies.
+
 **Sombra o borde. Nunca los dos.** Una acción secundaria lleva borde de 1 px de
 `ink-900` al 10 %. Los campos y las píldoras no llevan sombra nunca.
 
@@ -387,9 +399,14 @@ Lo que esta web hace distinto del manual, a propósito:
   declarada. Los otros `rgba()` habían salido antes a las utilidades `destello`
   y `calor`, con el mismo criterio que `lavado`. (`HeroGlow` ya no existe; los
   dos gradientes que vivían dentro del botón se fueron con `AnimatedButton`.)
-- **El anillo de foco no llega a 3:1.** `ring-focus` pinta 2 px de `cream-50` y
-  4 px de `amber-500`, y el ámbar contra la card de `paper` da **2,78:1**, por
-  debajo de lo que se le pide a un indicador de foco (WCAG 1.4.11). Es de toda
-  la web, no de una sección: tocarlo es una decisión de primitiva y necesita su
-  propia medición contra los cinco fondos. Medido el 22/9/2026 y anotado en
-  `DECISIONES.md` §3 decies; no se arregla de costado en el paso de otra cosa.
+- ~~**El anillo de foco no llega a 3:1.**~~ **Cerrado el 22/9/2026**, en
+  `DECISIONES.md` §3 duodevicies. Pintaba 2 px de hueco y 2 px de `amber-500`,
+  y el ámbar contra la card de `paper` daba **2,78:1** contra los 3:1 de WCAG
+  1.4.11. Se midió contra los cinco fondos que el sitio de verdad tiene debajo
+  de algo enfocable, y el anillo pasa a `amber-700` —el único que pasa los
+  cinco, 3,28:1 en el peor caso— que además es el uso que este manual ya le
+  declaraba a `marcaTexto`. De paso salieron dos defectos que nadie había
+  contado: el hueco iba clavado por tema y dibujaba un halo de 18:1 alrededor de
+  cualquier link sobre una superficie oscura en el tema claro, y en modo de
+  colores forzados no quedaba **ningún** indicador, porque ahí el navegador no
+  pinta `box-shadow` y la utilidad apagaba el `outline`.

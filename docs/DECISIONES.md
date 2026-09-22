@@ -1993,6 +1993,161 @@ en `PENDIENTES.md`.
   §3 terdecies eligió esa asimetría a propósito —*"el hero es una voz hablándole
   a dos personas"*— y el `flex-wrap` resuelve los 36 px sin tocarla.
 
+## 3 duodevicies. El anillo de foco, contra los cinco fondos
+
+El 22 de septiembre de 2026, después de cerrar la Fase C. Era la última deuda
+medida de [`MARCA.md`](MARCA.md) y la única falla de accesibilidad que le
+quedaba al sitio: `ring-focus` pintaba 2 px de hueco y 2 px de `amber-500`, y
+contra una card de `paper` eso da **2,78:1**, por debajo de los 3:1 que WCAG
+1.4.11 le pide a un indicador de foco.
+
+El manual decía que tocarlo *"necesita su propia medición contra los cinco
+fondos"*. Acá están los cinco, y no salieron de una lista: salieron de recorrer
+todo lo enfocable del sitio y componer, capa por capa, el fondo real que queda
+**por detrás** de cada caja — que es donde el anillo se pinta.
+
+| Superficie | Hex | Dónde tiene foco encima |
+|---|---|---|
+| `cream-50` | `#FBFCFD` | la página, en claro |
+| `paper` | `#FFFFFF` | las cards y la píldora del nav, en claro |
+| `marca-profunda` | `#140E03` | los tres lienzos, **en los dos temas** |
+| `ink-950` | `#151311` | la página en oscuro, el footer y la mitad oscura de `Audiences`, **en los dos temas** |
+| `ink-800` | `#24211E` | las cards y la píldora del nav, en oscuro |
+
+Son exactamente cinco, y lo que importa de la tabla es la columna de la derecha:
+**dos de las cinco son oscuras en el tema claro.** De ahí sale todo lo demás.
+
+### El color: `amber-700`, y ya estaba escrito para esto
+
+| Fondo | `amber-500` | `amber-600` | `amber-700` |
+|---|---|---|---|
+| `cream-50` | **2,71** | 3,22 | 4,75 |
+| `paper` | **2,78** | 3,31 | 4,88 |
+| `marca-profunda` | 6,90 | 5,80 | 3,94 |
+| `ink-950` | 6,66 | 5,60 | 3,80 |
+| `ink-800` | 5,75 | 4,84 | **3,28** |
+
+`amber-700` es el único que pasa las cinco. Su peor caso son los 3,28:1 contra
+la card oscura, y el margen es chico pero es el único que existe: por arriba,
+`amber-600` pasa las cinco por 0,22 y se cae en cuanto algo enfocable aterrice
+sobre el tinte (2,97) o sobre el lavado cálido (2,42), que son las dos
+superficies que hoy no tienen foco encima pero podrían tenerlo mañana.
+`amber-700` aguanta también esas dos, con 4,38 y 3,56. O sea que no es sólo el
+que pasa hoy: es el único que no obliga a volver a medir cuando se mueva algo.
+
+**Y no es un color nuevo.** Es `marcaTexto`, y el comentario del token en
+`globals.css` dice, literal, *"para cuando el ámbar tiene que LEERSE: links,
+texto de acento, **bordes de foco sobre papel**"*. El token se declaró para esto
+en la Fase B0 y el anillo era el único consumidor que no lo usaba. La deuda no
+era de paleta; era que la paleta ya tenía la respuesta.
+
+### Un solo valor en los dos temas
+
+El manual dice que sobre oscuro no hace falta bajarle la luz al ámbar, porque
+ahí pasa con 6,66:1. Es cierto, y aun así el anillo va en `amber-700` también en
+oscuro, por la columna de la derecha de la tabla: **un anillo no puede elegir
+por tema.** `marca-profunda` e `ink-950` aparecen también en el tema claro, así
+que un `@media (prefers-color-scheme)` le erraría al vestido exactamente en los
+lienzos, en el footer y en la mitad oscura de `Audiences`.
+
+Es la misma salida de la §3 septies con los links del nav, y conviene decirla
+con las mismas palabras: cuando un elemento tiene que sobrevivir a varios
+fondos, se deja de elegir el color por fondo y se lo saca de la ecuación. Lo que
+se paga son los 6,66 que el ámbar claro daba en oscuro, bajados a 3,80. Lo que
+se compra es que el número no dependa de nada.
+
+### El hueco lo declara la superficie, y ahí había un segundo defecto
+
+Los 2 px de adentro no son decoración: son lo que despega el anillo del elemento
+y lo que hace que se lea como un anillo y no como un borde. Por eso tienen que
+ser del color de la superficie de abajo — invisibles contra ella.
+
+Estaban clavados por tema (`cream-50` en claro, `ink-950` en oscuro), y con eso,
+**en el tema claro, cualquier link del footer, de los tres lienzos o de la mitad
+oscura de `Audiences` recibía un halo `cream-50` de 18:1 alrededor.** Medido:
+18,69:1 sobre `marca-profunda` y 18,04:1 sobre `ink-950`. No es una falla de
+contraste —de hecho es lo contrario, es demasiado— pero es el mismo error de
+fondo que el color: elegir por tema una cosa que depende de la superficie. En la
+home son 19 de los 36 enfocables.
+
+La salida es la convención que el repo ya tiene desde la §3 duodecies —*"la
+superficie se declara, no se adivina"*— con una diferencia que la hace más
+barata: acá no hace falta una prop como el `onDark` de `Button`, porque
+`--ring-hueco` es una custom property y **se hereda**. La superficie la declara
+una vez y todo lo que tenga adentro la recibe, hoy y cuando se le agregue algo.
+
+Va como `var(--ring-hueco, …)` y no como declaración propia de la utilidad, que
+es la lección de `--lavado-y` de la §3 undecies: declarada adentro, el valor
+local gana siempre y la perilla no llega a girar, porque quien la gira está un
+nivel más arriba.
+
+### Un solo anillo en todo el sitio
+
+El indicador estaba escrito **tres veces**, las tres con el mismo `amber-500` y
+la misma falla: la utilidad `ring-focus`, un `ring-2 ring-amber-500` propio
+dentro de [`Button`](../components/Button.tsx) con su propio `ring-offset`, y el
+`peer-focus-visible:ring-*` de
+[`AudienceSwitch`](../components/AudienceSwitch.tsx). Arreglar sólo la utilidad
+habría dejado el sitio con un anillo que pasa en los links y uno que no pasa en
+**todos los CTA**, que es el control que más importa.
+
+`Button` pasa a usar `ring-focus` y pierde sus cuatro clases de foco; su `onDark`
+sigue existiendo para el relleno, que es lo que esa prop siempre declaró, pero
+ya no para el anillo — el hueco lo hereda del lienzo. Queda uno solo que no
+puede usar la utilidad, y es estructural: en `AudienceSwitch` el que se enfoca es
+un `<input>` con `sr-only` y el que se pinta es un hermano, así que necesita
+`peer-focus-visible:` y la utilidad cuelga de `&:focus-visible`. Lleva los
+mismos valores y un comentario que dice que tienen que seguir siendo los mismos.
+
+### En alto contraste no había anillo
+
+Lo destapó reescribir la utilidad. En modo de colores forzados —el alto
+contraste de Windows— el navegador **no pinta `box-shadow`**, así que de los dos
+anillos no quedaba ninguno; y como la utilidad además apaga el `outline`, el
+foco se quedaba sin ningún indicador. Justo para quien enciende ese modo porque
+lo necesita.
+
+Se repone el `outline` dentro de `@media (forced-colors: active)`, con el mismo
+grosor y el mismo hueco para que la forma sea la misma. Ahí no hay número que
+medir: el color lo impone el sistema, no el sitio.
+
+### Verificación
+
+En lazo cerrado, y sin enfocar a mano: para **cada** enfocable de las seis
+rutas del sitio —la home, `/lista-espera`, `/soporte`, `/descargar`,
+`/invite/…` y `/legal/privacidad`— en los dos temas, se leyó el `--ring-hueco`
+que el elemento **hereda** y se lo comparó contra el fondo real compuesto por
+detrás de su caja.
+
+- **362 enfocables** revisados: 181 por tema, las seis rutas.
+- El anillo da entre **3,28 y 4,88:1**. Ninguno por debajo de 3.
+- El hueco coincide con el fondo en **1,000:1 exacto** en todos, sin excepción.
+  O sea que no queda una sola superficie sin declarar, ni un solo halo.
+- Mirado además en los tres casos que importan: el peor número (un link del nav
+  sobre la píldora `ink-800`, en oscuro), un CTA sobre el lienzo del hero y un
+  link del nav sobre la píldora `paper`. El anillo se lee en los tres.
+
+`npm run build` y `tsc --noEmit`, limpios.
+
+### Lo que se decidió NO hacer
+
+- **Dejar `amber-500` en oscuro y `amber-700` en claro,** que es lo que el
+  manual sugiere al decir que sobre oscuro no hace falta. Da mejores números en
+  oscuro (6,66 contra 3,80) y es incorrecto: el tema no dice de qué color es la
+  superficie, y dos de las cinco son oscuras en el tema claro.
+- **Engrosar el anillo** para compensar los 3,28 del peor caso. La regla es de
+  contraste, no de área: un anillo más gordo con 2,78:1 sigue sin pasar, y uno
+  con 3,28 ya pasa. Cambiar las dos cosas a la vez habría dejado sin saber cuál
+  arregló qué.
+- **Tokenizar el hueco por tema con un `--ring-hueco` en `:root`.** No funciona,
+  y conviene anotarlo: un custom property que contiene `var()` resuelve su valor
+  donde se **declara**, no donde se usa, así que un `--ring-hueco` armado en
+  `:root` ignoraría cualquier override más abajo. Por eso el fallback vive en la
+  utilidad y la superficie declara el valor crudo.
+- **Tocar el `ring-focus` de `ReferralCode`**, que es el único enfocable con
+  borde punteado ámbar propio. Su anillo ahora pasa como todos; el borde es otra
+  cosa, es la señal de "esto se arranca" y no un indicador de estado.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol
