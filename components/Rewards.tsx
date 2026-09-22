@@ -140,6 +140,7 @@ export default function Rewards() {
       */}
       <div
         aria-hidden="true"
+        data-canvas-capa
         className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda fade-y [--fade-y:6rem] dark:border-y dark:border-white/12 dark:[--fade-y:0rem]"
       />
 

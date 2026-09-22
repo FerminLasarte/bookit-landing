@@ -215,6 +215,61 @@ doble que el título de su sección— y en desktop queda idéntica.
 existe para que la escala esté escrita en un lugar, no para sumar nombres, y
 `Rewards` se recompone completa en la Fase C.
 
+## 3 quinquies. El header tiene tres estados porque dos no alcanzan
+
+D1 de la auditoría, resuelto el 22 de septiembre de 2026. Queda anotado porque
+la solución obvia —arreglar el predicado y dejar dos estados— no funciona, y
+alguien va a querer volver a intentarla.
+
+**El predicado estaba mal, pero no era lo único.** Preguntaba si ALGÚN
+`[data-canvas]` tocaba la banda de 72px del header, y con eso vestía de oscuro
+sobre un header transparente. "Tocar" no es "estar detrás". Además, los tres
+lienzos no terminan donde termina su rectángulo: el hero se disuelve con un
+degradé de salida propio de 160px, `#puntos` lleva una máscara `fade-y` de 96px
+arriba y abajo **sólo en claro**, y `#cierre` sí corta neto. Medir el rectángulo
+daba "hay lienzo" cuando el negro ya se había ido.
+
+**Y hay una zona muerta que ningún umbral arregla.** Entre el 28 % y el 84 % del
+degradé de salida del hero —unos 90px de scroll— *ningún* vestido pasa AA:
+
+| Punto del degradé | Vestido oscuro (`bone-300`) | Vestido claro (`ink-500`) |
+|---|---|---|
+| 0 % | 11,60:1 | 3,02:1 |
+| 30 % | **4,04:1** | **3,52:1** |
+| 60 % | 1,41:1 | **4,07:1** |
+| 85 % | 1,37:1 | 4,56:1 |
+
+La causa es que el header claro era `cream-50/80`: con 80 % de opacidad sobre
+`marca-profunda` compone `#CDCCCB` y deja `ink-500` en 3,02:1. Para que el fondo
+deje de importar harían falta **98 %** de opacidad.
+
+**Lo que se hizo:** tres estados en vez de dos.
+
+- `lienzo` — el lienzo cubre la barra entera y con negro pleno. Header
+  transparente, vestido oscuro, 11,60:1.
+- `borde` — hay lienzo pero no cubre todo, o está en su degradé. Header con
+  superficie **opaca**: el contraste deja de depender del fondo, 4,71:1
+  garantizado. **Es el estado que faltaba**, y es lo que cierra la zona muerta.
+- `pagina` — no hay lienzo cerca. Header translúcido como siempre.
+
+El vestido oscuro del tema oscuro nunca estuvo roto (`ink-950/80` da 6,09:1
+hasta sobre `cream-50`), así que sólo cambió lo que hacía falta. D1 era un
+defecto de modo claro, como decía la auditoría.
+
+**Lo que se decidió NO hacer:** volver el header translúcido en los bordes. La
+translucidez es deliberada y está bien en `pagina`, donde detrás sólo hay
+superficies claras. Sobre un lienzo, o a medio camino de uno, es exactamente el
+defecto.
+
+**Dónde termina el negro se mide en vivo,** leyendo la máscara y el alto del
+degradé de salida, en vez de anotar números a mano. Con eso sale gratis que
+`#puntos` no tenga fade en oscuro —su ventana de `borde` dura 160px en claro y
+60px en oscuro— y que el degradé del hero cambie de alto según el viewport.
+
+Verificado barriendo la home entera en un Chrome real, 280 posiciones cada 20px
+en los dos temas: **ninguna por debajo de 4,5:1**. Peor caso por estado, en
+claro 11,60 / 4,71 / 4,71 y en oscuro 11,60 / 11,20 / 11,20.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol
