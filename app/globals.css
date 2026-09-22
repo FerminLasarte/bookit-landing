@@ -184,6 +184,19 @@
    * Sombra canónica: `shadow` al 10%, blur 10, desplazada 4 hacia abajo.
    * Sombra O borde, nunca los dos. Los campos y las píldoras no llevan
    * sombra nunca (§5).
+   *
+   * EN LA WEB NO ES EL FILO DE LA CARD, y el nombre engaña. La card del sitio
+   * se sostiene con borde; la divergencia y su medición están en `docs/MARCA.md`
+   * (*Divergencia 7*) y en `docs/DECISIONES.md` §3 sexies. En dos números: en
+   * claro la sombra y el borde al 10% dan el MISMO 1,208:1 contra `cream-50`,
+   * así que ahí no hay nada que medir que los separe; en oscuro la sombra da
+   * 1,064:1, menos que el propio relleno de la card sobre la página (1,157:1),
+   * o sea que no dibuja nada. Un filo que existe en un tema y no en el otro no
+   * puede ser la regla de un sitio que diseña los dos.
+   *
+   * Su único uso legítimo es la superficie que de verdad flota por encima de
+   * la página: el toast de `ReferralCode`. Si aparece un segundo caso, tiene
+   * que flotar de verdad, no sólo ser contenido.
    */
   --shadow-card: 0 4px 10px rgb(31 41 55 / 0.1);
   --shadow-card-dark: 0 4px 10px rgb(0 0 0 / 0.45);

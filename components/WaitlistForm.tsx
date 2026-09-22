@@ -188,7 +188,7 @@ export default function WaitlistForm({
       <div
         ref={successRef}
         tabIndex={-1}
-        className="ring-focus rounded-card border border-ink-900/8 bg-paper p-8 shadow-[0_1px_0_rgba(0,0,0,0.03)] md:p-10 dark:border-white/8 dark:bg-ink-800"
+        className="ring-focus rounded-card border border-ink-900/10 bg-paper p-8 md:p-10 dark:border-white/10 dark:bg-ink-800"
       >
         <IconCheck className="h-9 w-9 text-amber-500" />
         {/* Mismo nivel de heading que el título que reemplaza. */}
@@ -210,7 +210,18 @@ export default function WaitlistForm({
   }
 
   return (
-    <div className="rounded-card border border-ink-900/8 bg-paper p-6 shadow-[0_1px_0_rgba(0,0,0,0.03)] md:p-10 dark:border-white/8 dark:bg-ink-800">
+    /*
+     * Card, y de las tres que quedan en el sitio. El criterio está en
+     * `docs/DECISIONES.md` §3 sexies: es card lo que se toma —se completa, se
+     * copia o se compara con lo de al lado—, no lo que sólo se lee. Un
+     * formulario se completa.
+     *
+     * Filo de borde y no de sombra: medido, en claro las dos opciones dan el
+     * mismo 1,208:1, y en oscuro `--shadow-card-dark` da 1,064:1, menos que el
+     * propio relleno de la card (1,157:1). Una regla que funciona en un tema y
+     * no en el otro no es la regla.
+     */
+    <div className="rounded-card border border-ink-900/10 bg-paper p-6 md:p-10 dark:border-white/10 dark:bg-ink-800">
       <div
         className={cn(
           "transition-opacity duration-150 motion-reduce:transition-none",

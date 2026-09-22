@@ -77,10 +77,18 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
 
   return (
     <div className="relative overflow-hidden py-16 md:py-24">
-      {/* Único glow de esta página */}
+      {/*
+       * Único glow de esta página, y va detrás del lockup, no detrás del texto.
+       * Estaba en `-top-48`, y mientras el contenido vivía dentro de una card de
+       * `paper` eso no importaba porque la card lo tapaba. Sacada la card, su
+       * cola llegaba al eyebrow con un 6,9% de ámbar encima, y ahí `amber-700`
+       * da 4,457:1 — falla AA por poco, que es exactamente cómo fallaron los
+       * otros tres lavados de este repo. Subido a `-top-64`, el eyebrow queda
+       * fuera de su alcance.
+       */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-48 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(215,138,29,0.15)_0%,rgba(215,138,29,0)_70%)]"
+        className="pointer-events-none absolute -top-72 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(215,138,29,0.15)_0%,rgba(215,138,29,0)_70%)]"
       />
 
       <div className="wrap relative">
@@ -89,7 +97,16 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
             <Wordmark className="text-3xl" />
           </div>
 
-          <div className="mt-10 rounded-card border border-ink-900/8 bg-paper p-7 shadow-[0_1px_0_rgba(0,0,0,0.03)] md:p-9 dark:border-white/8 dark:bg-ink-800">
+          {/*
+           * Acá NO va una card. Envolvía el contenido entero de la página, o
+           * sea que no se levantaba por encima de nada —no había un segundo
+           * plano del que despegarse— y además anidaba la card punteada de
+           * `ReferralCode`, con lo que la fórmula concéntrica del manual pedía
+           * 24 + 28 = 52px de radio exterior y había 24. Sacándola, la única
+           * card de la página es la que de verdad se toma: el código.
+           * El criterio, en `docs/DECISIONES.md` §3 sexies.
+           */}
+          <div className="mt-10">
             {code && <Eyebrow>Invitación</Eyebrow>}
 
             <h1 className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100">

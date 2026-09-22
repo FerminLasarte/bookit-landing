@@ -48,7 +48,11 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-ink-950 text-bone-100">
+    // `data-canvas`: el footer es `ink-950` en los DOS temas, así que para el
+    // header es una superficie oscura más. Sin esto, al final de cualquier
+    // página el nav se vestía de claro sobre el footer (1,31:1). Antes no se
+    // notaba porque el header tenía una superficie crema translúcida encima.
+    <footer data-canvas className="bg-ink-950 text-bone-100">
       <Hairline onDark />
 
       <div className="wrap py-16 md:py-20">

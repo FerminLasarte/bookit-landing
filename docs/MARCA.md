@@ -38,10 +38,33 @@ El isotipo es un corchete que se cierra sobre un check: lo que se abre, se
 agenda y se cumple.
 
 **Archivos.** `public/brand/logo_bookit_completo.svg` (lockup) y
-`logo_bookit_isotipo.svg`. Los trazos en tinta salen en `currentColor`; el
-naranja sale de `--logo-naranja` y los huecos de la palabra de `--logo-hueco`.
-En React se usa siempre [`components/Wordmark.tsx`](../components/Wordmark.tsx),
-nunca un `<img>` al SVG: un `<img>` no hereda el color y rompe el modo oscuro.
+`logo_bookit_isotipo.svg`. Los trazos en tinta salen en `currentColor` y el
+naranja de `--logo-naranja`. En React se usa siempre
+[`components/Wordmark.tsx`](../components/Wordmark.tsx), nunca un `<img>` al
+SVG: un `<img>` no hereda el color y rompe el modo oscuro.
+
+**Los huecos de la `B` y de las dos `o` van calados, no tapados.** Son subpaths
+del mismo path compuesto, así que el `fill-rule` por defecto ya los abre.
+Existía un token `--logo-hueco` que los pintaba del color del fondo y había que
+setearlo a mano en cada sitio de uso; se eliminó el 22/9/2026. Era una trampa:
+el logo sólo quedaba bien sobre exactamente `cream-50` o `ink-950`, y sobre un
+lienzo, un degradé o una captura los tapones se veían de otro color que el
+fondo. Calado, el logo deja de depender de lo que tenga detrás.
+
+**La palabra se redibujó el 22/9/2026.** El maestro pasó a tener los contornos
+creados, y con eso el lockup cambió de dibujo: las dos `o` eran círculos
+geométricos y el punto de la `i` un círculo sobre un rectángulo redondeado, y
+ahora son contornos tipográficos. **El isotipo no cambió**: sus siete paths son
+los mismos, verificado uno por uno. El `viewBox` tampoco, así que la proporción
+del lockup y el mínimo de 96 × 28 px siguen valiendo.
+
+**Al sincronizar desde el maestro hay que corregir dos cosas**, porque
+Illustrator las vuelve a escribir en cada export:
+
+1. **La tinta va en `currentColor`.** El export la deja sin `fill`, o sea negra
+   fija, y así el lockup es invisible sobre `marca-profunda`.
+2. **El naranja va en `--logo-naranja`.** El export escribe `#FD8003`; el
+   canónico es `#FD7D03`.
 
 **Los dos naranjas.** No es una inconsistencia:
 
@@ -125,13 +148,23 @@ tipografías.
 doble del hueco que hay dentro de uno. Un grupo se lee por su aire, no por su
 borde.
 
+De ahí sale **qué es card y qué no** en la web: es card lo que se *toma* —se
+completa, se copia o se compara con lo de al lado—, y lo que sólo se lee se
+agrupa por aire y un filete. La excepción la pone el contraste, no el gusto: en
+claro, el texto chico sobre una sección con tinte va en card de `paper` porque
+`cream-100` no lo sostiene. Las dos cláusulas y sus números, en
+`DECISIONES.md` §3 sexies.
+
 **Radios — cuatro y una fórmula.** Campos 12 · toasts 16 · cards 24 · píldoras
 50. Al anidar, `radio exterior = radio interior + padding`. Sin eso las esquinas
 no son concéntricas y la card se ve hecha a mano.
 
-**Sombra o borde. Nunca los dos.** Una superficie de contenido lleva
-`--shadow-card`. Una acción secundaria lleva borde de 1 px de `ink-900` al 10 %.
-Los campos y las píldoras no llevan sombra nunca.
+**Sombra o borde. Nunca los dos.** Una acción secundaria lleva borde de 1 px de
+`ink-900` al 10 %. Los campos y las píldoras no llevan sombra nunca.
+
+El manual agrega que una superficie de contenido lleva `--shadow-card`. **En la
+web no**: la card se sostiene con borde, y la sombra queda para lo único que de
+verdad flota, que es el toast. Es la *Divergencia 7*, con sus números.
 
 El 10 % vale para un borde que **acompaña** a un relleno. Un borde que tiene que
 sostener solo un control necesita 3:1 y no llega ni cerca: ver la *Divergencia
@@ -242,14 +275,65 @@ Lo que esta web hace distinto del manual, a propósito:
    de contraste medida en el producto, junto con el ámbar a tamaño display.
    Cambiar el rótulo a tinta lo lleva a 5,27:1 sin tocar el color de marca.
 
+7. **El filo de una superficie de contenido es el borde, no `--shadow-card`.**
+   Decidido el 22/9/2026 (Fase B paso 3). El manual manda la sombra; la web usa
+   borde en los dos temas. No es preferencia, lo deciden dos números: en claro
+   la sombra y el borde al 10 % dan **el mismo 1,208:1** contra `cream-50` —las
+   dos son `ink-900` al 10 % compuesto—, así que ahí la medición no los separa;
+   en oscuro `--shadow-card-dark` da **1,064:1**, **menos que el propio relleno
+   de la card** sobre la página (1,157:1), mientras que el borde al 10 % da
+   1,357:1. La sombra dibuja en un tema y no en el otro, y una regla así no
+   sirve para un sitio que diseña los dos.
+
+   De paso queda dicho que el relleno claro no separa nada por sí solo
+   (`paper` sobre `cream-50`: **1,027:1**). En claro la card **es** su borde; en
+   oscuro el borde acompaña a un relleno que ya se ve. Otra vez: el oscuro no es
+   el claro invertido.
+
+   **`--shadow-card` y `--shadow-card-dark` no se borraron**, porque un token
+   sin lectores es la forma más segura de que alguien lo use mal. Se les dio su
+   único uso legítimo: el toast de `ReferralCode`, que es la única superficie
+   del sitio que de verdad flota por encima de la página. Ese toast, además,
+   estaba escrito como **píldora con `shadow-lg`** — rompía a la vez el radio
+   propio del toast (16 px) y el "las píldoras no llevan sombra nunca" de más
+   arriba.
+
+8. **La fórmula concéntrica vale en anidados apretados.** `radio exterior =
+   radio interior + padding` no sobrevive al padding de la web: la card de
+   `WaitlistForm` tiene 24 px de radio, 24–40 px de padding y campos de 12, y la
+   fórmula pediría entre 36 y 52 px de radio exterior — más que la píldora. Con
+   28–40 px de aire entre un borde y el otro las esquinas no se leen como
+   concéntricas, se leen como dos formas sueltas. Donde el anidado sí es
+   apretado el sitio la cumple exacto: el marco del teléfono de `HowItWorks`,
+   40 px de radio con 12 px de padding sobre una pantalla de 28. La regla es
+   que vale mientras el hijo toque el padding.
+
 ## Deuda conocida
 
 - `public/brand/` conserva `icon.png`, `icon.jpeg`, `lockup.png` y
   `lockup.jpeg`, anteriores a los SVG. Hay que confirmar quién los consume
   (metadata, OG) antes de borrarlos.
+- **El maestro sigue escribiendo el naranja equivocado.** Los contornos ya están
+  creados —eso quedó resuelto el 22/9/2026— pero el export usa `#FD8003` y deja
+  la tinta sin `fill`. Las dos correcciones están listadas arriba, en *Logo*, y
+  hay que reaplicarlas cada vez que se sincronice. El camino que NO funcionó, y
+  conviene no repetirlo: exportar la palabra como `<text>` en
+  `Plus Jakarta Display`. Esa familia está instalada en la máquina de diseño
+  pero no es la que sirve el sitio (`Plus Jakarta Sans`, por `next/font`), no
+  existe en Google Fonts, y el `tspan` que separa "Book" de "it" está calculado
+  para sus métricas exactas. Renderizado en un navegador daba una tipografía
+  distinta en cada intento.
 - Quedan `rgba()` del ámbar escritos a mano en los gradientes de `page.tsx`,
-  `Audiences` y `Rewards`. Son el hex canónico, pero el manual pide que ningún
+  `Audiences`, `Rewards` y el destello de `/invite` —que el inventario anterior
+  no contaba—. Son el hex canónico, pero el manual pide que ningún
   color se escriba suelto. (`HeroGlow` ya no existe; los dos gradientes que
   vivían dentro del botón se fueron con `AnimatedButton` el 22/9/2026.)
 - Los bordes usan `ink-900/8`, `/10`, `/12` según el componente. El manual fija
-  **10 %**. Falta unificar.
+  **10 %**. Falta unificar — las cuatro superficies de conversión ya se pasaron
+  al 10 % en la Fase B paso 3; el resto es D4, del paso 5.
+- **`cream-100` no sostiene texto chico en claro**, y no se arregla aclarándolo:
+  para que `ink-500` llegue a 4,5:1 tiene que subir hasta `#F6F8FA`, y ahí
+  separa 1,04:1 contra `cream-50`, o sea que deja de verse como banda. Es la
+  versión grande de D2. Hoy se tapa poniendo el texto chico sobre una card de
+  `paper`; la salida real es del paso 5 y es estructural, no un ajuste de color.
+  Medido en `DECISIONES.md` §3 sexies.

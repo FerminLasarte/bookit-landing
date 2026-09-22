@@ -21,61 +21,48 @@ export default function Home() {
        * El hero NO usa `Reveal`: está sobre el pliegue, así que no hay scroll que
        * revelar, y arrancarlo en `opacity: 0` retrasaba el LCP hasta la hidratación.
        *
-       * Ocupa la pantalla entera, nav incluido: el `-mt-18` lo mete por debajo
-       * del header (que es translúcido y con blur), así el primer plano es todo
-       * hero. El `pt-28` compensa esos 4,5rem para que el texto no quede tapado.
+       * Dejó de ir a sangre y por debajo del header. Ahora es un lienzo con
+       * esquinas, apoyado dentro del `wrap`, y el nav se apoya en la página.
+       * El motivo no es estético: con el hero metido debajo de un header
+       * transparente, en reposo el nav quedaba sobre negro y al scrollear
+       * cruzaba un degradé donde el fondo es gris medio y NINGÚN color de texto
+       * llega a 4,5:1. De ahí salía la banda crema opaca que había que dibujar.
+       * Apoyado, el header está siempre sobre la página. Ver `components/Nav.tsx`.
+       *
+       * El lienzo arranca en el borde de contenido del `wrap`, que es exactamente
+       * donde arranca el lockup del nav. No es casualidad y hay que conservarlo:
+       * es lo que garantiza que, cuando el hero pasa por detrás del header, el
+       * lockup tenga negro pleno debajo y no medio borde.
        *
        * `svh` y no `dvh`: en mobile, con `dvh` el hero cambia de alto cuando la
        * barra del navegador se esconde al scrollear, y el texto salta.
        */}
       {/*
-        `pb-44` (176px) y no `pb-20`: el difuminado de salida mide `h-40` (160px),
-        así que con 80px de padding la fila de CTAs caía DENTRO del degradé. El
-        texto blanco del botón `glass` llegaba a 2,79:1 contra el fondo compuesto
-        en su base — invisible para Lighthouse, porque el fondo es un gradiente
-        detrás de un elemento translúcido. Ahora el contenido despeja el fade.
-      */}
-      {/*
         Los `@media (max-height)` no son cosmética: a 1280x700 —un portátil
-        cualquiera— el contenido del hero más el `pt-28` sumaban 723px antes de
-        llegar al CTA, así que el botón quedaba 24px cortado bajo el pliegue.
-        Bajar el padding de abajo no lo arregla: con el contenido más alto que
-        el viewport, `justify-center` ya no centra nada y lo único que mueve el
-        CTA hacia arriba es comprimir lo que tiene encima. En pantallas altas
-        el ritmo generoso queda intacto.
+        cualquiera— el contenido del hero no entraba antes de llegar al CTA, así
+        que el botón quedaba cortado bajo el pliegue. Con el contenido más alto
+        que el viewport, `justify-center` ya no centra nada y lo único que mueve
+        el CTA hacia arriba es comprimir lo que tiene encima.
       */}
-      <section data-hero data-canvas className="relative isolate -mt-18 flex min-h-svh flex-col justify-center overflow-hidden pt-28 pb-44 [@media(max-height:820px)]:pt-24 [@media(max-height:820px)]:pb-32">
-        {/*
-         * El lienzo del hero: `marca-profunda`, el negro con tinte ámbar del
-         * manual. Es el mismo en claro y en oscuro, igual que el de `Rewards`:
-         * no es un artefacto del tema, es la idea de marca. `docs/MARCA.md`
-         * ("Piezas fuera de la app") describe exactamente esta pieza — fondo
-         * marcaProfunda, una sola frase en 800 con tracking negativo, y el
-         * ámbar reservado para una única cosa. Acá esa cosa es el CTA.
-         */}
-        <div
-          aria-hidden="true"
-          // El filo inferior sólo en oscuro: en claro el hero se disuelve en la
-          // página con el degradé de salida, que ahí sí se ve.
-          data-canvas-capa
-          className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda dark:border-b dark:border-white/12"
-        />
-
-        {/*
-         * Difuminado de salida (§4.3): el hero no termina en un borde, se
-         * disuelve en el color de la página. Va por encima del destello —para
-         * apagarlo— y por debajo del texto.
-         */}
-        <div
-          aria-hidden="true"
-          // El nav lo lee para saber dónde termina el negro de verdad (D1).
-          data-canvas-salida
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 [@media(max-height:820px)]:h-28 bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-cream-50)_92%)] dark:bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-ink-950)_92%)]"
-        />
-
-        <div className="wrap relative w-full">
-          <div className="md:grid md:grid-cols-12 md:gap-8">
-            <div className="md:col-span-8">
+      <section data-hero className="pt-2 pb-24 md:pt-3 md:pb-36">
+        <div className="wrap">
+          {/*
+           * El lienzo del hero: `marca-profunda`, el negro con tinte ámbar del
+           * manual. Es el mismo en claro y en oscuro, igual que el de `Rewards`:
+           * no es un artefacto del tema, es la idea de marca. `docs/MARCA.md`
+           * ("Piezas fuera de la app") describe exactamente esta pieza — fondo
+           * marcaProfunda, una sola frase en 800 con tracking negativo, y el
+           * ámbar reservado para una única cosa. Acá esa cosa es el CTA.
+           *
+           * El filo sólo en oscuro, donde el lienzo y la página se separan
+           * 1,036:1 y sin él la card no tiene borde. En claro dan 17:1.
+           */}
+          <div
+            data-canvas
+            className="relative isolate flex min-h-[calc(100svh-6.5rem)] flex-col justify-center overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/12 [@media(max-height:820px)]:min-h-[calc(100svh-5rem)] [@media(max-height:820px)]:py-14"
+          >
+            <div className="md:grid md:grid-cols-12 md:gap-8">
+              <div className="md:col-span-9">
               <Eyebrow onDark>Tandil · Próximo lanzamiento</Eyebrow>
 
               <h1 className="mt-5 text-display-xl font-extrabold text-bone-100">
@@ -122,10 +109,10 @@ export default function Home() {
                 />
                 <Button text="Tengo un local" href="/#locales" variant="secondary" onDark />
               </div>
+              </div>
             </div>
           </div>
         </div>
-
       </section>
 
       {/* ───────────────────── 2. Cómo funciona ───────────────────── */}

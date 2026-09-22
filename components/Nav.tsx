@@ -21,168 +21,89 @@ function Logo({ className = "", onDark = false }: { className?: string; onDark?:
 }
 
 /*
- * ══ El fondo que tiene el header detrás ═════════════════════════════════
+ * ══ El header ═══════════════════════════════════════════════════════════
  *
- * D1 de la auditoría. El predicado anterior preguntaba si ALGÚN `[data-canvas]`
- * tocaba la banda de 72px del header, y con eso vestía de oscuro sobre un
- * header transparente. Dos cosas fallaban.
+ * La barra no tiene superficie. Los links sí: viajan dentro de una píldora con
+ * relleno propio, así que su contraste no depende de lo que pase por detrás.
  *
- * Una, "tocar" no es "estar detrás": con el lienzo cubriendo sólo la franja de
- * arriba de la banda, el contenido claro del header caía sobre página clara y
- * daba 1,61:1 en los links y 1,25:1 en el lockup.
+ * Eso es lo que destraba el problema, y conviene dejar escrito cuál era, porque
+ * la solución obvia —un solo color de texto sobre una barra transparente— no
+ * funciona y alguien va a querer intentarla de nuevo. Con la barra transparente
+ * el fondo detrás del header puede estar PARTIDO: la mitad oscura de la card de
+ * `#publico` (`ink-950`) cruza la banda durante ~680px de scroll y deja claro a
+ * la izquierda y oscuro a la derecha. Medido, con el vestido claro "Puntos" y
+ * "Soporte" quedan en 1,31:1, y dándolo vuelta los dos links de la izquierda
+ * quedan en 1,61:1 sobre la mitad clara. No hay color único que sirva, porque
+ * el problema no es CUÁNDO cambia el vestido sino que hay dos fondos a la vez.
  *
- * Dos, y más grave, los tres lienzos no terminan donde termina su rectángulo:
- *   · el hero se disuelve con un degradé de salida propio de 160px (112 si el
- *     viewport es bajo),
- *   · `#puntos` lleva una máscara `fade-y` de 96px ARRIBA Y ABAJO, sólo en
- *     claro (en oscuro vale 0),
- *   · `#cierre` sí corta neto.
- * Medir el rectángulo daba "hay lienzo" cuando el negro ya se había ido.
+ * Con la píldora, los links dan siempre lo mismo:
+ *   claro   `ink-900` sobre `paper`    14,68:1
+ *   oscuro  `bone-300` sobre `ink-800`  9,68:1
  *
- * Y hay un tercer problema que ningún umbral arregla: entre el 28% y el 84% del
- * degradé del hero —unos 90px de scroll— NINGÚN vestido pasa AA. El oscuro cae
- * a 4,04:1 y el claro todavía está en 3,52:1, porque el header claro es
- * `cream-50/80` y lo que pasa por detrás le arrastra el contraste. Con 80% de
- * opacidad sobre `marca-profunda` compone #CDCCCB y deja `ink-500` en 3,02:1;
- * haría falta 98% para llegar a 4,5:1.
+ * Lo ÚNICO que todavía cambia de vestido es el lockup, que va suelto a la
+ * izquierda. Es seguro porque ahí nunca hay fondo partido: la mitad oscura de
+ * `Audiences` arranca en el medio del `wrap`, y todo lo demás que pasa por
+ * detrás —el hero, `#puntos`, `#cierre` y el footer— ocupa el ancho entero.
+ *   con lienzo  `bone-100` sobre `marca-profunda`  14,91:1
+ *   sin lienzo  `ink-900` sobre `cream-50`         14,29:1
  *
- * Por eso son TRES estados y no dos:
- *
- *   `lienzo`  el lienzo cubre la barra entera y con negro pleno. Header
- *             transparente y vestido oscuro: `bone-300` da 11,60:1.
- *   `borde`   hay lienzo pero no cubre todo, o está en su degradé. Header con
- *             superficie OPACA: el contraste deja de depender del fondo y
- *             `ink-500` da 4,71:1 garantizado. Es el estado que faltaba.
- *   `pagina`  no hay lienzo cerca. Header translúcido como siempre; sobre
- *             cualquier superficie clara el 80% compone bien.
- *
- * El vestido oscuro del tema oscuro nunca estuvo roto (`ink-950/80` da 6,09:1
- * hasta sobre `cream-50`), así que sólo cambia lo que hacía falta.
+ * Y el hero ya no se mete debajo del header: es un lienzo con esquinas, apoyado
+ * dentro del `wrap`. Por eso en reposo el nav está sobre la página y no sobre
+ * el negro, que es de donde salía la banda crema que había que dibujar antes.
  */
-type Fondo = "lienzo" | "borde" | "pagina";
 
 const BANDA = 72; // alto del header: `h-18`
 
-/*
- * Tolerancia de redondeo. El header mide 72,5px reales y el hero lo compensa
- * con `-mt-18` (72px exactos), así que arriba de todo el lienzo arranca medio
- * píxel POR DEBAJO del tope y `arriba <= 0` fallaba: la portada entera —el
- * cuadro más visible del sitio— se vestía de `borde` y aparecía una banda
- * crema sobre el hero. No es un margen de diseño, es el redondeo del layout.
- */
-const EPS = 2;
-
-const fondoClasses: Record<Fondo, string> = {
-  lienzo: "bg-transparent",
-  borde: "bg-cream-50 dark:bg-ink-950",
-  pagina: "bg-cream-50/80 dark:bg-ink-950/80",
-};
-
-/** `6rem` y `96px` a número de píxeles. `--fade-y` se escribe en rem acá. */
-function aPx(valor: string): number {
-  const n = parseFloat(valor);
-  if (!n) return 0;
-  return valor.trim().endsWith("rem")
-    ? n * parseFloat(getComputedStyle(document.documentElement).fontSize)
-    : n;
-}
-
-/**
- * Dónde termina de verdad el negro de un lienzo. Se mide en vivo en vez de
- * anotar números a mano, y con eso sale gratis que `#puntos` no tenga fade en
- * oscuro y que el degradé del hero cambie de alto según el viewport.
- */
-function negroPleno(el: Element): { arriba: number; abajo: number } {
-  const r = el.getBoundingClientRect();
-
-  /*
-   * El `--fade-y` sólo cuenta si la máscara está puesta de verdad. `Section`
-   * escribe la variable en las tres tonalidades pero aplica la utilidad
-   * `fade-y` únicamente cuando NO es lienzo, así que leer la variable a secas
-   * le restaba 128px a `#cierre`, que corta neto.
-   */
-  const capa = el.querySelector<HTMLElement>("[data-canvas-capa]");
-  let fade = 0;
-  if (capa) {
-    const cs = getComputedStyle(capa);
-    const mascara = cs.maskImage || cs.webkitMaskImage;
-    if (mascara && mascara !== "none") fade = aPx(cs.getPropertyValue("--fade-y"));
-  }
-
-  const salida = el.querySelector<HTMLElement>("[data-canvas-salida]");
-  const alturaSalida = salida ? salida.getBoundingClientRect().height : 0;
-
-  return {
-    arriba: r.top + fade,
-    abajo: r.bottom - Math.max(fade, alturaSalida),
-  };
-}
-
-function fondoDetras(): Fondo {
-  let toca = false;
-  for (const el of document.querySelectorAll("[data-canvas]")) {
-    const r = el.getBoundingClientRect();
-    if (r.bottom <= 0 || r.top >= BANDA) continue;
-    toca = true;
-    const { arriba, abajo } = negroPleno(el);
-    if (arriba <= EPS && abajo >= BANDA - EPS) return "lienzo";
-  }
-  return toca ? "borde" : "pagina";
-}
-
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  const [fondo, setFondo] = useState<Fondo>("pagina");
+  const [overDark, setOverDark] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
   /*
-   * El nav cambia de superficie cuando deja de tener el hero detrás, no a los
-   * 8px. Con el umbral viejo, en la home se volvía `cream-50/80` con blur
-   * mientras todavía estaba sobre el lienzo negro: quedaba una banda lechosa
-   * con el contenido de atrás emborronado. En el resto de las páginas, donde
-   * no hay hero oscuro, sigue siendo el gesto mínimo de siempre.
+   * ¿Hay un lienzo detrás del header? Se pregunta con un `IntersectionObserver`
+   * cuya raíz es una franja de 72px pegada arriba: si algún `[data-canvas]` la
+   * toca, hay lienzo. El navegador lo resuelve solo, fuera del hilo principal,
+   * así que no hay `getBoundingClientRect` por cuadro ni loop de scroll.
+   *
+   * La franja se arma con `rootMargin`, que necesita píxeles, así que el
+   * observer se rehace cuando cambia el alto del viewport.
    */
   useEffect(() => {
-    let pendiente = 0;
+    const lienzos = Array.from(document.querySelectorAll("[data-canvas]"));
+    if (!lienzos.length) {
+      setOverDark(false);
+      return;
+    }
 
-    const medir = () => {
-      pendiente = 0;
-      const hero = document.querySelector("[data-hero]");
-      const umbral = hero ? hero.getBoundingClientRect().height - BANDA : 8;
-      setScrolled(window.scrollY > umbral);
-      setFondo(fondoDetras());
+    let obs: IntersectionObserver | null = null;
+    const encima = new Set<Element>();
+
+    const armar = () => {
+      obs?.disconnect();
+      encima.clear();
+      obs = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) encima.add(e.target);
+            else encima.delete(e.target);
+          }
+          setOverDark(encima.size > 0);
+        },
+        { rootMargin: `0px 0px ${BANDA - window.innerHeight}px 0px`, threshold: 0 },
+      );
+      lienzos.forEach((el) => obs!.observe(el));
     };
 
-    /*
-     * Por cuadro, no por evento: `medir` hace varios `getBoundingClientRect`,
-     * que fuerzan layout. React igual descarta el render cuando el valor no
-     * cambió, así que lo caro es la medición, no el estado.
-     */
-    const onScroll = () => {
-      if (pendiente) return;
-      pendiente = requestAnimationFrame(medir);
-    };
-
-    medir();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    armar();
+    window.addEventListener("resize", armar);
     return () => {
-      if (pendiente) cancelAnimationFrame(pendiente);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      obs?.disconnect();
+      window.removeEventListener("resize", armar);
     };
   }, [pathname]);
 
   // Cerrar el menú al navegar.
   useEffect(() => setOpen(false), [pathname]);
-
-  /*
-   * Viste de oscuro sólo cuando el lienzo cubre la barra ENTERA. En el borde
-   * de un lienzo el header se apoya en su propia superficie opaca, así que el
-   * contraste deja de depender de lo que pase por detrás.
-   */
-  const overDark = fondo === "lienzo";
 
   /*
    * Scrollspy. Cuatro anclas sobre una página de ~8.000px y ninguna señal de
@@ -265,21 +186,26 @@ export default function Nav() {
         Saltar al contenido
       </a>
 
-      <header
-        className={cn(
-          "sticky top-0 z-50 backdrop-blur-md transition-colors duration-300",
-          fondoClasses[fondo],
-          scrolled ? "border-b border-ink-900/8 dark:border-white/8" : "border-b border-transparent",
-        )}
-      >
+      {/*
+        Transparente. Sin superficie, sin `backdrop-blur` y sin filete al
+        scrollear: lo único que hace el header es cambiar el color de su
+        contenido cuando entra o sale de un lienzo, con el fundido de 300ms de
+        la tabla de Movimiento.
+      */}
+      <header className="sticky top-0 z-50 bg-transparent">
         <nav aria-label="Principal" className="wrap flex h-18 items-center justify-between gap-8">
           {/* Sin `aria-label`: el nombre accesible sale del wordmark ("Bookit"),
               así el texto visible y el nombre accesible coinciden. */}
-          <Link href="/" className="ring-focus flex min-h-11 items-center rounded-sm">
+          <Link href="/" className="ring-focus flex min-h-11 items-center rounded-sm transition-colors duration-300">
             <Logo className="text-xl" onDark={overDark} />
           </Link>
 
-          <ul className="hidden items-center gap-8 md:flex">
+          {/*
+            La píldora. Relleno + borde al 10% — el borde ACOMPAÑA a un relleno,
+            así que le corresponde el 10% del manual y no el 3:1 de un borde que
+            sostiene solo un control (Divergencia 6). Sin sombra: es una píldora.
+          */}
+          <ul className="hidden items-center gap-1 rounded-pill border border-ink-900/10 bg-paper p-1.5 md:flex dark:border-white/10 dark:bg-ink-800">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
@@ -288,14 +214,16 @@ export default function Nav() {
                     activa && link.href.endsWith(`#${activa}`) ? "location" : undefined
                   }
                   className={cn(
-                    "ring-focus rounded-sm text-small font-medium transition-colors duration-150",
-                    overDark
-                      ? "text-bone-300 hover:text-bone-100"
-                      : "text-ink-500 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100",
-                    // La sección en la que estás: color pleno, no un subrayado.
-                    activa &&
-                      link.href.endsWith(`#${activa}`) &&
-                      (overDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100"),
+                    // Sin `overDark`: el link está sobre la píldora, no sobre la
+                    // página, así que su contraste es el mismo en toda la ruta.
+                    "ring-focus flex min-h-9 items-center rounded-pill px-3.5 text-small transition-colors duration-150",
+                    "text-ink-900 hover:bg-ink-900/5 dark:text-bone-300 dark:hover:bg-white/8 dark:hover:text-bone-100",
+                    // La sección en la que estás, marcada con el peso y no sólo
+                    // con el color: el manual pide que el color nunca sea el
+                    // único portador de un dato.
+                    activa && link.href.endsWith(`#${activa}`)
+                      ? "font-bold dark:text-bone-100"
+                      : "font-medium",
                   )}
                 >
                   {link.label}
@@ -323,7 +251,7 @@ export default function Nav() {
             aria-label="Abrir menú"
             aria-expanded={open}
             className={cn(
-              "ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill md:hidden",
+              "ring-focus -mr-2 flex h-11 w-11 items-center justify-center rounded-pill transition-colors duration-300 md:hidden",
               overDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100",
             )}
           >
