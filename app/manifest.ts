@@ -9,7 +9,19 @@ export default function manifest(): MetadataRoute.Manifest {
       "Reservá turnos en barberías, peluquerías, manicura, estética, masajes y depilación de tu ciudad.",
     start_url: "/",
     display: "standalone",
-    background_color: "#FBF9F5",
+    /*
+     * Los dos hex son de las piezas que NO ven el `@theme`: un manifiesto de
+     * PWA es JSON, no CSS. Es la misma excepción inherente que `app/og/` y el
+     * `themeColor` del `viewport`, y está declarada en el contrato.
+     *
+     * Lo que sí era deuda es el VALOR. `background_color` decía `#FBF9F5`, un
+     * crema cálido que no es ningún token del sitio —`cream-50` es `#FBFCFD`,
+     * con R-B = -2—, o sea un color huérfano de una paleta anterior. Es el
+     * fondo del splash de la app instalada, y el splash tiene que ser el mismo
+     * blanco con el que la página pinta su primer cuadro o hay un destello al
+     * abrir. `theme_color` ya era el canónico (`amber-500`).
+     */
+    background_color: "#FBFCFD",
     theme_color: "#D78A1D",
     lang: "es-AR",
     categories: ["lifestyle", "beauty"],
