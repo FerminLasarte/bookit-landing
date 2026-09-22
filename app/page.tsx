@@ -59,56 +59,77 @@ export default function Home() {
            */}
           <div
             data-canvas
-            className="relative isolate flex min-h-[calc(100svh-6.5rem)] flex-col justify-center overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/12 [@media(max-height:820px)]:min-h-[calc(100svh-5rem)] [@media(max-height:820px)]:py-14"
+            className="relative isolate flex min-h-[calc(100svh-6.5rem)] flex-col justify-center overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/10 [@media(max-height:820px)]:min-h-[calc(100svh-5rem)] [@media(max-height:820px)]:py-14"
           >
-            <div className="md:grid md:grid-cols-12 md:gap-8">
-              <div className="md:col-span-9">
-              <Eyebrow onDark>Tandil · Próximo lanzamiento</Eyebrow>
+            {/*
+              EL TÍTULO OCUPA EL LIENZO ENTERO, y eso es lo que arregla las dos
+              cosas que estaban mal a la vez. El contenido vivía en 9 de 12
+              columnas —757px de los 1020 del lienzo— y desde ahí el titular
+              necesitaba tres renglones y sobraba casi un tercio de negro a la
+              derecha. Medido a 1440: la frase entera mide 1531px de glifos a
+              88px, así que a 757 pide 2,02 renglones y sale en tres, y a 1020
+              pide 1,50 y sale en DOS. No hacía falta tocar la escala ni el
+              copy; el titular estaba metido en una columna que no era la suya.
+            */}
+            <Eyebrow onDark>Tandil · Próximo lanzamiento</Eyebrow>
 
-              <h1 className="mt-5 text-display-xl font-extrabold text-bone-100">
-                Tu próximo turno, a un clic de distancia.
-              </h1>
+            <h1 className="mt-5 text-display-xl font-extrabold text-bone-100">
+              Tu próximo turno, a un clic de distancia.
+            </h1>
 
+            {/*
+              El separador del sistema, con su tick ámbar, ahora de lado a lado
+              del lienzo. Antes medía 32rem y cortaba a la mitad: era el filete
+              de una columna, no el del cartel. De ancho completo es lo que
+              parte la pieza en dos —promesa arriba, decisión abajo— y lo que
+              hace que el lienzo se lea como un objeto y no como una caja con
+              texto apoyado en la esquina.
+            */}
+            <Hairline onDark className="mt-10 [@media(max-height:820px)]:mt-7" />
+
+            {/*
+              La banda de abajo, a dos columnas: es la que ocupa la mitad
+              derecha que quedaba vacía, y de paso acorta la pila vertical, que
+              es lo que mantiene al CTA sobre el pliegue cuando la card cambió
+              de proporciones. El orden de lectura se conserva —bajada, después
+              la aclaración y el botón—, porque leer una fila es de izquierda a
+              derecha.
+            */}
+            <div className="mt-8 md:grid md:grid-cols-12 md:gap-8 [@media(max-height:820px)]:mt-7">
               {/* Medida propia: `measure` (64ch) dejaba renglones de 91 caracteres acá. */}
-              <p className="mt-7 max-w-[52ch] text-bone-300">
+              <p className="text-bone-300 md:col-span-5">
                 Barberías, peluquerías, uñas, depilación y estética de Tandil en una sola app.
                 Reservá cuando se te ocurra, sin cadenas de WhatsApp ni llamados en horario de
                 trabajo.
               </p>
 
-              {/*
-                El separador del sistema, con su tick ámbar. El hero era la única
-                sección sin ningún dispositivo estructural: el trabajo emocional
-                lo hacía un destello detrás del texto. Ahora lo hace el sistema.
-              */}
-              <Hairline onDark className="mt-12 max-w-[32rem] [@media(max-height:820px)]:mt-8" />
+              <div className="mt-8 md:col-span-6 md:col-start-7 md:mt-0">
+                {/*
+                  La aclaración va ANTES del botón. Debajo, el orden de lectura era
+                  ilusión → clic → decepción; acá encuadra la decisión en vez de
+                  desmentirla después. Y los 500 puntos dejan de ser un link de
+                  14px compitiendo con el botón para ser parte de la promesa.
+                */}
+                <p className="max-w-[46ch] text-small text-bone-300">
+                  Todavía no lanzamos. Anotate ahora y llevate{" "}
+                  <span className="num font-semibold text-amber-300">500</span>{" "}
+                  Puntos Bookit para tu primer turno.
+                </p>
 
-              {/*
-                La aclaración va ANTES del botón. Debajo, el orden de lectura era
-                ilusión → clic → decepción; acá encuadra la decisión en vez de
-                desmentirla después. Y los 500 puntos dejan de ser un link de
-                14px compitiendo con el botón para ser parte de la promesa.
-              */}
-              <p className="mt-7 max-w-[46ch] text-small text-bone-300">
-                Todavía no lanzamos. Anotate ahora y llevate{" "}
-                <span className="num font-semibold text-amber-300">500</span>{" "}
-                Puntos Bookit para tu primer turno.
-              </p>
-
-              {/*
-                Los dos públicos, arriba del pliegue. El hero entero hablaba de
-                cliente —eyebrow, título, bajada y CTA— y el dueño de local no
-                aparecía hasta dos secciones más abajo, con riesgo de cerrar la
-                pestaña antes. Un solo ámbar: el CTA que de verdad funciona.
-              */}
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  text="Sumate a la lista VIP"
-                  href="/lista-espera?tipo=cliente"
-                  onDark
-                />
-                <Button text="Tengo un local" href="/#locales" variant="secondary" onDark />
-              </div>
+                {/*
+                  Los dos públicos, arriba del pliegue. El hero entero hablaba de
+                  cliente —eyebrow, título, bajada y CTA— y el dueño de local no
+                  aparecía hasta dos secciones más abajo, con riesgo de cerrar la
+                  pestaña antes. Un solo ámbar: el CTA que de verdad funciona.
+                */}
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Button
+                    text="Sumate a la lista VIP"
+                    href="/lista-espera?tipo=cliente"
+                    onDark
+                  />
+                  <Button text="Tengo un local" href="/#locales" variant="secondary" onDark />
+                </div>
               </div>
             </div>
           </div>
@@ -181,7 +202,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Lado cliente */}
             <div className="flex flex-col items-start border-b border-white/10 pb-12 md:border-r md:border-b-0 md:pr-14 md:pb-0">
-              <Eyebrow onDark variant="label">
+              <Eyebrow onDark>
                 Sacás turnos
               </Eyebrow>
               <p className="mt-4 max-w-[30ch] text-bone-300">
@@ -205,7 +226,7 @@ export default function Home() {
 
             {/* Lado local */}
             <div className="flex flex-col items-start pt-12 md:pt-0 md:pl-14">
-              <Eyebrow onDark variant="label">
+              <Eyebrow onDark>
                 Tenés un local
               </Eyebrow>
               <p className="mt-4 max-w-[30ch] text-bone-300">

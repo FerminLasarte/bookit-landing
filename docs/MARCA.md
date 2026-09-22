@@ -104,7 +104,11 @@ es papel y tinta.
 sobre `paper`. No llega al 3:1 de un borde ni al 4,5:1 de un texto chico. Por
 eso existe `marcaTexto` (`#9D6515`, **4,75:1** sobre `cream-50`): el mismo tono
 con la luminosidad bajada, para cuando el color tiene que *leerse*. Sobre
-`cream-100` ese mismo tono da 4,38:1 y no pasa, que es el D2 de la auditoría.
+`cream-100` ese mismo tono da 4,38:1 y no pasa; sobre el lavado cálido da 3,56:1
+y no hay ámbar que pase. Era el D2 de la auditoría, y la salida no fue de color:
+`marcaTexto` dejó de usarse para rótulos y quedó para links y texto de acento
+sobre la página, que es donde su 4,75:1 alcanza. A tamaño grande, donde el
+umbral baja a 3:1, sí entra en la banda. Ver *Espacio y forma*.
 Sobre fondo oscuro no hace falta — ahí el ámbar pasa con **6,66:1**.
 
 Con la tinta **encima** del ámbar, en cambio, da **5,27:1**, y es lo que
@@ -135,7 +139,12 @@ tipografías.
 
 - De `h3` para arriba, los títulos van en 700 con tracking negativo. Es lo que
   hace que un título se lea como título y no como texto en negrita.
-- La bajada va en `ink-500` (`onSurfaceVariant`).
+- La bajada va en `ink-500` (`onSurfaceVariant`), salvo sobre una banda con
+  tinte en claro, donde no llega: ver *Espacio y forma*.
+- **El rótulo de un bloque va en tinta, no en el color de marca.** Es texto
+  chico, y el texto chico de acento pasa sólo sobre la página pelada: falló en
+  cuatro superficies distintas antes de que se contaran juntas. La jerarquía la
+  hace la escala. `DECISIONES.md` §3 octies.
 - En texto chico el tracking vuelve a 0: apretar una letra chica la vuelve
   ilegible.
 - El título y su bajada van pegados porque son una unidad. El cuerpo largo
@@ -150,14 +159,33 @@ borde.
 
 De ahí sale **qué es card y qué no** en la web: es card lo que se *toma* —se
 completa, se copia o se compara con lo de al lado—, y lo que sólo se lee se
-agrupa por aire y un filete. La excepción la pone el contraste, no el gusto: en
-claro, el texto chico sobre una sección con tinte va en card de `paper` porque
-`cream-100` no lo sostiene. Las dos cláusulas y sus números, en
-`DECISIONES.md` §3 sexies.
+agrupa por aire y un filete. Sin excepciones: son tres cards y las tres lo son
+por lo que son. Ver `DECISIONES.md` §3 sexies.
+
+Hubo una cuarta, puesta por el contraste y no por el contenido —en claro el
+texto chico no se sostiene sobre una sección con tinte—, y se fue el 22/9/2026
+cuando ese problema se resolvió donde estaba. Que es la regla siguiente.
+
+**Una banda clara se compone en tinta plena.** `cream-100` no sostiene texto
+chico: `ink-500` da 4,35:1 y `amber-700` 4,38:1, y no se arregla aclarándola —al
+valor que sostiene `ink-500` deja de verse como banda—. Así que sobre una
+sección con tinte van `ink-900` (13,20:1) y acentos sólo a tamaño grande, donde
+el umbral es 3:1 y `amber-700` da 4,38:1. Ninguna bajada en `ink-500`, ninguna
+letra chica. No es una restricción sino una densidad: la banda es donde la
+página habla a tinta plena y el papel es donde tiene bajadas. En oscuro no
+aplica (`bone-300` sobre `ink-850`, 10,14:1). Es la misma forma de regla que
+lleva el lavado cálido, y está escrita junto al token. `DECISIONES.md` §3
+octies.
 
 **Radios — cuatro y una fórmula.** Campos 12 · toasts 16 · cards 24 · píldoras
 50. Al anidar, `radio exterior = radio interior + padding`. Sin eso las esquinas
 no son concéntricas y la card se ve hecha a mano.
+
+**El anillo de foco sobre un link de texto es una píldora.** Toma la forma del
+elemento, así que el radio del elemento es el radio del anillo, y durante un
+tiempo eso se resolvió con el 2px por default de Tailwind — que llegó a ser el
+radio más usado del sitio sin existir en el manual. Es una píldora y no hace
+falta un quinto radio.
 
 **Sombra o borde. Nunca los dos.** Una acción secundaria lleva borde de 1 px de
 `ink-900` al 10 %. Los campos y las píldoras no llevan sombra nunca.
@@ -226,6 +254,12 @@ Cada uno de estos ya rompió la consistencia en algún lado:
 - Sombra en un campo o en una píldora.
 - Chips con relleno de marca dentro de una lista.
 - Cards de opción con borde naranja y tilde.
+- El rótulo de un bloque en ámbar. Llegó a haber catorce, uno abriendo cada
+  sección: un acento que aparece catorce veces no es un acento.
+- Una card puesta para levantar el contraste de lo que tiene adentro. El
+  problema es de la superficie de abajo y se arregla ahí.
+- Un valor de movimiento escrito en el componente. Los `--duration-*` y las
+  curvas son los tokens; se leen como `var()`, no se copian.
 - Wizards para juntar datos sueltos.
 
 ## Divergencias declaradas
@@ -323,17 +357,11 @@ Lo que esta web hace distinto del manual, a propósito:
   existe en Google Fonts, y el `tspan` que separa "Book" de "it" está calculado
   para sus métricas exactas. Renderizado en un navegador daba una tipografía
   distinta en cada intento.
-- Quedan `rgba()` del ámbar escritos a mano en los gradientes de `page.tsx`,
-  `Audiences`, `Rewards` y el destello de `/invite` —que el inventario anterior
-  no contaba—. Son el hex canónico, pero el manual pide que ningún
-  color se escriba suelto. (`HeroGlow` ya no existe; los dos gradientes que
-  vivían dentro del botón se fueron con `AnimatedButton` el 22/9/2026.)
-- Los bordes usan `ink-900/8`, `/10`, `/12` según el componente. El manual fija
-  **10 %**. Falta unificar — las cuatro superficies de conversión ya se pasaron
-  al 10 % en la Fase B paso 3; el resto es D4, del paso 5.
-- **`cream-100` no sostiene texto chico en claro**, y no se arregla aclarándolo:
-  para que `ink-500` llegue a 4,5:1 tiene que subir hasta `#F6F8FA`, y ahí
-  separa 1,04:1 contra `cream-50`, o sea que deja de verse como banda. Es la
-  versión grande de D2. Hoy se tapa poniendo el texto chico sobre una card de
-  `paper`; la salida real es del paso 5 y es estructural, no un ajuste de color.
-  Medido en `DECISIONES.md` §3 sexies.
+- Queda **un** `rgba()` suelto: la sombra del teléfono dibujado a mano de
+  `HowItWorks`, que se va con el teléfono cuando la Fase C ponga las capturas
+  reales. Los otros salieron a las utilidades `destello` y `calor` el 22/9/2026,
+  con el mismo criterio que `lavado`. (`HeroGlow` ya no existe; los dos
+  gradientes que vivían dentro del botón se fueron con `AnimatedButton`.)
+- Quedan **dos** radios arbitrarios, `rounded-[2.5rem]` y `rounded-[1.75rem]`, y
+  son del mismo teléfono. Cumplen la fórmula concéntrica exacta (28 + 12 = 40) y
+  se van con él; si otra pieza los necesitara, ahí se tokenizan.

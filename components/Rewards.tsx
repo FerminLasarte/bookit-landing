@@ -1,8 +1,6 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import Eyebrow from "./Eyebrow";
+import Reveal from "./Reveal";
 import { IconPoints, IconReferral } from "./icons";
 import { site } from "@/content/site";
 
@@ -14,49 +12,21 @@ import { site } from "@/content/site";
  * te devuelve algo. Acá comparten un único lienzo oscuro — el segundo y último
  * de la página — partido por una línea.
  *
- * Lo que le da vida es que las dos mitades se mueven: la cifra cuenta desde
- * cero cuando entra en pantalla, y la línea entre las dos personas fluye. Las
- * dos cosas se apagan con `prefers-reduced-motion`.
- */
-
-/* ── La cifra ────────────────────────────────────────────────────────── */
-
-/**
- * Cuenta de 0 a `to` la primera vez que entra en pantalla.
+ * Lo único que se mueve solo es la línea entre las dos personas, que fluye —una
+ * animación de ambiente, por detrás del texto— y se apaga con
+ * `prefers-reduced-motion`.
  *
- * El número real va en un `sr-only` aparte: un lector de pantalla tiene que
- * leer "500", no la cuenta entera fotograma a fotograma.
- */
-/**
- * La cifra entra, no cuenta.
+ * ESTA SECCIÓN NO TIENE MOVIMIENTO PROPIO. Reimplementaba `Reveal` cuatro
+ * veces con `initial / whileInView / viewport / transition` en línea y los
+ * mismos valores —el D7 de la auditoría—, así que cuando el paso 5 llevó el
+ * reveal al token de 560ms esta sección no se habría enterado y habría quedado
+ * corriendo a 700ms sola. Ahora usa `Reveal`, que es el único lugar donde ese
+ * movimiento está escrito.
  *
- * Antes era un odómetro de 0 a 500 en 1,8s con `easeOutExpo`. Tres problemas:
- * mostraba valores que no son —lo agarré en 492 y en 140— cuando el hero acaba
- * de prometer 500 exactos; un contador animado es la gramática visual de una
- * métrica en vivo, y esto es un regalo fijo en un producto que no tiene ninguna
- * métrica real; y `docs/MARCA.md` (Movimiento) pide movimiento "corto y físico",
- * con 300ms para algo que entra. 1,8s de números girando no es ninguna de las
- * dos cosas.
- *
- * Ahora sube 16px y aparece, con la misma curva que usa el resto de la página.
- * El número es el número desde el primer frame, así que tampoco hace falta el
- * `sr-only` que antes existía para que el lector no leyera la cuenta.
+ * La cifra tampoco tiene el suyo: era un `motion.span` que subía 16px en 300ms
+ * —el reveal, con otra duración— dentro de un bloque que ya estaba revelándose.
+ * Entra con su bloque.
  */
-function CountUp({ to }: { to: number }) {
-  const reduced = useReducedMotion();
-
-  return (
-    <motion.span
-      className="inline-block"
-      initial={reduced ? undefined : { opacity: 0, y: 16 }}
-      whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.6 }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {to}
-    </motion.span>
-  );
-}
 
 /* ── El flujo de referidos ───────────────────────────────────────────── */
 
@@ -98,11 +68,11 @@ function ReferralFlow() {
           <path
             d="M2 12 C 34 -4, 86 28, 118 12"
             fill="none"
-            stroke="rgba(232,180,95,0.45)"
+            stroke="currentColor"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeDasharray="4 8"
-            className="animate-flow"
+            className="animate-flow text-amber-300/45"
           />
         </svg>
       </div>
@@ -144,23 +114,19 @@ export default function Rewards() {
         // Sin `fade-y`: el degradé de entrada y salida de este lienzo también
         // pasaba por detrás del header, con el mismo gris medio del hero. En
         // oscuro ya valía 0, así que ahora los dos temas cortan igual.
-        className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda dark:border-y dark:border-white/12"
+        className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda dark:border-y dark:border-white/10"
       />
 
-      {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto */}
+      {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto.
+          El ámbar sale de la utilidad `destello`; estaba escrito como
+          `rgba(215,138,29,…)` a mano, que es el hex canónico pero suelto. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 h-[42rem] w-[42rem] -translate-x-1/2 animate-aurora rounded-full bg-[radial-gradient(circle,rgba(215,138,29,0.14)_0%,rgba(215,138,29,0)_65%)]"
+        className="destello pointer-events-none absolute -top-40 left-1/2 h-[42rem] w-[42rem] -translate-x-1/2 animate-aurora rounded-full"
       />
 
       <div className="wrap relative">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-64px" }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="mx-auto max-w-[34rem] text-center"
-        >
+        <Reveal className="mx-auto max-w-[34rem] text-center">
           <Eyebrow onDark>Recompensas</Eyebrow>
           <h2
             id="recompensas-title"
@@ -168,24 +134,18 @@ export default function Rewards() {
           >
             Los turnos que ya te hacías, ahora te devuelven algo.
           </h2>
-        </motion.div>
+        </Reveal>
 
         <div className="mt-20 grid gap-16 md:grid-cols-2 md:gap-0">
           {/* ── Puntos ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-64px" }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="md:pr-14"
-          >
-            <Eyebrow onDark variant="label">
+          <Reveal index={1} className="md:pr-14">
+            <Eyebrow onDark>
               Puntos Bookit
             </Eyebrow>
 
             {/* La cifra como pieza gráfica: es lo más grande de la sección */}
-            <p className="num mt-6 text-[clamp(4.5rem,11vw,8.5rem)] leading-[0.85] text-amber-300">
-              <CountUp to={500} />
+            <p className="num mt-6 text-display-2xl text-amber-300">
+              500
             </p>
             <p className="mt-4 font-display text-h3 font-semibold text-bone-100">
               puntos de regalo por anotarte.
@@ -210,22 +170,15 @@ export default function Rewards() {
                 </li>
               ))}
             </ol>
-          </motion.div>
+          </Reveal>
 
           {/* ── Referidos ── */}
-          <motion.div
-            id="referidos"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-64px" }}
-            transition={{ duration: 0.7, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-            className="border-white/10 md:border-l md:pl-14"
-          >
-            <Eyebrow onDark variant="label">
+          <Reveal id="referidos" index={2} className="border-white/10 md:border-l md:pl-14">
+            <Eyebrow onDark>
               Referidos
             </Eyebrow>
 
-            <h3 className="mt-6 font-display text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.1] font-semibold tracking-[-0.02em] text-bone-100">
+            <h3 className="mt-6 font-display text-display-sm font-semibold text-bone-100">
               Invitá y ganen los dos.
             </h3>
 
@@ -259,7 +212,7 @@ export default function Rewards() {
               Es un beneficio entre personas que sacan turnos. Los locales no participan del
               programa de referidos.
             </p>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

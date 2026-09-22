@@ -196,7 +196,7 @@ export default function Nav() {
         <nav aria-label="Principal" className="wrap flex h-18 items-center justify-between gap-8">
           {/* Sin `aria-label`: el nombre accesible sale del wordmark ("Bookit"),
               así el texto visible y el nombre accesible coinciden. */}
-          <Link href="/" className="ring-focus flex min-h-11 items-center rounded-sm transition-colors duration-300">
+          <Link href="/" className="ring-focus flex min-h-11 items-center rounded-pill transition-colors duration-300">
             <Logo className="text-xl" onDark={overDark} />
           </Link>
 
@@ -288,7 +288,7 @@ export default function Nav() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="ring-focus block rounded-sm font-display text-display-lg font-semibold text-ink-900 dark:text-bone-100"
+                    className="ring-focus block rounded-pill font-display text-display-lg font-semibold text-ink-900 dark:text-bone-100"
                   >
                     {link.label}
                   </Link>

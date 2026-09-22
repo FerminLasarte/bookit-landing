@@ -81,6 +81,23 @@
    * Superficie alterna de sección. El manual no define un tercer nivel
    * claro (la app no lo usa). Sale de bajarle luz a `cream-50` sin
    * moverle la temperatura, para que no reaparezca el crema viejo.
+   *
+   * REGLA DE TINTA, en claro — es el D2 de la auditoría, resuelto en el paso 5
+   * como estructura y no como ajuste de color. Esta banda NO sostiene texto
+   * chico: `ink-500` da 4,35:1 y `amber-700` 4,38:1, los dos por debajo de 4,5.
+   * Y no se arregla aclarándola: para sostener `ink-500` tiene que llegar a
+   * #F6F8FA, y ahí separa 1,04:1 contra `cream-50`, o sea que deja de verse
+   * como banda. Lo que sí sostiene, con margen:
+   *
+   *   `ink-900`  13,20:1  — título, bajada, cuerpo, eyebrow
+   *   acento a tamaño grande (≥24px o ≥18,66px en 700), que pide 3:1:
+   *   `amber-700`  4,38:1 ✓    `amber-600`  2,97:1 ✗    `amber-500`  2,50:1 ✗
+   *
+   * O sea: una sección con tinte se compone en tinta plena. Es la misma forma
+   * de regla que la utilidad `lavado` lleva escrita adentro —la superficie dice
+   * qué tinta la puede pisar—, y es lo que liberó a las cards de beneficios de
+   * `/lista-espera`, que existían sólo para tapar este número.
+   * En oscuro (`ink-850`) no aplica: ahí `bone-300` da 10,14:1.
    */
   --color-cream-100: #f1f3f5;
 
@@ -496,8 +513,103 @@
   }
 }
 
+@utility reveal {
+  /*
+   * Contenido que aparece (§8 del manual): sube 16px, 560ms, escalonado 60ms.
+   *
+   * Va en CSS y no en el componente porque el D6 de la auditoría era
+   * exactamente eso: `--duration-reveal` valía 560ms, `Reveal.tsx` escribía
+   * `duration: 0.7` a mano, y el token no lo leía nadie. Un valor de
+   * movimiento que vive en JavaScript no puede ser el token del sitio; es la
+   * misma razón por la que el botón lee `var(--duration-chico)` en vez de una
+   * clase `duration-*`. `Reveal.tsx` ahora sólo decide CUÁNDO —un
+   * `IntersectionObserver` que marca `data-revealed` una vez— y el cuánto y el
+   * cómo viven acá.
+   *
+   * `--reveal-i` es el índice dentro del grupo, o sea el escalonado.
+   *
+   * Todo el bloque cuelga de `no-preference`: con *Reducir movimiento* la
+   * utilidad no hace NADA —ni siquiera el estado inicial—, así que el contenido
+   * está visible desde el primer cuadro y no depende del observer. Es la misma
+   * garantía que daba el `useReducedMotion` del componente anterior.
+   */
+  --reveal-i: 0;
+
+  @media (prefers-reduced-motion: no-preference) {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity var(--duration-reveal) var(--ease-reveal),
+      transform var(--duration-reveal) var(--ease-reveal);
+    transition-delay: calc(var(--reveal-i) * 60ms);
+
+    &[data-revealed] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@utility destello {
+  /*
+   * El destello de ambiente: un círculo de ámbar muy difuso, siempre POR
+   * DETRÁS del texto (§4.4 — las de ambiente son el único loop permitido).
+   *
+   * Existía escrito tres veces como `rgba(215,138,29,…)` a mano, con tres
+   * alfas y tres radios apenas distintos. El hex es el canónico —`amber-500`—
+   * pero el manual pide que ningún color se escriba suelto en un componente.
+   * Las dos perillas conservan exactamente los valores de cada sitio de uso:
+   * el alfa de este destello ya entró una vez en una medición de contraste
+   * (`docs/DECISIONES.md` §3 sexies, el eyebrow de `/invite`), así que se
+   * tokeniza sin re-calibrar.
+   */
+  --destello-alfa: 14%;
+  --destello-radio: 65%;
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-amber-500) var(--destello-alfa), transparent) 0%,
+    transparent var(--destello-radio)
+  );
+}
+
+@utility calor {
+  /*
+   * El corte de calor de la mitad oscura de `Audiences`. Sobre papel el corte
+   * lo hace el color de fondo; en oscuro, tinta sobre tinta casi no se
+   * distingue y es este lavado el que separa una mitad de la otra.
+   *
+   * No es `lavado`: nace en la esquina superior DERECHA y es lineal, porque
+   * separa dos mitades de un objeto en vez de apoyar un encabezado.
+   */
+  background-image: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--color-amber-500) 12%, transparent) 0%,
+    color-mix(in srgb, var(--color-amber-500) 2%, transparent) 45%,
+    transparent 70%
+  );
+}
+
 @utility ring-focus {
-  /* Focus visible propio: §4.5 */
+  /*
+   * Focus visible propio: §4.5. Dos anillos concéntricos de `box-shadow`, así
+   * que toman la forma del elemento — o sea que el radio del elemento es el
+   * radio del anillo.
+   *
+   * D5 de la auditoría: el radio más usado del sitio era `rounded-sm`, quince
+   * veces, y no existe en el manual — son los 2px que Tailwind trae por
+   * default, puestos sólo para darle forma a este anillo sobre links de texto.
+   * La auditoría proponía declarar un quinto radio. No hace falta: el anillo
+   * alrededor de una palabra es una PÍLDORA, que es uno de los cuatro del
+   * manual y además el que ya usan los links del nav. Con eso el sitio pasa de
+   * nueve radios a cinco —`field`, `toast`, `card`, `pill` y `rounded-full`
+   * cuando es un círculo y no una esquina— sin inventar ninguno.
+   *
+   * Quedan dos arbitrarios, `rounded-[2.5rem]` y `rounded-[1.75rem]`, y son los
+   * del teléfono dibujado a mano de `HowItWorks`: cumplen la fórmula
+   * concéntrica exacta (28 + 12 = 40) y se van con el teléfono cuando la Fase C
+   * ponga las capturas reales. Si alguna pieza los volviera a necesitar, ahí sí
+   * se tokenizan.
+   */
   &:focus-visible {
     outline: none;
     --tw-ring-offset-color: var(--color-cream-50);

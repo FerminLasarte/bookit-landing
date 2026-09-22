@@ -38,7 +38,7 @@ export default function AudienceSwitch({
                 "group relative flex min-h-11 cursor-pointer flex-col justify-center rounded-field border px-4 py-3 transition-colors duration-150",
                 checked
                   ? "border-amber-500 bg-amber-50 dark:border-amber-500 dark:bg-amber-500/10"
-                  : "border-ink-900/12 bg-paper hover:border-ink-900/25 dark:border-white/12 dark:bg-ink-800 dark:hover:border-white/25",
+                  : "border-ink-900/10 bg-paper hover:border-ink-900/25 dark:border-white/10 dark:bg-ink-800 dark:hover:border-white/25",
                 disabled && "cursor-not-allowed opacity-60",
               )}
             >

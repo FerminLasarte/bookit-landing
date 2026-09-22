@@ -64,13 +64,13 @@ export default function SoportePage() {
                   <div className="mt-5 flex items-start gap-4">
                     {icon}
                     <div>
-                      <Eyebrow variant="label">{label}</Eyebrow>
+                      <Eyebrow>{label}</Eyebrow>
                       <a
                         href={href}
                         {...(href.startsWith("http")
                           ? { target: "_blank", rel: "noopener noreferrer" }
                           : {})}
-                        className="ring-focus mt-2 block rounded-sm text-h3 font-semibold text-ink-900 underline decoration-ink-900/15 underline-offset-4 transition-colors hover:decoration-amber-500 dark:text-bone-100 dark:decoration-white/20"
+                        className="ring-focus mt-2 block rounded-pill text-h3 font-semibold text-ink-900 underline decoration-ink-900/15 underline-offset-4 transition-colors hover:decoration-amber-500 dark:text-bone-100 dark:decoration-white/20"
                       >
                         {value}
                       </a>
@@ -108,7 +108,7 @@ export default function SoportePage() {
                 hacemos sin costo. Los pasos completos están en{" "}
                 <Link
                   href="/legal/eliminar-cuenta"
-                  className="ring-focus rounded-sm font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
+                  className="ring-focus rounded-pill font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
                 >
                   Eliminación de cuenta y datos
                 </Link>
@@ -132,14 +132,14 @@ export default function SoportePage() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="ring-focus rounded-sm text-small text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
+                        className="ring-focus rounded-pill text-small text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
                       >
                         {link.label}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
-                        className="ring-focus rounded-sm text-small text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
+                        className="ring-focus rounded-pill text-small text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
                       >
                         {link.label}
                       </Link>

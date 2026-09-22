@@ -5,7 +5,7 @@ import Hairline from "@/components/Hairline";
 import Reveal from "@/components/Reveal";
 import Section from "@/components/Section";
 import WaitlistForm from "@/components/WaitlistForm";
-import { IconCheck, IconPoints, IconSlot, IconStore } from "@/components/icons";
+import { IconCheck } from "@/components/icons";
 import { site } from "@/content/site";
 import type { Audience } from "@/content/waitlist";
 
@@ -39,23 +39,20 @@ export const metadata: Metadata = {
   },
 };
 
-/** Lo que se lleva quien se anota. La cifra es la pieza gráfica de cada card. */
+/** Lo que se lleva quien se anota. La cifra es la pieza gráfica de cada ítem. */
 const beneficios = [
   {
     figure: "500",
-    Icon: IconPoints,
     title: "Puntos Bookit de regalo",
     body: "Te esperan guardados para canjear en tu primer turno, el día que lancemos la app.",
   },
   {
     figure: "01",
-    Icon: IconSlot,
     title: "Te enterás antes que nadie",
     body: `Cuando la app esté disponible en ${site.city}, la lista es la primera en recibir el aviso por email.`,
   },
   {
     figure: "∞",
-    Icon: IconStore,
     title: "Precio fundador de por vida",
     body: "Si tenés un local, el precio fundador es para los primeros que se suman antes del lanzamiento.",
   },
@@ -103,7 +100,7 @@ export default async function ListaEsperaPage({
         {/* Mismo destello que el hero de la landing, en reposo */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-40 left-1/2 h-[38rem] w-[38rem] -translate-x-1/2 animate-aurora rounded-full bg-[radial-gradient(circle,rgba(215,138,29,0.13)_0%,rgba(215,138,29,0)_68%)]"
+          className="destello pointer-events-none absolute -top-40 left-1/2 h-[38rem] w-[38rem] -translate-x-1/2 animate-aurora rounded-full [--destello-alfa:13%] [--destello-radio:68%]"
         />
 
         <div className="wrap relative">
@@ -163,49 +160,51 @@ export default async function ListaEsperaPage({
         </Reveal>
 
         {/*
-         * Por contenido esto NO es una card: son tres textos con un ícono, se
-         * leen, no se toman, y el criterio de `docs/DECISIONES.md` §3 sexies
-         * los mandaría a agruparse por aire. La card se queda igual, y por un
-         * motivo medido que no es de composición: ESTA SECCIÓN TIENE TINTE.
+         * ESTO DEJÓ DE SER UNA CARD, y es la otra mitad del D2.
          *
-         * Sobre `cream-100`, el cuerpo en `ink-500` da 4,35:1 y la cifra y el
-         * ícono en `amber-600` dan 2,97:1 — los tres fallan. Sobre la card de
-         * `paper` vuelven a 4,83:1 y 3,31:1. O sea que acá la card no decora:
-         * es lo que sostiene el contraste, y es la segunda cláusula de la
-         * regla. En oscuro no haría falta (`bone-300` sobre `ink-850` da
-         * 10,14:1); es una restricción del tema claro, como todas las de
-         * `cream-100`.
+         * Por contenido nunca lo fue: son tres textos con una cifra, se leen y
+         * no se toman, así que el criterio de `docs/DECISIONES.md` §3 sexies los
+         * manda a agruparse por aire y un filete. Estaban en card por un motivo
+         * medido y ajeno — sobre el tinte, el cuerpo en `ink-500` daba 4,35:1 y
+         * la cifra en `amber-600` 2,97:1, y la card de `paper` los devolvía a
+         * 4,83:1 y 3,31:1—. O sea que la card no decoraba ni agrupaba: tapaba
+         * un número. Era la única card del sitio que existía por el fondo que
+         * tenía detrás.
          *
-         * Cuando el paso 5 resuelva D2 —que es este mismo token— esto se
-         * vuelve a mirar: es el primer caso que se destraba.
+         * Con la regla de tinta del paso 5 el problema se resuelve donde estaba:
+         * en la banda se compone a tinta plena. El cuerpo pasa a `ink-900`
+         * (13,20:1) y la cifra a `amber-700`, que a `display-sm` es texto grande
+         * y pide 3:1 — da 4,38:1—. Las cards del sitio bajan de cuatro a tres, y
+         * las tres que quedan lo son por lo que son: se completa, se compara o
+         * se copia.
+         *
+         * El ícono se va con la card. Decía lo mismo que la cifra que tiene
+         * debajo, y en `amber-600` era el otro número que fallaba (2,97:1): un
+         * ítem que ya no es una card no necesita dos marcas gráficas.
          */}
-        <ul className="mt-14 grid gap-4 md:grid-cols-3 md:gap-5">
+        <ul className="mt-14 grid md:grid-cols-3 md:gap-x-12">
           {beneficios.map((beneficio, index) => (
             <Reveal
               as="li"
               key={beneficio.title}
               index={index}
-              className="flex h-full flex-col rounded-card border border-ink-900/10 bg-paper p-7 md:p-8 dark:border-white/10 dark:bg-ink-800"
+              className="border-t border-ink-900/10 py-8 first:border-t-0 first:pt-0 md:border-t-0 md:py-0 dark:border-white/10"
             >
-              <beneficio.Icon className="h-6 w-6 text-amber-600 dark:text-amber-300" />
+              <Hairline className="mb-7 hidden md:block" />
 
-              {/* La cifra, en la tipografía de números: es la pieza gráfica del ítem.
-                  `display-sm` y no el `text-[3.5rem]` que estaba escrito a mano: es
-                  el token que la Fase B0 creó justo para este escalón (D8), y queda
-                  por debajo del `display-lg` del título de la sección, que es quien
-                  manda. Sobre `paper` da 3,31:1, que es lo que pide una cifra a
-                  este tamaño. */}
               <p
                 aria-hidden="true"
-                className="num mt-7 text-display-sm text-amber-600 dark:text-amber-300"
+                className="num text-display-sm text-amber-700 dark:text-amber-300"
               >
                 {beneficio.figure}
               </p>
 
-              <h3 className="mt-5 font-display text-h3 font-semibold text-ink-900 dark:text-bone-100">
+              <h3 className="mt-4 font-display text-h3 font-semibold text-ink-900 dark:text-bone-100">
                 {beneficio.title}
               </h3>
-              <p className="mt-3 text-small text-ink-500 dark:text-bone-300">{beneficio.body}</p>
+              <p className="mt-3 max-w-[34ch] text-small text-ink-900 dark:text-bone-300">
+                {beneficio.body}
+              </p>
             </Reveal>
           ))}
         </ul>
@@ -232,7 +231,7 @@ export default async function ListaEsperaPage({
                 as="li"
                 key={paso.n}
                 index={index}
-                className="flex gap-6 border-t border-ink-900/8 py-7 first:border-t-0 first:pt-0 dark:border-white/8"
+                className="flex gap-6 border-t border-ink-900/10 py-7 first:border-t-0 first:pt-0 dark:border-white/10"
               >
                 <span
                   aria-hidden="true"
@@ -254,8 +253,13 @@ export default async function ListaEsperaPage({
         </div>
       </Section>
 
-      {/* ─────────────────── 4. Letra chica ─────────────────── */}
-      <Section labelledBy="datos-title" tone="tint">
+      {/* ─────────────────── 4. Letra chica ───────────────────
+          Sin tinte. Es literalmente la letra chica de la página —`text-small`
+          en `ink-500`— y sobre `cream-100` eso da 4,35:1. La regla de tinta del
+          paso 5 dice que la banda se compone a tinta plena; poner este párrafo
+          en `ink-900` sería gritarlo. Va sobre la página, donde `ink-500`
+          vuelve a 4,71:1 y la letra chica puede ser chica. */}
+      <Section labelledBy="datos-title">
         <Reveal className="mx-auto max-w-[52ch] text-center">
           <h2
             id="datos-title"
@@ -277,7 +281,7 @@ export default async function ListaEsperaPage({
               <Link
                 key={link.href}
                 href={link.href}
-                className="ring-focus rounded-sm text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
+                className="ring-focus rounded-pill text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
               >
                 {link.label}
               </Link>

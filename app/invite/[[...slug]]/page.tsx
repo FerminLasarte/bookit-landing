@@ -88,7 +88,7 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
        */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-72 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(215,138,29,0.15)_0%,rgba(215,138,29,0)_70%)]"
+        className="destello pointer-events-none absolute -top-72 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full [--destello-alfa:15%] [--destello-radio:70%]"
       />
 
       <div className="wrap relative">
@@ -153,7 +153,7 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
               </p>
               <a
                 href={`mailto:${site.email}`}
-                className="ring-focus mt-2 inline-flex items-center gap-2 rounded-sm text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
+                className="ring-focus mt-2 inline-flex items-center gap-2 rounded-pill text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
               >
                 <Mail className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
                 Contactar a soporte

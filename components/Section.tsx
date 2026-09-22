@@ -14,9 +14,24 @@ const rhythmClasses: Record<Rhythm, string> = {
 
 const toneClasses: Record<Tone, string> = {
   paper: "",
-  // En oscuro va sólido sobre `ink-850`, no `ink-800/40`: al 40% sobre
-  // `ink-950` la diferencia era de un par de puntos de luminancia y la
-  // sección no se distinguía de la página.
+  /*
+   * La banda de sección. En oscuro va sólido sobre `ink-850`, no `ink-800/40`:
+   * al 40% sobre `ink-950` la diferencia era de un par de puntos de luminancia
+   * y la sección no se distinguía de la página.
+   *
+   * EN CLARO LA BANDA SE COMPONE EN TINTA PLENA. `cream-100` no sostiene texto
+   * chico —`ink-500` 4,35:1, `amber-700` 4,38:1— y no se arregla aclarándola:
+   * al valor que sostiene `ink-500` ya no se ve como banda. La regla, con sus
+   * números, está escrita junto al token en `globals.css`; en una línea: acá
+   * van `ink-900` y acentos a tamaño grande, y no van bajadas en `ink-500` ni
+   * letra chica. Es el D2 de la auditoría, resuelto como estructura.
+   *
+   * No es una restricción sino una densidad: la banda es donde la página habla
+   * a tinta plena, y el papel es donde tiene bajadas y letra chica. El contrato
+   * lo habilita — "que dos secciones contiguas tengan densidades distintas a
+   * propósito". En oscuro la regla no aplica: `bone-300` sobre `ink-850` da
+   * 10,14:1.
+   */
   tint: "bg-cream-100 dark:bg-ink-850",
   /*
    * El lienzo de marca: `marcaProfunda`, el mismo en los dos temas. Es el
@@ -30,11 +45,13 @@ const toneClasses: Record<Tone, string> = {
    * (#24211E): 1,2:1 de punta a punta. Dentro de ese rango, ningún relleno
    * separa un lienzo de la página —el par real da 1,036:1— y bajar el lienzo
    * en oscuro violaría el manual, que fija que `marcaProfunda` no cambia con
-   * el tema. El borde no toca ningún color canónico y rinde 1,34:1, más que
-   * cualquier escalón de relleno disponible. En claro no hace falta: ahí el
-   * mismo par da 17:1.
+   * el tema. El borde no toca ningún color canónico y rinde 1,24:1 al 10%, más
+   * que cualquier escalón de relleno disponible (el mejor es `ink-800` sobre
+   * `ink-950`, 1,157:1). §3 bis lo había puesto al 12% (1,32:1); el 10% es el
+   * valor del manual y sigue cumpliendo el criterio con el que se eligió, así
+   * que D4 cierra sin excepciones. En claro no hace falta: ahí el par da 17:1.
    */
-  canvas: "bg-marca-profunda dark:border-y dark:border-white/12",
+  canvas: "bg-marca-profunda dark:border-y dark:border-white/10",
 };
 
 /**

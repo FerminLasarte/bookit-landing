@@ -75,6 +75,11 @@ pasa, con 4,52:1), así que el hover **aclara**: ver `--color-amber-400`.
   semibold, tracking apretado y el color haciendo la jerarquía — más cerca de cómo lo hace Apple.
   Tiene dos variantes: `section` (acento ámbar) y `label` (gris, para rótulos utilitarios).
   El token `--text-micro` quedó sin uso y se borró.
+  **Las dos variantes y el color se fueron el 22/9/2026**: el rótulo va en tinta y es uno solo.
+  Lo que hace la jerarquía es la escala, no el color. Ver §3 octies — resulta que el color
+  haciendo la jerarquía era un texto chico de acento, y el texto chico de acento no sobrevive
+  a ninguna superficie del modo claro. El tracking apretado también se fue, que además era lo
+  que el manual pide para texto chico.
 - **Los `SlotChip` sueltos se eliminaron, y con ellos el componente.** Eran horarios de adorno
   flotando en el hero y usados como bullets: números sin significado que sólo generaban la pregunta
   "¿qué son?". Los horarios ahora existen en un único lugar, el paso 02 de "Cómo funciona", dentro de
@@ -519,6 +524,239 @@ pero es una decisión de composición de la Fase C, no una restricción.
 Y queda la pregunta que abre la referencia: si el hero es una card con esquinas,
 `#puntos` y `#cierre` —que siguen a sangre— deberían decidir si acompañan. Es
 Fase C.
+
+## 3 octies. Una banda clara no sostiene texto chico
+
+Fase B paso 5, el 22 de septiembre de 2026. Es D2, y la §3 sexies ya había
+avisado que era más grande de lo que decía la auditoría: no un eyebrow mal
+calibrado sobre `cream-100`, sino que **en claro ninguna banda sostiene texto
+chico**. Acá está la salida, que tuvo que ser estructural.
+
+### El número, y por qué no hay forma de moverlo
+
+| Sobre | `ink-500` | `amber-700` | `ink-900` |
+|---|---|---|---|
+| `cream-50` (la página) | 4,71:1 | 4,75:1 | 14,29:1 |
+| `cream-100` (la banda) | **4,35:1** | **4,38:1** | 13,20:1 |
+| lavado cálido (pico) | **3,53:1** | **3,56:1** | 10,73:1 |
+
+Las dos tintas con las que la web escribe texto chico pasan **sólo sobre la
+página pelada**, y con dos décimas de margen. Cualquier superficie las tumba.
+
+Y no se arregla por el lado del color, por los dos ejes:
+
+- **Aclarando la banda:** para sostener `ink-500` tiene que llegar a `#F6F8FA`,
+  y ahí separa 1,04:1 contra `cream-50` — deja de verse como banda. Está medido
+  en la §3 sexies.
+- **Oscureciendo la tinta:** `ink-900` pasa en todas, pero es la tinta del
+  título; una bajada del mismo color que su título no es una bajada.
+
+### La salida: la superficie declara qué tinta la puede pisar
+
+La banda deja de ser una superficie que aguanta cualquier cosa y pasa a tener
+una **regla de colocación**, igual que la utilidad `lavado` ya la tenía escrita
+adentro desde la Fase B0. En claro, una sección con tinte se compone en **tinta
+plena**: `ink-900` y acentos sólo a tamaño grande, donde el umbral baja a 3:1 y
+`amber-700` da 4,38:1. No van bajadas en `ink-500` ni letra chica.
+
+No es una restricción, es una densidad: **la banda es donde la página habla a
+tinta plena, y el papel es donde tiene bajadas y letra chica.** El contrato lo
+habilita explícitamente — *"que dos secciones contiguas tengan densidades
+distintas a propósito"*. En oscuro la regla no aplica: `bone-300` sobre
+`ink-850` da 10,14:1.
+
+La regla vive junto al token en `globals.css` y repetida en `Section.tsx`,
+porque quien elige un `tone` es quien tiene que leerla.
+
+### Lo que se destrabó, primero: el eyebrow perdió el ámbar
+
+Resultó ser la mitad más grande de D2. El componente tenía dos variantes,
+`amber-700` y `ink-500`, y **las dos son texto chico**, o sea que las dos
+vivían en la fila de arriba. Puestos juntos, el mismo rótulo ya había fallado
+cuatro veces en cuatro superficies distintas:
+
+| Dónde | Contraste | Quién lo encontró |
+|---|---|---|
+| `#publico`, sobre `cream-100` | 4,38:1 | la auditoría (D2) |
+| `/lista-espera`, dos secciones con tinte | 4,38:1 | la auditoría (D2) |
+| `/invite`, bajo el destello | 4,457:1 | §3 sexies — hubo que correr el destello |
+| sobre el lavado cálido | 3,56:1 | §3 ter — dejó a D2 como bloqueante |
+
+El último es el que decide, porque **no tiene arreglo por color**: el ámbar que
+pasara sobre el lavado ya no se leería como el ámbar. O sea que el rótulo de
+acento bloqueaba el único dispositivo cálido que la Fase B0 construyó para el
+modo claro, que es lo mismo que decir que bloqueaba la Fase C.
+
+En tinta el número deja de depender de la superficie — 14,29 / 13,20 / 14,68 /
+10,73:1 sobre `cream-50`, `cream-100`, `paper` y el lavado—. Es exactamente el
+movimiento que la §3 septies acaba de hacer con los links del nav: cuando un
+elemento tiene que sobrevivir a varios fondos, se deja de elegir el color por
+fondo y se lo saca de la ecuación.
+
+**Y además era un problema de marca, no sólo de contraste.** El manual dice que
+el color aparece "en el CTA, en lo elegido y en lo urgente. En una pantalla bien
+resuelta hay muy poco naranja". Había **catorce** rótulos ámbar en el sitio, uno
+abriendo cada sección. Un acento que aparece catorce veces no es un acento: es
+el color del texto de rótulo. El ámbar queda para el CTA.
+
+Con la tinta, las dos variantes se vuelven la misma cosa y se retiran — una
+etiqueta por intención—. Lo que separa al rótulo del título que tiene debajo es
+la escala (13px en 700 contra 52px), no el color. El tracking vuelve a 0, que es
+lo que el manual pide para texto chico y el componente no cumplía.
+
+### Lo que se destrabó, segundo: los beneficios dejan de ser una card
+
+Las cuatro cards de la §3 sexies eran tres por lo que son —se completa, se
+compara, se copia— y una por el fondo que tenía detrás. Los beneficios de
+`/lista-espera` estaban en card sólo para levantar el cuerpo de 4,35:1 a 4,83:1
+y la cifra de 2,97:1 a 3,31:1. **Era la única card del sitio que existía por su
+fondo.**
+
+Con la regla, el problema se resuelve donde estaba: el cuerpo pasa a `ink-900`
+(13,20:1) y la cifra a `amber-700`, que a `display-sm` es texto grande y da
+4,38:1 contra los 3:1 que pide. Quedan tres ítems de aire y filete, que es lo
+que el manual pide por default. Las cards del sitio bajan de cuatro a tres.
+
+Se fue también el ícono de cada ítem: decía lo mismo que la cifra que tiene
+debajo, y en `amber-600` era el otro número que fallaba. Un ítem que ya no es
+una card no necesita dos marcas gráficas.
+
+Y la sección de letra chica de esa misma página sale del tinte por la misma
+regla. Es literalmente la letra chica del sitio; ponerla en `ink-900` sería
+gritarla, así que va sobre la página, donde `ink-500` vuelve a 4,71:1.
+
+### D4, D5, D6 y D7, que cierran en el mismo paso
+
+**D4 cierra sin excepciones.** Los 57 bordes repartidos en seis opacidades
+quedan todos en el 10% del manual. El único elegido por medición era el filo de
+los lienzos en oscuro, que la §3 bis puso al 12%: al 10% da **1,24:1**, y sigue
+cumpliendo el criterio con el que se eligió —ser más que el mejor relleno
+disponible, que es `ink-800` sobre `ink-950` con 1,157:1—. Quedan afuera dos
+bordes ámbar, que son marcas de acento y no el filo neutro de una superficie, y
+los `hover:` al 25%, que son estados.
+
+**D5 no necesitaba el quinto radio que proponía la auditoría.** `rounded-sm` era
+el radio más usado del sitio —quince veces— y no existe en el manual: son los
+2px por default de Tailwind, puestos sólo para darle forma al anillo de foco
+sobre links de texto. El anillo alrededor de una palabra es una **píldora**, que
+ya es uno de los cuatro y es la forma que los links del nav ya usan. El sitio
+pasa de nueve radios a cinco sin inventar ninguno. Los dos arbitrarios que
+quedan son los del teléfono dibujado a mano de `HowItWorks` —cumplen la fórmula
+concéntrica exacta— y se van con el teléfono en la Fase C.
+
+**D6 y D7 cierran juntos, y en CSS.** `--duration-reveal` valía 560ms, `Reveal`
+escribía `duration: 0.7` a mano y su propio docstring citaba 700ms. La
+tentación era copiar 0,56 al componente; eso no cierra nada, porque **un valor
+de movimiento que vive en JavaScript no puede ser el token del sitio**. El
+reveal pasa a una utilidad de CSS que lee `--duration-reveal` y `--ease-reveal`,
+y el componente sólo decide *cuándo*. Es el mismo criterio que el botón ya
+aplicaba con `var(--duration-chico)`.
+
+Recién con eso D7 tiene sentido: `Rewards` puede usar `Reveal` en vez de
+reimplementarlo cuatro veces, y si no lo hiciera se habría quedado sola
+corriendo a 700ms. De paso se fue el `motion.span` de la cifra de Puntos, que
+era el reveal otra vez con otra duración dentro de un bloque que ya se estaba
+revelando.
+
+La utilidad entera cuelga de `prefers-reduced-motion: no-preference`: con
+*Reducir movimiento* no hace nada, **ni siquiera el estado inicial**, que es la
+misma garantía que daba el `useReducedMotion` del componente anterior. Y el
+observer revela también lo que ya quedó por encima del viewport, que es lo que
+pasa cuando la página carga con el scroll restaurado o en un ancla — eso el
+componente anterior no lo hacía.
+
+**Los `rgba()` sueltos** salen a dos utilidades, `destello` y `calor`, siguiendo
+el precedente de `lavado`. Verificado que el CSS computado es idéntico:
+`rgba(215,138,29,0.13)` exacto. No se re-calibraron los alfas a propósito — el
+del destello ya entró una vez en una medición de contraste (§3 sexies, el
+eyebrow de `/invite`), y esto es un cambio de tokenización, no de diseño. El de
+la línea de referidos se resuelve con `currentColor`. Queda uno, la sombra del
+teléfono, que se va con el teléfono.
+
+### Lo que se decidió NO hacer
+
+- **Sacarle el relleno a la banda en claro** y marcar la sección sólo con
+  filetes, que es lo que el modo oscuro ya hace por la §3 bis. Resolvía el
+  contraste de un plumazo, pero borra un dispositivo de composición en el tema
+  donde funciona, justo cuando el dial que hay que recorrer es `VARIANCE` de 4 a
+  7. Sería arreglar un tema rompiendo el otro, que es lo contrario de lo que
+  este repo viene decidiendo.
+- **Derivar una segunda tinta secundaria** más oscura que `ink-500` para que
+  sobreviva a la banda. Es la versión en token de "una segunda card parecida a
+  la que ya existe", y el contrato dice que el rediseño reduce el catálogo.
+- **Migrar los dos h3 de `Audiences` a `display-sm`.** El token nació con el
+  piso puesto en ese 1,75rem, pero `Audiences` lo usaba como tamaño fijo, no
+  como piso: a `display-sm` (40px) el título de la card queda a 1,30 del
+  `display-lg` de su sección y le compite, y al `h3` canónico (24px) entra en un
+  renglón y se lee como una oración. Mirado en pantalla, las dos alternativas
+  son peores que el valor a mano. El 1,75rem es un escalón real entre dos pasos
+  y la B0 ya decidió no sumar un sexto nombre; `Audiences` se recompone entera
+  en la Fase C y el escalón se elige ahí.
+
+## 3 nonies. El hero, y los disolvidos que no vuelven
+
+Fase B paso 5, el mismo día. El hero se adelantó a la Fase C —va antes de
+`#como-funciona`, contra el orden del contrato— porque la card con esquinas de
+la §3 septies le cambió las proporciones y lo dejó mal ejecutado: el titular
+rompía en tres renglones y casi un tercio del lienzo quedaba negro y vacío a la
+derecha.
+
+**Las dos cosas eran la misma, y las decide una medición.** El contenido vivía
+en 9 de 12 columnas —757px de los 1020 que el lienzo tiene por dentro—, un ancho
+heredado de cuando el hero iba a sangre y el texto tenía que apartarse del borde
+de la pantalla. Apoyado dentro del `wrap` y con padding propio, esa columna dejó
+de tener sentido: **el lienzo ya es el margen.** La frase entera mide 1531px de
+glifos a 88px, así que a 757 pide 2,02 renglones y sale en tres, y a 1020 pide
+1,50 y sale en dos. No hubo que tocar la escala, el copy ni el `clamp`.
+
+Con el titular a lo ancho, la mitad derecha se llena sola con una banda de abajo
+a dos columnas — bajada a la izquierda, la aclaración y los dos CTA a la
+derecha—, y esa banda además acorta la pila vertical, que es lo que sostiene al
+CTA sobre el pliegue con las proporciones nuevas. El filete pasa a ir de lado a
+lado: medía 32rem y era el filete de una columna, no el del cartel.
+
+**Lo que la §3 septies pedía respetar, verificado.** El lienzo sigue arrancando
+en el borde de contenido del `wrap` (170px a 1440), que es donde arranca el
+lockup; barrido el tramo donde la card entra a la banda de 72px del header
+—scroll 70, 76, 80, 90 y 100— el lockup da 14,91:1 en los cinco. Y el CTA entra
+sobre el pliegue en los tres tamaños del contrato, con los dos botones adentro:
+755 a 375×812, 586 a 1280×700 y 687 a 1440×900, sin scroll horizontal.
+
+**No sube a `display-2xl`,** que es para lo que el contrato habilita el paso por
+encima de `display-xl`. Con el ancho nuevo entraría a 136px en tres renglones a
+1440, pero a 1280×700 —el viewport que ya obligó a los `@media (max-height)`—
+son 353px sólo de titular contra 508px de alto útil, y el CTA se cae abajo del
+pliegue. El piso de la escala lo fija el pliegue, igual que el piso de
+`display-2xl` lo fijó el titular y no la cifra (§3 quater).
+
+### Los disolvidos no vuelven
+
+La §3 septies dejó abierto si reponer el degradé de salida del hero y el `fade-y`
+de `#puntos`, que eran el dispositivo de "el color entra y sale sin borde" y se
+sacaron para arreglar el nav. Con la píldora del nav ya no hacen falta para el
+contraste — el único expuesto es el lockup, que necesita 3:1 y en el peor punto
+del degradé tiene 3,38:1—. Es una decisión de composición, y es **no**:
+
+1. **El hero ya no es una banda, es un objeto.** Un degradé de salida en una
+   forma con esquinas redondeadas disuelve el borde de abajo y deja los costados
+   y las esquinas duros. El dispositivo era de secciones a sangre; la pieza
+   cambió de categoría.
+2. **Partiría la gramática de la página en dos.** El hero cortaría y `#puntos`
+   se disolvería. La §3 septies ya deja planteada la pregunta correcta, que es
+   al revés: si el hero es una card con esquinas, `#puntos` y `#cierre` tienen
+   que decidir si acompañan. Sea cual sea la respuesta, cortan neto.
+3. **El margen no da para gastarlo en decoración.** 3,38:1 contra 3:1 son 0,38
+   de aire sobre el elemento que ES la marca, y este repo ya se quemó tres veces
+   con márgenes así — 4,457, 4,49 y 4,29—. Cada vez la lección escrita fue la
+   misma.
+4. **No mueve el dial que hay que mover.** El único que falta recorrer es
+   `VARIANCE`, de 4 a 7. Un fundido en el borde de una banda es la misma
+   composición con los cantos más blandos.
+
+Con esto la *Consecuencia abierta* de la §3 septies queda cerrada: los lienzos
+cortan neto y es una decisión, no una restricción heredada. Lo que sigue abierto
+para la Fase C es la otra mitad de esa pregunta — si `#puntos` y `#cierre` pasan
+a ser lienzos con esquinas como el hero.
 
 ## 4. Lo que queda pendiente de una persona, no de código
 

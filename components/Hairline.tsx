@@ -16,7 +16,7 @@ export default function Hairline({
       aria-hidden="true"
       className={cn(
         "relative border-t",
-        onDark ? "border-white/8" : "border-ink-900/8 dark:border-white/8",
+        onDark ? "border-white/10" : "border-ink-900/10 dark:border-white/10",
         className,
       )}
     >
