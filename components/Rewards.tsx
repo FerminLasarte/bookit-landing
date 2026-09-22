@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Eyebrow from "./Eyebrow";
+import Hairline from "./Hairline";
 import Reveal from "./Reveal";
 import Section from "./Section";
 import { IconPoints, IconReferral } from "./icons";
@@ -88,6 +89,47 @@ function ReferralFlow() {
 
 /* ── La sección ──────────────────────────────────────────────────────── */
 
+/**
+ * LA COMPOSICIÓN: dos entradas apiladas, no dos columnas.
+ *
+ * Era título CENTRADO + dos columnas, y después de `#cierre` quedaba como la
+ * única sección de la home que todavía usaba las dos cosas que la auditoría
+ * contó: 5 de 6 secciones abrían con rótulo + `display-lg` en la misma posición
+ * y 4 de 6 resolvían el cuerpo con una partición en dos columnas.
+ *
+ * Acá el cuerpo deja de ser una partición y pasa a ser un registro de dos
+ * entradas separadas por filetes: Puntos primero, Referidos después. No es la
+ * misma fila dos veces — la primera pone la cifra contra su explicación (4 | 7)
+ * y la segunda el argumento contra el diagrama (5 | 6)—, y es la forma que el
+ * manual pide por default cuando el contenido sólo se lee: "un grupo se lee por
+ * su aire, no por su borde".
+ *
+ * Las dos filas se parten en `lg`, no en `md`. A 768 px la celda de la cifra
+ * deja 170 px y "puntos de regalo por anotarte." sale en tres renglones; la del
+ * argumento deja 220 px y el párrafo baja a cuatro palabras por línea. Con eso
+ * la home queda con una sola regla de partición: **dos columnas de 1024 para
+ * arriba**, que es donde ya parten `#publico` —por los 321 px que mide su CTA
+ * más largo— y la banda de `#cierre`.
+ *
+ * Lo que sale, y lo dice la auditoría: las tres líneas de "01 · 02 · 03"
+ * repetían dos veces lo mismo. Contaban los pasos 01, 02 y 03 de
+ * `#como-funciona` con otras palabras, y además repetían el párrafo que tenían
+ * justo encima — "Se acumulan solos y los canjeás en los que vienen"—. Con
+ * ellas se va uno de los dos recuadros que la sección tenía por dentro.
+ *
+ * Y sale el otro: el panel de Referidos. Sobre un lienzo no hay cards (§3
+ * sexies), y este no era ni siquiera de las que se toman: el link es un
+ * EJEMPLO de cómo se ve un código, no un código que alguien copie — el que se
+ * copia vive en `ReferralCode`, y ése sí es una card. Queda con aire y un
+ * filete, que es lo que la regla pide.
+ *
+ * LA CIFRA PASA A SER EL TÍTULO DE SU ENTRADA, y eso arregla algo que no era
+ * de composición: el "500" era un `<p>` suelto y el título de Puntos era otro
+ * `<p>` que empezaba en minúscula, así que la sección tenía un solo `h3` —el de
+ * Referidos— y la mitad de Puntos no figuraba en el esquema del documento. En
+ * un `h3` los dos pedazos se leen juntos, "500 puntos de regalo por anotarte",
+ * que es la frase entera y lo que un lector de pantalla necesita escuchar.
+ */
 export default function Rewards() {
   return (
     /*
@@ -122,80 +164,72 @@ export default function Rewards() {
       {/* `relative`: sin posicionar, el texto queda por debajo de la aurora,
           que es un absoluto hermano. */}
       <div className="relative">
-        <Reveal className="mx-auto max-w-[34rem] text-center">
+        {/*
+          El encabezado deja de estar centrado. El anti-center bias es de la
+          skill y el contrato lo toma; lo que decide acá es que ésta era la
+          última sección centrada de la página y que el lienzo, desde la
+          §3 terdecies, ya no es una banda a sangre: es un objeto con su propio
+          margen, así que el texto no tiene de qué apartarse.
+        */}
+        <Reveal>
           <Eyebrow onDark>Recompensas</Eyebrow>
           <h2
             id="recompensas-title"
-            className="mt-5 text-display-lg font-semibold text-bone-100"
+            className="mt-5 max-w-[20ch] text-display-lg font-semibold text-bone-100"
           >
             Los turnos que ya te hacías, ahora te devuelven algo.
           </h2>
         </Reveal>
 
-        <div className="mt-20 grid gap-16 md:grid-cols-2 md:gap-0">
-          {/* ── Puntos ── */}
-          <Reveal index={1} className="md:pr-14">
-            <Eyebrow onDark>
-              Puntos Bookit
-            </Eyebrow>
+        {/* ── Entrada 1 · Puntos ── */}
+        <Hairline onDark className="mt-12 md:mt-16" />
 
-            {/* La cifra como pieza gráfica: es lo más grande de la sección */}
-            <p className="num mt-6 text-display-2xl text-amber-300">
-              500
-            </p>
-            <p className="mt-4 font-display text-h3 font-semibold text-bone-100">
+        <Reveal index={1} className="mt-10 md:mt-12 lg:grid lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <Eyebrow onDark>Puntos Bookit</Eyebrow>
+            {/*
+              La cifra y su frase son UN título, no dos párrafos. Visualmente
+              la cifra manda —es lo más grande de la página— y en el esquema del
+              documento la entrada existe, que antes no pasaba.
+            */}
+            <h3 className="mt-6 font-display text-display-sm font-semibold text-bone-100">
+              {/* El espacio explícito: el `block` lo esconde en pantalla, y sin
+                  él el texto del encabezado es "500puntos". */}
+              <span className="num block text-display-2xl text-amber-300">500</span>{" "}
               puntos de regalo por anotarte.
-            </p>
+            </h3>
+          </div>
 
-            <p className="mt-5 max-w-[38ch] text-small text-bone-300">
-              Y cada turno que reservás por Bookit te deja más. Se acumulan solos y los canjeás en
-              los que vienen, en cualquier local de la app.
-            </p>
+          <p className="mt-6 max-w-[42ch] text-bone-300 lg:col-span-7 lg:col-start-6 lg:mt-0 lg:self-end">
+            Y cada turno que reservás por Bookit te deja más. Se acumulan solos y los canjeás en
+            los que vienen, en cualquier local de la app.
+          </p>
+        </Reveal>
 
-            <ol className="mt-10 space-y-px overflow-hidden rounded-field border border-white/10">
-              {[
-                { n: "01", label: "Reservás tu turno como siempre" },
-                { n: "02", label: "Los puntos se suman solos" },
-                { n: "03", label: "Los canjeás en el próximo" },
-              ].map((item) => (
-                <li key={item.n} className="flex items-center gap-4 bg-white/3 px-5 py-3.5">
-                  <span aria-hidden="true" className="num text-base text-amber-300">
-                    {item.n}
-                  </span>
-                  <span className="text-small text-bone-100">{item.label}</span>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
+        {/* ── Entrada 2 · Referidos ── */}
+        <Hairline onDark className="mt-14 md:mt-20" />
 
-          {/* ── Referidos ── */}
-          <Reveal id="referidos" index={2} className="border-white/10 md:border-l md:pl-14">
-            <Eyebrow onDark>
-              Referidos
-            </Eyebrow>
+        <Reveal id="referidos" index={2} className="mt-10 md:mt-12 lg:grid lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-5">
+            <Eyebrow onDark>Referidos</Eyebrow>
 
             <h3 className="mt-6 font-display text-display-sm font-semibold text-bone-100">
               Invitá y ganen los dos.
             </h3>
 
-            <p className="mt-5 max-w-[38ch] text-small text-bone-300">
+            <p className="mt-5 max-w-[38ch] text-bone-300">
               Cada persona que saca turnos con Bookit tiene su código. Compartilo, y cuando alguien
               se registra con él, suman puntos los dos.
             </p>
 
-            <div className="mt-10 rounded-card border border-white/10 bg-white/3 p-6">
-              <ReferralFlow />
-
-              <div className="mt-8 border-t border-white/10 pt-6">
-                <p className="text-xs font-semibold text-bone-300">Tu link se ve así</p>
-                <p className="mt-2 font-mono text-small break-all text-bone-100">
-                  {site.url.replace("https://www.", "")}/invite/
-                  <span className="text-amber-300">TUCODIGO</span>
-                </p>
-              </div>
-            </div>
-
-            <p className="mt-6 max-w-[38ch] text-xs text-bone-300">
+            {/*
+              Las dos aclaraciones salen de `text-xs`. Eran el otro "relleno o
+              de más" de la auditoría —letra chica acumulada— y el problema no
+              era lo que dicen sino a qué tamaño: 12px es un escalón que el
+              `@theme` no declara, puesto a mano. En `text-small` sobre el
+              lienzo dan 11,60:1, y es el mismo movimiento que hizo `#cierre`.
+            */}
+            <p className="mt-6 max-w-[38ch] text-small text-bone-300">
               Si la persona ya tiene la app instalada, el link la abre directo. Si no, ve tu código
               en la web y lo usa al registrarse.
             </p>
@@ -204,12 +238,29 @@ export default function Rewards() {
              * El programa es sólo entre quienes sacan turnos. Los locales no
              * tienen código ni suman puntos: su beneficio es el precio fundador.
              */}
-            <p className="mt-3 max-w-[38ch] text-xs text-bone-300">
+            <p className="mt-3 max-w-[38ch] text-small text-bone-300">
               Es un beneficio entre personas que sacan turnos. Los locales no participan del
               programa de referidos.
             </p>
-          </Reveal>
-        </div>
+          </div>
+
+          {/*
+            El diagrama, sin recuadro. Antes vivía en un panel con borde dentro
+            de un lienzo que ahora también tiene borde: dos rectángulos
+            redondeados anidados para agrupar algo que sólo se mira.
+          */}
+          <div className="mt-10 lg:col-span-6 lg:col-start-7 lg:mt-0">
+            <ReferralFlow />
+
+            <div className="mt-8 border-t border-white/10 pt-6">
+              <p className="text-small font-semibold text-bone-300">Tu link se ve así</p>
+              <p className="mt-2 font-mono text-small break-all text-bone-100">
+                {site.url.replace("https://www.", "")}/invite/
+                <span className="text-amber-300">TUCODIGO</span>
+              </p>
+            </div>
+          </div>
+        </Reveal>
       </div>
     </Section>
   );

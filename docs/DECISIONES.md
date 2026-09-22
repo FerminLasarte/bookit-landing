@@ -1492,6 +1492,123 @@ salir. `npm run build` y `tsc --noEmit`, limpios.
   1,2:1 de punta a punta y el footer en oscuro es el fondo de la página. Está
   medido desde la §3 bis, y cambiarlo sería una decisión de marca.
 
+## 3 quaterdecies. `#puntos`: un registro de dos entradas
+
+Fase C, el 22 de septiembre de 2026. `Rewards` ya había cambiado de lienzo en el
+paso de `#cierre` —pasó a ser un objeto con esquinas—; acá se recompone el
+contenido, que era lo que faltaba.
+
+### Era la última sección centrada, y la última con dos columnas
+
+La auditoría contó de dónde sale el `DESIGN_VARIANCE` 4: 5 de 6 secciones abrían
+con rótulo + `display-lg` en la misma posición y 4 de 6 resolvían el cuerpo con
+una partición en dos columnas. Después de `#cierre`, `Rewards` era la única que
+todavía hacía las dos cosas, y encima centrada.
+
+El cuerpo deja de ser una partición y pasa a ser **un registro de dos entradas**
+separadas por filetes: Puntos primero, Referidos después. No es la misma fila
+dos veces —la primera pone la cifra contra su explicación (4 | 7) y la segunda el
+argumento contra el diagrama (5 | 6)— y es la forma que el manual pide por
+default cuando el contenido sólo se lee: *"un grupo se lee por su aire, no por su
+borde"*.
+
+Con eso la home queda así, y ninguna composición se repite:
+
+| Sección | Cómo se resuelve |
+|---|---|
+| Hero | Titular a lo ancho del lienzo, filete, banda 5 \| 6 |
+| `#como-funciona` | Encabezado corto con el vacío a la derecha, dos celdas escalonadas en diagonal, banda a lo ancho |
+| `#publico` | Encabezado y un objeto partido en dos mitades iguales — el díptico |
+| `#puntos` | Encabezado y **dos entradas apiladas** con filetes |
+| `#faq` | Título en cuatro columnas, acordeón en siete *(pendiente de recomponer)* |
+| `#cierre` | Titular a lo ancho del lienzo, filete, banda 6 \| 6 |
+
+### Los dos recuadros que tenía por dentro
+
+**Se va la lista "01 · 02 · 03".** Es el *relleno o de más* que la auditoría
+marcó, y la comparación es literal:
+
+| `#como-funciona` | La lista de `Rewards` |
+|---|---|
+| 01 Encontrá tu local. | 01 Reservás tu turno como siempre |
+| 02 Reservá el turno. | 02 Los puntos se suman solos |
+| 03 Sumá puntos — *"Cada turno te deja Puntos Bookit para canjear en los que vienen."* | 03 Los canjeás en el próximo |
+
+Y además repetía el párrafo que tenía justo encima, que ya dice *"Se acumulan
+solos y los canjeás en los que vienen"*. O sea que contaba lo mismo dos veces
+dentro de la misma columna, y una tercera vez respecto de una sección anterior.
+No es reescribir copy: es sacar una tercera copia.
+
+**Y se va el panel de Referidos.** Sobre un lienzo no hay cards (§3 sexies), y
+éste no era ni siquiera de los que se toman: el link es un **ejemplo** de cómo se
+ve un código, no un código que alguien copie — el que se copia vive en
+[`ReferralCode`](../components/ReferralCode.tsx), y ése sí es una card por la
+primera cláusula. Quedaba un rectángulo redondeado con borde adentro de otro
+rectángulo redondeado con borde, que es lo que el lienzo hecho objeto volvió
+visible. Queda con aire y un filete.
+
+### La cifra pasa a ser el título de su entrada
+
+No es sólo composición. El "500" era un `<p>` suelto y el título de Puntos era
+otro `<p>` que empezaba en minúscula, así que la sección tenía **un solo `h3`**
+—el de Referidos— y la mitad de Puntos no figuraba en el esquema del documento.
+Ahora los dos pedazos son un `h3`: la cifra va en un `<span class="block">` que
+la deja a `display-2xl` en su propio renglón, y el texto del encabezado es la
+frase entera, "500 puntos de regalo por anotarte.", que es lo que un lector de
+pantalla necesita escuchar. El esquema pasa a ser `h2` + `h3` + `h3`.
+
+El espacio entre el `<span>` y el resto va explícito: el `block` lo esconde en
+pantalla, y sin él el texto del encabezado era "500puntos".
+
+### Las aclaraciones salen de `text-xs`
+
+Las dos del final de Referidos eran el otro *relleno o de más* de la auditoría,
+"letra chica acumulada". El problema no era lo que dicen —la segunda es la
+exclusión de los locales, que es información y no adorno— sino a qué tamaño:
+**12 px es un escalón que el `@theme` no declara** (`--text-small` es 14 px), o
+sea el default de Tailwind puesto a mano. Pasan a `text-small`, que sobre el
+lienzo da **11,60:1**. Es el mismo movimiento que hizo `#cierre`.
+
+De los cuatro `text-xs` que tenía `Rewards` queda uno: el rótulo de cada nodo del
+diagrama de referidos, que es un epígrafe dentro de un dibujo y no cuerpo de
+texto.
+
+### Una sola regla de partición para toda la home
+
+Las dos filas se parten en `lg`, no en `md`. Medido a 768 px: la celda de la
+cifra deja **170 px** y "puntos de regalo por anotarte." sale en tres renglones;
+la del argumento deja **220 px** y el párrafo baja a cuatro palabras por línea.
+
+Con esto las tres secciones que tienen dos columnas se parten en el mismo lugar
+—`#publico` por los 321 px que mide su CTA más largo, la banda de `#cierre` por
+lo mismo, y ésta por la tipografía— así que la home queda con **una sola regla:
+dos columnas de 1024 para arriba**. Por debajo, todo se apila.
+
+### Verificación
+
+Cinco anchos —390 · 768 · 1024 · 1180 · 1440— y los dos temas. Sin scroll
+horizontal en ninguno, el ancla `#referidos` intacta, el `aria-labelledby` de la
+sección apuntando al mismo `h2`, y el esquema de encabezados en `h2 + h3 + h3`.
+`npm run build` y `tsc --noEmit`, limpios.
+
+El lienzo es el mismo en los dos temas por decisión de marca, así que la sección
+se ve igual en claro y en oscuro; lo que cambia es la página que la rodea.
+
+### Lo que se decidió NO hacer
+
+- **Mover la aurora.** Nace centrada (`left-1/2`) y el encabezado ahora está a la
+  izquierda, así que el resplandor y el título dejaron de estar atados. Es una
+  animación de ambiente, muy difusa y por detrás de todo; correrla es tocar lo
+  único que se mueve solo en la sección para ganar muy poco. Queda anotado en
+  `PENDIENTES.md`.
+- **Subir los rótulos del diagrama a `text-small`.** Son epígrafes dentro de un
+  dibujo, y el nodo mide 96 px: "Quien invitás" a 14 px lo llena entero.
+- **Tocar el `display-sm` de los dos `h3`.** Es el valor que la sección ya tenía
+  y queda a 1,30 del `display-lg` del encabezado, que es el escalón adyacente de
+  la escala del sitio. En la entrada de Puntos ni siquiera es lo más pesado —la
+  cifra mide 136 px—, y en la de Referidos el filete y el rótulo ya lo
+  subordinan.
+
 ## 4. Lo que queda pendiente de una persona, no de código
 
 - **Revisión legal** de los cinco documentos de `/legal/*`, sobre todo puntos, suscripciones y el rol

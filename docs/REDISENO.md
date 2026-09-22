@@ -223,7 +223,7 @@ de `app/og/` quedan como están: `ImageResponse` no ve el `@theme`. Queda un sol
 `HowItWorks`, que se van con él en la Fase C.
 
 **Fase C · Secciones,** sobre las primitivas ya nuevas: ~~`#como-funciona`~~ →
-~~hero~~ → ~~`#publico`~~ → ~~`#cierre`~~ → `Rewards` → `#faq` → `Nav`
+~~hero~~ → ~~`#publico`~~ → ~~`#cierre`~~ → ~~`Rewards`~~ → `#faq` → `Nav`
 (composición, ya arreglado su contraste en B) y
 [`Footer`](../components/Footer.tsx).
 `#como-funciona` primero porque es la que más cambia: se saca el carrusel y el
@@ -250,6 +250,18 @@ los dos lienzos y fijan el techo del lenguaje.
 > clara ni se importa—; la partición de la card baja a `lg`, porque en `md` la
 > mitad daba 246 px y el CTA del local mide 321 y se salía; y se cerró el
 > último resto del D1, que seguía vivo con las mitades apiladas.
+
+> **`Rewards` (`#puntos`) hecho el 22/9/2026**, en `DECISIONES.md`
+> §3 quaterdecies. Era la última sección centrada y la última que resolvía el
+> cuerpo con una partición en dos columnas: pasa a ser un registro de dos
+> entradas apiladas con filetes, con particiones distintas cada una (4 | 7 y
+> 5 | 6). Se fueron los dos recuadros que tenía por dentro —la lista
+> "01 · 02 · 03", que contaba lo mismo que los tres pasos de `#como-funciona` y
+> que el párrafo de arriba, y el panel de Referidos, que sobre un lienzo no
+> puede ser card— y las dos aclaraciones salieron de `text-xs`. La cifra pasa a
+> ser el `h3` de su entrada, así que la sección deja de tener una mitad fuera
+> del esquema del documento. Y con sus filas partiendo en `lg`, la home queda
+> con **una sola regla de partición: dos columnas de 1024 para arriba**.
 
 > **`#cierre` hecho el 22/9/2026**, en `DECISIONES.md` §3 terdecies. Cierra la
 > última pregunta abierta de la §3 nonies: **los lienzos de marca pasan a ser
