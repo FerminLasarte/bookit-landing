@@ -157,24 +157,31 @@ la Fase B y la Fase C lo consumen:
    label arriba, error abajo, sin placeholder como label.
 5. [`Section`](../components/Section.tsx), [`Eyebrow`](../components/Eyebrow.tsx),
    [`Hairline`](../components/Hairline.tsx), [`Reveal`](../components/Reveal.tsx)
-   — el vocabulario de composición que la Fase C va a consumir.
+   — el vocabulario de composición que la Fase C va a consumir. **Hecho el
+   22/9/2026**, en `DECISIONES.md` §3 octies.
 
-Cierra en el mismo paso: el eyebrow de `#publico` a 4,38:1 (D2), los reveals a
-560 ms con el token en vez de 700 ms a mano (D6, D7), los nueve radios (D5), los
-bordes unificados al 10 % (D4) y los `rgba()` sueltos movidos a
-`@theme` — en [`Audiences`](../components/Audiences.tsx),
-[`Rewards`](../components/Rewards.tsx) (dos), [`page.tsx`](../app/page.tsx) y
-[`AnimatedButton`](../components/AnimatedButton.tsx) (dos gradientes de capa).
-Los `#hex` de `app/og/` quedan como están: `ImageResponse` no ve el `@theme`.
-El manual también nombra `HeroGlow`, que ya no existe: esa línea de su *Deuda
-conocida* hay que borrarla.
+Cerraron en el mismo paso D2, D4, D5, D6, D7 y los `rgba()` sueltos. D2 no era
+un eyebrow mal calibrado: es que en claro ninguna banda sostiene texto chico, y
+la salida fue una regla de colocación sobre el tinte más sacarle el ámbar al
+rótulo de bloque, que había fallado en cuatro superficies distintas. Los `#hex`
+de `app/og/` quedan como están: `ImageResponse` no ve el `@theme`. Queda un solo
+`rgba()` y dos radios arbitrarios, los tres del teléfono dibujado a mano de
+`HowItWorks`, que se van con él en la Fase C.
 
-**Fase C · Secciones,** sobre las primitivas ya nuevas: `#como-funciona` → hero →
-`#publico` → `#cierre` → `Rewards` → `#faq` → `Nav` (composición, ya arreglado
-su contraste en B) y [`Footer`](../components/Footer.tsx). `#como-funciona` primero porque es la que
-más cambia: se saca el carrusel y el teléfono dibujado, y entran las capturas.
-Después el hero y `#cierre`, que son los dos lienzos y fijan el techo del
-lenguaje.
+**Fase C · Secciones,** sobre las primitivas ya nuevas: `#como-funciona` →
+~~hero~~ → `#publico` → `#cierre` → `Rewards` → `#faq` → `Nav` (composición, ya
+arreglado su contraste en B) y [`Footer`](../components/Footer.tsx).
+`#como-funciona` primero porque es la que más cambia: se saca el carrusel y el
+teléfono dibujado, y entran las capturas. Después `#cierre`, que con el hero son
+los dos lienzos y fijan el techo del lenguaje.
+
+> **El hero se adelantó al paso 5**, el 22/9/2026, contra este orden. No por
+> gusto: la card con esquinas del paso 4 le cambió las proporciones y lo dejó
+> mal ejecutado —titular en tres renglones, un tercio del lienzo vacío—, o sea
+> que era un defecto de ejecución y no una recomposición. `DECISIONES.md` §3
+> nonies. Ahí también se cerró la *Consecuencia abierta* de la §3 septies: los
+> disolvidos **no** vuelven, los lienzos cortan neto. Lo que sigue abierto es si
+> `#puntos` y `#cierre` pasan a ser lienzos con esquinas como el hero.
 
 Una rama por capa (`diseno/primitivas`, `diseno/secciones-…`), como las que ya
 están en el historial.
