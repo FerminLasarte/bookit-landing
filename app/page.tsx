@@ -57,6 +57,7 @@ export default function Home() {
           aria-hidden="true"
           // El filo inferior sólo en oscuro: en claro el hero se disuelve en la
           // página con el degradé de salida, que ahí sí se ve.
+          data-canvas-capa
           className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda dark:border-b dark:border-white/12"
         />
 
@@ -67,6 +68,8 @@ export default function Home() {
          */}
         <div
           aria-hidden="true"
+          // El nav lo lee para saber dónde termina el negro de verdad (D1).
+          data-canvas-salida
           className="pointer-events-none absolute inset-x-0 bottom-0 h-40 [@media(max-height:820px)]:h-28 bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-cream-50)_92%)] dark:bg-[linear-gradient(180deg,rgba(20,14,3,0)_0%,var(--color-ink-950)_92%)]"
         />
 

@@ -20,9 +20,119 @@ function Logo({ className = "", onDark = false }: { className?: string; onDark?:
   return <Wordmark className={className} onDark={onDark} />;
 }
 
+/*
+ * ══ El fondo que tiene el header detrás ═════════════════════════════════
+ *
+ * D1 de la auditoría. El predicado anterior preguntaba si ALGÚN `[data-canvas]`
+ * tocaba la banda de 72px del header, y con eso vestía de oscuro sobre un
+ * header transparente. Dos cosas fallaban.
+ *
+ * Una, "tocar" no es "estar detrás": con el lienzo cubriendo sólo la franja de
+ * arriba de la banda, el contenido claro del header caía sobre página clara y
+ * daba 1,61:1 en los links y 1,25:1 en el lockup.
+ *
+ * Dos, y más grave, los tres lienzos no terminan donde termina su rectángulo:
+ *   · el hero se disuelve con un degradé de salida propio de 160px (112 si el
+ *     viewport es bajo),
+ *   · `#puntos` lleva una máscara `fade-y` de 96px ARRIBA Y ABAJO, sólo en
+ *     claro (en oscuro vale 0),
+ *   · `#cierre` sí corta neto.
+ * Medir el rectángulo daba "hay lienzo" cuando el negro ya se había ido.
+ *
+ * Y hay un tercer problema que ningún umbral arregla: entre el 28% y el 84% del
+ * degradé del hero —unos 90px de scroll— NINGÚN vestido pasa AA. El oscuro cae
+ * a 4,04:1 y el claro todavía está en 3,52:1, porque el header claro es
+ * `cream-50/80` y lo que pasa por detrás le arrastra el contraste. Con 80% de
+ * opacidad sobre `marca-profunda` compone #CDCCCB y deja `ink-500` en 3,02:1;
+ * haría falta 98% para llegar a 4,5:1.
+ *
+ * Por eso son TRES estados y no dos:
+ *
+ *   `lienzo`  el lienzo cubre la barra entera y con negro pleno. Header
+ *             transparente y vestido oscuro: `bone-300` da 11,60:1.
+ *   `borde`   hay lienzo pero no cubre todo, o está en su degradé. Header con
+ *             superficie OPACA: el contraste deja de depender del fondo y
+ *             `ink-500` da 4,71:1 garantizado. Es el estado que faltaba.
+ *   `pagina`  no hay lienzo cerca. Header translúcido como siempre; sobre
+ *             cualquier superficie clara el 80% compone bien.
+ *
+ * El vestido oscuro del tema oscuro nunca estuvo roto (`ink-950/80` da 6,09:1
+ * hasta sobre `cream-50`), así que sólo cambia lo que hacía falta.
+ */
+type Fondo = "lienzo" | "borde" | "pagina";
+
+const BANDA = 72; // alto del header: `h-18`
+
+/*
+ * Tolerancia de redondeo. El header mide 72,5px reales y el hero lo compensa
+ * con `-mt-18` (72px exactos), así que arriba de todo el lienzo arranca medio
+ * píxel POR DEBAJO del tope y `arriba <= 0` fallaba: la portada entera —el
+ * cuadro más visible del sitio— se vestía de `borde` y aparecía una banda
+ * crema sobre el hero. No es un margen de diseño, es el redondeo del layout.
+ */
+const EPS = 2;
+
+const fondoClasses: Record<Fondo, string> = {
+  lienzo: "bg-transparent",
+  borde: "bg-cream-50 dark:bg-ink-950",
+  pagina: "bg-cream-50/80 dark:bg-ink-950/80",
+};
+
+/** `6rem` y `96px` a número de píxeles. `--fade-y` se escribe en rem acá. */
+function aPx(valor: string): number {
+  const n = parseFloat(valor);
+  if (!n) return 0;
+  return valor.trim().endsWith("rem")
+    ? n * parseFloat(getComputedStyle(document.documentElement).fontSize)
+    : n;
+}
+
+/**
+ * Dónde termina de verdad el negro de un lienzo. Se mide en vivo en vez de
+ * anotar números a mano, y con eso sale gratis que `#puntos` no tenga fade en
+ * oscuro y que el degradé del hero cambie de alto según el viewport.
+ */
+function negroPleno(el: Element): { arriba: number; abajo: number } {
+  const r = el.getBoundingClientRect();
+
+  /*
+   * El `--fade-y` sólo cuenta si la máscara está puesta de verdad. `Section`
+   * escribe la variable en las tres tonalidades pero aplica la utilidad
+   * `fade-y` únicamente cuando NO es lienzo, así que leer la variable a secas
+   * le restaba 128px a `#cierre`, que corta neto.
+   */
+  const capa = el.querySelector<HTMLElement>("[data-canvas-capa]");
+  let fade = 0;
+  if (capa) {
+    const cs = getComputedStyle(capa);
+    const mascara = cs.maskImage || cs.webkitMaskImage;
+    if (mascara && mascara !== "none") fade = aPx(cs.getPropertyValue("--fade-y"));
+  }
+
+  const salida = el.querySelector<HTMLElement>("[data-canvas-salida]");
+  const alturaSalida = salida ? salida.getBoundingClientRect().height : 0;
+
+  return {
+    arriba: r.top + fade,
+    abajo: r.bottom - Math.max(fade, alturaSalida),
+  };
+}
+
+function fondoDetras(): Fondo {
+  let toca = false;
+  for (const el of document.querySelectorAll("[data-canvas]")) {
+    const r = el.getBoundingClientRect();
+    if (r.bottom <= 0 || r.top >= BANDA) continue;
+    toca = true;
+    const { arriba, abajo } = negroPleno(el);
+    if (arriba <= EPS && abajo >= BANDA - EPS) return "lienzo";
+  }
+  return toca ? "borde" : "pagina";
+}
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
-  const [encimaDeLienzo, setEncimaDeLienzo] = useState(false);
+  const [fondo, setFondo] = useState<Fondo>("pagina");
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -34,28 +144,31 @@ export default function Nav() {
    * no hay hero oscuro, sigue siendo el gesto mínimo de siempre.
    */
   useEffect(() => {
-    const onScroll = () => {
-      const hero = document.querySelector("[data-hero]");
-      const umbral = hero ? hero.getBoundingClientRect().height - 72 : 8;
-      setScrolled(window.scrollY > umbral);
+    let pendiente = 0;
 
-      /*
-       * ¿Hay un lienzo de marca detrás de la barra? No alcanza con preguntar
-       * si estamos en el hero: `Rewards` y el cierre son los mismos 18px de
-       * `marca-profunda`, y ahí el header `cream-50/80` componía a un gris
-       * medio (#cdcccb) que dejaba los links en 3,02:1.
-       */
-      const banda = 72;
-      const sobreLienzo = Array.from(document.querySelectorAll("[data-canvas]")).some((el) => {
-        const r = el.getBoundingClientRect();
-        return r.top < banda && r.bottom > 0;
-      });
-      setEncimaDeLienzo(sobreLienzo);
+    const medir = () => {
+      pendiente = 0;
+      const hero = document.querySelector("[data-hero]");
+      const umbral = hero ? hero.getBoundingClientRect().height - BANDA : 8;
+      setScrolled(window.scrollY > umbral);
+      setFondo(fondoDetras());
     };
-    onScroll();
+
+    /*
+     * Por cuadro, no por evento: `medir` hace varios `getBoundingClientRect`,
+     * que fuerzan layout. React igual descarta el render cuando el valor no
+     * cambió, así que lo caro es la medición, no el estado.
+     */
+    const onScroll = () => {
+      if (pendiente) return;
+      pendiente = requestAnimationFrame(medir);
+    };
+
+    medir();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
+      if (pendiente) cancelAnimationFrame(pendiente);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
@@ -65,13 +178,11 @@ export default function Nav() {
   useEffect(() => setOpen(false), [pathname]);
 
   /*
-   * El hero de la home es un lienzo `marca-profunda` en los dos temas, y el nav
-   * se le monta encima. Arriba de todo el nav se vuelve transparente y viste de
-   * oscuro; apenas se scrollea vuelve a su superficie de siempre. En el resto de
-   * las páginas el tope es claro, así que esto no aplica nunca.
+   * Viste de oscuro sólo cuando el lienzo cubre la barra ENTERA. En el borde
+   * de un lienzo el header se apoya en su propia superficie opaca, así que el
+   * contraste deja de depender de lo que pase por detrás.
    */
-  // Viste de oscuro siempre que tenga un lienzo detrás, esté donde esté.
-  const overDark = encimaDeLienzo;
+  const overDark = fondo === "lienzo";
 
   /*
    * Scrollspy. Cuatro anclas sobre una página de ~8.000px y ninguna señal de
@@ -157,7 +268,7 @@ export default function Nav() {
       <header
         className={cn(
           "sticky top-0 z-50 backdrop-blur-md transition-colors duration-300",
-          overDark ? "bg-transparent" : "bg-cream-50/80 dark:bg-ink-950/80",
+          fondoClasses[fondo],
           scrolled ? "border-b border-ink-900/8 dark:border-white/8" : "border-b border-transparent",
         )}
       >

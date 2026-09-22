@@ -70,6 +70,7 @@ export default function Section({
       {tone !== "paper" && (
         <div
           aria-hidden="true"
+          data-canvas-capa
           className={cn(
             "pointer-events-none absolute inset-0 -z-10",
             // El lienzo corta neto; el tinte entra y sale con degradé.
