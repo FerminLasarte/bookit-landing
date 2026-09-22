@@ -68,6 +68,13 @@ export default function Audiences() {
             >
               <IconSlot className="h-7 w-7 text-amber-600 dark:text-amber-300" />
               <Eyebrow className="mt-6">Para quien saca turnos</Eyebrow>
+              {/* El 1,75rem queda a mano a propósito. Es el escalón entre `h3` y
+                  `display-sm` y no existe como token: a `display-sm` (40px) el
+                  título de la card queda a 1,30 del `display-lg` de la sección y
+                  le compite; a `h3` (24px) entra en un renglón y se lee como una
+                  oración, no como un título. La Fase B0 decidió no sumar un
+                  sexto paso, y `Audiences` se recompone entera en la Fase C —
+                  ahí se elige un escalón, no acá. */}
               <h3
                 id="clientes-title"
                 className="mt-3 font-display text-h3 font-semibold text-ink-900 md:text-[1.75rem] md:leading-[1.15] dark:text-bone-100"
@@ -103,10 +110,7 @@ export default function Audiences() {
                * fondo; en dark, tinta sobre tinta casi no se distingue, y es el
                * lavado ámbar el que separa una mitad de la otra.
                */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(150deg,rgba(215,138,29,0.12)_0%,rgba(215,138,29,0.02)_45%,transparent_70%)]"
-              />
+              <div aria-hidden="true" className="calor pointer-events-none absolute inset-0" />
               {/* Sin aurora acá: el ámbar va reservado a una sola cosa por pieza
               (docs/MARCA.md). En esta sección esa cosa es el CTA. */}
 

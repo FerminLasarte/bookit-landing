@@ -8,9 +8,9 @@ import { faq } from "@/content/faq";
  */
 export default function Faq() {
   return (
-    <ul className="border-t border-ink-900/8 dark:border-white/8">
+    <ul className="border-t border-ink-900/10 dark:border-white/10">
       {faq.map((item) => (
-        <li key={item.q} className="border-b border-ink-900/8 dark:border-white/8">
+        <li key={item.q} className="border-b border-ink-900/10 dark:border-white/10">
           <details className="group">
             <summary className="ring-focus flex cursor-pointer list-none items-start justify-between gap-6 py-6 text-left [&::-webkit-details-marker]:hidden">
               <h3 className="text-h3 font-semibold text-ink-900 dark:text-bone-100">{item.q}</h3>
@@ -25,7 +25,7 @@ export default function Faq() {
               {item.link && (
                 <Link
                   href={item.link.href}
-                  className="ring-focus mt-3 inline-block rounded-sm text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
+                  className="ring-focus mt-3 inline-block rounded-pill text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
                 >
                   {item.link.label}
                 </Link>

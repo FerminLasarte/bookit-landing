@@ -21,7 +21,7 @@ type Status = "idle" | "submitting" | "success";
 type FieldName = "name" | "email" | "userType" | "category" | "categoryOther" | "consent";
 
 const fieldClasses =
-  "ring-focus min-h-11 w-full rounded-field border border-ink-900/12 bg-paper px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-500/60 transition-colors duration-150 hover:border-ink-900/25 focus:border-amber-500 dark:border-white/12 dark:bg-ink-800 dark:text-bone-100 dark:placeholder:text-bone-300/50 dark:hover:border-white/25";
+  "ring-focus min-h-11 w-full rounded-field border border-ink-900/10 bg-paper px-3.5 py-2.5 text-base text-ink-900 placeholder:text-ink-500/60 transition-colors duration-150 hover:border-ink-900/25 focus:border-amber-500 dark:border-white/10 dark:bg-ink-800 dark:text-bone-100 dark:placeholder:text-bone-300/50 dark:hover:border-white/25";
 
 const labelClasses = "block text-small font-semibold text-ink-900 dark:text-bone-100";
 
@@ -356,7 +356,7 @@ export default function WaitlistForm({
             aria-invalid={invalid.has("consent") || undefined}
             className={cn(
               // 24px: el mínimo de target que pide WCAG 2.2 para un control chico.
-              "ring-focus mt-0.5 h-6 w-6 shrink-0 rounded-sm accent-amber-500",
+              "ring-focus mt-0.5 h-6 w-6 shrink-0 rounded-pill accent-amber-500",
               invalid.has("consent") && "outline-2 outline-error dark:outline-error-dark",
             )}
           />
@@ -386,14 +386,14 @@ export default function WaitlistForm({
           Al anotarte aceptás nuestros{" "}
           <Link
             href="/legal/terminos"
-            className="ring-focus rounded-sm font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
+            className="ring-focus rounded-pill font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
           >
             Términos
           </Link>{" "}
           y la{" "}
           <Link
             href="/legal/privacidad"
-            className="ring-focus rounded-sm font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
+            className="ring-focus rounded-pill font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-2 dark:text-amber-300 dark:decoration-amber-300/30"
           >
             Política de Privacidad
           </Link>

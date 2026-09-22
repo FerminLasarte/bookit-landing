@@ -6,7 +6,7 @@ import { legalUpdatedAt } from "@/content/site";
 import type { LegalBlock, LegalDoc as Doc } from "@/content/legal";
 
 const proseLink =
-  "ring-focus inline-flex items-start gap-1 rounded-sm font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300";
+  "ring-focus inline-flex items-start gap-1 rounded-pill font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300";
 
 function Block({ block }: { block: LegalBlock }) {
   switch (block.type) {
@@ -88,13 +88,13 @@ export default function LegalDoc({ doc }: { doc: Doc }) {
       {/* Índice lateral sticky en desktop (§8) */}
       <nav aria-label="Índice del documento" className="hidden md:col-span-3 md:block">
         <div className="sticky top-28">
-          <Eyebrow variant="label">En esta página</Eyebrow>
+          <Eyebrow>En esta página</Eyebrow>
           <ol className="mt-5 space-y-2.5">
             {doc.sections.map((section) => (
               <li key={section.id}>
                 <a
                   href={`#${section.id}`}
-                  className="ring-focus rounded-sm text-small text-ink-500 transition-colors duration-150 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100"
+                  className="ring-focus rounded-pill text-small text-ink-500 transition-colors duration-150 hover:text-ink-900 dark:text-bone-300 dark:hover:text-bone-100"
                 >
                   {section.heading}
                 </a>

@@ -59,7 +59,7 @@ export default function Home() {
            */}
           <div
             data-canvas
-            className="relative isolate flex min-h-[calc(100svh-6.5rem)] flex-col justify-center overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/12 [@media(max-height:820px)]:min-h-[calc(100svh-5rem)] [@media(max-height:820px)]:py-14"
+            className="relative isolate flex min-h-[calc(100svh-6.5rem)] flex-col justify-center overflow-hidden rounded-card bg-marca-profunda px-5 py-14 md:px-10 md:py-24 dark:border dark:border-white/10 [@media(max-height:820px)]:min-h-[calc(100svh-5rem)] [@media(max-height:820px)]:py-14"
           >
             <div className="md:grid md:grid-cols-12 md:gap-8">
               <div className="md:col-span-9">
@@ -181,7 +181,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Lado cliente */}
             <div className="flex flex-col items-start border-b border-white/10 pb-12 md:border-r md:border-b-0 md:pr-14 md:pb-0">
-              <Eyebrow onDark variant="label">
+              <Eyebrow onDark>
                 Sacás turnos
               </Eyebrow>
               <p className="mt-4 max-w-[30ch] text-bone-300">
@@ -205,7 +205,7 @@ export default function Home() {
 
             {/* Lado local */}
             <div className="flex flex-col items-start pt-12 md:pt-0 md:pl-14">
-              <Eyebrow onDark variant="label">
+              <Eyebrow onDark>
                 Tenés un local
               </Eyebrow>
               <p className="mt-4 max-w-[30ch] text-bone-300">

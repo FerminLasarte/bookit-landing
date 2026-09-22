@@ -11,7 +11,7 @@ const linkClasses =
   // se salía del viewport y metía scroll horizontal. `break-words` no alcanza
   // acá — no achica el tamaño min-content, así que el ítem de flex anónimo
   // seguía sin poder encogerse. `overflow-wrap: anywhere` sí lo achica.
-  "ring-focus inline-flex min-w-0 items-start gap-1.5 rounded-sm text-small [overflow-wrap:anywhere] text-bone-300 transition-colors duration-150 hover:text-bone-100";
+  "ring-focus inline-flex min-w-0 items-start gap-1.5 rounded-pill text-small [overflow-wrap:anywhere] text-bone-300 transition-colors duration-150 hover:text-bone-100";
 
 function FooterLink({ link }: { link: NavLinkType }) {
   if (link.external) {
@@ -126,7 +126,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 border-t border-white/8 pt-6">
+        <div className="mt-14 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-2 text-xs text-bone-300 md:flex-row md:items-center md:justify-between">
             <p>
               © <span className="num">{year}</span> Bookit. Todos los derechos reservados.

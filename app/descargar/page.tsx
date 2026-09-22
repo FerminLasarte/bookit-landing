@@ -65,12 +65,12 @@ export default function DescargarPage() {
           <Hairline className="mt-16" />
 
           <div className="mt-8">
-            <Eyebrow variant="label">Rubros</Eyebrow>
+            <Eyebrow>Rubros</Eyebrow>
             <ul className="mt-3 flex flex-wrap gap-2">
               {categorias.map((categoria) => (
                 <li
                   key={categoria.value}
-                  className="rounded-pill border border-ink-900/12 px-3.5 py-1.5 text-small text-ink-900 dark:border-white/12 dark:text-bone-100"
+                  className="rounded-pill border border-ink-900/10 px-3.5 py-1.5 text-small text-ink-900 dark:border-white/10 dark:text-bone-100"
                 >
                   {categoria.label}
                 </li>

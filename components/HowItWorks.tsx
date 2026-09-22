@@ -74,7 +74,7 @@ function ScreenBuscar() {
               "rounded-pill border px-3 py-1.5 text-xs font-medium",
               index === 0
                 ? "border-amber-500 bg-amber-500 text-ink-900"
-                : "border-ink-900/12 text-ink-500 dark:border-white/12 dark:text-bone-300",
+                : "border-ink-900/10 text-ink-500 dark:border-white/10 dark:text-bone-300",
             )}
           >
             {categoria.label}
@@ -94,7 +94,7 @@ function ScreenBuscar() {
           <motion.div
             key={local.name}
             variants={row}
-            className="flex items-center justify-between gap-4 rounded-field border border-ink-900/8 bg-cream-50 px-4 py-3 dark:border-white/8 dark:bg-ink-950"
+            className="flex items-center justify-between gap-4 rounded-field border border-ink-900/10 bg-cream-50 px-4 py-3 dark:border-white/10 dark:bg-ink-950"
           >
             <div className="min-w-0">
               <p className={cn(screenTitle, "truncate")}>{local.name}</p>
@@ -151,11 +151,11 @@ function ScreenHorarios() {
                 "num flex items-center justify-center rounded-field border py-3 text-base",
                 slot.state === "selected" && "border-amber-500 bg-amber-500 text-ink-900",
                 slot.state === "free" &&
-                  "border-ink-900/12 text-ink-900 dark:border-white/12 dark:text-bone-100",
+                  "border-ink-900/10 text-ink-900 dark:border-white/10 dark:text-bone-100",
                 // El tachado ya dice que está ocupado: no hace falta bajarle la
                 // opacidad al texto, que era lo que le rompía el contraste.
                 slot.state === "taken" &&
-                  "border-ink-900/8 text-ink-500 line-through dark:border-white/8 dark:text-bone-300",
+                  "border-ink-900/10 text-ink-500 line-through dark:border-white/10 dark:text-bone-300",
               )}
             >
               {slot.time}
@@ -209,7 +209,7 @@ function ScreenPuntos() {
         Disponibles para tu próximo turno
       </motion.p>
 
-      <ul className="mt-6 space-y-px overflow-hidden rounded-field border border-ink-900/8 dark:border-white/8">
+      <ul className="mt-6 space-y-px overflow-hidden rounded-field border border-ink-900/10 dark:border-white/10">
         {ledger.map((item) => (
           <motion.li
             key={item.label}
