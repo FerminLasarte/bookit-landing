@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Eyebrow from "./Eyebrow";
 import Reveal from "./Reveal";
+import Section from "./Section";
 import { IconPoints, IconReferral } from "./icons";
 import { site } from "@/content/site";
 
@@ -9,8 +10,9 @@ import { site } from "@/content/site";
  *
  * Eran dos secciones con la misma forma (texto a la izquierda, caja a la
  * derecha) una detrás de la otra, y contaban la misma idea: en Bookit el turno
- * te devuelve algo. Acá comparten un único lienzo oscuro — el segundo y último
- * de la página — partido por una línea.
+ * te devuelve algo. Acá comparten un único lienzo oscuro, partido por una
+ * línea. Es el del medio de los tres de la home: el hero abre, éste marca el
+ * compás y el cierre remata.
  *
  * Lo único que se mueve solo es la línea entre las dos personas, que fluye —una
  * animación de ambiente, por detrás del texto— y se apaga con
@@ -88,44 +90,38 @@ function ReferralFlow() {
 
 export default function Rewards() {
   return (
-    <section
-      data-canvas
-      id="puntos"
-      aria-labelledby="recompensas-title"
-      className="relative isolate overflow-hidden py-32 md:py-44"
-    >
-      {/*
-       * El lienzo oscuro va en su propia capa con `fade-y`: en vez de cortar el
-       * papel con una línea recta, la tinta entra y sale con un degradé. El
-       * padding (8rem) es mayor que el difuminado (6rem) a propósito: cuando
-       * empieza el texto, el fondo ya es tinta plena y el contraste se sostiene.
-       */}
-      {/*
-        `marca-profunda`, no `ink-950`: en modo oscuro `ink-950` ES el fondo de
-        la página, así que el lienzo desaparecía y la sección se quedaba sin
-        canvas justo en el tema donde más lo necesita. El negro con tinte ámbar
-        del manual es distinto en los dos temas — es la idea de marca, no un
-        artefacto del tema. Lo comparte con el hero: son las dos piezas tipo
-        cartel de la página, y cada una tiene un solo acento ámbar (acá, el 500).
-      */}
-      <div
-        aria-hidden="true"
-        data-canvas-capa
-        // Sin `fade-y`: el degradé de entrada y salida de este lienzo también
-        // pasaba por detrás del header, con el mismo gris medio del hero. En
-        // oscuro ya valía 0, así que ahora los dos temas cortan igual.
-        className="pointer-events-none absolute inset-0 -z-10 bg-marca-profunda dark:border-y dark:border-white/10"
-      />
-
-      {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto.
-          El ámbar sale de la utilidad `destello`; estaba escrito como
-          `rgba(215,138,29,…)` a mano, que es el hex canónico pero suelto. */}
+    /*
+     * EL LIENZO PASÓ A SER UN OBJETO CON ESQUINAS, y eso es todo lo que cambia
+     * acá — el contenido de esta sección se recompone en su propio paso, que en
+     * el orden del contrato viene después de `#cierre`.
+     *
+     * La pieza dejó de pintarse a mano: era la tercera copia del mismo lienzo
+     * y ahora la pone `Section` con `tone="canvas"`, que es también quien sabe
+     * que el filo va sólo en oscuro y que `data-canvas` tiene que ir en la card
+     * y no en la sección. Con ella se van la capa de fondo propia, el
+     * `overflow-hidden` de la sección y el `data-canvas-capa`, que no lo leía
+     * nadie desde que la §3 septies borró la lectura en vivo de máscaras.
+     *
+     * `marca-profunda` y no `ink-950`: en modo oscuro `ink-950` ES el fondo de
+     * la página, así que el lienzo desaparecía y la sección se quedaba sin
+     * canvas justo en el tema donde más lo necesita. El negro con tinte ámbar
+     * del manual es el mismo en los dos temas — es la idea de marca, no un
+     * artefacto del tema. Lo comparte con el hero y con el cierre: son las tres
+     * piezas tipo cartel de la página, y cada una tiene un solo acento ámbar.
+     */
+    <Section id="puntos" labelledBy="recompensas-title" rhythm="breath" tone="canvas">
+      {/* Aurora de fondo: lenta, muy difusa, siempre por detrás del texto, y
+          ahora recortada por las esquinas del lienzo. El ámbar sale de la
+          utilidad `destello`; estaba escrito como `rgba(215,138,29,…)` a mano,
+          que es el hex canónico pero suelto. */}
       <div
         aria-hidden="true"
         className="destello pointer-events-none absolute -top-40 left-1/2 h-[42rem] w-[42rem] -translate-x-1/2 animate-aurora rounded-full"
       />
 
-      <div className="wrap relative">
+      {/* `relative`: sin posicionar, el texto queda por debajo de la aurora,
+          que es un absoluto hermano. */}
+      <div className="relative">
         <Reveal className="mx-auto max-w-[34rem] text-center">
           <Eyebrow onDark>Recompensas</Eyebrow>
           <h2
@@ -215,6 +211,6 @@ export default function Rewards() {
           </Reveal>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
