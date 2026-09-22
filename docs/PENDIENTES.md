@@ -55,15 +55,16 @@ se corrige el botón, y toca dos piezas a la vez.
 
 ### 4 · `text-xs` acumulado, contado por primera vez
 
-Diez usos fuera del tamaño `compact` del botón: `Rewards` (4),
-`WaitlistForm` (2), `LegalDoc`, `Footer`, `AudienceSwitch`, `ReferralCode`. La
-auditoría nombra dos de ellos como relleno —los del final de Referidos— y el
-resto nunca se contó junto. `#cierre` sacó los suyos en la §3 terdecies y los
-pasó a `text-small`.
+12 px es un escalón que el `@theme` no declara —`--text-small` es 14 px—, así
+que es el default de Tailwind usado a mano. Se contaron diez usos; `#cierre`
+(§3 terdecies) y `#puntos` (§3 quaterdecies) sacaron los suyos y los pasaron a
+`text-small`.
 
-Es una pregunta de densidad de todo el sitio, no de una sección: 12 px es un
-escalón que el `@theme` no declara (`--text-small` es 14 px), así que hoy es el
-default de Tailwind usado a mano en diez lugares.
+**Quedan siete**, todos fuera de la home: `WaitlistForm` (2), `LegalDoc`,
+`Footer`, `AudienceSwitch`, `ReferralCode`, y el rótulo de cada nodo del
+diagrama de referidos —ése es un epígrafe dentro de un dibujo, que es otra cosa
+y probablemente se quede—. Es una pregunta de densidad de todo el sitio, no de
+una sección.
 
 ### 5 · El hero es el único lienzo que no pasa por `Section`
 
@@ -78,7 +79,15 @@ sin que nadie lo haya escrito.
 El comentario de [`Section`](../components/Section.tsx) quedó viejo: el ritmo lo
 usan `#puntos` y `#cierre`. Es una línea de comentario, no un valor.
 
-### 7 · El corte de renglón del titular de `#cierre`
+### 7 · La aurora de `#puntos` quedó desatada del encabezado
+
+Nace centrada (`left-1/2 -translate-x-1/2`) de cuando el encabezado de la
+sección estaba centrado. Desde la §3 quaterdecies el encabezado va a la
+izquierda, así que el resplandor y el título dejaron de estar atados. Es una
+animación de ambiente, muy difusa y por detrás de todo, y es lo único que se
+mueve solo en la sección: correrla es tocar eso para ganar muy poco.
+
+### 8 · El corte de renglón del titular de `#cierre`
 
 `text-wrap: balance` está en todos los `h1/h2/h3` del sitio y parte "Cuando
 Bookit abra en / Tandil, ya vas a estar adentro." El corte de la coma sería
