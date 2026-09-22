@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Mail } from "lucide-react";
-import AnimatedButton from "@/components/AnimatedButton";
+import Button from "@/components/Button";
 import Eyebrow from "@/components/Eyebrow";
 import Hairline from "@/components/Hairline";
 import ReferralCode from "@/components/ReferralCode";
@@ -105,20 +105,16 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
 
             <div className="mt-8">
               {flags.storeLinksLive ? (
-                <AnimatedButton
+                <Button
                   text="Descargar App"
                   href={site.app.appStore ?? site.app.playStore ?? "/descargar"}
-                  variant="primary"
-                  size="lg"
                   fullWidth
                 />
               ) : (
                 <>
-                  <AnimatedButton
+                  <Button
                     text="Anotate y te avisamos"
                     href="/lista-espera"
-                    variant="primary"
-                    size="lg"
                     fullWidth
                   />
                   <p className="mt-4 text-center text-small text-ink-500 dark:text-bone-300">

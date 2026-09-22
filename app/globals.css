@@ -21,15 +21,20 @@
   /*
    * `primary`. El ámbar de interfaz. Mismo hex en claro y en oscuro: la
    * marca no cambia de color con el tema. Relleno de CTA, elegido, acento.
-   * Sobre superficie clara da 2,64:1 — NO se usa como texto ahí (§11).
+   * Sobre superficie clara da 2,71:1 sobre `cream-50` y 2,78:1 sobre `paper`
+   * — NO se usa como texto ahí (§11). Con `ink-900` ENCIMA da 5,27:1, que es
+   * lo que habilita el botón de acción.
+   * (Remedidos el 22/9/2026: el comentario decía 2,64:1.)
    */
   --color-amber-500: #d78a1d;
 
   /*
    * `marcaTexto`. El mismo tono (37° de matiz) con la luminosidad bajada,
    * para cuando el ámbar tiene que LEERSE: links, texto de acento, bordes
-   * de foco sobre papel. Da 4,9:1 sobre `cream-50`.
-   * Sobre fondo oscuro no hace falta: ahí el ámbar ya pasa con 6,3:1.
+   * de foco sobre papel. Da 4,75:1 sobre `cream-50` — pasa, pero con menos
+   * margen del que decía este comentario (4,9:1). Sobre `cream-100` da 4,38:1
+   * y NO pasa: es el D2 de la auditoría.
+   * Sobre fondo oscuro no hace falta: ahí el ámbar pasa con 6,66:1.
    */
   --color-amber-700: #9d6515;
 
@@ -105,6 +110,16 @@
    */
   --color-amber-300: #e8b45f;
 
+  /*
+   * DERIVADO. El relleno de hover del CTA de acción. Existe porque el hover
+   * del ámbar tiene que ACLARAR, no oscurecer: `ink-900` sobre `amber-600`
+   * —el token que se llamaba "Hover del CTA"— da 4,44:1 y falla AA, y el
+   * margen para oscurecer es nulo (al 90% del camino a `amber-600` todavía
+   * pasa, con 4,52:1). Aclarando sobra: con `ink-900` da 5,74:1 contra los
+   * 5,27:1 del reposo. Cae entre `amber-300` y `amber-500` en luminancia.
+   */
+  --color-amber-400: #dd9226;
+
   --color-amber-100: #f6e7ce; /* rellenos suaves, bordes */
 
   /*
@@ -155,17 +170,6 @@
    */
   --color-lavado-profundo: #604117;
 
-  /*
-   * DERIVADO. Los dos extremos del biselado del CTA. No son pasos de la escala
-   * ámbar: son la luz y la sombra que le dan volumen a la cápsula, derivados a
-   * ojo del ámbar de marca. Vivían sueltos dentro de `AnimatedButton`, que es
-   * justo lo que el manual prohíbe ("Nunca un hex suelto en un componente").
-   * Los valores son los que ya tenía el botón: esto los mueve de lugar, no los
-   * cambia.
-   */
-  --color-cta-luz: #f0ac42;
-  --color-cta-sombra: #be770f;
-
   /* ── Forma — CANÓNICO (§5) ────────────────────────────────────────── */
   /*
    * Cuatro radios y una fórmula: al anidar,
@@ -181,19 +185,6 @@
    * Sombra O borde, nunca los dos. Los campos y las píldoras no llevan
    * sombra nunca (§5).
    */
-  /*
-   * La elevación del CTA principal. Dos `inset` que hacen el biselado —la luz
-   * arriba, el canto abajo— y dos sombras externas: una ámbar que lo despega
-   * del papel y una neutra que lo apoya. Vivían escritas a mano dentro de
-   * `AnimatedButton`, con cuatro `rgba()` sueltos.
-   */
-  --shadow-cta:
-    inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -1px 0 rgb(107 60 0 / 0.28),
-    0 8px 20px -10px rgb(190 119 15 / 0.7), 0 2px 6px -2px rgb(21 19 17 / 0.16);
-  --shadow-cta-hover:
-    inset 0 1px 0 rgb(255 255 255 / 0.6), inset 0 -1px 0 rgb(107 60 0 / 0.32),
-    0 18px 38px -14px rgb(190 119 15 / 0.85), 0 5px 14px -6px rgb(21 19 17 / 0.22);
-
   --shadow-card: 0 4px 10px rgb(31 41 55 / 0.1);
   --shadow-card-dark: 0 4px 10px rgb(0 0 0 / 0.45);
 

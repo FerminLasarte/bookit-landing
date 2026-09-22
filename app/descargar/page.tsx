@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AnimatedButton from "@/components/AnimatedButton";
+import Button from "@/components/Button";
 import Eyebrow from "@/components/Eyebrow";
 import Hairline from "@/components/Hairline";
 import { categorias } from "@/content/categorias";
@@ -29,19 +29,16 @@ export default function DescargarPage() {
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 {site.app.appStore && (
-                  <AnimatedButton
+                  <Button
                     text="Descargar para iPhone"
                     href={site.app.appStore}
-                    variant="primary"
-                    size="lg"
                   />
                 )}
                 {site.app.playStore && (
-                  <AnimatedButton
+                  <Button
                     text="Descargar para Android"
                     href={site.app.playStore}
-                    variant="ink"
-                    size="lg"
+                    variant="secondary"
                   />
                 )}
               </div>
@@ -57,11 +54,9 @@ export default function DescargarPage() {
                 avisamos antes que a nadie.
               </p>
               <div className="mt-10">
-                <AnimatedButton
+                <Button
                   text="Sumate a la lista VIP"
                   href="/lista-espera"
-                  variant="primary"
-                  size="lg"
                 />
               </div>
             </>

@@ -15,7 +15,7 @@ chocaron, gané la accesibilidad y dejé la marca lo más intacta posible. Los t
 
 | # | Qué dice el brief | Qué hice | Por qué |
 |---|---|---|---|
-| 1 | `AnimatedButton` variante `primary`: `bg-amber-500 text-white` (§5) | `bg-amber-500 text-ink-900` | Blanco sobre `#D78A1D` da **2,78:1** y falla AA a 16px. Tinta sobre el mismo ámbar da **6,66:1**. El fondo de marca queda igual; sólo cambia el color del texto. Mismo cambio aplicado al botón del email transaccional. |
+| 1 | `AnimatedButton` variante `primary`: `bg-amber-500 text-white` (§5) | `bg-amber-500 text-ink-900` | Blanco sobre `#D78A1D` da **2,78:1** y falla AA a 16px. Tinta sobre el mismo ámbar da **5,27:1**. El fondo de marca queda igual; sólo cambia el color del texto. Mismo cambio aplicado al botón del email transaccional. |
 | 2 | `--color-amber-700: #A9660F`, "SOLO para texto/links chicos sobre papel (contraste AA)" (§4.1) | **Superado por el manual v1: hoy el token es `#9D6515`** (`marcaTexto`, 4,9:1 sobre `cream-50`). En su momento fue `#96590C` | El valor del brief no cumplía la función que tiene asignada: daba 4,35:1 sobre `cream-50` y **3,96:1** sobre `cream-100`, los dos por debajo de 4,5. `#96590C` da 5,63 / 5,35 / 4,87 sobre paper / cream-50 / cream-100. El brief mismo pide "verificar ≥4.5:1 con un checker antes de cerrar". |
 | 3 | Wordmark: "it" en `amber-500` (§4.6.4) | `amber-600` sobre claro, `amber-500` sobre oscuro | A los 20px del nav, `#D78A1D` sobre `cream-50` da **2,64:1** (AA pide 3:1 para texto grande). `#C67D19` da 3,15:1. WCAG exceptúa los logotipos, pero el criterio de aceptación pide un 100 literal en Lighthouse y axe no sabe que es un logo. Sobre fondo oscuro se usa el ámbar de marca, que ahí da 6,66:1. |
 
@@ -24,6 +24,30 @@ decoración, y el ámbar de marca sobre papel no llega al 3:1 de texto grande.
 
 Los `#D78A1D` que quedan son: fondos de botón, iconos decorativos (`aria-hidden`), los ticks ámbar de
 los `Hairline` y el wordmark sobre oscuro. Ninguno es texto chico sobre papel.
+
+### Los números de contraste, remedidos el 22 de septiembre de 2026
+
+Al rehacer el botón (Fase B paso 1) se revalidó la calculadora de contraste
+contra los valores WCAG publicados —21,00 · 4,54 · 7,00 · 8,59, los cuatro
+exactos— y aparecieron cuatro números mal en el repo. Las decisiones que
+sostienen no cambian; los márgenes sí, y uno de ellos decide un estado.
+
+| Dónde | Decía | Real |
+|---|---|---|
+| Este archivo, §1.1: `ink-900` sobre `amber-500` | 6,66:1 | **5,27:1** |
+| `MARCA.md` y `globals.css`: `amber-700` sobre `cream-50` | 4,9:1 | 4,75:1 |
+| `MARCA.md` y `globals.css`: `amber-500` sobre `ink-950` | 6,3:1 | 6,66:1 |
+| `MARCA.md` y `globals.css`: `amber-500` sobre superficie clara | 2,64:1 | 2,71:1 sobre `cream-50`, 2,78:1 sobre `paper` |
+
+El primero es un error de verdad y parece una transposición: **6,66 es el número
+de `amber-500` sobre `ink-950`**, que está en otro archivo. Los otros tres son
+redondeo. Los cuatro ya están corregidos en los tres archivos.
+
+Importa porque el margen real de la tinta sobre el ámbar es mucho más chico de
+lo que el repo creía, y eso decide el hover del botón: `ink-900` sobre
+`amber-600` —el token que se llamaba "Hover del CTA"— da **4,44:1** y falla AA.
+Oscurecer el ámbar no tiene margen (al 90% del camino a `amber-600` todavía
+pasa, con 4,52:1), así que el hover **aclara**: ver `--color-amber-400`.
 
 ## 2. Desvíos técnicos
 
