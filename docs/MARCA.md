@@ -40,7 +40,7 @@ agenda y se cumple.
 **Archivos.** `public/brand/logo_bookit_completo.svg` (lockup) y
 `logo_bookit_isotipo.svg`. Los trazos en tinta salen en `currentColor` y el
 naranja de `--logo-naranja`. En React se usa siempre
-[`components/Wordmark.tsx`](../components/Wordmark.tsx), nunca un `<img>` al
+[`components/ui/Wordmark.tsx`](../components/ui/Wordmark.tsx), nunca un `<img>` al
 SVG: un `<img>` no hereda el color y rompe el modo oscuro.
 
 **Los huecos de la `B` y de las dos `o` van calados, no tapados.** Son subpaths
@@ -194,10 +194,10 @@ que el de *Color*: el anillo tiene que leerse, y `primary` sobre las superficies
 claras da 2,71 y 2,78:1, por debajo de los 3:1 que WCAG le pide a un indicador
 de foco. `marcaTexto` pasa sobre las cinco superficies que el sitio tiene debajo
 de algo enfocable, con 3,28:1 en el peor caso. **El mismo valor en los dos
-temas**, y eso no contradice la línea de *Color* que dice que sobre oscuro el
-ámbar pasa solo: la contradice el sitio, donde dos de esas cinco superficies
-—el lienzo y el footer— son oscuras también en el tema claro, así que un anillo
-no puede elegir su color por tema. Los 2 px de hueco que lo despegan del
+temas**: remedido el 23/9/2026 sobre las superficies de la v4, da de 3,23:1
+(tile arena en oscuro) a 4,88:1 (`paper`), así que un solo valor alcanza y el
+anillo no depende del tema. El único fondo donde no pasaría es el tile miel en
+oscuro (1,98:1), y ahí no hay nada enfocable. Los 2 px de hueco que lo despegan del
 elemento van del color de la superficie, que se declara y no se adivina.
 `archivo/DECISIONES.md` §3 duodevicies.
 
@@ -249,13 +249,13 @@ pie —"Revisá los campos marcados"— es el *Error inesperado* de la tabla de
 arriba, deja al color como único portador del dato y, para quien usa un lector
 de pantalla, no dice nada: `aria-invalid` sin `aria-describedby` anuncia que
 algo está mal y no qué. Es WCAG 3.3.1 y son dos reglas de este manual. Lo
-garantiza la primitiva [`Field`](../components/Field.tsx), que no deja declarar
+garantiza la primitiva [`Field`](../components/forms/Field.tsx), que no deja declarar
 un campo sin su mensaje.
 
 **El emoji de la pantalla de éxito es la única excepción**, y es de fondo: el
 🎉 de "¡Adentro!" es un mensaje de celebración, no iconografía de interfaz.
 Está decidido en el brief (§6.2) y el código lo dice desde siempre —
-[`Footer.tsx`](../components/Footer.tsx) llegó a citar "la única excepción que
+el footer de la v3 llegó a citar "la única excepción que
 registra `MARCA.md`"—, sólo que acá nunca se había escrito. Queda escrito: es
 ese emoji, en esa pantalla y en el correo que la acompaña, y ninguno más.
 

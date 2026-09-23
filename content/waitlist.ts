@@ -44,7 +44,6 @@ export const waitlistCopy: Record<Audience, AudienceCopy> = {
     desc: {
       before: "Anotate en la lista VIP y accedé a ",
       strong: "precio fundador de por vida",
-      // Sin "cupos limitados": no hay un número detrás (confirmado 21/9/2026).
       after: ": es para los primeros locales que se sumen antes del lanzamiento.",
     },
     button: "Quiero mi lugar como fundador",
