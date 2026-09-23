@@ -1,3 +1,5 @@
+import { site } from "./site";
+
 /**
  * Copy dinámico de la lista VIP (§6.2). Ya funciona en producción: el tono
  * y las promesas no se cambian, sólo se tipan.
@@ -29,13 +31,13 @@ export const waitlistCopy: Record<Audience, AudienceCopy> = {
     title: "Tandil, tu forma de sacar turnos está a punto de cambiar.",
     desc: {
       before: "Anotate en la lista VIP y llevate ",
-      strong: "500 Puntos Bookit",
+      strong: `${site.puntosDeRegalo} Puntos Bookit`,
       after: " de regalo para canjear en tu primer turno cuando lancemos la app.",
     },
-    button: "Quiero mis 500 puntos",
+    button: `Quiero mis ${site.puntosDeRegalo} puntos`,
     success: {
       lead: "Ya estás oficialmente en la lista VIP.",
-      body: "Acabamos de enviarte un correo confirmando tus 500 puntos (revisá spam por las dudas). Te vamos a avisar antes que a nadie cuando la app esté lista.",
+      body: `Acabamos de enviarte un correo confirmando tus ${site.puntosDeRegalo} puntos (revisá spam por las dudas). Te vamos a avisar antes que a nadie cuando la app esté lista.`,
     },
   },
   local: {

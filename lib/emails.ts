@@ -5,7 +5,7 @@ import type { UserType } from "./waitlist-schema";
 export const WAITLIST_FROM = `Bookit VIP <${site.transactionalEmail}>`;
 
 export const WAITLIST_SUBJECTS: Record<UserType, string> = {
-  cliente: "¡Tus 500 puntos Bookit están asegurados! 🎁",
+  cliente: `¡Tus ${site.puntosDeRegalo} puntos Bookit están asegurados! 🎁`,
   local: "¡Tu lugar como local fundador está reservado! 🎁",
 };
 
@@ -30,7 +30,7 @@ export function waitlistEmailHtml(name: string, userType: UserType): string {
         <p>Mientras tanto, seguinos en Instagram para enterarte de qué otros locales ya se están sumando.</p>`
     : `
         <p>Ya estás oficialmente en la lista VIP de <strong>Bookit</strong>.</p>
-        <p>Acabamos de guardar tus <strong>500 puntos bajo llave</strong>. Te vamos a avisar antes que a nadie cuando la app esté lista para descargar en Tandil, para que puedas canjearlos en tu primer turno.</p>
+        <p>Acabamos de guardar tus <strong>${site.puntosDeRegalo} puntos bajo llave</strong>. Te vamos a avisar antes que a nadie cuando la app esté lista para descargar en Tandil, para que puedas canjearlos en tu primer turno.</p>
         <p>Mientras tanto, seguinos en Instagram para enterarte de qué locales ya se están sumando.</p>`;
 
   return `

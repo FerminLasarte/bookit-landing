@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { site } from "@/content/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -76,7 +77,7 @@ export default function OpengraphImage() {
               letterSpacing: "-0.04em",
             }}
           >
-            500
+            {site.puntosDeRegalo}
           </div>
           <div style={{ display: "flex", color: "#D9C6B4", fontSize: 26, maxWidth: 720 }}>
             Puntos Bookit de regalo por anotarte, para tu primer turno.

@@ -137,7 +137,7 @@ export const terminos: LegalDoc = {
         },
         {
           type: "p",
-          text: "Los 500 Puntos Bookit ofrecidos por anotarse a la lista de espera se acreditan al crear la cuenta con el mismo correo con el que te anotaste, y quedan disponibles para tu primer turno.",
+          text: `Los ${site.puntosDeRegalo} Puntos Bookit ofrecidos por anotarse a la lista de espera se acreditan al crear la cuenta con el mismo correo con el que te anotaste, y quedan disponibles para tu primer turno.`,
         },
       ],
     },
