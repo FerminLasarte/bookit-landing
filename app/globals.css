@@ -53,7 +53,7 @@
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
-  --text-numeral: clamp(5rem, 3rem + 10vw, 11rem);
+  --text-numeral: clamp(10rem, 2rem + 26vw, 20rem);
   --text-numeral--line-height: 0.85;
   --text-numeral--letter-spacing: -0.06em;
   --text-display: clamp(2.5rem, 1.5rem + 4.4vw, 4.75rem);
@@ -131,6 +131,8 @@
   --color-tile-arena: var(--tile-arena);
   --color-tile-niebla: var(--tile-niebla);
   --color-tile-miel: var(--tile-miel);
+  /* Un número a escala de fondo: el tono del tile arena, que deja leer `fg` encima */
+  --color-marca-agua: var(--tile-arena);
 
   --shadow-tile: var(--tile-shadow);
   --shadow-float: var(--float-shadow);

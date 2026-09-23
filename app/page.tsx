@@ -6,8 +6,8 @@ import Hairline from "@/components/Hairline";
 import ComoFunciona from "@/components/home/ComoFunciona";
 import Hero from "@/components/home/Hero";
 import ParaLocales from "@/components/home/ParaLocales";
+import Puntos from "@/components/home/Puntos";
 import Reveal from "@/components/ui/Reveal";
-import Rewards from "@/components/Rewards";
 import Section from "@/components/Section";
 
 export const metadata: Metadata = {
@@ -23,8 +23,7 @@ export default function Home() {
 
       <ParaLocales />
 
-      {/* ──────────── 4. Puntos + Referidos (lienzo oscuro) ──────────── */}
-      <Rewards />
+      <Puntos />
 
       {/* ────────────────────────── 5. FAQ ────────────────────────── */}
       {/*

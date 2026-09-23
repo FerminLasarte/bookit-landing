@@ -9,7 +9,7 @@ export const hero = {
   title: "Tu próximo turno de",
   rubros,
   lede: `Los locales de ${site.city} en una sola app. Reservá cuando se te ocurra, sin cadenas de WhatsApp ni llamados en horario de trabajo.`,
-  note: "Todavía no lanzamos. Anotate y llevate 500 Puntos Bookit para tu primer turno.",
+  note: `Todavía no lanzamos. Anotate y llevate ${site.puntosDeRegalo} Puntos Bookit para tu primer turno.`,
   ctaCliente: { label: "Sumate a la lista VIP", href: "/lista-espera?tipo=cliente" },
   ctaLocal: { label: "Tengo un local", href: "/#locales" },
 } as const;
@@ -86,4 +86,19 @@ export const paraLocales = {
   pantallas: pantallasLocal,
   fundador: `Precio fundador de por vida, para los primeros locales de ${site.city}.`,
   cta: { label: "Quiero mi lugar como fundador", href: "/lista-espera?tipo=local" },
+} as const;
+
+export const puntos = {
+  title: "Los turnos que ya te hacías, ahora te devuelven algo.",
+  lede: "Cada turno que reservás te deja Puntos Bookit, y los canjeás en los que vienen.",
+  cifra: site.puntosDeRegalo,
+  regalo: "Puntos Bookit de regalo por anotarte, guardados para tu primer turno.",
+  referidos: {
+    title: "Invitá y ganen los dos.",
+    body: "Cuando alguien se registra con tu código, suman puntos los dos.",
+    link: `${new URL(site.url).hostname.replace(/^www\./, "")}/invite/`,
+    codigo: "TUCODIGO",
+    nota: "Es entre personas que sacan turnos: los locales no participan.",
+  },
+  cta: { label: `Quiero mis ${site.puntosDeRegalo} puntos`, href: "/lista-espera?tipo=cliente" },
 } as const;

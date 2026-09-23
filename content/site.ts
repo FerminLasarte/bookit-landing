@@ -8,6 +8,8 @@ export const site = {
   legalName: "Bookit",
   url: "https://www.somosbookit.com.ar",
   city: "Tandil",
+  /** Los Puntos Bookit de regalo por anotarse a la lista. */
+  puntosDeRegalo: 500,
   province: "Buenos Aires",
   country: "Argentina",
   hq: "HQ · Tandil, Buenos Aires, Argentina",
