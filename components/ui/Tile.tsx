@@ -18,6 +18,7 @@ export default function Tile({
   title,
   body,
   aside,
+  bleed = false,
   children,
   className,
   mediaClassName,
@@ -27,6 +28,8 @@ export default function Tile({
   body?: ReactNode;
   /** Algo que acompaña al título en la misma línea, como un `Badge`. */
   aside?: ReactNode;
+  /** El medio arranca arriba, centrado, y sigue de largo por el borde de abajo. */
+  bleed?: boolean;
   children: ReactNode;
   className?: string;
   mediaClassName?: string;
@@ -37,6 +40,7 @@ export default function Tile({
         className={cn(
           "relative isolate overflow-hidden rounded-card shadow-tile",
           tones[tone],
+          bleed && "flex aspect-4/3 items-start justify-center pt-10 md:pt-12",
           mediaClassName,
         )}
       >

@@ -4,8 +4,8 @@ import Audiences from "@/components/Audiences";
 import Eyebrow from "@/components/Eyebrow";
 import Faq from "@/components/Faq";
 import Hairline from "@/components/Hairline";
+import ComoFunciona from "@/components/home/ComoFunciona";
 import Hero from "@/components/home/Hero";
-import HowItWorks from "@/components/HowItWorks";
 import Reveal from "@/components/ui/Reveal";
 import Rewards from "@/components/Rewards";
 import Section from "@/components/Section";
@@ -19,45 +19,7 @@ export default function Home() {
     <>
       <Hero />
 
-      {/* ───────────────────── 2. Cómo funciona ───────────────────── */}
-      {/*
-        Primera sección después del lienzo del hero, y la primera del sitio que
-        usa el lavado cálido: el dispositivo que la Fase B0 construyó y que
-        todavía no consumía nadie. Va acá porque es la sección que muestra las
-        pantallas de la app, o sea el lugar donde el calor que la app tiene
-        detrás de sus encabezados aparece de los dos lados del marco.
-      */}
-      <Section
-        id="como-funciona"
-        labelledBy="como-funciona-title"
-        rhythm="apoyo"
-        lavado
-        /*
-          EL ALCANCE, que es la única perilla del lavado por sección — nunca
-          la opacidad—. En móvil va más corto: el degradé no escala con el
-          texto, y ahí la sección se aprieta, así que el mismo valor le llega a
-          la bajada. Medido en el borde de ARRIBA de cada elemento, que es su
-          peor punto, a 375 · 768 · 1024 · 1440:
-
-            rótulo   ink-900 13px   49-60 % de lavado   12,06-12,45:1
-            titular  ink-900        39-47 %             12,55-12,78:1
-            "01"     ink-500 28-40px  0-6 %              4,63-4,71:1  (pide 3)
-            bajadas  ink-500 14px     0 % en las cuatro  4,71:1
-
-          O sea: sobre el lavado sólo hay tinta plena y un ordinal a tamaño de
-          display, y el texto chico cae entero fuera del degradé — que es lo
-          que la regla de colocación pide, resuelto como estructura y no como
-          ajuste de color.
-
-          Los valores descartados, para no volver a probarlos: 32rem deja la
-          bajada en 4,64:1 a 1024 y 34rem en 4,67:1 a 1440. Pasan, con 0,14 y
-          0,17 de margen, y este repo ya se quemó tres veces con márgenes así.
-          Y 24rem en móvil le da a la bajada un 26,5 %, o sea 4,37:1: falla.
-        */
-        className="[--lavado-y:20rem] md:[--lavado-y:24rem]"
-      >
-        <HowItWorks />
-      </Section>
+      <ComoFunciona />
 
       {/* ──────────── 3. Los dos públicos, en una sola pieza ──────────── */}
       <Section
