@@ -1,44 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, m, useInView, useReducedMotion } from "motion/react";
+import { transicion } from "@/lib/movimiento";
 
-const INTERVALO = 2200;
+const INTERVALO = 1400;
 
 /**
- * Una palabra que rota en su lugar. Todas se apilan en la misma celda, así que
- * la caja mide lo que la más ancha y el renglón no salta al cambiar.
+ * Una palabra que rota en su lugar: la que se va sale por arriba y la nueva
+ * entra desde abajo, siempre en ese sentido. Las palabras invisibles de fondo
+ * le dan a la caja el ancho de la más larga, así el renglón no salta.
  *
- * Da una sola vuelta y se queda en la primera: algo que se mueve solo y
- * para siempre necesitaría un botón de pausa (WCAG 2.2.2). Con Reducir
- * movimiento no rota. Es decorativa: el texto accesible lo pone quien la usa.
+ * Gira sin parar, pero se frena fuera de pantalla y con el puntero encima
+ * (WCAG 2.2.2). Con Reducir movimiento no gira. Es decorativa: el texto
+ * accesible lo pone quien la usa.
  */
 export default function RotatingWord({ words }: { words: readonly string[] }) {
-  const [paso, setPaso] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const enPantalla = useInView(ref);
+  const reducir = useReducedMotion();
+  const [actual, setActual] = useState(0);
+  const [pausada, setPausada] = useState(false);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (paso >= words.length) return;
-    const timer = window.setTimeout(() => setPaso((p) => p + 1), INTERVALO);
-    return () => window.clearTimeout(timer);
-  }, [paso, words.length]);
-
-  const actual = paso % words.length;
+    if (reducir || pausada || !enPantalla) return;
+    const timer = window.setInterval(() => setActual((i) => (i + 1) % words.length), INTERVALO);
+    return () => window.clearInterval(timer);
+  }, [reducir, pausada, enPantalla, words.length]);
 
   return (
-    <span aria-hidden="true" className="inline-grid justify-items-center overflow-hidden pb-[0.08em]">
-      {words.map((word, i) => (
-        <span
-          key={word}
-          className={cn(
-            "col-start-1 row-start-1 transition-[opacity,transform] duration-(--duration-reveal) ease-(--ease-reveal)",
-            i === actual ? "translate-y-0 opacity-100" : "opacity-0",
-            i !== actual && (i < actual ? "-translate-y-full" : "translate-y-full"),
-          )}
-        >
+    <span
+      ref={ref}
+      aria-hidden="true"
+      onPointerEnter={() => setPausada(true)}
+      onPointerLeave={() => setPausada(false)}
+      className="inline-grid justify-items-center overflow-hidden pb-[0.08em] *:[grid-area:1/1]"
+    >
+      {words.map((word) => (
+        <span key={word} className="invisible">
           {word}
         </span>
       ))}
+      <AnimatePresence initial={false}>
+        <m.span
+          key={words[actual]}
+          initial={{ y: "105%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "-105%" }}
+          transition={transicion.reveal}
+        >
+          {words[actual]}
+        </m.span>
+      </AnimatePresence>
     </span>
   );
 }
