@@ -1,27 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import Eyebrow from "@/components/Eyebrow";
-import Hairline from "@/components/Hairline";
-import Reveal from "@/components/Reveal";
-import Section from "@/components/Section";
-import WaitlistForm from "@/components/WaitlistForm";
-import { IconCheck } from "@/components/icons";
+import WaitlistForm from "@/components/forms/WaitlistForm";
+import Reveal from "@/components/ui/Reveal";
+import Section from "@/components/ui/Section";
+import TextLink from "@/components/ui/TextLink";
+import { IconCheck } from "@/components/ui/icons";
 import { site } from "@/content/site";
-import type { Audience } from "@/content/waitlist";
-
-/**
- * §6.2 — La lista VIP tiene página propia.
- *
- * Antes era una sección más de la landing, entre Referidos y las preguntas, y
- * competía con todo lo que tenía alrededor. Acá la página entera hace una sola
- * cosa: explicar qué es la lista, qué te llevás por anotarte y cómo sigue
- * después. El formulario está arriba de todo, al lado del texto, para que
- * nadie tenga que scrollear a buscarlo.
- */
+import { listaEspera, type Audience } from "@/content/waitlist";
 
 const title = "Tandil, tu forma de sacar turnos está por cambiar";
-const description =
-  "Anotate en la lista VIP y llevate 500 Puntos Bookit de regalo para tu primer turno. Barberías, uñas, depilación y más, todo en una sola app.";
+const gancho = `Anotate en la lista VIP y llevate ${site.puntosDeRegalo} Puntos Bookit de regalo para tu primer turno.`;
+const description = `${gancho} Barberías, uñas, depilación y más, todo en una sola app.`;
 
 export const metadata: Metadata = {
   title,
@@ -34,54 +22,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: `Bookit | ${title}`,
-    description:
-      "Anotate en la lista VIP y llevate 500 Puntos Bookit de regalo para tu primer turno.",
+    description: gancho,
   },
 };
-
-/** Lo que se lleva quien se anota. La cifra es la pieza gráfica de cada ítem. */
-const beneficios = [
-  {
-    figure: "500",
-    title: "Puntos Bookit de regalo",
-    body: "Te esperan guardados para canjear en tu primer turno, el día que lancemos la app.",
-  },
-  {
-    figure: "01",
-    title: "Te enterás antes que nadie",
-    body: `Cuando la app esté disponible en ${site.city}, la lista es la primera en recibir el aviso por email.`,
-  },
-  {
-    figure: "∞",
-    title: "Precio fundador de por vida",
-    body: "Si tenés un local, el precio fundador es para los primeros que se suman antes del lanzamiento.",
-  },
-] as const;
-
-/** Qué pasa después de apretar el botón. Sin promesas que no podamos cumplir. */
-const pasos = [
-  {
-    n: "01",
-    title: "Te anotás",
-    body: "Un nombre, un correo y listo. No pedimos tarjeta ni nada por el estilo.",
-  },
-  {
-    n: "02",
-    title: "Te llega el correo",
-    body: "Confirmamos tus 500 puntos por email en el momento. Revisá spam por las dudas.",
-  },
-  {
-    n: "03",
-    title: "Te avisamos del lanzamiento",
-    body: "El día que la app esté en App Store y Google Play, sos de los primeros en saberlo.",
-  },
-] as const;
-
-const garantias = [
-  "Anotarte no cuesta nada.",
-  "Sólo te escribimos por Bookit, nunca para otra cosa.",
-  "Te podés dar de baja cuando quieras, desde cualquier correo que te mandemos.",
-] as const;
 
 export default async function ListaEsperaPage({
   searchParams,
@@ -89,206 +32,57 @@ export default async function ListaEsperaPage({
   searchParams: Promise<{ tipo?: string }>;
 }) {
   const { tipo } = await searchParams;
-  // `?tipo=local` / `?tipo=cliente` preselecciona el público (§6.2).
   const initialAudience: Audience | null =
     tipo === "local" ? "local" : tipo === "cliente" ? "cliente" : null;
+  const { pasos, datos } = listaEspera;
 
   return (
     <>
-      {/* ─────────────── 1. Qué es la lista + el formulario ─────────────── */}
-      <section className="relative overflow-hidden pt-14 pb-24 md:pt-20 md:pb-32">
-        {/* Mismo destello que el hero de la landing, en reposo */}
-        <div
-          aria-hidden="true"
-          className="destello pointer-events-none absolute -top-40 left-1/2 h-[38rem] w-[38rem] -translate-x-1/2 animate-aurora rounded-full [--destello-alfa:13%] [--destello-radio:68%]"
-        />
+      <Section id="lista" as="h1" title={listaEspera.title} lede={listaEspera.lede}>
+        <div className="mx-auto max-w-[36rem]">
+          <WaitlistForm initialAudience={initialAudience} />
 
-        <div className="wrap relative">
-          <div className="md:grid md:grid-cols-12 md:gap-12">
-            <div className="md:col-span-5">
-              <Eyebrow>
-                Lista VIP · {site.city}
-              </Eyebrow>
-
-              <h1 className="mt-5 text-display-lg font-extrabold text-ink-900 dark:text-bone-100">
-                Entrá antes que el resto de {site.city}.
-              </h1>
-
-              <p className="measure mt-6 text-ink-500 dark:text-bone-300">
-                La lista VIP es el grupo de fundadores de Bookit: las personas y los locales que van
-                a usar la app antes que nadie. Anotarte lleva menos de un minuto y te deja{" "}
-                <strong className="font-semibold text-ink-900 dark:text-bone-100">
-                  <span className="num">500</span> Puntos Bookit
-                </strong>{" "}
-                esperándote.
-              </p>
-
-              <ul className="mt-9 space-y-3.5">
-                {garantias.map((garantia) => (
-                  <li key={garantia} className="flex items-start gap-3">
-                    <IconCheck className="mt-0.5 h-4.5 w-4.5 shrink-0 text-amber-600 dark:text-amber-300" />
-                    <span className="text-small text-ink-500 dark:text-bone-300">{garantia}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <Hairline className="mt-10" />
-
-              <p className="mt-8 max-w-[36ch] text-small text-ink-500 dark:text-bone-300">
-                Todavía no lanzamos: estamos terminando la app y arrancamos por {site.city}. Te
-                escribimos en cuanto esté lista.
-              </p>
-            </div>
-
-            <div className="mt-12 md:col-span-7 md:mt-0">
-              <WaitlistForm initialAudience={initialAudience} headingAs="p" />
-            </div>
-          </div>
+          <ul className="mt-8 space-y-2.5 px-2">
+            {listaEspera.garantias.map((garantia) => (
+              <li key={garantia} className="flex items-start gap-3 text-small text-muted">
+                <IconCheck className="mt-0.5 size-4.5 shrink-0" />
+                {garantia}
+              </li>
+            ))}
+          </ul>
         </div>
-      </section>
+      </Section>
 
-      {/* ─────────────────── 2. Qué te llevás ─────────────────── */}
-      <Section labelledBy="beneficios-title" tone="tint">
-        <Reveal className="max-w-[36rem]">
-          <Eyebrow>Beneficios</Eyebrow>
-          <h2
-            id="beneficios-title"
-            className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100"
-          >
-            Qué te llevás por anotarte.
-          </h2>
-        </Reveal>
-
-        {/*
-         * ESTO DEJÓ DE SER UNA CARD, y es la otra mitad del D2.
-         *
-         * Por contenido nunca lo fue: son tres textos con una cifra, se leen y
-         * no se toman, así que el criterio de `docs/DECISIONES.md` §3 sexies los
-         * manda a agruparse por aire y un filete. Estaban en card por un motivo
-         * medido y ajeno — sobre el tinte, el cuerpo en `ink-500` daba 4,35:1 y
-         * la cifra en `amber-600` 2,97:1, y la card de `paper` los devolvía a
-         * 4,83:1 y 3,31:1—. O sea que la card no decoraba ni agrupaba: tapaba
-         * un número. Era la única card del sitio que existía por el fondo que
-         * tenía detrás.
-         *
-         * Con la regla de tinta del paso 5 el problema se resuelve donde estaba:
-         * en la banda se compone a tinta plena. El cuerpo pasa a `ink-900`
-         * (13,20:1) y la cifra a `amber-700`, que a `display-sm` es texto grande
-         * y pide 3:1 — da 4,38:1—. Las cards del sitio bajan de cuatro a tres, y
-         * las tres que quedan lo son por lo que son: se completa, se compara o
-         * se copia.
-         *
-         * El ícono se va con la card. Decía lo mismo que la cifra que tiene
-         * debajo, y en `amber-600` era el otro número que fallaba (2,97:1): un
-         * ítem que ya no es una card no necesita dos marcas gráficas.
-         */}
-        <ul className="mt-14 grid md:grid-cols-3 md:gap-x-12">
-          {beneficios.map((beneficio, index) => (
-            <Reveal
-              as="li"
-              key={beneficio.title}
-              index={index}
-              className="border-t border-ink-900/10 py-8 first:border-t-0 first:pt-0 md:border-t-0 md:py-0 dark:border-white/10"
-            >
-              <Hairline className="mb-7 hidden md:block" />
-
-              <p
-                aria-hidden="true"
-                className="num text-display-sm text-amber-700 dark:text-amber-300"
-              >
-                {beneficio.figure}
-              </p>
-
-              <h3 className="mt-4 font-display text-h3 font-semibold text-ink-900 dark:text-bone-100">
-                {beneficio.title}
-              </h3>
-              <p className="mt-3 max-w-[34ch] text-small text-ink-900 dark:text-bone-300">
-                {beneficio.body}
-              </p>
+      <Section id="como-sigue" title={pasos.title}>
+        <ol className="grid gap-14 text-center md:grid-cols-3 md:gap-10">
+          {pasos.items.map((paso, index) => (
+            <Reveal as="li" key={paso.title} index={index}>
+              <span aria-hidden="true" className="num text-title font-bold text-muted">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3 className="mt-3 text-title font-bold text-fg">{paso.title}</h3>
+              <p className="mx-auto mt-2 max-w-[34ch] text-pretty text-small text-muted">{paso.body}</p>
             </Reveal>
           ))}
-        </ul>
+        </ol>
       </Section>
 
-      {/* ─────────────────── 3. Cómo sigue ─────────────────── */}
-      <Section labelledBy="pasos-title">
-        <div className="md:grid md:grid-cols-12 md:gap-16">
-          <div className="md:col-span-4">
-            <Reveal>
-              <Eyebrow>Después de anotarte</Eyebrow>
-              <h2
-                id="pasos-title"
-                className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100"
-              >
-                Cómo sigue.
-              </h2>
-            </Reveal>
-          </div>
-
-          <ol className="mt-12 md:col-span-7 md:col-start-6 md:mt-0">
-            {pasos.map((paso, index) => (
-              <Reveal
-                as="li"
-                key={paso.n}
-                index={index}
-                className="flex gap-6 border-t border-ink-900/10 py-7 first:border-t-0 first:pt-0 dark:border-white/10"
-              >
-                <span
-                  aria-hidden="true"
-                  className="num shrink-0 text-2xl text-amber-600 dark:text-amber-300"
-                >
-                  {paso.n}
-                </span>
-                <div>
-                  <h3 className="font-display text-h3 font-semibold text-ink-900 dark:text-bone-100">
-                    {paso.title}
-                  </h3>
-                  <p className="mt-2 max-w-[46ch] text-small text-ink-500 dark:text-bone-300">
-                    {paso.body}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
-        </div>
-      </Section>
-
-      {/* ─────────────────── 4. Letra chica ───────────────────
-          Sin tinte. Es literalmente la letra chica de la página —`text-small`
-          en `ink-500`— y sobre `cream-100` eso da 4,35:1. La regla de tinta del
-          paso 5 dice que la banda se compone a tinta plena; poner este párrafo
-          en `ink-900` sería gritarlo. Va sobre la página, donde `ink-500`
-          vuelve a 4,71:1 y la letra chica puede ser chica. */}
-      <Section labelledBy="datos-title">
+      {/* Letra chica: sin `Section`, que la pondría a tamaño display. */}
+      <section aria-labelledby="datos-titulo" className="wrap pb-24 md:pb-36">
         <Reveal className="mx-auto max-w-[52ch] text-center">
-          <h2
-            id="datos-title"
-            className="font-display text-h3 font-semibold text-ink-900 dark:text-bone-100"
-          >
-            Tus datos, en claro.
+          <h2 id="datos-titulo" className="text-title font-bold text-fg">
+            {datos.title}
           </h2>
-          <p className="mt-4 text-small text-ink-500 dark:text-bone-300">
-            Guardamos tu nombre, tu correo y —si nos lo dejás— tu WhatsApp, sólo para avisarte del
-            lanzamiento y darte tus puntos. Nada de esto se vende ni se comparte. Podés pedir que
-            los borremos cuando quieras.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {[
-              { label: "Política de Privacidad", href: "/legal/privacidad" },
-              { label: "Términos y Condiciones", href: "/legal/terminos" },
-              { label: "Eliminar mis datos", href: "/legal/eliminar-cuenta" },
-            ].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="ring-focus rounded-pill text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
-              >
+          <p className="mt-3 text-pretty text-small text-muted">{datos.body}</p>
+          <p className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-small">
+            {datos.links.map((link) => (
+              <TextLink key={link.href} href={link.href}>
                 {link.label}
-              </Link>
+              </TextLink>
             ))}
-          </div>
+          </p>
         </Reveal>
-      </Section>
+      </section>
     </>
   );
 }

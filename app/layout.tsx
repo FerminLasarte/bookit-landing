@@ -1,16 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import Nav from "@/components/layout/Nav";
+import Footer from "@/components/layout/Footer";
 import { site } from "@/content/site";
 import "./globals.css";
 
 /*
- * Una sola familia para todo (manual de marca §4). `--font-display` y
- * `--font-sans` apuntan a esta misma variable desde `globals.css`: el nombre
- * display se conserva porque lo usan los componentes, no porque haya dos
- * tipografías.
+ * Una sola familia para todo (manual de marca §4): `--font-sans` apunta a
+ * esta variable desde `globals.css`.
  *
  * Los cinco pesos son los que el manual declara disponibles. En la app la
  * fuente va empaquetada; acá va por `next/font`, que la self-hostea en el
@@ -107,7 +105,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Nav />
-        <main id="contenido" className="flex-1">
+        <main id="contenido" className="flex-1 pt-20 md:pt-24">
           {children}
         </main>
         <Footer />

@@ -1,6 +1,23 @@
-/** Une clases ignorando `false`, `undefined` y `null`. */
+import { extendTailwindMerge } from "tailwind-merge";
+
+/* Las escalas propias de `globals.css`, para que tailwind-merge sepa que
+   `text-small` es un tamaño y `text-muted` un color, y no descarte uno. */
+const merge = extendTailwindMerge({
+  extend: {
+    theme: {
+      text: ["numeral", "display", "title", "body", "small", "micro"],
+      radius: ["field", "toast", "card", "pill"],
+      shadow: ["tile", "float"],
+    },
+  },
+});
+
+/**
+ * Une clases ignorando `false`, `undefined` y `null`. Si dos chocan, gana la
+ * última: es lo que deja que un `className` de afuera pise al del componente.
+ */
 export function cn(...classes: Array<string | false | null | undefined>): string {
-  return classes.filter(Boolean).join(" ");
+  return merge(classes.filter(Boolean).join(" "));
 }
 
 /**

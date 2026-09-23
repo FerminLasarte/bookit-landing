@@ -7,9 +7,9 @@
 > [`docs/MARCA.md`](docs/MARCA.md) y tokenizada en el bloque `@theme` de
 > [`app/globals.css`](app/globals.css). Ese par es autoridad, no material a re-derivar.
 > El contexto largo está en [`docs/LANDING_BRIEF.md`](docs/LANDING_BRIEF.md) y las desviaciones
-> tomadas al construir, en [`docs/DECISIONES.md`](docs/DECISIONES.md).
+> tomadas al construir, en [`docs/archivo/DECISIONES.md`](docs/archivo/DECISIONES.md).
 >
-> Última actualización: 21 de septiembre de 2026.
+> Última actualización: 23 de septiembre de 2026.
 
 ## Platform
 
@@ -70,7 +70,7 @@ Lo que un producto vecino no podría copiar de verdad:
 - Soporte público: `somosbookit@gmail.com`
 - Remitente transaccional: `hola@somosbookit.com.ar` (Resend, `Bookit VIP <…>`)
 - Teléfono: `+54 9 249 460-0615` — **real y confirmado** (ya no es el placeholder que registra
-  `docs/DECISIONES.md` §3).
+  `docs/archivo/DECISIONES.md` §3).
 - Instagram: **`@bookit_arg`** — confirmado el 21 de septiembre de 2026. El brief §2 pedía
   cambiarlo a `@somosbookit`: esa corrección quedó **sin efecto**, el handle vigente es el que
   está en el código.
@@ -91,7 +91,8 @@ fallback. Hay links de invitación circulando hoy.
 - **Puntos Bookit** — fidelización: se acumulan por turno y se canjean en los siguientes.
   Hay niveles (bronce, plata, oro, VIP) tokenizados en `@theme`.
 - **Referidos / invitaciones** — código por usuario, link compartible, beneficio para ambas partes.
-  Hay variante para comercios.
+  La variante para comercios se dio de baja: los referidos son sólo entre personas que sacan
+  turnos. Los links `/invite/comercio/<CODIGO>` que ya circulan siguen resolviendo.
 - **Agenda del local** — se actualiza sola, recordatorios automáticos, ficha e historial por
   cliente, link propio para compartir en Instagram.
 - **Pago del turno — mixto, y lo decide el local.** Confirmado el 21 de septiembre de 2026.
@@ -100,24 +101,26 @@ fallback. Hay links de invitación circulando hoy.
   por igual. O sea que la landing no puede decir ni "se paga en el local" ni "se paga por la app"
   como si fueran la regla — las dos conviven y la que rige depende del local.
 - **La suscripción mensual de los locales se cobra por Mercado Pago.** Confirmado el 21 de
-  septiembre de 2026. Esto cierra el punto que `docs/DECISIONES.md` §4 dejaba sin verificar: el
+  septiembre de 2026. Esto cierra el punto que `docs/archivo/DECISIONES.md` §4 dejaba sin verificar: el
   texto vigente del Botón de arrepentimiento §2 dice que la suscripción todavía no se cobra online,
   y **está desactualizado**.
 - **Consecuencia.** Bookit cobra y el servicio lo presta el local, así que el reparto de
   responsabilidad del reintegro (Términos §1 y §3) y el mecanismo del **Botón de arrepentimiento**
   (Ley 24.240) siguen necesitando **revisión de una persona con formación legal** antes de publicar.
-  `flags.inAppPayments: true` ya está en `content/site.ts`, pero un booleano no alcanza para
-  representar "efectivo o Mercado Pago, a criterio del local": el copy tiene que decirlo.
+  Un booleano no alcanzaba para representar "efectivo o Mercado Pago, a criterio del local", y por
+  eso `payments` en `content/site.ts` lo dice con tres campos (`efectivoEnLocal`,
+  `mercadoPagoEnApp` y `loEligeElLocal`). El copy tiene que decirlo igual.
 
 - **Los Puntos Bookit no tienen un valor fijo en pesos.** Confirmado el 21 de
   septiembre de 2026. Ninguna superficie puede declarar una equivalencia ni una
   tasa de acumulación por turno: no existen. La landing lo dice explícitamente
   en la FAQ en vez de dejar el hueco.
-- **"Cupos limitados" no tiene un número detrás.** Confirmado el 21 de
-  septiembre de 2026, y por eso se eliminó de toda la web. El precio fundador
-  es para los primeros locales que se suman antes del lanzamiento —eso sí es
-  cierto por definición del beneficio— pero no hay una cantidad de cupos que
-  se pueda anunciar ni agotar. No reintroducir la escasez sin un número real.
+- **"Cupos limitados" es una decisión de marketing, no una promesa falsa.**
+  Aclarado por Fermín el 23 de septiembre de 2026. El precio fundador es para
+  los primeros locales que se suman antes del lanzamiento, y el cupo es
+  limitado porque Bookit decide hasta cuándo se ofrece. Hoy lo dice el correo
+  de bienvenida de locales. Lo que no existe es un número: no se anuncia una
+  cantidad de cupos ni cuántos quedan.
 
 **Contratos técnicos que no se pueden romper** (detalle en `docs/LANDING_BRIEF.md` §2):
 
@@ -160,7 +163,7 @@ sección son SVG propios. Sin JS de terceros.
   (Excepción registrada: el 🎉 de las pantallas de éxito del formulario es un mensaje de
   celebración, no iconografía de UI.)
 - **Logo.** Isotipo = un corchete que se cierra sobre un check. Los SVG están en `public/brand/`
-  y en React se usan siempre por `components/Wordmark.tsx`, nunca como `<img>`. La palabra del
+  y en React se usan siempre por `components/ui/Wordmark.tsx`, nunca como `<img>`. La palabra del
   lockup es dibujo, no texto: no se reescribe con otra tipografía.
 
 ## Evidence on Hand
@@ -177,12 +180,15 @@ sección son SVG propios. Sin JS de terceros.
 - **Cero testimonios, métricas, logos de clientes, cantidad de usuarios, ratings o reseñas.**
   No hay ninguno real. El criterio de aceptación del brief §10 lo prohíbe explícitamente, y el
   JSON-LD no lleva `AggregateRating`.
+  La sección de testimonios de la home existe con **citas de prueba** para diseñarla
+  (`content/testimonios.ts`), marcada como tal y **sin renderizarse en producción**
+  mientras `sonDePrueba` sea `true`. Decidido por Fermín el 22 de septiembre de 2026.
 - Tampoco hay locales adheridos anunciables por nombre, ni fecha pública de lanzamiento.
 
-**Screenshots de la app.** No hay ninguna captura en el repo (`public/` sólo tiene marca y
-`.well-known`). Se van a **capturar desde el simulador de iOS** cuando el trabajo de superficie las
-necesite; hasta entonces no hay imagen de producto disponible. Esto **actualiza** el §11.7 de
-`docs/LANDING_BRIEF.md` y el §3 de `docs/DECISIONES.md`, que daban las capturas por inexistentes.
+**Capturas de la app.** Son quince pantallas reales, en claro y en oscuro, en `assets/capturas/`.
+Se registran una sola vez, con su texto alternativo, en `content/capturas.ts`. Esto **actualiza**
+el §11.7 de `docs/LANDING_BRIEF.md` y el §3 de `docs/archivo/DECISIONES.md`, que daban las capturas
+por inexistentes.
 
 **Assets rotos, a no reintroducir.** Los tres archivos del sitio viejo en Supabase Storage
 (`favicon.png`, `og-image.png`, `banner_compartir.jpg`) devuelven **HTTP 400**: el bucket no es
@@ -211,7 +217,7 @@ páginas medidas, y es un criterio de aceptación vigente.
 
 - **Contraste medido contra el fondo real, nunca contra blanco por costumbre** (regla §3 del manual):
   4,5:1 en texto · 3:1 en texto grande, iconos y bordes.
-- El ámbar de marca `#D78A1D` **no se usa como texto sobre fondo claro** (da 2,64:1). Para eso
+- El ámbar de marca `#D78A1D` **no se usa como texto sobre fondo claro** (da 2,71:1). Para eso
   existe `amber-700` / `marcaTexto` `#9D6515`.
 - **El color nunca es el único portador de un dato.**
 - Claro y oscuro, los dos diseñados. El oscuro no es el claro invertido.
