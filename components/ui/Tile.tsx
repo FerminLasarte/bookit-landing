@@ -1,13 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-
-export type TileTone = "arena" | "niebla" | "miel";
-
-const tones: Record<TileTone, string> = {
-  arena: "bg-tile-arena",
-  niebla: "bg-tile-niebla",
-  miel: "bg-tile-miel",
-};
+import Superficie, { type Tono } from "./Superficie";
 
 /**
  * Un medio sobre un fondo plano, con título y bajada debajo. El medio se
@@ -24,7 +17,7 @@ export default function Tile({
   className,
   mediaClassName,
 }: {
-  tone?: TileTone;
+  tone?: Tono;
   title?: ReactNode;
   body?: ReactNode;
   /** Algo que acompaña al título en la misma línea, como un `Badge`. */
@@ -39,16 +32,12 @@ export default function Tile({
 
   return (
     <Root className={cn("text-center", className)}>
-      <div
-        className={cn(
-          "relative isolate overflow-hidden rounded-card shadow-tile",
-          tones[tone],
-          bleed && "flex aspect-4/3 items-start justify-center pt-10 md:pt-12",
-          mediaClassName,
-        )}
+      <Superficie
+        tone={tone}
+        className={cn(bleed && "flex aspect-4/3 items-start justify-center pt-10 md:pt-12", mediaClassName)}
       >
         {children}
-      </div>
+      </Superficie>
       {title && (
         <h3 className="mt-7 flex items-center justify-center gap-3 text-title font-bold text-fg">
           {title}

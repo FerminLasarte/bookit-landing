@@ -177,6 +177,9 @@ sección son SVG propios. Sin JS de terceros.
 - **Cero testimonios, métricas, logos de clientes, cantidad de usuarios, ratings o reseñas.**
   No hay ninguno real. El criterio de aceptación del brief §10 lo prohíbe explícitamente, y el
   JSON-LD no lleva `AggregateRating`.
+  La sección de testimonios de la home existe con **citas de prueba** para diseñarla
+  (`content/testimonios.ts`), marcada como tal y **sin renderizarse en producción**
+  mientras `sonDePrueba` sea `true`. Decidido por Fermín el 22 de septiembre de 2026.
 - Tampoco hay locales adheridos anunciables por nombre, ni fecha pública de lanzamiento.
 
 **Screenshots de la app.** No hay ninguna captura en el repo (`public/` sólo tiene marca y

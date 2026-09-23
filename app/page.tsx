@@ -7,6 +7,7 @@ import ComoFunciona from "@/components/home/ComoFunciona";
 import Hero from "@/components/home/Hero";
 import ParaLocales from "@/components/home/ParaLocales";
 import Puntos from "@/components/home/Puntos";
+import Testimonios from "@/components/home/Testimonios";
 import Reveal from "@/components/ui/Reveal";
 import Section from "@/components/Section";
 
@@ -24,6 +25,8 @@ export default function Home() {
       <ParaLocales />
 
       <Puntos />
+
+      <Testimonios />
 
       {/* ────────────────────────── 5. FAQ ────────────────────────── */}
       {/*

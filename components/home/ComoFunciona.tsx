@@ -1,10 +1,11 @@
 import Reveal from "@/components/ui/Reveal";
 import Screen from "@/components/ui/Screen";
 import Section from "@/components/ui/Section";
-import Tile, { type TileTone } from "@/components/ui/Tile";
+import { type Tono } from "@/components/ui/Superficie";
+import Tile from "@/components/ui/Tile";
 import { comoFunciona } from "@/content/home";
 
-const TONOS: readonly TileTone[] = ["arena", "niebla", "miel"];
+const TONOS: readonly Tono[] = ["arena", "niebla", "miel"];
 
 export default function ComoFunciona() {
   return (
