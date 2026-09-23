@@ -39,7 +39,12 @@ export default function Screen({
   const { props: dark } = getImageProps({ ...common, src: oscuro });
 
   return (
-    <div className={cn("rounded-card bg-surface p-2 shadow-tile", className)}>
+    <div
+      className={cn(
+        "rounded-card bg-surface p-2 shadow-tile transition-[translate,box-shadow] duration-(--duration-entrada) ease-out-cubic hover:-translate-y-1.5 hover:shadow-alzado",
+        className,
+      )}
+    >
       <div
         className="relative overflow-hidden rounded-toast"
         style={{ aspectRatio: `${claro.width} / ${bottom - top}` }}

@@ -7,7 +7,7 @@ const merge = extendTailwindMerge({
     theme: {
       text: ["numeral", "display", "title", "body", "small", "micro"],
       radius: ["field", "toast", "card", "pill"],
-      shadow: ["tile", "float"],
+      shadow: ["tile", "float", "alzado"],
     },
   },
 });

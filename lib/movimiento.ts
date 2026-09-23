@@ -24,6 +24,8 @@ export const transicion = {
   reveal: { duration: duracion.reveal, ease: curva.reveal },
   /** Lo que responde a la mano: rápido y con un rebote apenas visible. */
   resorte: { type: "spring", stiffness: 420, damping: 32 },
+  /** Una cifra que cuenta hasta su valor: arranca rápido y se frena al llegar. */
+  cuenta: { duration: 1.6, ease: curva.reveal },
   /** Algo grande que se acomoda en su lugar: un abanico que se abre. */
   llegada: { type: "spring", stiffness: 180, damping: 20 },
   /** Lo que sigue al puntero o al scroll: más blando, para que no tiemble. */

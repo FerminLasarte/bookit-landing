@@ -104,7 +104,7 @@ export default function SelectorPantallas({
                 aria-hidden={i !== visible}
                 className={cn(
                   "[grid-area:1/1] transition-[opacity,translate,scale] duration-(--duration-entrada) ease-out-cubic",
-                  i === visible ? "opacity-100" : "translate-y-3 scale-98 opacity-0",
+                  i === visible ? "opacity-100" : "pointer-events-none translate-y-3 scale-98 opacity-0",
                 )}
               >
                 {pantalla}

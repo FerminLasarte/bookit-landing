@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, useMotionValueEvent, useScroll } from "motion/react";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Resaltado from "@/components/ui/Resaltado";
@@ -43,6 +43,9 @@ export default function Nav() {
   const pathname = usePathname();
   const activa = useSeccionActiva(pathname === "/");
   const [sobre, setSobre] = useState<string | null>(null);
+  const { scrollY } = useScroll();
+  const [compacto, setCompacto] = useState(false);
+  useMotionValueEvent(scrollY, "change", (y) => setCompacto(y > 24));
   const [abierto, setAbierto] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -70,12 +73,26 @@ export default function Nav() {
         Saltar al contenido
       </a>
 
-      <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 md:px-6 md:pt-5">
+      {/* Al scrollear, la píldora se achica y se vuelve más opaca: acompaña sin tapar. */}
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-50 px-3 transition-[padding] duration-(--duration-entrada) ease-out-cubic md:px-6",
+          compacto ? "pt-2 md:pt-3" : "pt-3 md:pt-5",
+        )}
+      >
         <nav
           aria-label="Principal"
-          className="mx-auto max-w-[68rem] rounded-card bg-surface/80 shadow-float backdrop-blur-xl [--ring-hueco:var(--surface)]"
+          className={cn(
+            "mx-auto rounded-card shadow-float backdrop-blur-xl transition-[max-width,background-color] duration-(--duration-entrada) ease-out-cubic [--ring-hueco:var(--surface)]",
+            compacto ? "max-w-[60rem] bg-surface/92" : "max-w-[68rem] bg-surface/80",
+          )}
         >
-          <div className="flex h-16 items-center gap-3 pr-3 pl-5">
+          <div
+            className={cn(
+              "flex items-center gap-3 pr-3 pl-5 transition-[height] duration-(--duration-entrada) ease-out-cubic",
+              compacto ? "h-14" : "h-16",
+            )}
+          >
             <Link href="/" className="ring-focus flex min-h-11 items-center rounded-pill">
               <Wordmark className="h-8" />
             </Link>

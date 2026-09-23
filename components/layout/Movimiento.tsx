@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import { LazyMotion, MotionConfig } from "motion/react";
+import { useMagnetismo } from "@/lib/useMagnetismo";
 
 const cargarFunciones = () => import("@/lib/motion-funciones").then((m) => m.default);
 
@@ -19,6 +20,7 @@ export const useIntro = () => useContext(IntroContext);
  * Reducir movimiento; `strict` obliga a usar `m.*`, que no trae el motor entero.
  */
 export default function Movimiento({ children }: { children: ReactNode }) {
+  useMagnetismo();
   const [lista, setLista] = useState(false);
   const intro = useMemo(() => ({ lista, terminar: () => setLista(true) }), [lista]);
 
