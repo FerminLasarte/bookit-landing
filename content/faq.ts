@@ -1,4 +1,4 @@
-import { payments } from "./site";
+import { payments, site } from "./site";
 
 export type FaqItem = {
   q: string;
@@ -6,6 +6,15 @@ export type FaqItem = {
   /** Link opcional al final de la respuesta. */
   link?: { label: string; href: string };
 };
+
+export const preguntas = {
+  title: "Lo que suelen preguntarnos.",
+  lede: {
+    antes: "Y si no está acá, ",
+    contacto: { label: "escribinos", href: "/soporte" },
+    despues: ": te contestamos nosotros.",
+  },
+} as const;
 
 export const faq: readonly FaqItem[] = [
   {
@@ -18,7 +27,7 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: "¿Y para los locales?",
-    a: "Es una suscripción mensual. Los locales fundadores tienen precio preferencial de por vida. Te pasamos los detalles cuando te contactamos.",
+    a: "Es una suscripción mensual. Los primeros locales que se suman tienen precio fundador de por vida. Te pasamos los detalles cuando te contactamos.",
   },
   {
     q: "¿Se paga el turno por la app?",
@@ -41,11 +50,11 @@ export const faq: readonly FaqItem[] = [
     // El valor del punto no es fijo (confirmado 21/9/2026). Decirlo es mejor que
     // dejar el hueco: una moneda sin valor declarado es el clásico indicio de
     // que el beneficio no existe, y esta página ya admite lo que no sabe.
-    a: "Sumás puntos por cada turno y los canjeás en los siguientes. Por anotarte a la lista te llevás 500 de regalo para el primero. Un punto no tiene un valor fijo en pesos.",
+    a: `Sumás puntos por cada turno y los canjeás en los siguientes. Por anotarte a la lista te llevás ${site.puntosDeRegalo} de regalo para el primero. Un punto no tiene un valor fijo en pesos.`,
   },
   {
     q: "¿Cómo funcionan los referidos?",
-    a: "Cada persona que saca turnos tiene su código de invitación: quien se registra con él y quien lo compartió suman puntos. Es sólo entre usuarios — los locales no tienen código ni participan del programa.",
+    a: "Cada persona que saca turnos tiene su código de invitación: quien se registra con él y quien lo compartió suman puntos. Si ya tenés la app, el link la abre directo; si no, te muestra el código para usarlo al registrarte. Es sólo entre personas que sacan turnos: los locales no tienen código ni participan del programa.",
   },
   {
     q: "¿Qué hacen con mis datos?",

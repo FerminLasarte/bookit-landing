@@ -231,6 +231,23 @@
   }
 }
 
+/* Un <details> que se abre creciendo. Donde el navegador no lo soporta, se abre al instante. */
+@utility acordeon {
+  interpolate-size: allow-keywords;
+
+  &::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size var(--duration-entrada) var(--ease-out-cubic),
+      content-visibility var(--duration-entrada) allow-discrete;
+  }
+
+  &[open]::details-content {
+    block-size: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

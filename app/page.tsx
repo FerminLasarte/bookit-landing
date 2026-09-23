@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Button from "@/components/Button";
 import Eyebrow from "@/components/Eyebrow";
-import Faq from "@/components/Faq";
 import Hairline from "@/components/Hairline";
 import ComoFunciona from "@/components/home/ComoFunciona";
 import Hero from "@/components/home/Hero";
 import ParaLocales from "@/components/home/ParaLocales";
+import Preguntas from "@/components/home/Preguntas";
 import Puntos from "@/components/home/Puntos";
 import Testimonios from "@/components/home/Testimonios";
 import Reveal from "@/components/ui/Reveal";
@@ -28,47 +28,7 @@ export default function Home() {
 
       <Testimonios />
 
-      {/* ────────────────────────── 5. FAQ ────────────────────────── */}
-      {/*
-        LA ÚNICA SECCIÓN DE LA HOME DONDE EL ENCABEZADO VA AL COSTADO Y NO
-        ARRIBA, y por eso se conserva: después de `#puntos` ninguna composición
-        de la página se repite, y ésta es la que aporta la variante de título
-        anclado contra un cuerpo largo. El acordeón `<details>` tampoco se toca
-        — nativo, por teclado y sin JS, y la auditoría lo cuenta entre los
-        bloques que trabajan.
-
-        LO QUE CAMBIA ES DÓNDE PARTE. Era `md`, y era la última de la home que
-        partía ahí: la §3 quaterdecies dejó escrito que la página queda con
-        "una sola regla de partición, dos columnas de 1024 para arriba", y esta
-        sección la desmentía. No es sólo consistencia, está medido: a 768 px la
-        columna del título deja 208 px y "preguntarnos." —la palabra más larga
-        del titular, a los 32 px del piso de `display-lg`— mide 209. El renglón
-        entra con 1 px de más, o sea con margen cero, y se come el canalón de la
-        columna 5 sin que nada lo avise. Este repo ya decidió tres veces que un
-        margen así no es un margen.
-
-        A 1024 la columna pasa a 293 px y a 1180 a 345, que es donde el titular
-        respira en dos renglones. Por debajo de `lg` el título ocupa el ancho
-        entero y sale en uno solo (407 px de glifos en 688 de `wrap`).
-      */}
-      <Section id="faq" labelledBy="faq-title">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <Reveal>
-              <Eyebrow>Preguntas</Eyebrow>
-              <h2
-                id="faq-title"
-                className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100"
-              >
-                Lo que suelen preguntarnos.
-              </h2>
-            </Reveal>
-          </div>
-          <Reveal index={1} className="mt-10 lg:col-span-7 lg:col-start-6 lg:mt-0">
-            <Faq />
-          </Reveal>
-        </div>
-      </Section>
+      <Preguntas />
 
       {/* ──────────────── 6. Cierre — la bifurcación ──────────────── */}
       {/*
