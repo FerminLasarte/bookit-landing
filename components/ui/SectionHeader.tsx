@@ -19,7 +19,7 @@ export default function SectionHeader({
 }) {
   return (
     <div className={cn("mx-auto max-w-[52rem] text-center", className)}>
-      <Heading id={id} className="text-display font-bold text-fg">
+      <Heading id={id} className="text-display font-bold break-words text-fg">
         {title}
       </Heading>
       {lede && <p className="mx-auto mt-6 max-w-[46ch] text-pretty text-muted">{lede}</p>}

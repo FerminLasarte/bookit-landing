@@ -82,7 +82,7 @@ export default function LegalDoc({ doc }: { doc: Doc }) {
           </div>
         </nav>
 
-        <article className="max-w-[65ch]">
+        <article className="max-w-[65ch] break-words">
           {doc.sections.map((section) => (
             <section
               key={section.id}
