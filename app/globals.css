@@ -250,23 +250,6 @@
   }
 }
 
-/* Un <details> que se abre creciendo. Donde el navegador no lo soporta, se abre al instante. */
-@utility acordeon {
-  interpolate-size: allow-keywords;
-
-  &::details-content {
-    block-size: 0;
-    overflow-y: clip;
-    transition:
-      block-size var(--duration-entrada) var(--ease-out-cubic),
-      content-visibility var(--duration-entrada) allow-discrete;
-  }
-
-  &[open]::details-content {
-    block-size: auto;
-  }
-}
-
 /*
  * El tijeretazo (`layout/Splash`). Corre con el primer cuadro, sin esperar a
  * JS: el logo entra, una línea lo corta de lado a lado con la tijera a la

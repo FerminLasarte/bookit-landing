@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { AnimatePresence } from "motion/react";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
-import Resaltado, { useResaltado } from "@/components/ui/Resaltado";
+import Resaltado from "@/components/ui/Resaltado";
 import Wordmark from "@/components/ui/Wordmark";
 import { navCta, navLinks } from "@/content/nav";
 import { site } from "@/content/site";
@@ -41,7 +42,7 @@ function useSeccionActiva(enHome: boolean) {
 export default function Nav() {
   const pathname = usePathname();
   const activa = useSeccionActiva(pathname === "/");
-  const { caja, medir, soltar } = useResaltado();
+  const [sobre, setSobre] = useState<string | null>(null);
   const [abierto, setAbierto] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -80,23 +81,23 @@ export default function Nav() {
             </Link>
             <Badge className="hidden sm:inline-flex">Pronto en {site.city}</Badge>
 
-            <ul className="relative mx-auto hidden items-center lg:flex" onMouseLeave={soltar}>
-              <Resaltado caja={caja} />
+            <ul className="mx-auto hidden items-center lg:flex" onMouseLeave={() => setSobre(null)}>
               {navLinks.map((link) => (
                 <li
                   key={link.href}
-                  onMouseEnter={(event) => medir(event.currentTarget)}
-                  onFocus={(event) => medir(event.currentTarget)}
-                  onBlur={soltar}
+                  onMouseEnter={() => setSobre(link.href)}
+                  onFocus={() => setSobre(link.href)}
+                  onBlur={() => setSobre(null)}
                 >
                   <Link
                     href={link.href}
                     aria-current={esActiva(link.href) ? "location" : undefined}
                     className={cn(
-                      "ring-focus relative flex min-h-10 items-center rounded-pill px-4 text-small transition-colors duration-(--duration-chico)",
+                      "ring-focus relative isolate flex min-h-10 items-center rounded-pill px-4 text-small transition-colors duration-(--duration-chico)",
                       esActiva(link.href) ? "font-semibold text-fg" : "text-muted hover:text-fg",
                     )}
                   >
+                    <AnimatePresence>{sobre === link.href && <Resaltado grupo="nav-resaltado" />}</AnimatePresence>
                     {link.label}
                   </Link>
                 </li>

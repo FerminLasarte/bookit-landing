@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import Resaltado, { useResaltado } from "@/components/ui/Resaltado";
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import Plegable from "@/components/ui/Plegable";
+import Resaltado from "@/components/ui/Resaltado";
 import Tile from "@/components/ui/Tile";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +17,8 @@ const TECLAS: Record<string, (i: number, total: number) => number> = {
 
 /**
  * Pestañas verticales que cambian la pantalla de un tile. La pestaña activa
- * muestra su bajada; las demás, sólo el título. En móvil el tile va arriba.
+ * muestra su bajada; las demás, sólo el título. Con el mouse, pasar por una
+ * pestaña ya asoma su pantalla. En móvil el tile va arriba.
  */
 export default function SelectorPantallas({
   items,
@@ -28,18 +30,9 @@ export default function SelectorPantallas({
 }) {
   const id = useId();
   const [activa, setActiva] = useState(0);
+  const [asomada, setAsomada] = useState<number | null>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { caja, medir } = useResaltado();
-
-  // El resaltado sigue a la pestaña activa mientras se abre y cuando cambia el ancho.
-  useEffect(() => {
-    const el = tabs.current[activa];
-    if (!el) return;
-    medir(el);
-    const observer = new ResizeObserver(() => medir(el));
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [activa, medir]);
+  const visible = asomada ?? activa;
 
   const onKeyDown = (event: KeyboardEvent) => {
     const siguiente = TECLAS[event.key]?.(activa, items.length);
@@ -55,9 +48,9 @@ export default function SelectorPantallas({
         role="tablist"
         aria-orientation="vertical"
         onKeyDown={onKeyDown}
-        className="relative flex flex-col gap-1"
+        onPointerLeave={() => setAsomada(null)}
+        className="flex flex-col gap-1"
       >
-        <Resaltado caja={caja} className="rounded-card bg-surface shadow-tile" />
         {items.map((item, i) => {
           const esActiva = i === activa;
           return (
@@ -75,30 +68,22 @@ export default function SelectorPantallas({
               aria-describedby={esActiva ? `${id}-bajada-${i}` : undefined}
               tabIndex={esActiva ? 0 : -1}
               onClick={() => setActiva(i)}
-              className="ring-focus relative rounded-card px-6 py-4 text-left"
+              onPointerEnter={(event) => event.pointerType === "mouse" && setAsomada(i)}
+              className="ring-focus group relative isolate rounded-card px-6 py-4 text-left"
             >
+              {esActiva && <Resaltado grupo={`${id}-resaltado`} className="rounded-card bg-surface shadow-tile" />}
               <span
                 id={`${id}-titulo-${i}`}
                 className={cn(
                   "block text-title font-bold transition-colors duration-(--duration-chico)",
-                  esActiva ? "text-fg" : "text-muted hover:text-fg",
+                  esActiva ? "text-fg" : "text-muted group-hover:text-fg",
                 )}
               >
                 {item.title}
               </span>
-              <span
-                aria-hidden={!esActiva}
-                className={cn(
-                  "grid transition-[grid-template-rows] duration-(--duration-entrada) ease-out-cubic",
-                  esActiva ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-                )}
-              >
-                <span className="overflow-hidden">
-                  <span id={`${id}-bajada-${i}`} className="block pt-1.5 text-pretty text-small text-muted">
-                    {item.body}
-                  </span>
-                </span>
-              </span>
+              <Plegable as="span" abierto={esActiva} className="pt-1.5 text-pretty text-small text-muted">
+                <span id={`${id}-bajada-${i}`}>{item.body}</span>
+              </Plegable>
             </button>
           );
         })}
@@ -111,15 +96,15 @@ export default function SelectorPantallas({
         className="order-first lg:order-none"
       >
         <Tile bleed tone="niebla">
-          {/* Todas en la misma celda: la activa aparece encima de las demás. */}
+          {/* Todas en la misma celda: la visible sube a su lugar, las demás esperan abajo. */}
           <div className="grid w-[55%] max-w-80">
             {pantallas.map((pantalla, i) => (
               <div
                 key={items[i]?.title}
-                aria-hidden={i !== activa}
+                aria-hidden={i !== visible}
                 className={cn(
-                  "[grid-area:1/1] transition-[opacity,transform] duration-(--duration-tab) ease-out-cubic",
-                  i === activa ? "opacity-100" : "translate-y-1.5 opacity-0",
+                  "[grid-area:1/1] transition-[opacity,translate,scale] duration-(--duration-entrada) ease-out-cubic",
+                  i === visible ? "opacity-100" : "translate-y-3 scale-98 opacity-0",
                 )}
               >
                 {pantalla}
