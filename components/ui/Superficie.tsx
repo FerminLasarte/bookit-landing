@@ -1,31 +1,45 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { cn } from "@/lib/utils";
 
-export type Tono = "arena" | "niebla" | "miel";
+export type Tono = "arena" | "niebla" | "miel" | "surface";
 
+/*
+ * Los tres tonos de tile muestran y llevan sombra. `surface` es lo que se toma
+ * —un formulario, un código—, y eso lleva borde en vez de sombra: MARCA,
+ * Divergencia 7.
+ */
 const tonos: Record<Tono, string> = {
-  arena: "bg-tile-arena",
-  niebla: "bg-tile-niebla",
-  miel: "bg-tile-miel",
+  arena: "bg-tile-arena shadow-tile",
+  niebla: "bg-tile-niebla shadow-tile",
+  miel: "bg-tile-miel shadow-tile",
+  surface: "border border-line bg-surface [--ring-hueco:var(--surface)]",
 };
 
 /**
- * La card del sitio: 24 px, un fondo plano de la paleta y la sombra de tile.
- * Sobre los tonos claros `muted` no llega a AA; el texto de adentro va en `fg`.
+ * La card del sitio: 24 px y un fondo plano de la paleta.
+ * Sobre los tonos claros de tile `muted` no llega a AA; el texto de adentro va en `fg`.
  */
 export default function Superficie({
   tone = "arena",
   as: Component = "div",
   children,
   className,
+  ref,
+  ...props
 }: {
   tone?: Tono;
-  as?: "div" | "figure";
+  as?: "div" | "figure" | "button";
   children: ReactNode;
   className?: string;
-}) {
+  ref?: Ref<HTMLElement>;
+} & Omit<HTMLAttributes<HTMLElement>, "className" | "children">) {
   return (
-    <Component className={cn("relative isolate overflow-hidden rounded-card shadow-tile", tonos[tone], className)}>
+    <Component
+      ref={ref as never}
+      {...(Component === "button" && { type: "button" as const })}
+      {...props}
+      className={cn("relative isolate overflow-hidden rounded-card", tonos[tone], className)}
+    >
       {children}
     </Component>
   );

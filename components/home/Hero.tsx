@@ -26,14 +26,15 @@ export default function Hero() {
             </>
           }
           lede={hero.lede}
+          actions={
+            <>
+              <Button href={hero.ctaCliente.href}>{hero.ctaCliente.label}</Button>
+              <Button href={hero.ctaLocal.href} variant="secondary">
+                {hero.ctaLocal.label}
+              </Button>
+            </>
+          }
         />
-
-        <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Button href={hero.ctaCliente.href}>{hero.ctaCliente.label}</Button>
-          <Button href={hero.ctaLocal.href} variant="secondary">
-            {hero.ctaLocal.label}
-          </Button>
-        </div>
         <p className="mx-auto mt-5 max-w-[40ch] text-center text-small text-muted">{hero.note}</p>
 
         {/* Las dos caras del turno: quien reserva al centro, el local detrás. */}

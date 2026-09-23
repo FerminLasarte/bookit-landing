@@ -53,6 +53,7 @@ Viven en [`app/globals.css`](../app/globals.css) en dos capas:
 | `line` | filetes y bordes | `ink-900` 10 % | blanco 10 % |
 | `accent` | relleno del CTA, lo elegido | `amber-500` | `amber-500` |
 | `accent-fg` | texto y foco en ámbar | `amber-700` | `amber-300` |
+| `danger` | el error de un campo | `error` | `error-dark` |
 | `tile-*` | fondo de un tile | ver `globals.css` | ver `globals.css` |
 
 **Tipografía:** `display` para `h1` y `h2` (el mismo tamaño en todas las
@@ -72,8 +73,9 @@ otra podría necesitar.
 | `Button` | Píldora. `primary` (ámbar, tinta encima) y `secondary` (tinta llena). |
 | `TextLink` | El único link de texto del sitio. Resuelve interno, externo y la flecha. |
 | `Badge` | Etiqueta chica en mono: "Pronto", "Ejemplo". |
-| `Section` | Aire vertical, `wrap` y el encabezado. Toda sección de contenido pasa por acá. |
-| `SectionHeader` | Título `display` + bajada `muted`, centrado. |
+| `Section` | Aire vertical, `wrap` y el encabezado. Toda sección de contenido pasa por acá. Con `as="h1"` es el encabezado de una página. |
+| `SectionHeader` | Título `display` + bajada `muted` + botones, centrado. |
+| `Superficie` | La card: 24 px y un fondo plano. Los tonos de tile llevan sombra; `surface`, lo que se toma, lleva borde. |
 | `Tile` | Card de 24 px con fondo plano, sombra y un medio adentro; título y bajada abajo. |
 | `Screen` | Una captura de la app dentro de un marco, con su versión clara y oscura. |
 | `Reveal` | Aparición al entrar en pantalla (sube 16 px, 560 ms). |

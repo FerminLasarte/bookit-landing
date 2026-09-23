@@ -89,6 +89,7 @@
   --muted: var(--color-ink-500);
   --line: rgb(31 41 55 / 0.1);
   --accent-fg: var(--color-amber-700);
+  --danger: var(--color-error); /* 6,46:1 sobre `surface` */
 
   /* Fondos de tile: planos, de la paleta. El color fuerte lo ponen las capturas */
   --tile-arena: var(--color-amber-100);
@@ -108,6 +109,7 @@
     --muted: var(--color-bone-300);
     --line: rgb(255 255 255 / 0.1);
     --accent-fg: var(--color-amber-300);
+    --danger: var(--color-error-dark); /* 9,43:1 sobre `surface` */
 
     --tile-arena: #2b2117;
     --tile-niebla: var(--color-ink-850);
@@ -128,6 +130,7 @@
   --color-accent: var(--color-amber-500);
   --color-accent-hover: var(--color-amber-400);
   --color-accent-fg: var(--accent-fg);
+  --color-danger: var(--danger);
   --color-tile-arena: var(--tile-arena);
   --color-tile-niebla: var(--tile-niebla);
   --color-tile-miel: var(--tile-miel);
