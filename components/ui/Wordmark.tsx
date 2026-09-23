@@ -50,7 +50,7 @@ export default function Wordmark({
         aria-label="Bookit"
         className={cn(
           "h-[1em] w-auto [--logo-naranja:var(--color-logo-naranja)]",
-          onDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100",
+          onDark ? "text-bone-100" : "text-fg",
           className,
         )}
       >
@@ -93,7 +93,7 @@ export default function Wordmark({
       aria-label="Bookit"
       className={cn(
         "h-[1em] min-h-7 w-auto [--logo-naranja:var(--color-logo-naranja)]",
-        onDark ? "text-bone-100" : "text-ink-900 dark:text-bone-100",
+        onDark ? "text-bone-100" : "text-fg",
         className,
       )}
     >

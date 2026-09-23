@@ -114,8 +114,8 @@ Sobre fondo oscuro no hace falta — ahí el ámbar pasa con **6,66:1**.
 Con la tinta **encima** del ámbar, en cambio, da **5,27:1**, y es lo que
 habilita el botón de acción. Los cuatro números de este párrafo se remidieron el
 22/9/2026 contra los valores WCAG publicados; los anteriores (2,64 · 4,9 · 6,3 y
-un 6,66 transpuesto en `DECISIONES.md` §1.1) estaban mal. Ver la tabla de
-*Los números de contraste, remedidos* en `DECISIONES.md`.
+un 6,66 transpuesto en `archivo/DECISIONES.md` §1.1) estaban mal. Ver la tabla de
+*Los números de contraste, remedidos* en `archivo/DECISIONES.md`.
 
 **Reglas:**
 
@@ -144,7 +144,7 @@ tipografías.
 - **El rótulo de un bloque va en tinta, no en el color de marca.** Es texto
   chico, y el texto chico de acento pasa sólo sobre la página pelada: falló en
   cuatro superficies distintas antes de que se contaran juntas. La jerarquía la
-  hace la escala. `DECISIONES.md` §3 octies.
+  hace la escala. `archivo/DECISIONES.md` §3 octies.
 - En texto chico el tracking vuelve a 0: apretar una letra chica la vuelve
   ilegible.
 - El título y su bajada van pegados porque son una unidad. El cuerpo largo
@@ -157,25 +157,17 @@ tipografías.
 doble del hueco que hay dentro de uno. Un grupo se lee por su aire, no por su
 borde.
 
-De ahí sale **qué es card y qué no** en la web: es card lo que se *toma* —se
-completa, se copia o se compara con lo de al lado—, y lo que sólo se lee se
-agrupa por aire y un filete. Sin excepciones: son tres cards y las tres lo son
-por lo que son. Ver `DECISIONES.md` §3 sexies.
+De ahí sale **qué es card y qué no** en la web, desde el diseño v4
+(`DISENO.md`). Hay dos:
 
-Hubo una cuarta, puesta por el contraste y no por el contenido —en claro el
-texto chico no se sostiene sobre una sección con tinte—, y se fue el 22/9/2026
-cuando ese problema se resolvió donde estaba. Que es la regla siguiente.
+- **El tile**, que muestra: un fondo plano de la paleta con una captura de la
+  app adentro, y el título y la bajada *debajo*, sobre la página. No lleva texto
+  chico adentro, así que su fondo no tiene que sostener contraste.
+- **La superficie**, que se toma: un formulario, un código para copiar. Es
+  `surface` con borde.
 
-**Una banda clara se compone en tinta plena.** `cream-100` no sostiene texto
-chico: `ink-500` da 4,35:1 y `amber-700` 4,38:1, y no se arregla aclarándola —al
-valor que sostiene `ink-500` deja de verse como banda—. Así que sobre una
-sección con tinte van `ink-900` (13,20:1) y acentos sólo a tamaño grande, donde
-el umbral es 3:1 y `amber-700` da 4,38:1. Ninguna bajada en `ink-500`, ninguna
-letra chica. No es una restricción sino una densidad: la banda es donde la
-página habla a tinta plena y el papel es donde tiene bajadas. En oscuro no
-aplica (`bone-300` sobre `ink-850`, 10,14:1). Es la misma forma de regla que
-lleva el lavado cálido, y está escrita junto al token. `DECISIONES.md` §3
-octies.
+Lo que sólo se lee se agrupa por aire. **No hay bandas de color entre
+secciones**: el límite de una sección es el aire que la separa de la siguiente.
 
 **Radios — cuatro y una fórmula.** Campos 12 · toasts 16 · cards 24 · píldoras
 50. Al anidar, `radio exterior = radio interior + padding`. Sin eso las esquinas
@@ -197,14 +189,11 @@ temas**, y eso no contradice la línea de *Color* que dice que sobre oscuro el
 —el lienzo y el footer— son oscuras también en el tema claro, así que un anillo
 no puede elegir su color por tema. Los 2 px de hueco que lo despegan del
 elemento van del color de la superficie, que se declara y no se adivina.
-`DECISIONES.md` §3 duodevicies.
+`archivo/DECISIONES.md` §3 duodevicies.
 
 **Sombra o borde. Nunca los dos.** Una acción secundaria lleva borde de 1 px de
-`ink-900` al 10 %. Los campos y las píldoras no llevan sombra nunca.
-
-El manual agrega que una superficie de contenido lleva `--shadow-card`. **En la
-web no**: la card se sostiene con borde, y la sombra queda para lo único que de
-verdad flota, que es el toast. Es la *Divergencia 7*, con sus números.
+`ink-900` al 10 %. Los campos y las píldoras no llevan sombra nunca. Lo que lleva
+sombra está listado en la *Divergencia 7*.
 
 El 10 % vale para un borde que **acompaña** a un relleno. Un borde que tiene que
 sostener solo un control necesita 3:1 y no llega ni cerca: ver la *Divergencia
@@ -319,7 +308,7 @@ Lo que esta web hace distinto del manual, a propósito:
    autoridad* de arriba en vez de completarla. El motivo es que el botón de la
    app no se puede importar: medido sobre las capturas, pone rótulo **blanco**
    sobre el ámbar, y eso da **2,78:1**. Es la misma composición que pedía el
-   brief y que `DECISIONES.md` §1.1 ya había rechazado por accesibilidad, así
+   brief y que `archivo/DECISIONES.md` §1.1 ya había rechazado por accesibilidad, así
    que aplicar la jerarquía al pie de la letra importaría una falla conocida.
    De la app se conservan la paleta, el relleno plano —sin biselado, sin
    degradé, sin sombra, como está medido— y la sensación al apretar; la tinta y
@@ -339,28 +328,17 @@ Lo que esta web hace distinto del manual, a propósito:
    de contraste medida en el producto, junto con el ámbar a tamaño display.
    Cambiar el rótulo a tinta lo lleva a 5,27:1 sin tocar el color de marca.
 
-7. **El filo de una superficie de contenido es el borde, no `--shadow-card`.**
-   Decidido el 22/9/2026 (Fase B paso 3). El manual manda la sombra; la web usa
-   borde en los dos temas. No es preferencia, lo deciden dos números: en claro
-   la sombra y el borde al 10 % dan **el mismo 1,208:1** contra `cream-50` —las
-   dos son `ink-900` al 10 % compuesto—, así que ahí la medición no los separa;
-   en oscuro `--shadow-card-dark` da **1,064:1**, **menos que el propio relleno
-   de la card** sobre la página (1,157:1), mientras que el borde al 10 % da
-   1,357:1. La sombra dibuja en un tema y no en el otro, y una regla así no
-   sirve para un sitio que diseña los dos.
+7. **Lleva sombra lo que flota o muestra, no lo que se toma.** Decidido el
+   22/9/2026 con la referencia de `DISENO.md`. Hay dos sombras:
+   `shadow-tile` (tiles y el marco de las capturas) y `shadow-float` (el nav y
+   el toast, que flotan sobre la página). Las superficies que se toman
+   —formulario, código— siguen con borde, por los números que dio la v3: en
+   oscuro la sombra de una card sola da 1,064:1 contra la página y el borde
+   1,357:1 (`archivo/DECISIONES.md`).
 
-   De paso queda dicho que el relleno claro no separa nada por sí solo
-   (`paper` sobre `cream-50`: **1,027:1**). En claro la card **es** su borde; en
-   oscuro el borde acompaña a un relleno que ya se ve. Otra vez: el oscuro no es
-   el claro invertido.
-
-   **`--shadow-card` y `--shadow-card-dark` no se borraron**, porque un token
-   sin lectores es la forma más segura de que alguien lo use mal. Se les dio su
-   único uso legítimo: el toast de `ReferralCode`, que es la única superficie
-   del sitio que de verdad flota por encima de la página. Ese toast, además,
-   estaba escrito como **píldora con `shadow-lg`** — rompía a la vez el radio
-   propio del toast (16 px) y el "las píldoras no llevan sombra nunca" de más
-   arriba.
+   El filete blanco de `shadow-tile` no es un borde: es un brillo interno que no
+   separa nada de la página. El tile se separa por su relleno y su sombra, y no
+   lleva texto adentro, así que ninguna de las dos tiene que pasar un contraste.
 
 8. **La fórmula concéntrica vale en anidados apretados.** `radio exterior =
    radio interior + padding` no sobrevive al padding de la web: la card de
@@ -370,11 +348,8 @@ Lo que esta web hace distinto del manual, a propósito:
    concéntricas, se leen como dos formas sueltas. La regla es que vale mientras
    el hijo toque el padding.
 
-   Su caso testigo era el marco del teléfono de `HowItWorks` —40 px de radio con
-   12 px de padding sobre una pantalla de 28, la fórmula exacta— y **se fue con
-   el teléfono en la Fase C**. La regla sigue valiendo; hoy no tiene ejemplo en
-   el código, porque las capturas de la app van en un panel sin nada anidado
-   adentro.
+   Su caso testigo es el marco de `Screen`: 24 px afuera, 8 de marco y 16
+   adentro, con la fórmula exacta y dentro de los cuatro radios.
 
 ## Deuda conocida
 
@@ -400,7 +375,7 @@ Lo que esta web hace distinto del manual, a propósito:
   y `calor`, con el mismo criterio que `lavado`. (`HeroGlow` ya no existe; los
   dos gradientes que vivían dentro del botón se fueron con `AnimatedButton`.)
 - ~~**El anillo de foco no llega a 3:1.**~~ **Cerrado el 22/9/2026**, en
-  `DECISIONES.md` §3 duodevicies. Pintaba 2 px de hueco y 2 px de `amber-500`,
+  `archivo/DECISIONES.md` §3 duodevicies. Pintaba 2 px de hueco y 2 px de `amber-500`,
   y el ámbar contra la card de `paper` daba **2,78:1** contra los 3:1 de WCAG
   1.4.11. Se midió contra los cinco fondos que el sitio de verdad tiene debajo
   de algo enfocable, y el anillo pasa a `amber-700` —el único que pasa los

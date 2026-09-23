@@ -1,8 +1,8 @@
 import Button from "./Button";
 import Captura from "./Captura";
 import Eyebrow from "./Eyebrow";
-import Reveal from "./Reveal";
-import { IconCheck } from "./icons";
+import Reveal from "./ui/Reveal";
+import { IconCheck } from "./ui/icons";
 import { featuresCliente, featuresLocal } from "@/content/features";
 import { cn } from "@/lib/utils";
 

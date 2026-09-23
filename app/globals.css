@@ -1,339 +1,282 @@
 @import "tailwindcss";
 
+/*
+ * Tokens del sitio. La normativa está en `docs/MARCA.md` (qué es cada color y
+ * por qué) y `docs/DISENO.md` (cómo se usan). Dos capas:
+ *
+ *   Paleta     — los valores de marca. Los componentes no los usan directo.
+ *   Semánticos — dicen para qué es el color y cambian solos con el tema.
+ */
+
+/* ── Paleta ─────────────────────────────────────────────────────────── */
+
 @theme {
-  /* ══════════════════════════════════════════════════════════════════
-   * Tokens de marca · fuente: Manual de marca Bookit v1 (sept. 2026).
-   * La normativa en prosa vive en `docs/MARCA.md`.
-   *
-   *   CANÓNICO — está en el manual. No se edita acá: se corrige el
-   *              manual primero y después este archivo.
-   *   DERIVADO — la web lo necesita y el manual no lo cubre (el manual
-   *              está escrito para la app). Ajustable con criterio,
-   *              dejando anotado el contraste.
-   *
-   * Regla del manual §3: el contraste se mide contra el fondo REAL, no
-   * contra blanco por costumbre. 4,5:1 texto · 3:1 texto grande,
-   * íconos y bordes.
-   * ════════════════════════════════════════════════════════════════ */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
-  /* ── Marca — CANÓNICO ─────────────────────────────────────────────── */
-
-  /*
-   * `primary`. El ámbar de interfaz. Mismo hex en claro y en oscuro: la
-   * marca no cambia de color con el tema. Relleno de CTA, elegido, acento.
-   * Sobre superficie clara da 2,71:1 sobre `cream-50` y 2,78:1 sobre `paper`
-   * — NO se usa como texto ahí (§11). Con `ink-900` ENCIMA da 5,27:1, que es
-   * lo que habilita el botón de acción.
-   * (Remedidos el 22/9/2026: el comentario decía 2,64:1.)
-   */
-  --color-amber-500: #d78a1d;
-
-  /*
-   * `marcaTexto`. El mismo tono (37° de matiz) con la luminosidad bajada,
-   * para cuando el ámbar tiene que LEERSE: links, texto de acento, bordes
-   * de foco sobre papel. Da 4,75:1 sobre `cream-50` — pasa, pero con menos
-   * margen del que decía este comentario (4,9:1). Sobre `cream-100` da 4,38:1
-   * y NO pasa: es el D2 de la auditoría.
-   * Sobre fondo oscuro no hace falta PARA TEXTO: ahí el ámbar pasa con 6,66:1.
-   *
-   * El anillo de foco es la excepción a esa última línea, y recién lo usa desde
-   * el 22/9/2026 — la deuda que este mismo comentario nombraba como "bordes de
-   * foco sobre papel" y que `ring-focus` nunca había consumido. Ahí va en los
-   * DOS temas, porque un anillo no puede elegir por tema: dos de las cinco
-   * superficies que el sitio tiene debajo de algo enfocable son oscuras también
-   * en el tema claro. Ver `ring-focus`, más abajo.
-   */
-  --color-amber-700: #9d6515;
-
-  /*
-   * `marcaProfunda`. El fondo del cartel: un negro con el tinte del ámbar,
-   * no un negro neutro. No cambia con el tema (§10).
-   */
+  /* Marca — CANÓNICO */
+  --color-amber-500: #d78a1d; /* primary: relleno del CTA. No es texto sobre claro */
+  --color-amber-700: #9d6515; /* marcaTexto: ámbar que se lee sobre claro, 4,75:1 */
   --color-marca-profunda: #140e03;
+  --color-logo-naranja: #fd7d03; /* sólo logo, ícono y splash */
 
-  /*
-   * El naranja saturado del LOGO. Sólo logo, ícono de app y splash. Nunca
-   * como color de interfaz: no aguanta de relleno de un botón (§2). La
-   * landing lo toca únicamente a través de los SVG de `public/brand/`.
-   */
-  --color-logo-naranja: #fd7d03;
+  /* Superficies y tinta — CANÓNICO */
+  --color-paper: #ffffff;
+  --color-cream-50: #fbfcfd;
+  --color-ink-950: #151311;
+  --color-ink-800: #24211e;
+  --color-ink-900: #1f2937;
+  --color-ink-500: #6b7280;
+  --color-bone-100: #e8e2d9;
+  --color-bone-300: #d9c6b4;
+  --color-error: #ba1a1a;
+  --color-error-dark: #ffb4ab;
 
-  /* ── Superficies y tinta — CANÓNICO (ColorScheme de la app) ───────── */
-
-  --color-paper: #ffffff; /* surfaceContainerHighest claro: cards, nav */
-  --color-cream-50: #fbfcfd; /* surface claro. Off-white, no gris */
-  --color-ink-950: #151311; /* surface oscuro */
-  --color-ink-800: #24211e; /* surfaceContainerHighest oscuro */
-  --color-ink-900: #1f2937; /* onSurface claro: el texto principal */
-  --color-ink-500: #6b7280; /* onSurfaceVariant claro: texto secundario */
-  --color-bone-100: #e8e2d9; /* onSurface oscuro */
-  --color-bone-300: #d9c6b4; /* onSurfaceVariant oscuro */
-
-  /* ── Semánticos — CANÓNICO (§3, la lista está cerrada) ────────────── */
-
-  --color-error: #ba1a1a; /* claro */
-  --color-error-dark: #ffb4ab; /* oscuro */
-  --color-alerta: #f59e0b; /* pide atención, no está roto */
-  --color-exito: #16a34a;
-
-  /* Niveles de Puntos Bookit. Los usa `Rewards`. */
-  --color-nivel-bronce: #cd7f32;
-  --color-nivel-plata: #b4b4b4;
-  --color-nivel-oro: #ffd700;
-  --color-nivel-vip: #673ab7;
-
-  /* ── DERIVADO — la web los necesita, el manual no los cubre ───────── */
-
-  /*
-   * Superficie alterna de sección. El manual no define un tercer nivel
-   * claro (la app no lo usa). Sale de bajarle luz a `cream-50` sin
-   * moverle la temperatura, para que no reaparezca el crema viejo.
-   *
-   * REGLA DE TINTA, en claro — es el D2 de la auditoría, resuelto en el paso 5
-   * como estructura y no como ajuste de color. Esta banda NO sostiene texto
-   * chico: `ink-500` da 4,35:1 y `amber-700` 4,38:1, los dos por debajo de 4,5.
-   * Y no se arregla aclarándola: para sostener `ink-500` tiene que llegar a
-   * #F6F8FA, y ahí separa 1,04:1 contra `cream-50`, o sea que deja de verse
-   * como banda. Lo que sí sostiene, con margen:
-   *
-   *   `ink-900`  13,20:1  — título, bajada, cuerpo, eyebrow
-   *   acento a tamaño grande (≥24px o ≥18,66px en 700), que pide 3:1:
-   *   `amber-700`  4,38:1 ✓    `amber-600`  2,97:1 ✗    `amber-500`  2,50:1 ✗
-   *
-   * O sea: una sección con tinte se compone en tinta plena. Es la misma forma
-   * de regla que la utilidad `lavado` lleva escrita adentro —la superficie dice
-   * qué tinta la puede pisar—, y es lo que liberó a las cards de beneficios de
-   * `/lista-espera`, que existían sólo para tapar este número.
-   * En oscuro (`ink-850`) no aplica: ahí `bone-300` da 10,14:1.
-   */
-  --color-cream-100: #f1f3f5;
-
-  /*
-   * DERIVADO. El par oscuro de `cream-100`: la superficie alterna de sección
-   * en modo oscuro. El manual da tres oscuros — `marca-profunda` (#140E03),
-   * `ink-950` (#151311) y `ink-800` (#24211e)— y `Audiences` ya usa los dos
-   * últimos en las mitades de su card. Sin una cuarta banda, el oscuro se
-   * leía como un túnel continuo: las secciones no se distinguían entre sí y
-   * los dos lienzos `marca-profunda` dejaban de leerse como lienzos.
-   * Cae entre `ink-950` y `ink-800`, así que la card de `Audiences` sigue
-   * levantando sobre la sección que la contiene. El valor está lo más arriba
-   * que puede sin alcanzar a `ink-800`: 1,10:1 contra el fondo de página.
-   */
-  --color-ink-850: #201d19;
-
-  /* Borde sobre fondo oscuro. Equivale a `onSurface` al 12% del manual. */
-  --color-ink-700: #3a342e;
-
-  /* Hover del CTA. El manual define estados por opacidad, no por tono. */
-  --color-amber-600: #c67d19;
-
-  /*
-   * Acento sobre fondos oscuros. El manual usaría `primary` tal cual (ya
-   * pasa 6,3:1); este tono más claro existe para separar dos niveles de
-   * acento dentro de una misma sección oscura.
-   */
-  --color-amber-300: #e8b45f;
-
-  /*
-   * DERIVADO. El relleno de hover del CTA de acción. Existe porque el hover
-   * del ámbar tiene que ACLARAR, no oscurecer: `ink-900` sobre `amber-600`
-   * —el token que se llamaba "Hover del CTA"— da 4,44:1 y falla AA, y el
-   * margen para oscurecer es nulo (al 90% del camino a `amber-600` todavía
-   * pasa, con 4,52:1). Aclarando sobra: con `ink-900` da 5,74:1 contra los
-   * 5,27:1 del reposo. Cae entre `amber-300` y `amber-500` en luminancia.
-   */
-  --color-amber-400: #dd9226;
-
-  --color-amber-100: #f6e7ce; /* rellenos suaves, bordes */
-
-  /*
-   * Relleno ámbar mínimo. El comentario anterior lo llamaba "wash de sección"
-   * y no lo es: con `ink-500` encima da 4,50:1, justo sobre la línea de AA, y
-   * por eso `bg-amber-50` en claro se sacó TRES veces —`LegalDoc`,
-   * `ReferralCode` y `HowItWorks` documentan cada vez—. El lavado de sección
-   * es `--color-lavado-*` más abajo, con la utilidad `lavado`.
-   */
+  /* DERIVADOS — la web los necesita y el manual no */
+  --color-amber-300: #e8b45f; /* ámbar que se lee sobre oscuro */
+  --color-amber-400: #dd9226; /* hover del CTA */
+  --color-amber-100: #f6e7ce;
   --color-amber-50: #fdf6ea;
+  --color-cream-100: #f1f3f5;
+  --color-ink-850: #1c1a17;
 
-  /* ── El lavado cálido — DERIVADO ─────────────────────────────────────
-   *
-   * El dispositivo que la app apoya detrás de cada encabezado y la web no
-   * tenía en ningún lado. Es la causa del desbalance que midió la auditoría:
-   * en oscuro la web se lee como Bookit y en claro se leía como un sitio gris
-   * con acentos ámbar, porque en claro no había NINGUNA superficie cálida.
-   *
-   * Medido pixel a pixel sobre `Capturas Web/{claro,oscuro}`, en
-   * `01_cliente_inicio` y `10_comercio_agenda_dia` (idénticas entre sí;
-   * `09_bienvenida` está dos escalones más profunda).
-   *
-   * No es una superficie plana: es un degradé anclado en la esquina superior
-   * IZQUIERDA. Estos dos valores son su PICO, y se pintan únicamente desde la
-   * utilidad `lavado`. Nunca con `bg-`: no existe ningún cálido plano que
-   * sostenga `ink-500` a 4,5:1 y además se vea —el cruce cae en R-B = +8—, y
-   * de ahí sale la regla de colocación que documenta la utilidad.
-   */
-
-  /*
-   * Claro. Pico #F1D9B7; a mitad del borde superior la app da #F4E5D0, que es
-   * de donde salen los #EFE1CD → #F0E1CB que anotó la auditoría.
-   * Sobre el pico: `ink-900` 10,73:1 y `amber-700` 3,56:1 —que pasa a 24px o
-   * más, y NO pasa a tamaño de eyebrow—. NO van encima `ink-500` (3,53:1) ni
-   * `amber-500` como texto (2,03:1). Una card de `paper` levanta 1,37:1 sobre
-   * el lavado; sobre `cream-50` pelado es 1,00:1, o sea invisible sin borde.
-   */
-  --color-lavado-calido: #f1d9b7;
-
-  /*
-   * Oscuro. Pico #604117; a mitad del borde superior la app da #453015, que es
-   * el valor que anotó la auditoría. Acá el lavado casi no restringe:
-   * `bone-100` 7,20:1, `bone-300` 5,60:1 y `amber-300` 4,91:1 pasan todos.
-   * La única pérdida es `amber-500` como texto de lectura, que cae a 3,33:1:
-   * ahí va `amber-300`. Separa 2,00:1 contra `ink-950`.
-   * No es el claro invertido: en claro el lavado limita qué texto puede ir
-   * encima, en oscuro no.
-   */
-  --color-lavado-profundo: #604117;
-
-  /* ── Forma — CANÓNICO (§5) ────────────────────────────────────────── */
-  /*
-   * Cuatro radios y una fórmula: al anidar,
-   * radio exterior = radio interior + padding.
-   */
+  /* Radios: los cuatro del manual */
   --radius-field: 12px;
   --radius-toast: 16px;
   --radius-card: 24px;
   --radius-pill: 50px;
 
-  /*
-   * Sombra canónica: `shadow` al 10%, blur 10, desplazada 4 hacia abajo.
-   * Sombra O borde, nunca los dos. Los campos y las píldoras no llevan
-   * sombra nunca (§5).
-   *
-   * EN LA WEB NO ES EL FILO DE LA CARD, y el nombre engaña. La card del sitio
-   * se sostiene con borde; la divergencia y su medición están en `docs/MARCA.md`
-   * (*Divergencia 7*) y en `docs/DECISIONES.md` §3 sexies. En dos números: en
-   * claro la sombra y el borde al 10% dan el MISMO 1,208:1 contra `cream-50`,
-   * así que ahí no hay nada que medir que los separe; en oscuro la sombra da
-   * 1,064:1, menos que el propio relleno de la card sobre la página (1,157:1),
-   * o sea que no dibuja nada. Un filo que existe en un tema y no en el otro no
-   * puede ser la regla de un sitio que diseña los dos.
-   *
-   * Su único uso legítimo es la superficie que de verdad flota por encima de
-   * la página: el toast de `ReferralCode`. Si aparece un segundo caso, tiene
-   * que flotar de verdad, no sólo ser contenido.
-   */
+  /* Tipografía: una sola familia (Plus Jakarta Sans, por next/font) */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  --text-numeral: clamp(5rem, 3rem + 10vw, 11rem);
+  --text-numeral--line-height: 0.85;
+  --text-numeral--letter-spacing: -0.06em;
+  --text-display: clamp(2.5rem, 1.5rem + 4.4vw, 4.75rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.04em;
+  --text-title: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.015em;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.55;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.4;
+
+  /* Movimiento — CANÓNICO. Se leen como var(), no se copian */
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-chico: 180ms; /* algo chico cambia */
+  --duration-entrada: 300ms; /* algo entra o sale */
+  --duration-tab: 220ms; /* cambio de tab: fundido que sube 6 px */
+  --duration-reveal: 560ms; /* contenido que aparece: sube 16 px, escalonado */
+  --scale-tap: 0.97;
+  --opacity-tap: 0.4;
+}
+
+/* ── Semánticos ─────────────────────────────────────────────────────── */
+
+:root {
+  --page: var(--color-cream-50);
+  --surface: var(--color-paper);
+  --fg: var(--color-ink-900);
+  --muted: var(--color-ink-500);
+  --line: rgb(31 41 55 / 0.1);
+  --accent-fg: var(--color-amber-700);
+
+  /* Fondos de tile: planos, de la paleta. El color fuerte lo ponen las capturas */
+  --tile-arena: var(--color-amber-100);
+  --tile-niebla: #eceef1;
+  --tile-miel: var(--color-amber-300);
+
+  --tile-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.6), 0 10px 40px -10px rgb(10 10 10 / 0.15);
+  --float-shadow: 0 0 0 1px var(--line), 0 12px 32px -12px rgb(10 10 10 / 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: var(--color-ink-950);
+    --surface: var(--color-ink-800);
+    --fg: var(--color-bone-100);
+    --muted: var(--color-bone-300);
+    --line: rgb(255 255 255 / 0.1);
+    --accent-fg: var(--color-amber-300);
+
+    --tile-arena: #2b2117;
+    --tile-niebla: var(--color-ink-850);
+    --tile-miel: #5c3f16;
+
+    --tile-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.06), 0 10px 40px -10px rgb(0 0 0 / 0.6);
+    --float-shadow: 0 0 0 1px var(--line), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+  }
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--color-amber-500);
+  --color-accent-hover: var(--color-amber-400);
+  --color-accent-fg: var(--accent-fg);
+  --color-tile-arena: var(--tile-arena);
+  --color-tile-niebla: var(--tile-niebla);
+  --color-tile-miel: var(--tile-miel);
+
+  --shadow-tile: var(--tile-shadow);
+  --shadow-float: var(--float-shadow);
+}
+
+/* ── Base ───────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 7rem; /* el nav flotante no tapa el destino de un ancla */
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--page);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--color-amber-100);
+    color: var(--color-ink-900);
+  }
+}
+
+/* ── Utilidades ─────────────────────────────────────────────────────── */
+
+@utility wrap {
+  margin-inline: auto;
+  max-width: 1180px;
+  padding-inline: 1.25rem;
+
+  @media (min-width: 768px) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Toda cifra visible: tabular, para que las columnas no bailen */
+@utility num {
+  font-feature-settings:
+    "tnum" 1,
+    "lnum" 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/*
+ * Anillo de foco. `amber-700` en los dos temas: es el único ámbar que pasa 3:1
+ * sobre todas las superficies con algo enfocable (MARCA, "Espacio y forma").
+ * El hueco toma el color de la superficie de abajo; donde no es `page`, el
+ * contenedor lo declara con `[--ring-hueco:…]`.
+ */
+@utility ring-focus {
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--ring-hueco, var(--page)),
+      0 0 0 4px var(--color-amber-700);
+  }
+
+  @media (forced-colors: active) {
+    &:focus-visible {
+      outline: 2px solid;
+      outline-offset: 2px;
+    }
+  }
+}
+
+@utility reveal {
+  --reveal-i: 0;
+
+  @media (prefers-reduced-motion: no-preference) {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity var(--duration-reveal) var(--ease-reveal),
+      transform var(--duration-reveal) var(--ease-reveal);
+    transition-delay: calc(var(--reveal-i) * 60ms);
+
+    &[data-revealed] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+ * LEGADO v3 — lo que todavía usan las piezas que no se rehicieron.
+ * Se borra entero en la fase 9 de `docs/DISENO.md`. No sumar nada acá.
+ * ════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  --color-amber-600: #c67d19;
+  --color-lavado-calido: #f1d9b7;
+  --color-lavado-profundo: #604117;
+  --color-ink-700: #3a342e;
+
   --shadow-card: 0 4px 10px rgb(31 41 55 / 0.1);
   --shadow-card-dark: 0 4px 10px rgb(0 0 0 / 0.45);
 
-  /* ── Tipografía — CANÓNICO: una sola familia (§4) ─────────────────── */
-  /*
-   * Plus Jakarta Sans para todo. `--font-display` y `--font-sans` apuntan
-   * a la misma familia a propósito: el nombre se conserva porque lo usan
-   * los componentes, no porque haya dos tipografías.
-   * Pesos del manual: 400 · 500 · 600 · 700 · 800.
-   */
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-
-  /*
-   * DERIVADO. Cifras: la misma Jakarta con `tnum` para que las columnas no
-   * bailen. Se aplica sólo desde la utilidad `num`, nunca suelta.
-   */
   --font-numeric: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-  /*
-   * DERIVADO. Pila de sistema, sin descarga. Sólo para lo que es
-   * literalmente un código que alguien copia (el código de referido).
-   */
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-
-  /*
-   * La escala del manual sale del ancho de pantalla (es de la app). Acá son
-   * `clamp()`, pero el tracking es el del manual: negativo y fuerte arriba,
-   * 0 abajo — apretar una letra chica la vuelve ilegible (§4).
-   *
-   * Cinco pasos. `display-2xl` y `display-sm` son de la Fase B0 del rediseño:
-   * salen de los `clamp()` que `Rewards` y `Audiences` escribían a mano (D8 de
-   * la auditoría), no de valores nuevos.
-   */
-
-  /*
-   * DERIVADO. El paso de cartel, por encima de `display-xl`: los titulares que
-   * el contrato del rediseño habilita "donde la sección lo justifique".
-   *
-   * El techo (8,5rem) es el que `Rewards` ya escribía a mano para su cifra. La
-   * pendiente baja de 11vw a 10vw para que tope a 1360px, junto con
-   * `display-xl` (1354px), y no a 1236px. El piso es 3,75rem y no los 4,5rem
-   * de `Rewards` porque ese piso estaba calibrado para tres dígitos ("500"):
-   * una frase corta a 72px en un viewport de 375px envuelve a cuatro líneas.
-   * A 375px la cifra pasa a 60px —sigue siendo casi el doble que el título de
-   * su sección— y en desktop queda idéntica.
-   *
-   * El tracking es medio paso y no uno entero (la cadencia daría -0.06em): a
-   * 136px, -0.055em ya aprieta más en absoluto que -0.045em a 88px.
-   */
   --text-display-2xl: clamp(3.75rem, 10vw, 8.5rem);
   --text-display-2xl--line-height: 0.92;
   --text-display-2xl--letter-spacing: -0.055em;
-
   --text-display-xl: clamp(2.75rem, 6.5vw, 5.5rem);
   --text-display-xl--line-height: 0.95;
   --text-display-xl--letter-spacing: -0.045em;
-
   --text-display-lg: clamp(2rem, 3.8vw, 3.25rem);
   --text-display-lg--line-height: 1.05;
   --text-display-lg--letter-spacing: -0.03em;
-
-  /*
-   * DERIVADO. El paso que faltaba entre `display-lg` y `h3`. No es un valor
-   * nuevo: es el `clamp(1.75rem, 3vw, 2.5rem)` que `Rewards` escribía a mano
-   * para su h3, y su piso es el `md:text-[1.75rem]` de `Audiences` — a 768px
-   * los dos dan los mismos 28px. El tracking -0.02em también es el que ya
-   * estaba escrito ahí, y cae justo entre el de `display-lg` y el de `h3`.
-   *
-   * Es el escalón más corto de la escalera (0,77 contra ~0,60 del resto). Se
-   * conserva así a propósito: sale de una composición real, no de una razón
-   * geométrica.
-   */
   --text-display-sm: clamp(1.75rem, 3vw, 2.5rem);
   --text-display-sm--line-height: 1.1;
   --text-display-sm--letter-spacing: -0.02em;
-
   --text-h3: clamp(1.25rem, 1.6vw, 1.5rem);
   --text-h3--line-height: 1.2;
   --text-h3--letter-spacing: -0.015em;
 
-  --text-body: 1.0625rem; /* 17px */
-  --text-body--line-height: 1.55;
-
-  --text-small: 0.875rem; /* 14px */
-  --text-small--line-height: 1.55;
-
-
-  /* ── Movimiento — CANÓNICO (§8) ───────────────────────────────────── */
-  /*
-   * Corto y físico. Nada rebota de más, nada gira esperando. El manual da
-   * una curva —`easeOutCubic`— y cuatro duraciones; esto es su traducción.
-   */
-  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
-
-  --duration-chico: 180ms; /* algo chico cambia */
-  --duration-entrada: 300ms; /* algo entra o sale */
-  --duration-tab: 220ms; /* cambio de tab: fundido que sube 6px */
-  --duration-reveal: 560ms; /* contenido que aparece: sube 16px, escalonado */
-
-  /* Tap: si tiene superficie se hunde a 0.97; si no, se apaga a 0.4. */
-  --scale-tap: 0.97;
-  --opacity-tap: 0.4;
-
-  /*
-   * DERIVADO. La curva de los reveals de scroll de la web. Es más larga de
-   * cola que `easeOutCubic` porque acá el recorrido es mayor que en un
-   * teléfono; el resto del sitio usa la canónica.
-   */
-  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
-
-  /* Animaciones de ambiente (§4.4): lentas, en loop, nunca por encima del texto */
   --animate-aurora: aurora 18s ease-in-out infinite;
   --animate-flow: flow 1.4s linear infinite;
 
@@ -349,115 +292,18 @@
     }
   }
 
-  /* Corrimiento del guionado: hace que la línea de referidos "fluya". */
   @keyframes flow {
     to {
       stroke-dashoffset: -12;
     }
   }
-
-}
-
-/* ── Base ──────────────────────────────────────────────────────────── */
-
-@layer base {
-  html {
-    scroll-behavior: smooth;
-    /* El nav sticky no tiene que tapar el target de un ancla */
-    scroll-padding-top: 6rem;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
-    /*
-     * Sin esto el navegador computa `color-scheme: normal` y pinta las barras
-     * de scroll, el caret y los controles nativos en claro sobre la página
-     * oscura. Es una de las superficies que el diseño no dibuja pero igual viste.
-     */
-    color-scheme: light;
-    background-color: var(--color-cream-50);
-    color: var(--color-ink-900);
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body {
-      color-scheme: dark;
-      background-color: var(--color-ink-950);
-      color: var(--color-bone-100);
-    }
-  }
-
-  @media (min-width: 768px) {
-    body {
-      font-size: 1.125rem; /* 18px en desktop */
-    }
-  }
-
-  /* Tipografía de display por defecto en los headings */
-  h1,
-  h2,
-  h3 {
-    font-family: var(--font-display);
-    font-weight: 700;
-    text-wrap: balance;
-  }
-
-  /* Selección con el ámbar de marca */
-  ::selection {
-    background-color: var(--color-amber-100);
-    color: var(--color-ink-900);
-  }
-}
-
-/* ── Utilidades propias (las únicas) ───────────────────────────────── */
-
-@utility wrap {
-  /* Container del sitio: §4.3 */
-  margin-inline: auto;
-  max-width: 1180px;
-  padding-inline: 1.5rem;
-
-  @media (min-width: 768px) {
-    padding-inline: 2.5rem;
-  }
-}
-
-@utility num {
-  /*
-   * Toda cifra visible del sitio pasa por acá: es lo que le da a los números
-   * una tipografía propia. `tnum` + `lnum` para que las columnas no bailen.
-   */
-  font-family: var(--font-numeric);
-  font-weight: 500;
-  font-feature-settings:
-    "tnum" 1,
-    "lnum" 1;
-  font-variant-numeric: tabular-nums lining-nums;
-  letter-spacing: -0.02em;
 }
 
 @utility measure {
-  /* Medida de lectura máxima: 64ch, §4.2 */
   max-width: 64ch;
 }
 
 @utility fade-y {
-  /*
-   * Difuminado de sección (§4.3).
-   *
-   * Las secciones con color propio ya no cortan con una línea: su fondo se
-   * desvanece arriba y abajo, así el color entra y sale sin borde. Se aplica
-   * SIEMPRE sobre la capa de fondo, nunca sobre el contenedor con texto — la
-   * máscara afecta a todos los hijos y dejaría los títulos semitransparentes.
-   *
-   * `--fade-y` es la altura del degradé; se puede pisar por clase
-   * (`[--fade-y:9rem]`) cuando la sección tiene más aire.
-   */
   --fade-y: 6rem;
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -476,40 +322,6 @@
 }
 
 @utility lavado {
-  /*
-   * El lavado cálido de superficie. Fase B0 del rediseño.
-   *
-   * GEOMETRÍA, derivada de la app. En las capturas el lavado nace en la
-   * esquina superior izquierda, llega a la superficie base a 393 pt sobre el
-   * borde izquierdo (45 % del alto de pantalla) y, sobre el borde superior,
-   * todavía conserva un tercio de su fuerza al llegar al otro extremo —o sea
-   * que su radio horizontal es ~1,5 veces el ancho—. Las dos paradas de esta
-   * rampa reproducen ese apagado con menos de 8,4 puntos de desvío, que en
-   * color son unas 5 unidades de R-B: no se distingue del original.
-   *
-   * A diferencia de `fade-y`, esta utilidad SÍ puede ir en el mismo elemento
-   * que contiene el texto: es un `background-image`, no una máscara, así que
-   * no afecta a los hijos. Se apoya sobre el `background-color` que la sección
-   * ya tenga —`cream-50`, `cream-100` o `paper`—.
-   *
-   * REGLA DE COLOCACIÓN, en claro. Sobre la parte fuerte del lavado van
-   * `ink-900` y los pasos de display, que ahí dan 10,73:1. NO van la bajada en
-   * `ink-500` (3,53:1) ni un eyebrow `amber-700` a tamaño de lectura (3,56:1
-   * contra los 4,5:1 que pide). El texto chico va sobre una card de `paper`,
-   * donde `ink-500` vuelve a 4,71:1, o más abajo, donde el lavado ya se apagó.
-   * En oscuro la regla se relaja: ahí `bone-300` da 5,60:1.
-   *
-   * La perilla por sección es `--lavado-y`, o sea el ALCANCE. Nunca la
-   * opacidad: un solo cálido en todo el sitio con varios alcances es lo que
-   * evita terminar con seis lavados parecidos, que es justo lo que el manual
-   * prohíbe.
-   *
-   * Va como `var(--lavado-y, 24rem)` y no como una declaración propia. La Fase
-   * C encontró por qué importa: el lavado se pinta en una capa de fondo, y
-   * quien elige el alcance es la SECCIÓN, que está un nivel más arriba.
-   * Declarándolo acá, el valor local ganaba siempre y la perilla no llegaba a
-   * girar. Con el fallback, `[--lavado-y:34rem]` funciona en los dos lados.
-   */
   background-image: radial-gradient(
     150% var(--lavado-y, 24rem) at 0% 0%,
     var(--color-lavado-calido) 0%,
@@ -525,56 +337,7 @@
   }
 }
 
-@utility reveal {
-  /*
-   * Contenido que aparece (§8 del manual): sube 16px, 560ms, escalonado 60ms.
-   *
-   * Va en CSS y no en el componente porque el D6 de la auditoría era
-   * exactamente eso: `--duration-reveal` valía 560ms, `Reveal.tsx` escribía
-   * `duration: 0.7` a mano, y el token no lo leía nadie. Un valor de
-   * movimiento que vive en JavaScript no puede ser el token del sitio; es la
-   * misma razón por la que el botón lee `var(--duration-chico)` en vez de una
-   * clase `duration-*`. `Reveal.tsx` ahora sólo decide CUÁNDO —un
-   * `IntersectionObserver` que marca `data-revealed` una vez— y el cuánto y el
-   * cómo viven acá.
-   *
-   * `--reveal-i` es el índice dentro del grupo, o sea el escalonado.
-   *
-   * Todo el bloque cuelga de `no-preference`: con *Reducir movimiento* la
-   * utilidad no hace NADA —ni siquiera el estado inicial—, así que el contenido
-   * está visible desde el primer cuadro y no depende del observer. Es la misma
-   * garantía que daba el `useReducedMotion` del componente anterior.
-   */
-  --reveal-i: 0;
-
-  @media (prefers-reduced-motion: no-preference) {
-    opacity: 0;
-    transform: translateY(16px);
-    transition:
-      opacity var(--duration-reveal) var(--ease-reveal),
-      transform var(--duration-reveal) var(--ease-reveal);
-    transition-delay: calc(var(--reveal-i) * 60ms);
-
-    &[data-revealed] {
-      opacity: 1;
-      transform: none;
-    }
-  }
-}
-
 @utility destello {
-  /*
-   * El destello de ambiente: un círculo de ámbar muy difuso, siempre POR
-   * DETRÁS del texto (§4.4 — las de ambiente son el único loop permitido).
-   *
-   * Existía escrito tres veces como `rgba(215,138,29,…)` a mano, con tres
-   * alfas y tres radios apenas distintos. El hex es el canónico —`amber-500`—
-   * pero el manual pide que ningún color se escriba suelto en un componente.
-   * Las dos perillas conservan exactamente los valores de cada sitio de uso:
-   * el alfa de este destello ya entró una vez en una medición de contraste
-   * (`docs/DECISIONES.md` §3 sexies, el eyebrow de `/invite`), así que se
-   * tokeniza sin re-calibrar.
-   */
   --destello-alfa: 14%;
   --destello-radio: 65%;
   background-image: radial-gradient(
@@ -585,146 +348,10 @@
 }
 
 @utility calor {
-  /*
-   * El corte de calor de la mitad oscura de `Audiences`. Sobre papel el corte
-   * lo hace el color de fondo; en oscuro, tinta sobre tinta casi no se
-   * distingue y es este lavado el que separa una mitad de la otra.
-   *
-   * No es `lavado`: nace en la esquina superior DERECHA y es lineal, porque
-   * separa dos mitades de un objeto en vez de apoyar un encabezado.
-   */
   background-image: linear-gradient(
     150deg,
     color-mix(in srgb, var(--color-amber-500) 12%, transparent) 0%,
     color-mix(in srgb, var(--color-amber-500) 2%, transparent) 45%,
     transparent 70%
   );
-}
-
-@utility ring-focus {
-  /*
-   * Focus visible propio: §4.5. Dos anillos concéntricos de `box-shadow`, así
-   * que toman la forma del elemento — o sea que el radio del elemento es el
-   * radio del anillo.
-   *
-   * D5 de la auditoría: el radio más usado del sitio era `rounded-sm`, quince
-   * veces, y no existe en el manual — son los 2px que Tailwind trae por
-   * default, puestos sólo para darle forma a este anillo sobre links de texto.
-   * La auditoría proponía declarar un quinto radio. No hace falta: el anillo
-   * alrededor de una palabra es una PÍLDORA, que es uno de los cuatro del
-   * manual y además el que ya usan los links del nav. Con eso el sitio pasa de
-   * nueve radios a cinco —`field`, `toast`, `card`, `pill` y `rounded-full`
-   * cuando es un círculo y no una esquina— sin inventar ninguno.
-   *
-   * Los dos arbitrarios que quedaban —`rounded-[2.5rem]` y `rounded-[1.75rem]`,
-   * el marco del teléfono dibujado a mano— se fueron con el teléfono en la Fase
-   * C, junto con el último `rgba()` suelto. El sitio queda en CUATRO radios más
-   * `rounded-full`, que es la lista del manual. Las capturas de la app van en un
-   * panel de `rounded-card`: el radio nombra un tamaño, no un rol.
-   *
-   * ── EL ANILLO VA EN `amber-700`, NO EN `amber-500` ────────────────────
-   *
-   * Era la última deuda medida de `docs/MARCA.md`: el anillo pintaba 2px de
-   * hueco y 2px de `amber-500`, y contra una card de `paper` eso da 2,78:1,
-   * por debajo de los 3:1 que WCAG 1.4.11 le pide a un indicador de foco.
-   *
-   * El anillo se pinta sobre CINCO superficies, y están medidas —no estimadas—
-   * recorriendo todo lo enfocable del sitio y componiendo el fondo real que
-   * queda por detrás de cada caja:
-   *
-   *                          amber-500   amber-600   amber-700
-   *   cream-50   la página        2,71        3,22        4,75
-   *   paper      card clara       2,78        3,31        4,88
-   *   marca-prof. lienzo          6,90        5,80        3,94
-   *   ink-950    página oscura    6,66        5,60        3,80
-   *   ink-800    card oscura      5,75        4,84        3,28
-   *
-   * `amber-700` es el único que pasa las cinco, con 3,28:1 en el peor caso.
-   * `amber-600` pasa las cinco por poco (3,22) y se cae en cuanto algo
-   * enfocable aterrice sobre el tinte (2,97) o sobre el lavado cálido (2,42);
-   * `amber-700` aguanta también esas dos (4,38 y 3,56), que es lo que hace que
-   * la regla siga valiendo mañana.
-   *
-   * Y no es un color nuevo: es `marcaTexto`, cuyo comentario en este mismo
-   * archivo dice, literal, "para cuando el ámbar tiene que LEERSE: links,
-   * texto de acento, **bordes de foco sobre papel**". El token estaba escrito
-   * para esto y el anillo era el único que no lo usaba.
-   *
-   * UN SOLO VALOR EN LOS DOS TEMAS, y eso es deliberado. El manual dice que
-   * sobre oscuro el ámbar pasa sin bajarle la luz, pero un anillo no puede
-   * elegir por tema: `marca-profunda` e `ink-950` aparecen TAMBIÉN en el tema
-   * claro —los lienzos, el footer, la mitad oscura de `Audiences`—, así que un
-   * `@media` de tema le erraría al vestido justo ahí. Es la misma salida de la
-   * §3 septies con los links del nav: cuando un elemento tiene que sobrevivir a
-   * varios fondos, se deja de elegir el color por fondo y se lo saca de la
-   * ecuación.
-   *
-   * ── EL HUECO LO DECLARA LA SUPERFICIE ─────────────────────────────────
-   *
-   * Los 2px de adentro no son decoración: son lo que despega el anillo del
-   * elemento, y por eso tienen que ser del color de la superficie que el
-   * elemento tiene debajo. Con el hueco clavado por tema, en el tema CLARO el
-   * anillo dibujaba un halo `cream-50` de 18:1 alrededor de cualquier link del
-   * footer, de los lienzos o de la mitad oscura de `Audiences`, que son oscuras
-   * en los dos temas.
-   *
-   * Así que la superficie se declara, como ya hacen `Button`, `Eyebrow`,
-   * `Hairline` y `Captura` con `onDark`. Sólo que acá no hace falta una prop:
-   * `--ring-hueco` es una custom property, o sea que se hereda, y la declara la
-   * superficie UNA vez para todo lo que tenga adentro.
-   *
-   * Va como `var(--ring-hueco, …)` y NO como una declaración propia de la
-   * utilidad. Es la lección de `--lavado-y` (§3 undecies): declarándola acá, el
-   * valor local ganaría siempre y la perilla no llegaría a girar, porque quien
-   * la gira está un nivel más arriba.
-   */
-  &:focus-visible {
-    outline: none;
-    box-shadow:
-      0 0 0 2px var(--ring-hueco, var(--color-cream-50)),
-      0 0 0 4px var(--color-amber-700);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    &:focus-visible {
-      box-shadow:
-        0 0 0 2px var(--ring-hueco, var(--color-ink-950)),
-        0 0 0 4px var(--color-amber-700);
-    }
-  }
-
-  /*
-   * EN ALTO CONTRASTE EL ANILLO NO EXISTÍA. En modo de colores forzados
-   * —el alto contraste de Windows— el navegador no pinta `box-shadow`, así que
-   * de los dos anillos no quedaba ninguno; y como la utilidad además apaga el
-   * `outline`, el foco se quedaba sin NINGÚN indicador, justo para quien
-   * enciende ese modo porque lo necesita.
-   *
-   * Acá el color no lo elige el sitio —lo impone el sistema— así que no hay
-   * número que medir: se repone el `outline`, con el mismo grosor y el mismo
-   * hueco que el anillo de arriba para que la forma sea la misma.
-   */
-  @media (forced-colors: active) {
-    &:focus-visible {
-      outline: 2px solid;
-      outline-offset: 2px;
-    }
-  }
-}
-
-/* ── prefers-reduced-motion: §4.4 ──────────────────────────────────── */
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    transition-delay: 0ms !important;
-  }
 }

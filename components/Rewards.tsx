@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import Eyebrow from "./Eyebrow";
 import Hairline from "./Hairline";
-import Reveal from "./Reveal";
+import Reveal from "./ui/Reveal";
 import Section from "./Section";
-import { IconPoints, IconReferral } from "./icons";
+import { IconPoints, IconReferral } from "./ui/icons";
 import { site } from "@/content/site";
 
 /**

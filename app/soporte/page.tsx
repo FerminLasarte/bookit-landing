@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Mail, Phone } from "lucide-react";
 import Eyebrow from "@/components/Eyebrow";
 import Hairline from "@/components/Hairline";
-import { IconInstagram } from "@/components/icons";
+import { IconInstagram } from "@/components/ui/icons";
 import { site } from "@/content/site";
 import { footerLegales } from "@/content/nav";
 

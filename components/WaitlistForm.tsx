@@ -5,7 +5,7 @@ import Link from "next/link";
 import Button from "./Button";
 import AudienceSwitch from "./AudienceSwitch";
 import Field, { FieldError } from "./Field";
-import { IconCheck, IconInstagram } from "./icons";
+import { IconCheck, IconInstagram } from "./ui/icons";
 import { categoriasFormulario } from "@/content/categorias";
 import { site } from "@/content/site";
 import {

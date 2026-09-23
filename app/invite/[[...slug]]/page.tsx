@@ -4,7 +4,7 @@ import Button from "@/components/Button";
 import Eyebrow from "@/components/Eyebrow";
 import Hairline from "@/components/Hairline";
 import ReferralCode from "@/components/ReferralCode";
-import Wordmark from "@/components/Wordmark";
+import Wordmark from "@/components/ui/Wordmark";
 import { flags, site } from "@/content/site";
 import { codeFromSlug, normalizeCode } from "@/lib/utils";
 

@@ -7,7 +7,7 @@
 > [`docs/MARCA.md`](docs/MARCA.md) y tokenizada en el bloque `@theme` de
 > [`app/globals.css`](app/globals.css). Ese par es autoridad, no material a re-derivar.
 > El contexto largo está en [`docs/LANDING_BRIEF.md`](docs/LANDING_BRIEF.md) y las desviaciones
-> tomadas al construir, en [`docs/DECISIONES.md`](docs/DECISIONES.md).
+> tomadas al construir, en [`docs/archivo/DECISIONES.md`](docs/archivo/DECISIONES.md).
 >
 > Última actualización: 21 de septiembre de 2026.
 
@@ -70,7 +70,7 @@ Lo que un producto vecino no podría copiar de verdad:
 - Soporte público: `somosbookit@gmail.com`
 - Remitente transaccional: `hola@somosbookit.com.ar` (Resend, `Bookit VIP <…>`)
 - Teléfono: `+54 9 249 460-0615` — **real y confirmado** (ya no es el placeholder que registra
-  `docs/DECISIONES.md` §3).
+  `docs/archivo/DECISIONES.md` §3).
 - Instagram: **`@bookit_arg`** — confirmado el 21 de septiembre de 2026. El brief §2 pedía
   cambiarlo a `@somosbookit`: esa corrección quedó **sin efecto**, el handle vigente es el que
   está en el código.
@@ -100,7 +100,7 @@ fallback. Hay links de invitación circulando hoy.
   por igual. O sea que la landing no puede decir ni "se paga en el local" ni "se paga por la app"
   como si fueran la regla — las dos conviven y la que rige depende del local.
 - **La suscripción mensual de los locales se cobra por Mercado Pago.** Confirmado el 21 de
-  septiembre de 2026. Esto cierra el punto que `docs/DECISIONES.md` §4 dejaba sin verificar: el
+  septiembre de 2026. Esto cierra el punto que `docs/archivo/DECISIONES.md` §4 dejaba sin verificar: el
   texto vigente del Botón de arrepentimiento §2 dice que la suscripción todavía no se cobra online,
   y **está desactualizado**.
 - **Consecuencia.** Bookit cobra y el servicio lo presta el local, así que el reparto de
@@ -182,7 +182,7 @@ sección son SVG propios. Sin JS de terceros.
 **Screenshots de la app.** No hay ninguna captura en el repo (`public/` sólo tiene marca y
 `.well-known`). Se van a **capturar desde el simulador de iOS** cuando el trabajo de superficie las
 necesite; hasta entonces no hay imagen de producto disponible. Esto **actualiza** el §11.7 de
-`docs/LANDING_BRIEF.md` y el §3 de `docs/DECISIONES.md`, que daban las capturas por inexistentes.
+`docs/LANDING_BRIEF.md` y el §3 de `docs/archivo/DECISIONES.md`, que daban las capturas por inexistentes.
 
 **Assets rotos, a no reintroducir.** Los tres archivos del sitio viejo en Supabase Storage
 (`favicon.png`, `og-image.png`, `banner_compartir.jpg`) devuelven **HTTP 400**: el bucket no es

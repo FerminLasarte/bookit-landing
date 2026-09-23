@@ -1,7 +1,7 @@
 import Eyebrow from "./Eyebrow";
 import Captura from "./Captura";
 import Hairline from "./Hairline";
-import Reveal from "./Reveal";
+import Reveal from "./ui/Reveal";
 import { steps } from "@/content/steps";
 
 import cercaClaro from "@/assets/capturas/claro/02_cliente_cerca_tuyo.webp";

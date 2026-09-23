@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, Menu } from "lucide-react";
 import Button from "./Button";
-import Wordmark from "./Wordmark";
+import Wordmark from "./ui/Wordmark";
 import { navLinks } from "@/content/nav";
 import { cn } from "@/lib/utils";
 

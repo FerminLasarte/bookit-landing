@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ArrowUpRight, Mail, Phone } from "lucide-react";
-import Wordmark from "./Wordmark";
+import Wordmark from "./ui/Wordmark";
 import Eyebrow from "./Eyebrow";
 import Hairline from "./Hairline";
-import { IconInstagram } from "./icons";
+import { IconInstagram } from "./ui/icons";
 import { site } from "@/content/site";
 import { footerLegales, footerProducto, type NavLink as NavLinkType } from "@/content/nav";
 

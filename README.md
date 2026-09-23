@@ -64,10 +64,10 @@ app/
   opengraph-image.tsx         OG de la home, generada con next/og
 content/                     Datos y copy: site.ts (fuente única de contacto/URLs), legal.ts, faq.ts...
 lib/                          Validación, rate limiting, templates de email
-docs/                         LANDING_BRIEF.md (brief original) y DECISIONES.md (desvíos y pendientes)
+docs/                         LANDING_BRIEF.md (brief original), MARCA.md, DISENO.md (contrato del diseño v4) y archivo/ (historia de la v3)
 ```
 
-`docs/DECISIONES.md` documenta qué quedó pendiente de definición humana (razón social/CUIT,
+`docs/archivo/DECISIONES.md` documenta qué quedó pendiente de definición humana (razón social/CUIT,
 teléfono real, pagos in-app, revisión legal) y por qué el sitio se apartó del brief en ciertos
 puntos.
 

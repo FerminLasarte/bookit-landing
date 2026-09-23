@@ -5,7 +5,7 @@ import Eyebrow from "@/components/Eyebrow";
 import Faq from "@/components/Faq";
 import Hairline from "@/components/Hairline";
 import HowItWorks from "@/components/HowItWorks";
-import Reveal from "@/components/Reveal";
+import Reveal from "@/components/ui/Reveal";
 import Rewards from "@/components/Rewards";
 import Section from "@/components/Section";
 

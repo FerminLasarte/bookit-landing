@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Eyebrow from "@/components/Eyebrow";
 import Hairline from "@/components/Hairline";
-import Reveal from "@/components/Reveal";
+import Reveal from "@/components/ui/Reveal";
 import Section from "@/components/Section";
 import WaitlistForm from "@/components/WaitlistForm";
-import { IconCheck } from "@/components/icons";
+import { IconCheck } from "@/components/ui/icons";
 import { site } from "@/content/site";
 import type { Audience } from "@/content/waitlist";
 
