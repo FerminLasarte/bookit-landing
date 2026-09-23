@@ -47,9 +47,9 @@
   --radius-card: 24px;
   --radius-pill: 50px;
 
-  /* Tipografía: una sola familia (Plus Jakarta Sans, por next/font) */
+  /* Tipografía: una sola familia (Plus Jakarta Sans, por next/font). Sin `font-mono`: ni los códigos la usan */
+  --font-*: initial;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
   --text-numeral: clamp(10rem, 2rem + 26vw, 20rem);
   --text-numeral--line-height: 0.85;
@@ -164,6 +164,16 @@
   h3 {
     font-weight: 700;
     text-wrap: balance;
+  }
+
+  /* Tailwind deja la flecha en los botones; acá todo lo que se toca lleva la mano */
+  button:not(:disabled),
+  [role="button"],
+  [role="tab"],
+  summary,
+  label:has(> input:not(:disabled)),
+  input:is([type="radio"], [type="checkbox"]):not(:disabled) {
+    cursor: pointer;
   }
 
   ::selection {

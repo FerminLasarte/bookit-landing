@@ -25,7 +25,7 @@ export default function Preguntas() {
             <li key={item.q} className="border-b border-line">
               {/* Con el mismo `name`, abrir una cierra la anterior. */}
               <details name="preguntas" className="acordeon group">
-                <summary className="ring-focus flex cursor-pointer list-none items-start justify-between gap-6 rounded-card py-6 text-left [&::-webkit-details-marker]:hidden">
+                <summary className="ring-focus flex list-none items-start justify-between gap-6 rounded-card py-6 text-left [&::-webkit-details-marker]:hidden">
                   <h3 className="text-title font-semibold text-fg">{item.q}</h3>
                   <Plus
                     className="mt-1 size-5 shrink-0 text-muted transition-transform duration-(--duration-chico) group-open:rotate-45"

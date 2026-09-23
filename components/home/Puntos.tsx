@@ -28,7 +28,7 @@ export default function Puntos() {
         <p className="mx-auto mt-2 max-w-[38ch] text-pretty text-muted">{referidos.body}</p>
 
         <p className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <span className="rounded-pill border border-line bg-surface px-5 py-3 font-mono text-small break-all text-fg">
+          <span className="rounded-pill border border-line bg-surface px-5 py-3 text-small font-medium break-all text-fg">
             {referidos.link}
             <span className="text-accent-fg">{referidos.codigo}</span>
           </span>

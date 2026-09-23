@@ -72,7 +72,7 @@ otra podría necesitar.
 |---|---|
 | `Button` | Píldora. `primary` (ámbar, tinta encima) y `secondary` (tinta llena). |
 | `TextLink` | El único link de texto del sitio. Resuelve interno, externo y la flecha. |
-| `Badge` | Etiqueta chica en mono: "Pronto", "Ejemplo". |
+| `Badge` | Etiqueta chica en píldora: "Pronto", "Ejemplo". |
 | `Section` | Aire vertical, `wrap` y el encabezado. Toda sección de contenido pasa por acá. Con `as="h1"` es el encabezado de una página. |
 | `SectionHeader` | Título `display` + bajada `muted` + botones, centrado. |
 | `Superficie` | La card: 24 px y un fondo plano. Los tonos de tile llevan sombra; `surface`, lo que se toma, lleva borde. |

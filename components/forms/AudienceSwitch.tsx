@@ -52,7 +52,7 @@ export default function AudienceSwitch({
                 checked={checked}
                 required
                 onChange={() => onChange(option)}
-                className="ring-focus absolute inset-0 cursor-pointer appearance-none rounded-field"
+                className="ring-focus absolute inset-0 appearance-none rounded-field"
               />
               <span className={cn("text-small text-fg", checked ? "font-bold" : "font-semibold")}>
                 {copy.tab}

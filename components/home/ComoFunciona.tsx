@@ -24,7 +24,7 @@ export default function ComoFunciona() {
               tone={TONOS[i % TONOS.length]}
               title={
                 <>
-                  <span className="num font-mono text-small font-normal text-muted">
+                  <span className="num text-small font-semibold text-muted">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   {paso.title}
