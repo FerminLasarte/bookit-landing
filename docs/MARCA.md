@@ -144,9 +144,8 @@ un 6,66 transpuesto en `archivo/DECISIONES.md` §1.1) estaban mal. Ver la tabla 
 800. Va por `next/font`, que la self-hostea en el build: no hay request a Google
 en runtime.
 
-`--font-display` y `--font-sans` apuntan a la misma familia a propósito. El
-nombre display se conserva porque lo usan los componentes, no porque haya dos
-tipografías.
+`--font-sans` es la única variable de familia. La jerarquía la hace la escala
+(`display`, `title`, `body`…), no una segunda tipografía.
 
 - De `h3` para arriba, los títulos van en 700 con tracking negativo. Es lo que
   hace que un título se lea como título y no como texto en negrita.
@@ -302,13 +301,11 @@ Lo que esta web hace distinto del manual, a propósito:
 2. **Existe `--font-mono`.** El manual manda una sola familia. Acá hay una pila
    mono de sistema, sin descarga, para lo que es literalmente un código que
    alguien copia: el código de referido.
-3. **Hay tokens de acento que el manual no tiene** (`amber-300`, `amber-100`,
-   `amber-50`, `cream-100`, `ink-850`). La app no los necesita; una landing con
-   secciones sí. Van marcados DERIVADO. `ink-850` (`#1C1A17`) es el par oscuro
-   de `cream-100`: el manual da tres oscuros y `Audiences` ya usa dos en las
-   mitades de su card, así que sin una cuarta banda el modo oscuro se leía como
-   un túnel continuo y los lienzos `marcaProfunda` dejaban de leerse como
-   lienzos.
+3. **Hay tokens de acento que el manual no tiene** (`amber-300`, `amber-400`,
+   `amber-100`, `ink-850`). La app no los necesita y la web sí: el ámbar que se
+   lee sobre oscuro, el hover del CTA, el fondo del tile arena y el del tile
+   niebla en oscuro. Van marcados DERIVADO. `amber-50` y `cream-100` eran de
+   las bandas de color de la v3 y se borraron con ella el 23/9/2026.
 4. **El nombre se escribe `Bookit`, no `BooKit`.** El manual v1 §2 pide la K
    mayúscula en prosa. Es un error: la marca es `Bookit`. Pendiente corregirlo
    en el manual; hasta entonces manda esta línea.

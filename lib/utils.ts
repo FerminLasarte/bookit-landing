@@ -5,11 +5,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const merge = extendTailwindMerge({
   extend: {
     theme: {
-      text: [
-        "numeral", "display", "title", "body", "small", "micro",
-        // LEGADO v3: se va con el bloque de `globals.css` en la fase 9.
-        "display-2xl", "display-xl", "display-lg", "display-sm", "h3",
-      ],
+      text: ["numeral", "display", "title", "body", "small", "micro"],
       radius: ["field", "toast", "card", "pill"],
       shadow: ["tile", "float"],
     },

@@ -7,10 +7,8 @@ import { site } from "@/content/site";
 import "./globals.css";
 
 /*
- * Una sola familia para todo (manual de marca §4). `--font-display` y
- * `--font-sans` apuntan a esta misma variable desde `globals.css`: el nombre
- * display se conserva porque lo usan los componentes, no porque haya dos
- * tipografías.
+ * Una sola familia para todo (manual de marca §4): `--font-sans` apunta a
+ * esta variable desde `globals.css`.
  *
  * Los cinco pesos son los que el manual declara disponibles. En la app la
  * fuente va empaquetada; acá va por `next/font`, que la self-hostea en el

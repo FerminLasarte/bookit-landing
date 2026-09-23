@@ -664,11 +664,3 @@ export const botonArrepentimiento: LegalDoc = {
     },
   ],
 };
-
-export const legalDocs = {
-  terminos,
-  privacidad,
-  cookies,
-  "eliminar-cuenta": eliminarCuenta,
-  "boton-de-arrepentimiento": botonArrepentimiento,
-} as const;
