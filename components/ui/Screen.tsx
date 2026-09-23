@@ -31,7 +31,10 @@ export default function Screen({
   const sobrante = ALTO - (bottom - top);
   const posicion = sobrante > 0 ? (top / sobrante) * 100 : 0;
 
-  const common = { alt, fill: true, sizes, ...(eager && { fetchPriority: "high" as const }) };
+  // Dentro de un <picture> el navegador baja sólo la fuente elegida, así que
+  // `eager` no trae las dos versiones.
+  const carga = eager ? ({ loading: "eager", fetchPriority: "high" } as const) : {};
+  const common = { alt, fill: true, sizes, ...carga };
   const { props: img } = getImageProps({ ...common, src: claro });
   const { props: dark } = getImageProps({ ...common, src: oscuro });
 

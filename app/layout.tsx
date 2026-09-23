@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
-import Nav from "@/components/Nav";
+import Nav from "@/components/layout/Nav";
 import Footer from "@/components/Footer";
 import { site } from "@/content/site";
 import "./globals.css";
@@ -107,7 +107,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Nav />
-        <main id="contenido" className="flex-1">
+        <main id="contenido" className="flex-1 pt-20 md:pt-24">
           {children}
         </main>
         <Footer />
