@@ -74,8 +74,16 @@
   --duration-entrada: 300ms; /* algo entra o sale */
   --duration-tab: 220ms; /* cambio de tab: fundido que sube 6 px */
   --duration-reveal: 560ms; /* contenido que aparece: sube 16 px, escalonado */
+  --ease-telon: cubic-bezier(0.76, 0, 0.24, 1); /* algo que cubre la pantalla y se corre */
   --scale-tap: 0.97;
   --opacity-tap: 0.4;
+}
+
+/* Cuánto abre la tijera, en grados. Registrada para que se pueda animar. */
+@property --apertura {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 10;
 }
 
 /* ── Semánticos ─────────────────────────────────────────────────────── */
@@ -256,6 +264,103 @@
 
   &[open]::details-content {
     block-size: auto;
+  }
+}
+
+/*
+ * El tijeretazo (`layout/Splash`). Corre con el primer cuadro, sin esperar a
+ * JS: el logo entra, una línea lo corta de lado a lado con la tijera a la
+ * cabeza y las dos mitades se abren. Si ya se vio en la visita, no se pinta.
+ */
+@utility splash {
+  --splash-corte: 350ms;
+  --splash-abre: 950ms;
+  animation: splash-fin 0s calc(var(--splash-abre) + 650ms) forwards;
+
+  html[data-splash="visto"] & {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+
+  & [data-parte="logo"] {
+    animation: splash-logo 400ms var(--ease-reveal) both;
+  }
+
+  & [data-parte="corte"] {
+    transform-origin: left;
+    animation:
+      splash-corte 550ms var(--ease-out-cubic) var(--splash-corte) both,
+      splash-apaga 200ms linear var(--splash-abre) forwards;
+  }
+
+  & [data-parte="tijera"] {
+    animation:
+      splash-viaje 550ms var(--ease-out-cubic) var(--splash-corte) both,
+      tijeretazo 110ms linear var(--splash-corte) 5 alternate,
+      splash-apaga 200ms linear var(--splash-abre) forwards;
+  }
+
+  & [data-parte="arriba"] {
+    animation: splash-arriba 650ms var(--ease-telon) var(--splash-abre) forwards;
+  }
+
+  & [data-parte="abajo"] {
+    animation: splash-abajo 650ms var(--ease-telon) var(--splash-abre) forwards;
+  }
+}
+
+@keyframes splash-logo {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+}
+
+@keyframes splash-corte {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes splash-viaje {
+  to {
+    translate: 100vw 0;
+  }
+}
+
+@keyframes tijeretazo {
+  from {
+    --apertura: 22;
+  }
+  to {
+    --apertura: 0;
+  }
+}
+
+@keyframes splash-apaga {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes splash-arriba {
+  to {
+    translate: 0 -100%;
+  }
+}
+
+@keyframes splash-abajo {
+  to {
+    translate: 0 100%;
+  }
+}
+
+@keyframes splash-fin {
+  to {
+    visibility: hidden;
   }
 }
 
