@@ -90,6 +90,11 @@ una anilla del isotipo — es una medida que está dentro del dibujo, así que
 escala sola. El isotipo no baja de 24 px; el lockup no baja de 96 px de ancho
 (`Wordmark` lo fuerza con `min-h-7`: 28 px de alto son 96 px de ancho).
 
+**Tamaño en el nav: 32 px de alto** (unos 110 px de ancho). Se eligió mirándolo
+en la píldora de 64 px: a 28 px, con el isotipo recompuesto más chico, la marca
+quedaba por debajo de la etiqueta y el CTA. A 32 px la palabra tiene más o
+menos el doble de alto de mayúscula que los links del nav.
+
 **Lo que no se le hace.** No se recolorea fuera de las cuatro versiones. No se
 estira, inclina, ni se le agrega sombra, contorno o degradado. No se separa el
 check del corchete. No va sobre una foto sin una capa que garantice contraste.

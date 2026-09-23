@@ -87,7 +87,7 @@ export default function Nav() {
         >
           <div className="flex h-16 items-center gap-3 pr-3 pl-5">
             <Link href="/" className="ring-focus flex min-h-11 items-center rounded-pill">
-              <Wordmark className="text-xl" />
+              <Wordmark className="h-8" />
             </Link>
             <Badge className="hidden sm:inline-flex">Pronto en {site.city}</Badge>
 
