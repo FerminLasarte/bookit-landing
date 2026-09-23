@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type FocusEvent, type MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import Resaltado, { useResaltado } from "@/components/ui/Resaltado";
 import Wordmark from "@/components/ui/Wordmark";
 import { navCta, navLinks } from "@/content/nav";
 import { site } from "@/content/site";
@@ -37,22 +38,10 @@ function useSeccionActiva(enHome: boolean) {
   return activa;
 }
 
-/** Un fondo que se desliza hasta el link bajo el puntero o el foco. */
-function useResaltado() {
-  const [caja, setCaja] = useState<{ x: number; w: number } | null>(null);
-
-  const mover = (event: MouseEvent<HTMLElement> | FocusEvent<HTMLElement>) => {
-    const el = event.currentTarget;
-    setCaja({ x: el.offsetLeft, w: el.offsetWidth });
-  };
-
-  return { caja, mover, soltar: () => setCaja(null) };
-}
-
 export default function Nav() {
   const pathname = usePathname();
   const activa = useSeccionActiva(pathname === "/");
-  const { caja, mover, soltar } = useResaltado();
+  const { caja, medir, soltar } = useResaltado();
   const [abierto, setAbierto] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -92,16 +81,14 @@ export default function Nav() {
             <Badge className="hidden sm:inline-flex">Pronto en {site.city}</Badge>
 
             <ul className="relative mx-auto hidden items-center lg:flex" onMouseLeave={soltar}>
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "absolute inset-y-0 left-0 rounded-pill bg-fg/6 transition-[transform,width,opacity] duration-(--duration-entrada) ease-out-cubic",
-                  caja ? "opacity-100" : "opacity-0",
-                )}
-                style={caja ? { width: caja.w, transform: `translateX(${caja.x}px)` } : undefined}
-              />
+              <Resaltado caja={caja} />
               {navLinks.map((link) => (
-                <li key={link.href} onMouseEnter={mover} onFocus={mover} onBlur={soltar}>
+                <li
+                  key={link.href}
+                  onMouseEnter={(event) => medir(event.currentTarget)}
+                  onFocus={(event) => medir(event.currentTarget)}
+                  onBlur={soltar}
+                >
                   <Link
                     href={link.href}
                     aria-current={esActiva(link.href) ? "location" : undefined}

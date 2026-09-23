@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Button from "@/components/Button";
-import Audiences from "@/components/Audiences";
 import Eyebrow from "@/components/Eyebrow";
 import Faq from "@/components/Faq";
 import Hairline from "@/components/Hairline";
 import ComoFunciona from "@/components/home/ComoFunciona";
 import Hero from "@/components/home/Hero";
+import ParaLocales from "@/components/home/ParaLocales";
 import Reveal from "@/components/ui/Reveal";
 import Rewards from "@/components/Rewards";
 import Section from "@/components/Section";
@@ -21,14 +21,7 @@ export default function Home() {
 
       <ComoFunciona />
 
-      {/* ──────────── 3. Los dos públicos, en una sola pieza ──────────── */}
-      <Section
-        id="publico"
-        labelledBy="publico-title"
-        tone="tint"
-      >
-        <Audiences />
-      </Section>
+      <ParaLocales />
 
       {/* ──────────── 4. Puntos + Referidos (lienzo oscuro) ──────────── */}
       <Rewards />

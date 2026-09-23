@@ -11,7 +11,8 @@ const tones: Record<TileTone, string> = {
 
 /**
  * Un medio sobre un fondo plano, con título y bajada debajo. El medio se
- * recorta contra la card: lo que se asoma del borde es a propósito.
+ * recorta contra la card: lo que se asoma del borde es a propósito. Sin
+ * título, el tile es sólo la superficie.
  */
 export default function Tile({
   tone = "arena",
@@ -24,7 +25,7 @@ export default function Tile({
   mediaClassName,
 }: {
   tone?: TileTone;
-  title: ReactNode;
+  title?: ReactNode;
   body?: ReactNode;
   /** Algo que acompaña al título en la misma línea, como un `Badge`. */
   aside?: ReactNode;
@@ -34,8 +35,10 @@ export default function Tile({
   className?: string;
   mediaClassName?: string;
 }) {
+  const Root = title ? "article" : "div";
+
   return (
-    <article className={cn("text-center", className)}>
+    <Root className={cn("text-center", className)}>
       <div
         className={cn(
           "relative isolate overflow-hidden rounded-card shadow-tile",
@@ -46,11 +49,13 @@ export default function Tile({
       >
         {children}
       </div>
-      <h3 className="mt-7 flex items-center justify-center gap-3 text-title font-bold text-fg">
-        {title}
-        {aside}
-      </h3>
+      {title && (
+        <h3 className="mt-7 flex items-center justify-center gap-3 text-title font-bold text-fg">
+          {title}
+          {aside}
+        </h3>
+      )}
       {body && <p className="mx-auto mt-2 max-w-[38ch] text-pretty text-small text-muted">{body}</p>}
-    </article>
+    </Root>
   );
 }

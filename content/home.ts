@@ -14,15 +14,16 @@ export const hero = {
   ctaLocal: { label: "Tengo un local", href: "/#locales" },
 } as const;
 
-export type Paso = {
+/** Un texto con la pantalla de la app que lo muestra. */
+export type Pantalla = {
   title: string;
   body: string;
-  /** La pantalla que lo muestra, y qué franja (en píxeles de la captura). */
+  /** Qué captura, y qué franja (en píxeles de la captura). */
   captura: CapturaId;
   crop?: { top: number; bottom: number };
 };
 
-const pasos: readonly Paso[] = [
+const pasos: readonly Pantalla[] = [
   {
     title: "Encontrá tu local.",
     body: `Los locales de ${site.city} en un mismo lugar, con sus servicios, precios y horarios reales.`,
@@ -46,4 +47,43 @@ export const comoFunciona = {
   title: "Sacar turno lleva treinta segundos.",
   lede: "Sin llamar, sin esperar que te contesten.",
   pasos,
+} as const;
+
+const pantallasLocal: readonly Pantalla[] = [
+  {
+    title: "Agenda",
+    body: "Los turnos del día y los huecos libres, al día solos.",
+    captura: "agenda",
+  },
+  {
+    title: "Asistencia",
+    body: "Marcás quién vino y quién no. Menos ausencias, con recordatorios automáticos.",
+    captura: "turnoLocal",
+    // La hoja del turno, con un poco de la agenda oscurecida detrás.
+    crop: { top: 880, bottom: 2622 },
+  },
+  {
+    title: "Mostrador",
+    body: "Los turnos que te piden por teléfono o en persona entran a la misma agenda.",
+    captura: "mostrador",
+    crop: { top: 420, bottom: 2622 },
+  },
+  {
+    title: "Equipo",
+    body: "Cada profesional con sus horarios y sus servicios.",
+    captura: "equipo",
+  },
+  {
+    title: "Crecimiento",
+    body: "Cuántos turnos hacés por mes, tu mejor mes y lo que más vendés.",
+    captura: "crecimiento",
+  },
+];
+
+export const paraLocales = {
+  title: "Tu agenda, sin idas y vueltas.",
+  lede: "Todo lo del local en una app: los turnos, el equipo y cómo te va.",
+  pantallas: pantallasLocal,
+  fundador: `Precio fundador de por vida, para los primeros locales de ${site.city}.`,
+  cta: { label: "Quiero mi lugar como fundador", href: "/lista-espera?tipo=local" },
 } as const;
