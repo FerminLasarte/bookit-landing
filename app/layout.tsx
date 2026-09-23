@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import Nav from "@/components/layout/Nav";
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 import { site } from "@/content/site";
 import "./globals.css";
 

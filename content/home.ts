@@ -2,6 +2,10 @@ import type { CapturaId } from "./capturas";
 import { categorias } from "./categorias";
 import { site } from "./site";
 
+/** A dónde llevan los CTA de cada público. */
+const listaCliente = "/lista-espera?tipo=cliente";
+const listaLocal = "/lista-espera?tipo=local";
+
 /** Los rubros en minúscula, para completar "Tu próximo turno de…". */
 const rubros = categorias.map((categoria) => categoria.label.toLowerCase());
 
@@ -10,7 +14,7 @@ export const hero = {
   rubros,
   lede: `Los locales de ${site.city} en una sola app. Reservá cuando se te ocurra, sin cadenas de WhatsApp ni llamados en horario de trabajo.`,
   note: `Todavía no lanzamos. Anotate y llevate ${site.puntosDeRegalo} Puntos Bookit para tu primer turno.`,
-  ctaCliente: { label: "Sumate a la lista VIP", href: "/lista-espera?tipo=cliente" },
+  ctaCliente: { label: "Sumate a la lista VIP", href: listaCliente },
   ctaLocal: { label: "Tengo un local", href: "/#locales" },
 } as const;
 
@@ -85,7 +89,7 @@ export const paraLocales = {
   lede: "Todo lo del local en una app: los turnos, el equipo y cómo te va.",
   pantallas: pantallasLocal,
   fundador: `Precio fundador de por vida, para los primeros locales de ${site.city}.`,
-  cta: { label: "Quiero mi lugar como fundador", href: "/lista-espera?tipo=local" },
+  cta: { label: "Quiero mi lugar como fundador", href: listaLocal },
 } as const;
 
 export const puntos = {
@@ -100,5 +104,33 @@ export const puntos = {
     codigo: "TUCODIGO",
     nota: "Es entre personas que sacan turnos: los locales no participan.",
   },
-  cta: { label: `Quiero mis ${site.puntosDeRegalo} puntos`, href: "/lista-espera?tipo=cliente" },
+  cta: { label: `Quiero mis ${site.puntosDeRegalo} puntos`, href: listaCliente },
+} as const;
+
+export type Puerta = {
+  label: string;
+  body: string;
+  note: string;
+  cta: { label: string; href: string };
+};
+
+export const cierre = {
+  title: `Cuando Bookit abra en ${site.city}, ya vas a estar adentro.`,
+  lede: "Todavía no lanzamos. Te avisamos antes que a nadie.",
+  // De izquierda a derecha; la del medio va al frente.
+  cascada: ["mapa", "ficha", "bienvenida", "misTurnos", "servicios"] satisfies readonly CapturaId[],
+  puertas: [
+    {
+      label: "Sacás turnos",
+      body: `${site.puntosDeRegalo} Puntos Bookit de regalo, guardados para tu primer turno.`,
+      note: "Te avisamos por email cuando abramos. Un nombre y un correo: no pedimos tarjeta.",
+      cta: { label: "Sumate a la lista VIP", href: listaCliente },
+    },
+    {
+      label: "Tenés un local",
+      body: `Precio fundador de por vida, para los primeros locales de ${site.city}.`,
+      note: "Te contactamos por WhatsApp o email con los detalles. Anotarte no te compromete a nada.",
+      cta: { label: "Quiero mi lugar como fundador", href: listaLocal },
+    },
+  ] satisfies readonly Puerta[],
 } as const;
