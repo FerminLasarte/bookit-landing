@@ -22,14 +22,18 @@ export default function TextLink({
     <Anchor
       {...props}
       className={cn(
-        "ring-focus inline-flex items-baseline gap-1 rounded-pill transition-colors duration-(--duration-chico)",
+        "ring-focus group inline-flex items-baseline gap-1 rounded-pill transition-colors duration-(--duration-chico)",
         tones[tone],
         className,
       )}
     >
       {children}
       {opensTab && (
-        <ArrowUpRight className="size-3.5 shrink-0 self-center" strokeWidth={1.75} aria-hidden="true" />
+        <ArrowUpRight
+          className="size-3.5 shrink-0 self-center transition-[translate] duration-(--duration-chico) ease-out-cubic group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          strokeWidth={1.75}
+          aria-hidden="true"
+        />
       )}
     </Anchor>
   );

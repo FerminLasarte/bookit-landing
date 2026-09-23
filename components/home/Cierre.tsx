@@ -4,32 +4,19 @@ import Screen from "@/components/ui/Screen";
 import Section from "@/components/ui/Section";
 import Superficie from "@/components/ui/Superficie";
 import { cierre } from "@/content/home";
-import { cn } from "@/lib/utils";
-
-/** Un abanico: los extremos más girados y más bajos. En móvil quedan las tres del medio. */
-const POSES = [
-  "z-0 hidden -rotate-8 translate-y-14 lg:block",
-  "z-10 -rotate-4 translate-y-5",
-  "z-20",
-  "z-10 rotate-4 translate-y-5",
-  "z-0 hidden rotate-8 translate-y-14 lg:block",
-];
+import Abanico from "./Abanico";
 
 export default function Cierre() {
   return (
     <Section id="cierre" title={cierre.title} lede={cierre.lede}>
       <Reveal className="mx-auto max-w-[66rem]">
         <Superficie tone="arena" className="px-4 pb-4 lg:aspect-2/1 lg:p-0">
-          <div className="flex h-80 justify-center overflow-hidden pt-10 lg:h-full lg:pt-12">
-            {cierre.cascada.map((id, i) => (
-              <Screen
-                key={id}
-                id={id}
-                sizes="(min-width: 1024px) 12rem, 9rem"
-                className={cn("relative -mx-5 w-36 shrink-0 lg:-mx-3 lg:w-48", POSES[i])}
-              />
+          <Abanico
+            className="h-80 overflow-hidden pt-10 lg:h-full lg:pt-12"
+            pantallas={cierre.cascada.map((id) => (
+              <Screen key={id} id={id} sizes="(min-width: 1024px) 12rem, 9rem" />
             ))}
-          </div>
+          />
 
           {/* En móvil tapan el corte de la cascada; en escritorio flotan sobre su mitad de abajo. */}
           <div className="relative z-30 -mt-24 grid gap-4 lg:absolute lg:inset-x-10 lg:bottom-10 lg:mt-0 lg:grid-cols-2 lg:gap-6">

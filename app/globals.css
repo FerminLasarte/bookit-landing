@@ -47,9 +47,9 @@
   --radius-card: 24px;
   --radius-pill: 50px;
 
-  /* Tipografía: una sola familia (Plus Jakarta Sans, por next/font) */
+  /* Tipografía: una sola familia (Plus Jakarta Sans, por next/font). Sin `font-mono`: ni los códigos la usan */
+  --font-*: initial;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
   --text-numeral: clamp(10rem, 2rem + 26vw, 20rem);
   --text-numeral--line-height: 0.85;
@@ -74,8 +74,16 @@
   --duration-entrada: 300ms; /* algo entra o sale */
   --duration-tab: 220ms; /* cambio de tab: fundido que sube 6 px */
   --duration-reveal: 560ms; /* contenido que aparece: sube 16 px, escalonado */
+  --ease-telon: cubic-bezier(0.76, 0, 0.24, 1); /* algo que cubre la pantalla y se corre */
   --scale-tap: 0.97;
   --opacity-tap: 0.4;
+}
+
+/* Cuánto abre la tijera, en grados. Registrada para que se pueda animar. */
+@property --apertura {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 10;
 }
 
 /* ── Semánticos ─────────────────────────────────────────────────────── */
@@ -97,6 +105,9 @@
   --tile-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.6), 0 10px 40px -10px rgb(10 10 10 / 0.15);
   --float-shadow: 0 0 0 1px var(--line), 0 12px 32px -12px rgb(10 10 10 / 0.18);
+  /* Un tile que se levanta bajo el puntero: la misma sombra, más lejos */
+  --lift-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.6), 0 24px 48px -12px rgb(10 10 10 / 0.22);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -116,6 +127,8 @@
     --tile-shadow:
       inset 0 0 0 1px rgb(255 255 255 / 0.06), 0 10px 40px -10px rgb(0 0 0 / 0.6);
     --float-shadow: 0 0 0 1px var(--line), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+    --lift-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.06), 0 24px 48px -12px rgb(0 0 0 / 0.7);
   }
 }
 
@@ -137,6 +150,7 @@
 
   --shadow-tile: var(--tile-shadow);
   --shadow-float: var(--float-shadow);
+  --shadow-alzado: var(--lift-shadow);
 }
 
 /* ── Base ───────────────────────────────────────────────────────────── */
@@ -164,6 +178,30 @@
   h3 {
     font-weight: 700;
     text-wrap: balance;
+  }
+
+  /* Tailwind deja la flecha en los botones; acá todo lo que se toca lleva la mano */
+  button:not(:disabled),
+  [role="button"],
+  [role="tab"],
+  summary,
+  label:has(> input:not(:disabled)),
+  input:is([type="radio"], [type="checkbox"]):not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* Con el cursor propio (`layout/Cursor`) el del sistema se esconde, salvo para escribir */
+  html[data-cursor="propio"],
+  html[data-cursor="propio"] * {
+    cursor: none;
+  }
+
+  html[data-cursor="propio"] :is(input:not([type="radio"], [type="checkbox"]), textarea, [contenteditable="true"]) {
+    cursor: text;
+  }
+
+  html[data-cursor="propio"] select {
+    cursor: default;
   }
 
   ::selection {
@@ -232,20 +270,112 @@
   }
 }
 
-/* Un <details> que se abre creciendo. Donde el navegador no lo soporta, se abre al instante. */
-@utility acordeon {
-  interpolate-size: allow-keywords;
+/*
+ * Un botón que se deja llevar por el puntero (`lib/useMagnetismo` pone
+ * `--mx` y `--my`). Es dueño de toda la transición del botón: el fondo y
+ * el tap son chicos; el imán vuelve despacio a su lugar.
+ */
+@utility magnetico {
+  translate: var(--mx, 0) var(--my, 0);
+  transition-property: background-color, scale, translate;
+  transition-duration: var(--duration-chico), var(--duration-chico), var(--duration-reveal);
+  transition-timing-function: var(--ease-out-cubic), var(--ease-out-cubic), var(--ease-reveal);
+}
 
-  &::details-content {
-    block-size: 0;
-    overflow-y: clip;
-    transition:
-      block-size var(--duration-entrada) var(--ease-out-cubic),
-      content-visibility var(--duration-entrada) allow-discrete;
+/*
+ * El tijeretazo (`layout/Splash`). Corre con el primer cuadro, sin esperar a
+ * JS: el logo entra, una línea lo corta de lado a lado con la tijera a la
+ * cabeza y las dos mitades se abren. Si ya se vio en la visita, no se pinta.
+ */
+@utility splash {
+  --splash-corte: 350ms;
+  --splash-abre: 950ms;
+  animation: splash-fin 0s calc(var(--splash-abre) + 650ms) forwards;
+
+  html[data-splash="visto"] & {
+    display: none;
   }
 
-  &[open]::details-content {
-    block-size: auto;
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+
+  & [data-parte="logo"] {
+    animation: splash-logo 400ms var(--ease-reveal) both;
+  }
+
+  & [data-parte="corte"] {
+    transform-origin: left;
+    animation:
+      splash-corte 550ms var(--ease-out-cubic) var(--splash-corte) both,
+      splash-apaga 200ms linear var(--splash-abre) forwards;
+  }
+
+  & [data-parte="tijera"] {
+    animation:
+      splash-viaje 550ms var(--ease-out-cubic) var(--splash-corte) both,
+      tijeretazo 110ms linear var(--splash-corte) 5 alternate,
+      splash-apaga 200ms linear var(--splash-abre) forwards;
+  }
+
+  & [data-parte="arriba"] {
+    animation: splash-arriba 650ms var(--ease-telon) var(--splash-abre) forwards;
+  }
+
+  & [data-parte="abajo"] {
+    animation: splash-abajo 650ms var(--ease-telon) var(--splash-abre) forwards;
+  }
+}
+
+@keyframes splash-logo {
+  from {
+    opacity: 0;
+    scale: 0.92;
+  }
+}
+
+@keyframes splash-corte {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes splash-viaje {
+  to {
+    translate: 100vw 0;
+  }
+}
+
+@keyframes tijeretazo {
+  from {
+    --apertura: 22;
+  }
+  to {
+    --apertura: 0;
+  }
+}
+
+@keyframes splash-apaga {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes splash-arriba {
+  to {
+    translate: 0 -100%;
+  }
+}
+
+@keyframes splash-abajo {
+  to {
+    translate: 0 100%;
+  }
+}
+
+@keyframes splash-fin {
+  to {
+    visibility: hidden;
   }
 }
 

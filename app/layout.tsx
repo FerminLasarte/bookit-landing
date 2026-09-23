@@ -3,7 +3,11 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import Nav from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
+import Cursor from "@/components/layout/Cursor";
+import Movimiento from "@/components/layout/Movimiento";
+import Splash from "@/components/layout/Splash";
 import { site } from "@/content/site";
+import { SPLASH_VISTO } from "@/lib/movimiento";
 import "./globals.css";
 
 /*
@@ -94,21 +98,32 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html
-      lang="es-AR"
-      className={jakarta.variable}
-    >
+    // El script de abajo marca `data-splash` antes de hidratar.
+    <html lang="es-AR" className={jakarta.variable} suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col">
         <script
           type="application/ld+json"
           // JSON-LD estático: no hay input de usuario en este objeto.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Nav />
-        <main id="contenido" className="flex-1 pt-20 md:pt-24">
-          {children}
-        </main>
-        <Footer />
+        {/* Antes de pintar: si el splash ya se vio en esta visita, no aparece. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{sessionStorage.getItem("${SPLASH_VISTO}")&&(document.documentElement.dataset.splash="visto")}catch(e){}`,
+          }}
+        />
+        <noscript>
+          <style>{".splash{display:none}"}</style>
+        </noscript>
+        <Movimiento>
+          <Splash />
+          <Cursor />
+          <Nav />
+          <main id="contenido" className="flex-1 pt-20 md:pt-24">
+            {children}
+          </main>
+          <Footer />
+        </Movimiento>
       </body>
     </html>
   );

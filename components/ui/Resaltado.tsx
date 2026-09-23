@@ -1,34 +1,24 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { m } from "motion/react";
+import { transicion } from "@/lib/movimiento";
 import { cn } from "@/lib/utils";
 
-type Caja = { x: number; y: number; w: number; h: number };
-
-/** La caja de un elemento dentro de su padre, para que el resaltado vaya hasta ahí. */
-export function useResaltado() {
-  const [caja, setCaja] = useState<Caja | null>(null);
-
-  const medir = useCallback((el: HTMLElement) => {
-    setCaja({ x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight });
-  }, []);
-
-  return { caja, medir, soltar: useCallback(() => setCaja(null), []) };
-}
-
-/** Un fondo que se desliza entre los ítems de una lista. El padre va `relative`. */
-export default function Resaltado({ caja, className }: { caja: Caja | null; className?: string }) {
+/**
+ * Un fondo que se desliza entre los ítems de una lista. Va adentro del ítem
+ * activo (que es `relative isolate`); al pasar a otro, `layoutId` lo lleva
+ * de uno al otro. `grupo` tiene que ser único en la página.
+ */
+export default function Resaltado({ grupo, className }: { grupo: string; className?: string }) {
   return (
-    <span
+    <m.span
+      layoutId={grupo}
       aria-hidden="true"
-      className={cn(
-        "absolute top-0 left-0 rounded-pill bg-fg/6 transition-[transform,width,height,opacity] duration-(--duration-entrada) ease-out-cubic",
-        caja ? "opacity-100" : "opacity-0",
-        className,
-      )}
-      style={
-        caja ? { width: caja.w, height: caja.h, transform: `translate(${caja.x}px, ${caja.y}px)` } : undefined
-      }
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={transicion.entrada}
+      className={cn("absolute inset-0 -z-10 rounded-pill bg-fg/6", className)}
     />
   );
 }

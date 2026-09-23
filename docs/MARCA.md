@@ -298,9 +298,9 @@ Lo que esta web hace distinto del manual, a propósito:
 1. **La escala tipográfica es `clamp()`, no fracción del ancho de pantalla.** El
    manual deriva cada paso del ancho del teléfono con tope en 450. En la web el
    rango de anchos es otro; se conserva el *tracking* del manual, no su fórmula.
-2. **Existe `--font-mono`.** El manual manda una sola familia. Acá hay una pila
-   mono de sistema, sin descarga, para lo que es literalmente un código que
-   alguien copia: el código de referido.
+2. ~~**Existe `--font-mono`.**~~ Retirada el 23/9/2026: el sitio usa una sola
+   familia, también para cifras y códigos. `globals.css` borra la escala
+   `--font-*` para que no se pueda volver a usar.
 3. **Hay tokens de acento que el manual no tiene** (`amber-300`, `amber-400`,
    `amber-100`, `ink-850`). La app no los necesita y la web sí: el ámbar que se
    lee sobre oscuro, el hover del CTA, el fondo del tile arena y el del tile

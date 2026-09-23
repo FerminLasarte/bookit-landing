@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import Reveal from "./Reveal";
 import SectionHeader from "./SectionHeader";
 
 /**
@@ -29,16 +28,23 @@ export default function Section({
   className?: string;
 }) {
   const titleId = `${id}-titulo`;
-  const header = <SectionHeader as={as} id={titleId} title={title} lede={lede} actions={actions} />;
+  const esPagina = as === "h1";
 
   return (
     <section
       id={id}
       aria-labelledby={titleId}
-      className={cn(as === "h1" ? "pt-12 pb-24 md:pt-20 md:pb-36" : "py-24 md:py-36", className)}
+      className={cn(esPagina ? "pt-12 pb-24 md:pt-20 md:pb-36" : "py-24 md:py-36", className)}
     >
       <div className="wrap">
-        {as === "h1" ? header : <Reveal>{header}</Reveal>}
+        <SectionHeader
+          as={as}
+          id={titleId}
+          title={title}
+          lede={lede}
+          actions={actions}
+          escalonado={!esPagina}
+        />
         {children && <div className="mt-14 md:mt-20">{children}</div>}
       </div>
     </section>

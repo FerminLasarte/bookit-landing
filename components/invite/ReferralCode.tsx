@@ -48,7 +48,7 @@ export default function ReferralCode({ code }: { code: string }) {
       >
         <span className="block text-small font-semibold text-fg">{copy.rotulo}</span>
         <span className="mt-3 flex items-center justify-center gap-3">
-          <span className="font-mono text-title font-bold tracking-[0.12em] break-all text-fg">{code}</span>
+          <span className="num text-title font-bold tracking-[0.12em] break-all text-fg">{code}</span>
           <Copy
             className="size-4 shrink-0 text-muted transition-colors group-hover:text-fg"
             strokeWidth={1.75}

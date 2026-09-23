@@ -39,9 +39,11 @@ export default function Screen({
   const { props: dark } = getImageProps({ ...common, src: oscuro });
 
   return (
-    <div className={cn("rounded-card bg-surface p-2 shadow-tile", className)}>
-      <div
-        className="relative overflow-hidden rounded-toast"
+    // El marco se levanta, la caja de afuera no: si subiera la zona del hover, el borde temblaría.
+    <div className={cn("group/screen", className)}>
+      <div className="rounded-card bg-surface p-2 shadow-tile transition-[translate,box-shadow] duration-(--duration-entrada) ease-out-cubic group-hover/screen:-translate-y-1.5 group-hover/screen:shadow-alzado">
+        <div
+          className="relative overflow-hidden rounded-toast"
         style={{ aspectRatio: `${claro.width} / ${bottom - top}` }}
       >
         <picture>
@@ -52,7 +54,8 @@ export default function Screen({
             className="object-cover"
             style={{ ...img.style, objectPosition: `50% ${posicion}%` }}
           />
-        </picture>
+          </picture>
+        </div>
       </div>
     </div>
   );

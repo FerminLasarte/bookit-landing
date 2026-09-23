@@ -72,16 +72,44 @@ otra podría necesitar.
 |---|---|
 | `Button` | Píldora. `primary` (ámbar, tinta encima) y `secondary` (tinta llena). |
 | `TextLink` | El único link de texto del sitio. Resuelve interno, externo y la flecha. |
-| `Badge` | Etiqueta chica en mono: "Pronto", "Ejemplo". |
+| `Badge` | Etiqueta chica en píldora: "Pronto", "Ejemplo". |
 | `Section` | Aire vertical, `wrap` y el encabezado. Toda sección de contenido pasa por acá. Con `as="h1"` es el encabezado de una página. |
 | `SectionHeader` | Título `display` + bajada `muted` + botones, centrado. |
 | `Superficie` | La card: 24 px y un fondo plano. Los tonos de tile llevan sombra; `surface`, lo que se toma, lleva borde. |
 | `Tile` | Card de 24 px con fondo plano, sombra y un medio adentro; título y bajada abajo. |
 | `Screen` | Una captura de la app dentro de un marco, con su versión clara y oscura. |
 | `Reveal` | Aparición al entrar en pantalla (sube 16 px, 560 ms). |
+| `Plegable` | Un bloque que se abre creciendo y se cierra encogiendo. Cerrado queda `inert`. |
+| `Resaltado` | El fondo que se desliza entre los ítems de una lista (`layoutId`). |
+| `Herramienta` | Tijera, peine, secador, esmalte, navaja o brocha: el cursor y el splash. |
 
 Las capturas se importan una sola vez, en
 [`content/capturas.ts`](../content/capturas.ts), con su texto alternativo.
+
+## Movimiento
+
+La base es [`motion`](https://motion.dev), montado una vez en
+`layout/Movimiento`: `MotionConfig reducedMotion="user"` apaga las
+transformaciones cuando el sistema pide Reducir movimiento, y `LazyMotion`
+carga el motor después de hidratar (se usa `m.*`, nunca `motion.*`).
+
+- **Lo que CSS resuelve, lo resuelve CSS:** reveals, `Plegable`, hovers, el
+  imán de los botones y el splash. Lo que depende del scroll, del puntero o de
+  una presencia (algo que entra y sale) va con `motion`.
+- **Los valores no se escriben en el componente.** CSS lee los tokens de
+  `globals.css`; `motion` lee `lib/movimiento.ts`, que los espeja y suma los
+  resortes.
+- **Con Reducir movimiento** el rubro del hero no gira, el splash no aparece,
+  el imán y la inclinación se apagan, y lo demás llega sin desplazarse.
+- **El puntero** (cursor propio, imán, inclinación del hero, vista previa de las
+  pestañas) sólo existe con mouse: `PUNTERO_FINO`.
+
+| Pieza | Dónde |
+|---|---|
+| Splash del tijeretazo, una vez por visita | `layout/Splash` + utilidad `splash` |
+| Cursor: una herramienta por sección | `layout/Cursor` + `content/cursor.ts` |
+| Botones magnéticos | `lib/useMagnetismo` + utilidad `magnetico` |
+| El nav se compacta al scrollear | `layout/Nav` |
 
 ## Estructura
 
@@ -101,7 +129,7 @@ content/     copy y datos: ningún texto de producto vive en un componente
 | # | Sección | Idea | Composición |
 |---|---|---|---|
 | 1 | Hero | Tu próximo turno, del rubro que sea | Título con el rubro que rota; la app en un marco con dos capturas giradas detrás |
-| 2 | Cómo funciona | Reservar lleva tres pasos | Tres tiles: dos arriba y uno centrado abajo |
+| 2 | Cómo funciona | Reservar lleva treinta segundos | Tres teléfonos en escalera sobre un reloj que corre con el scroll |
 | 3 | Para locales | La agenda del local, resuelta | Selector de pantallas que cambia un tile grande |
 | 4 | Puntos y referidos | Cada turno devuelve algo | El número 500 a escala de fondo y el link de invitación |
 | 5 | Testimonios | Lo que dicen los primeros | Bento de citas. Datos de prueba, apagados en producción |

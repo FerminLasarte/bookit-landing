@@ -33,8 +33,7 @@ type Props =
 
 export default function Button({ variant = "primary", size = "default", className, ...props }: Props) {
   const classes = cn(
-    "ring-focus inline-flex items-center justify-center gap-2 rounded-pill text-center font-semibold",
-    "transition-[background-color,transform] duration-(--duration-chico) ease-out-cubic",
+    "ring-focus magnetico inline-flex items-center justify-center gap-2 rounded-pill text-center font-semibold",
     "active:scale-(--scale-tap) motion-reduce:active:scale-100",
     "disabled:pointer-events-none disabled:opacity-55",
     variants[variant],
@@ -42,8 +41,8 @@ export default function Button({ variant = "primary", size = "default", classNam
     className,
   );
 
-  if (props.href !== undefined) return <Anchor {...props} className={classes} />;
+  if (props.href !== undefined) return <Anchor {...props} data-magnetico className={classes} />;
 
   const { type = "button", ...rest } = props;
-  return <button type={type} {...rest} className={classes} />;
+  return <button type={type} {...rest} data-magnetico className={classes} />;
 }
