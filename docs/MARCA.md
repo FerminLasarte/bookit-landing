@@ -58,6 +58,12 @@ ahora son contornos tipográficos. **El isotipo no cambió**: sus siete paths so
 los mismos, verificado uno por uno. El `viewBox` tampoco, así que la proporción
 del lockup y el mínimo de 96 × 28 px siguen valiendo.
 
+**El lockup se recompuso el mismo 22/9/2026, más tarde.** Dentro del lockup el
+isotipo quedó al 82 % de su tamaño anterior (0,8175, medido en los trazos) y la
+palabra se corrió 3,7 unidades a la derecha. El dibujo del isotipo no cambió, y
+el isotipo suelto (favicon, ícono, `logo_bookit_isotipo.svg`) tampoco. El
+`viewBox` es el mismo, así que el mínimo de 96 × 28 px sigue valiendo.
+
 **Al sincronizar desde el maestro hay que corregir dos cosas**, porque
 Illustrator las vuelve a escribir en cada export:
 
