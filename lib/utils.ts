@@ -34,15 +34,15 @@ export function normalizeCode(raw: string | undefined | null): string | null {
  * Extrae el código de invitación de un slug de `/invite/[[...slug]]`.
  * Orden de precedencia (§6.3): `?code=` lo resuelve el caller.
  *   `/invite/XXX`            → XXX
- *   `/invite/comercio/XXX`   → XXX
+ *   `/invite/comercio/XXX`   → null
  *
- * La rama `comercio` es sólo compatibilidad: ya no generamos esos links —los
- * referidos son sólo entre personas que sacan turnos— pero los que se
- * compartieron siguen resolviendo el código en vez de leer "COMERCIO".
+ * Los links de comercio responden 200 (contrato), pero como invitación sin
+ * código: el programa para locales se dio de baja y esos códigos ya no le
+ * corresponden a nadie. La app los ignora igual.
  */
 export function codeFromSlug(slug: readonly string[] | undefined): string | null {
   if (!slug || slug.length === 0) return null;
-  const [first, second] = slug;
-  if (first === "comercio") return normalizeCode(second);
+  const [first] = slug;
+  if (first === "comercio") return null;
   return normalizeCode(first);
 }

@@ -147,7 +147,7 @@ export const terminos: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: `El programa de referidos es exclusivo de las cuentas personales, es decir, de quienes sacan turnos. Cada una tiene un código de invitación propio, que se comparte como link (${site.url.replace("https://www.", "")}/invite/TUCODIGO). Cuando alguien se registra como usuario usando tu código, las dos partes reciben el beneficio vigente al momento del registro.`,
+          text: `El programa de referidos es exclusivo de las cuentas personales, es decir, de quienes sacan turnos. Cada una tiene un código de invitación propio, que se comparte como link (${site.dominio}/invite/TUCODIGO). Cuando alguien se registra como usuario usando tu código, las dos partes reciben el beneficio vigente al momento del registro.`,
         },
         {
           type: "ul",

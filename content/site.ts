@@ -3,10 +3,18 @@
  * Si un dato aparece dos veces en el sitio, tiene que salir de acá.
  */
 
+/**
+ * Canónico sin `www`: es el host que sirve los archivos de Universal Links y
+ * App Links sin redirigir, y el de los links de invitación. En Vercel, `www`
+ * redirige acá.
+ */
+const dominio = "somosbookit.com.ar";
+
 export const site = {
   name: "Bookit",
   legalName: "Bookit",
-  url: "https://www.somosbookit.com.ar",
+  dominio,
+  url: `https://${dominio}`,
   city: "Tandil",
   /** Los Puntos Bookit de regalo por anotarse a la lista. */
   puntosDeRegalo: 500,

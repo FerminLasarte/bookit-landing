@@ -1,6 +1,6 @@
 # Bookit — Landing
 
-Landing y lista de espera de [Bookit](https://www.somosbookit.com.ar), la app de turnos para
+Landing y lista de espera de [Bookit](https://somosbookit.com.ar), la app de turnos para
 barberías, peluquerías, uñas, estética y más en Tandil, Buenos Aires.
 
 ## Stack

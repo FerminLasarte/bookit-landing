@@ -100,7 +100,7 @@ export const puntos = {
   referidos: {
     title: "Invitá y ganen los dos.",
     body: "Cuando alguien se registra con tu código, suman puntos los dos.",
-    link: `${new URL(site.url).hostname.replace(/^www\./, "")}/invite/`,
+    link: `${site.dominio}/invite/`,
     codigo: "TUCODIGO",
     nota: "Es entre personas que sacan turnos: los locales no participan.",
   },

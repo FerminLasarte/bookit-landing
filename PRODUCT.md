@@ -61,7 +61,7 @@ Lo que un producto vecino no podría copiar de verdad:
 | Mercado inicial | Tandil, Buenos Aires, Argentina |
 | Idioma | Español rioplatense, **voseo**. `lang="es-AR"` en todo el sitio |
 | Moneda / zona | ARS · `America/Argentina/Buenos_Aires` |
-| Dominio | `somosbookit.com.ar`, canónico **con `www`** |
+| Dominio | `somosbookit.com.ar`, canónico **sin `www`**: en Vercel, `www` redirige al apex |
 | Bundle / package | `ar.com.somosbookit.app` · Apple Team ID `MPX5U375K6` |
 | Deploy | Vercel |
 
@@ -80,7 +80,9 @@ email de bienvenida, con plantilla y asunto distintos según `cliente` o `local`
 
 **Deep links.** Universal Links (iOS) y App Links (Android) ya están configurados y en producción.
 `/invite/<CODIGO>` y `/invite/comercio/<CODIGO>` abren la app si está instalada; la web es el
-fallback. Hay links de invitación circulando hoy.
+fallback. Hay links de invitación circulando hoy. Los dos archivos de `.well-known` se sirven
+sin redirección sólo en el apex, así que los links y las asociaciones de la app van sin `www`:
+iOS y Android no siguen una redirección al verificar.
 
 ## Capabilities and Constraints
 
@@ -92,7 +94,8 @@ fallback. Hay links de invitación circulando hoy.
   Hay niveles (bronce, plata, oro, VIP) tokenizados en `@theme`.
 - **Referidos / invitaciones** — código por usuario, link compartible, beneficio para ambas partes.
   La variante para comercios se dio de baja: los referidos son sólo entre personas que sacan
-  turnos. Los links `/invite/comercio/<CODIGO>` que ya circulan siguen resolviendo.
+  turnos. Los links `/invite/comercio/<CODIGO>` que ya circulan responden 200, como invitación
+  sin código: esos códigos ya no le corresponden a nadie.
 - **Agenda del local** — se actualiza sola, recordatorios automáticos, ficha e historial por
   cliente, link propio para compartir en Instagram.
 - **Pago del turno — mixto, y lo decide el local.** Confirmado el 21 de septiembre de 2026.
