@@ -42,13 +42,13 @@ const pasos: readonly Pantalla[] = [
     title: "Confirmá el turno.",
     body: "Revisás el día, el servicio y cómo se paga, y listo: el turno es tuyo.",
     captura: "revisa",
-    // La hoja de confirmación, sin la pantalla oscurecida de atrás.
-    crop: { top: 1000, bottom: 2622 },
   },
 ];
 
 export const comoFunciona = {
   title: "Sacar turno lleva treinta segundos.",
+  /** Lo que marca el reloj al terminar el último paso. */
+  segundos: 30,
   lede: "Sin llamar, sin esperar que te contesten.",
   pasos,
 } as const;
