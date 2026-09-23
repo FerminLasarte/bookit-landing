@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type Ref } from "react";
 import {
   m,
   useMotionValueEvent,
@@ -14,6 +14,9 @@ import { transicion } from "@/lib/movimiento";
 import { cn } from "@/lib/utils";
 
 type Estado = "espera" | "activo" | "hecho";
+
+/** El `md` de Tailwind: desde ahí la línea es horizontal. */
+const ESCRITORIO = "(min-width: 48rem)";
 
 /** Una marca del reloj, con los segundos debajo desde `md`. */
 function Hito({ encendido, segundos, className }: { encendido: boolean; segundos: number; className: string }) {
@@ -40,9 +43,11 @@ type PasoProps = {
   total: number;
   segundos: number;
   progreso: MotionValue<number>;
+  /** Sólo el primero: la línea que mide el reloj en escritorio. */
+  refLinea?: Ref<HTMLDivElement>;
 };
 
-function Paso({ title, body, pantalla, i, total, segundos, progreso }: PasoProps) {
+function Paso({ title, body, pantalla, i, total, segundos, progreso, refLinea }: PasoProps) {
   const desde = i / total;
   const hasta = (i + 1) / total;
   const ultimo = i === total - 1;
@@ -78,6 +83,7 @@ function Paso({ title, body, pantalla, i, total, segundos, progreso }: PasoProps
 
       {/* El tramo del reloj: vertical a la izquierda en móvil, horizontal bajo los teléfonos desde `md`. */}
       <m.div
+        ref={refLinea}
         aria-hidden="true"
         style={{ "--f": tramo } as unknown as CSSProperties}
         className="absolute top-0 bottom-0 left-[0.6875rem] w-0.5 bg-line md:relative md:inset-auto md:-mx-5 md:mt-12 md:h-0.5 md:w-auto"
@@ -127,12 +133,29 @@ export default function Cronometro({
   pantallas: readonly ReactNode[];
   segundos: number;
 }) {
-  const ref = useRef<HTMLOListElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 80%", "end 70%"] });
-  const progreso = useSpring(scrollYProgress, transicion.suave);
+  const refLista = useRef<HTMLOListElement>(null);
+  const refLinea = useRef<HTMLDivElement>(null);
+  const escritorio = useRef(false);
+
+  // Móvil: la punta de la línea vertical sigue la altura de lectura.
+  const lista = useScroll({ target: refLista, offset: ["start 65%", "end 65%"] }).scrollYProgress;
+  // Escritorio: el reloj arranca cuando la línea asoma abajo, con los teléfonos ya a la vista.
+  const linea = useScroll({ target: refLinea, offset: ["start 85%", "start 45%"] }).scrollYProgress;
+  const progreso = useSpring(
+    useTransform([lista, linea], ([enLista, enLinea]: number[]) => (escritorio.current ? enLinea! : enLista!)),
+    transicion.suave,
+  );
+
+  useEffect(() => {
+    const medio = window.matchMedia(ESCRITORIO);
+    const medir = () => (escritorio.current = medio.matches);
+    medir();
+    medio.addEventListener("change", medir);
+    return () => medio.removeEventListener("change", medir);
+  }, []);
 
   return (
-    <ol ref={ref} className="mx-auto grid max-w-[66rem] md:grid-cols-3 md:pt-16">
+    <ol ref={refLista} className="mx-auto grid max-w-[66rem] md:grid-cols-3 md:pt-16">
       {pasos.map((paso, i) => (
         <Paso
           key={paso.title}
@@ -142,6 +165,7 @@ export default function Cronometro({
           total={pasos.length}
           segundos={segundos}
           progreso={progreso}
+          refLinea={i === 0 ? refLinea : undefined}
         />
       ))}
     </ol>
