@@ -11,37 +11,15 @@ import Resaltado from "@/components/ui/Resaltado";
 import Wordmark from "@/components/ui/Wordmark";
 import { navCta, navLinks } from "@/content/nav";
 import { site } from "@/content/site";
+import { useSeccionEnFoco } from "@/lib/useSeccionEnFoco";
 import { cn } from "@/lib/utils";
 
-/** El ancla de la home que está en el centro de la pantalla. */
-function useSeccionActiva(enHome: boolean) {
-  const [activa, setActiva] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!enHome) return setActiva(null);
-
-    const secciones = navLinks
-      .map((link) => link.href.split("#")[1])
-      .map((id) => id && document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.find((entry) => entry.isIntersecting);
-        if (visible) setActiva(visible.target.id);
-      },
-      { rootMargin: "-45% 0px -45% 0px" },
-    );
-    secciones.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [enHome]);
-
-  return activa;
-}
+/** Las anclas de la home que el nav marca como actuales. */
+const ANCLAS = navLinks.flatMap((link) => link.href.split("#")[1] ?? []);
 
 export default function Nav() {
   const pathname = usePathname();
-  const activa = useSeccionActiva(pathname === "/");
+  const activa = useSeccionEnFoco(ANCLAS);
   const [sobre, setSobre] = useState<string | null>(null);
   const { scrollY } = useScroll();
   const [compacto, setCompacto] = useState(false);

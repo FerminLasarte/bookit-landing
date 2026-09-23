@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import Nav from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
+import Cursor from "@/components/layout/Cursor";
 import Movimiento from "@/components/layout/Movimiento";
 import Splash from "@/components/layout/Splash";
 import { site } from "@/content/site";
@@ -116,6 +117,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </noscript>
         <Movimiento>
           <Splash />
+          <Cursor />
           <Nav />
           <main id="contenido" className="flex-1 pt-20 md:pt-24">
             {children}

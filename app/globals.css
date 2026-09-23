@@ -190,6 +190,20 @@
     cursor: pointer;
   }
 
+  /* Con el cursor propio (`layout/Cursor`) el del sistema se esconde, salvo para escribir */
+  html[data-cursor="propio"],
+  html[data-cursor="propio"] * {
+    cursor: none;
+  }
+
+  html[data-cursor="propio"] :is(input:not([type="radio"], [type="checkbox"]), textarea, [contenteditable="true"]) {
+    cursor: text;
+  }
+
+  html[data-cursor="propio"] select {
+    cursor: default;
+  }
+
   ::selection {
     background-color: var(--color-amber-100);
     color: var(--color-ink-900);
