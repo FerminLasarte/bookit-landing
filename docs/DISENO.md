@@ -91,6 +91,8 @@ components/
   layout/    Nav, Footer
   home/      una pieza por sección de la home
   forms/     Field, AudienceSwitch, WaitlistForm
+  legal/     LegalDoc: los cinco documentos de /legal
+  invite/    ReferralCode: el código para copiar
 content/     copy y datos: ningún texto de producto vive en un componente
 ```
 
@@ -105,6 +107,20 @@ content/     copy y datos: ningún texto de producto vive en un componente
 | 5 | Testimonios | Lo que dicen los primeros | Bento de citas. Datos de prueba, apagados en producción |
 | 6 | Preguntas | Lo que suelen preguntar | Acordeón centrado |
 | 7 | Cierre | Anotate antes de que abra | Las dos puertas, cliente y local, sobre la cascada de capturas |
+
+## Las rutas secundarias
+
+Todas abren con `Section as="h1"`: el mismo encabezado centrado que el hero,
+sin `Reveal`. Lo que se toma va en `Superficie tone="surface"`.
+
+| Ruta | Composición |
+|---|---|
+| `/lista-espera` | Formulario en una superficie; cómo sigue en tres pasos; la letra chica |
+| `/soporte` | Los tres canales como superficies enlazadas; tiempos y borrado de datos |
+| `/descargar` | Encabezado con el CTA y un tile con la pantalla de bienvenida |
+| `/invite` | El código para copiar y el CTA; el copy no dice "Descargá" sin tiendas |
+| `/legal/*` | Una columna de lectura, con el índice fijo al costado desde `lg` |
+| 404 | Encabezado con los dos botones |
 
 ## Flujo de trabajo
 

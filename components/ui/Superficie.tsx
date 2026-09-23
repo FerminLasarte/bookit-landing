@@ -6,13 +6,14 @@ export type Tono = "arena" | "niebla" | "miel" | "surface";
 /*
  * Los tres tonos de tile muestran y llevan sombra. `surface` es lo que se toma
  * —un formulario, un código—, y eso lleva borde en vez de sombra: MARCA,
- * Divergencia 7.
+ * Divergencia 7. El hueco del anillo es `surface` para lo de adentro; la
+ * card misma, si se enfoca, está sobre la página.
  */
 const tonos: Record<Tono, string> = {
   arena: "bg-tile-arena shadow-tile",
   niebla: "bg-tile-niebla shadow-tile",
   miel: "bg-tile-miel shadow-tile",
-  surface: "border border-line bg-surface [--ring-hueco:var(--surface)]",
+  surface: "border border-line bg-surface *:[--ring-hueco:var(--surface)]",
 };
 
 /**

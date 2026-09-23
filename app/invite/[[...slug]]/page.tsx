@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Mail } from "lucide-react";
-import Button from "@/components/Button";
-import Eyebrow from "@/components/Eyebrow";
-import Hairline from "@/components/Hairline";
-import ReferralCode from "@/components/ReferralCode";
-import Wordmark from "@/components/ui/Wordmark";
+import ReferralCode from "@/components/invite/ReferralCode";
+import Button from "@/components/ui/Button";
+import Section from "@/components/ui/Section";
+import TextLink from "@/components/ui/TextLink";
+import { invite } from "@/content/paginas";
 import { flags, site } from "@/content/site";
 import { codeFromSlug, normalizeCode } from "@/lib/utils";
 
@@ -13,9 +12,9 @@ type PageProps = {
   searchParams: Promise<{ code?: string }>;
 };
 
+// El texto con el que se comparte el link ya circula: no cambia con el diseño.
 const shareTitle = "¡Sumate a Bookit!";
-const shareDescription =
-  "Descargá la app, usá mi código de invitación y ganemos puntos los dos.";
+const shareDescription = "Descargá la app, usá mi código de invitación y ganemos puntos los dos.";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -51,117 +50,36 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-/**
- * Los referidos son sólo entre personas que sacan turnos, así que acá hay un
- * único mensaje con código. La variante para comercios se dio de baja junto con
- * el programa: un local no tiene código ni suma puntos por invitar.
- */
-const copy = {
-  conCodigo: {
-    title: "¡Te invitaron a unirte a Bookit!",
-    desc: "Descargá la app, usá el código de abajo al registrarte y sumá puntos para tus próximos turnos.",
-  },
-  sinCodigo: {
-    title: "Tu próximo turno, a un clic de distancia.",
-    desc: "Descargá la app oficial de Bookit para gestionar tus reservas en barberías, peluquerías y centros de estética de forma rápida y sencilla.",
-  },
-} as const;
-
 export default async function InvitePage({ params, searchParams }: PageProps) {
   const [{ slug }, { code: queryCode }] = await Promise.all([params, searchParams]);
 
   // Precedencia (§6.3): ?code= → /invite/XXX
   const code = normalizeCode(queryCode) ?? codeFromSlug(slug);
+  const etapa = flags.storeLinksLive ? "conTiendas" : "preLanzamiento";
+  const { title, desc } = (code ? invite.conCodigo : invite.sinCodigo)[etapa];
 
-  const contenido = code ? copy.conCodigo : copy.sinCodigo;
+  const cta = flags.storeLinksLive ? (
+    <Button href={site.app.appStore ?? site.app.playStore ?? "/descargar"}>{invite.cta.conTiendas}</Button>
+  ) : (
+    <Button href={invite.cta.preLanzamiento.href}>{invite.cta.preLanzamiento.label}</Button>
+  );
 
   return (
-    <div className="relative overflow-hidden py-16 md:py-24">
-      {/*
-       * Único glow de esta página, y va detrás del lockup, no detrás del texto.
-       * Estaba en `-top-48`, y mientras el contenido vivía dentro de una card de
-       * `paper` eso no importaba porque la card lo tapaba. Sacada la card, su
-       * cola llegaba al eyebrow con un 6,9% de ámbar encima, y ahí `amber-700`
-       * da 4,457:1 — falla AA por poco, que es exactamente cómo fallaron los
-       * otros tres lavados de este repo. Subido a `-top-64`, el eyebrow queda
-       * fuera de su alcance.
-       */}
-      <div
-        aria-hidden="true"
-        className="destello pointer-events-none absolute -top-72 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full [--destello-alfa:15%] [--destello-radio:70%]"
-      />
+    // Con código, el botón va después del código; sin código, bajo la bajada.
+    <Section id="invitacion" as="h1" title={title} lede={desc} actions={code ? undefined : cta}>
+      <div className="mx-auto max-w-[28rem] text-center">
+        {code && (
+          <>
+            <ReferralCode code={code} />
+            <div className="mt-8">{cta}</div>
+          </>
+        )}
 
-      <div className="wrap relative">
-        <div className="mx-auto max-w-[34rem]">
-          <div className="flex justify-center">
-            <Wordmark className="text-3xl" />
-          </div>
-
-          {/*
-           * Acá NO va una card. Envolvía el contenido entero de la página, o
-           * sea que no se levantaba por encima de nada —no había un segundo
-           * plano del que despegarse— y además anidaba la card punteada de
-           * `ReferralCode`, con lo que la fórmula concéntrica del manual pedía
-           * 24 + 28 = 52px de radio exterior y había 24. Sacándola, la única
-           * card de la página es la que de verdad se toma: el código.
-           * El criterio, en `docs/DECISIONES.md` §3 sexies.
-           */}
-          <div className="mt-10">
-            {code && <Eyebrow>Invitación</Eyebrow>}
-
-            <h1 className="mt-5 text-display-lg font-semibold text-ink-900 dark:text-bone-100">
-              {contenido.title}
-            </h1>
-            <p className="measure mt-5 text-ink-500 dark:text-bone-300">{contenido.desc}</p>
-
-            {code && (
-              <div className="mt-8">
-                <ReferralCode code={code} />
-              </div>
-            )}
-
-            <div className="mt-8">
-              {flags.storeLinksLive ? (
-                <Button
-                  text="Descargar App"
-                  href={site.app.appStore ?? site.app.playStore ?? "/descargar"}
-                  fullWidth
-                />
-              ) : (
-                <>
-                  <Button
-                    text="Anotate y te avisamos"
-                    href="/lista-espera"
-                    fullWidth
-                  />
-                  <p className="mt-4 text-center text-small text-ink-500 dark:text-bone-300">
-                    Todavía no lanzamos la app. Anotate a la lista y te escribimos el día que salga.
-                    {code && " Guardá tu código: te va a servir al registrarte."}
-                  </p>
-                </>
-              )}
-            </div>
-
-          </div>
-
-          {/* Bloque de soporte — requisito de Apple (§6.3) */}
-          <div className="mt-10">
-            <Hairline />
-            <div className="mt-6 text-center">
-              <p className="text-small text-ink-500 dark:text-bone-300">
-                ¿Necesitás ayuda con tu cuenta o la app?
-              </p>
-              <a
-                href={`mailto:${site.email}`}
-                className="ring-focus mt-2 inline-flex items-center gap-2 rounded-pill text-small font-semibold text-amber-700 underline decoration-amber-700/30 underline-offset-4 transition-colors hover:decoration-amber-700 dark:text-amber-300 dark:decoration-amber-300/30 dark:hover:decoration-amber-300"
-              >
-                <Mail className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
-                Contactar a soporte
-              </a>
-            </div>
-          </div>
-        </div>
+        <p className={code ? "mt-16 text-small text-muted" : "text-small text-muted"}>
+          {invite.ayuda.pregunta}{" "}
+          <TextLink href={invite.ayuda.link.href}>{invite.ayuda.link.label}</TextLink>
+        </p>
       </div>
-    </div>
+    </Section>
   );
 }
