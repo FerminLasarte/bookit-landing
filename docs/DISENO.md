@@ -60,6 +60,11 @@ Viven en [`app/globals.css`](../app/globals.css) en dos capas:
 secciones, como en la referencia), `title` para `h3`, y después `body`, `small`
 y `micro`. `numeral` es para el número protagonista de una pieza.
 
+**Escala:** todo se mide en `rem`, así que el sitio crece desde la letra base
+del `html`: 100 % hasta 1600 px de ancho y de ahí en línea recta hasta 125 % en
+2560 (un monitor de 27"). Lo que tiene que crecer con la pantalla no se escribe
+en px.
+
 **Forma:** los cuatro radios de `MARCA.md`. `shadow-tile` para los tiles y
 `shadow-float` para lo que flota (nav, toast).
 

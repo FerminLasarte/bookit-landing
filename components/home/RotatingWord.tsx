@@ -11,10 +11,11 @@ const INTERVALO = 1400;
  * entra desde abajo, siempre en ese sentido. Las palabras invisibles de fondo
  * le dan a la caja el ancho de la más larga, así el renglón no salta.
  *
- * La máscara recorta sólo en vertical y con un cuarto de em de aire arriba y
- * abajo (que el margen negativo devuelve al renglón): los acentos y las colas
- * se salen del alto de línea, y el interletrado negativo, del ancho. Por eso
- * cada palabra viaja 150 % y no 100 %, para salir entera de ese aire.
+ * La máscara es un `clip-path` que no cambia el renglón: corta justo en su
+ * borde de arriba, para que la palabra que sale no pase por encima del título;
+ * abajo deja 0,15 em para las colas (p, q, j), que se salen del alto de línea;
+ * a los costados no corta. Los acentos entran en el renglón. Cada palabra
+ * viaja 115 % para salir entera, colas incluidas.
  *
  * Gira sin parar, pero se frena fuera de pantalla y con el puntero encima
  * (WCAG 2.2.2). Con Reducir movimiento no gira. Es decorativa: el texto
@@ -39,7 +40,7 @@ export default function RotatingWord({ words }: { words: readonly string[] }) {
       aria-hidden="true"
       onPointerEnter={() => setPausada(true)}
       onPointerLeave={() => setPausada(false)}
-      className="-my-[0.25em] inline-grid justify-items-center overflow-y-clip py-[0.25em] *:[grid-area:1/1]"
+      className="inline-grid justify-items-center [clip-path:inset(0_-0.5em_-0.15em)] *:[grid-area:1/1]"
     >
       {words.map((word) => (
         <span key={word} className="invisible">
@@ -49,9 +50,9 @@ export default function RotatingWord({ words }: { words: readonly string[] }) {
       <AnimatePresence initial={false}>
         <m.span
           key={words[actual]}
-          initial={{ y: "150%" }}
+          initial={{ y: "115%" }}
           animate={{ y: 0 }}
-          exit={{ y: "-150%" }}
+          exit={{ y: "-115%" }}
           transition={transicion.reveal}
         >
           {words[actual]}

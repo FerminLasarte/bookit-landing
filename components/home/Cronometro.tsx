@@ -76,7 +76,9 @@ function Paso({ title, body, pantalla, i, total, segundos, progreso, refLinea }:
           encendido: { opacity: 1, scale: 1, rotate: 0 },
         }}
         transition={transicion.resorte}
-        className="col-start-2 mx-auto w-[70%] max-w-60 md:w-full md:translate-y-[calc(var(--escalon)*-2rem)]"
+        // Desde `md` el ancho también depende del alto: en una pantalla baja los teléfonos, la
+        // línea y el nav tienen que entrar juntos mientras corre el reloj.
+        className="col-start-2 mx-auto w-[70%] max-w-60 md:w-full md:max-w-[min(15rem,26svh)] md:translate-y-[calc(var(--escalon)*-2rem)]"
       >
         {pantalla}
       </m.div>
@@ -137,10 +139,12 @@ export default function Cronometro({
   const refLinea = useRef<HTMLDivElement>(null);
   const escritorio = useRef(false);
 
-  // Móvil: la punta de la línea vertical sigue la altura de lectura.
-  const lista = useScroll({ target: refLista, offset: ["start 65%", "end 65%"] }).scrollYProgress;
-  // Escritorio: el reloj arranca cuando la línea asoma abajo, con los teléfonos ya a la vista.
-  const linea = useScroll({ target: refLinea, offset: ["start 85%", "start 45%"] }).scrollYProgress;
+  // Móvil: la punta de la línea vertical va al 80 % de la pantalla, así cada teléfono se
+  // enciende apenas asoma y no cuando ya está pasando.
+  const lista = useScroll({ target: refLista, offset: ["start 80%", "end 80%"] }).scrollYProgress;
+  // Escritorio: el reloj corre desde que la línea asoma abajo hasta que sube al 75 %. Más
+  // arriba, en una laptop de 14", el último teléfono se enciende ya tapado por el nav.
+  const linea = useScroll({ target: refLinea, offset: ["start end", "start 75%"] }).scrollYProgress;
   const progreso = useSpring(
     useTransform([lista, linea], ([enLista, enLinea]: number[]) => (escritorio.current ? enLinea! : enLista!)),
     transicion.suave,
