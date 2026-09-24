@@ -51,7 +51,9 @@ export default function HeroTelefonos({
 
   return (
     <div className="relative mx-auto mt-16 max-w-[56rem] perspective-[1400px] md:mt-20">
-      <m.div style={{ rotateX, rotateY }} className="relative flex justify-center transform-3d">
+      {/* Sin `transform-3d`: el grupo gira como una lámina. Si los teléfonos compartieran
+          el espacio 3D, Safari no sabría cuál va adelante donde se pisan y los haría saltar. */}
+      <m.div style={{ rotateX, rotateY }} className="relative flex justify-center">
         {(Object.keys(LADOS) as (keyof typeof LADOS)[]).map((key) => {
           const { lado, className } = LADOS[key];
           return (

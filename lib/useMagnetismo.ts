@@ -1,27 +1,48 @@
 "use client";
 
 import { useEffect } from "react";
-import { PUNTERO_FINO } from "./movimiento";
+import { animate, motionValue, type MotionValue, type Transition } from "motion/react";
+import { PUNTERO_FINO, transicion } from "./movimiento";
 
 /** Qué fracción de la distancia al centro sigue el elemento. */
 const FUERZA = 0.3;
 /** Cuánto se puede alejar el puntero de la caja antes de soltarla, en px. */
 const MARGEN = 12;
 
-/** La caja del elemento sin el desplazamiento que le pone el imán. */
-function cajaEnReposo(el: HTMLElement) {
-  const caja = el.getBoundingClientRect();
-  const [dx = 0, dy = 0] = getComputedStyle(el).translate.split(" ").map((v) => parseFloat(v) || 0);
-  return new DOMRect(caja.x - dx, caja.y - dy, caja.width, caja.height);
+type Iman = { x: MotionValue<number>; y: MotionValue<number> };
+const imanes = new WeakMap<HTMLElement, Iman>();
+
+/** El desplazamiento de un elemento, como dos valores que se pintan en su `translate`. */
+function imanDe(el: HTMLElement): Iman {
+  let iman = imanes.get(el);
+  if (!iman) {
+    const x = motionValue(0);
+    const y = motionValue(0);
+    const pintar = () => (el.style.translate = `${x.get()}px ${y.get()}px`);
+    x.on("change", pintar);
+    y.on("change", pintar);
+    iman = { x, y };
+    imanes.set(el, iman);
+  }
+  return iman;
+}
+
+/** Un resorte que, al cambiar de destino, sigue con la velocidad que traía. */
+function llevar(el: HTMLElement, dx: number, dy: number, transition: Transition) {
+  const { x, y } = imanDe(el);
+  animate(x, dx, transition);
+  animate(y, dy, transition);
 }
 
 /**
  * Todo lo que lleva `data-magnetico` se corre hacia el puntero mientras está
- * encima, y vuelve al soltarlo. Un solo listener para todo el sitio; el cómo
- * se mueve vive en la utilidad `magnetico`. Sólo con mouse y sin Reducir movimiento.
+ * encima, y vuelve con un rebote al soltarlo. Un solo listener para todo el
+ * sitio. Sólo con mouse y sin Reducir movimiento.
  *
- * Se mide la caja una vez, al agarrar, y en reposo: medirla ya corrida hace
- * que el imán se persiga a sí mismo y tiemble en los bordes.
+ * La caja se mide una vez, al agarrar, y en reposo: medirla ya corrida hace
+ * que el imán se persiga a sí mismo. Y va con resortes y no con una
+ * transición de CSS, que en cada movimiento del puntero arranca de cero y
+ * pierde la velocidad: eso era el temblor.
  */
 export function useMagnetismo() {
   useEffect(() => {
@@ -31,30 +52,35 @@ export function useMagnetismo() {
     let actual: { el: HTMLElement; caja: DOMRect } | null = null;
 
     const soltar = () => {
-      actual?.el.style.removeProperty("--mx");
-      actual?.el.style.removeProperty("--my");
+      if (actual) llevar(actual.el, 0, 0, transicion.llegada);
       actual = null;
     };
 
     const mover = (event: PointerEvent) => {
-      const { clientX: x, clientY: y } = event;
+      const { clientX: px, clientY: py } = event;
 
       if (actual) {
         const { caja } = actual;
         const cerca =
-          x >= caja.left - MARGEN && x <= caja.right + MARGEN && y >= caja.top - MARGEN && y <= caja.bottom + MARGEN;
+          px >= caja.left - MARGEN && px <= caja.right + MARGEN && py >= caja.top - MARGEN && py <= caja.bottom + MARGEN;
         if (!cerca) soltar();
       }
 
       if (!actual) {
         const el = (event.target as Element | null)?.closest<HTMLElement>("[data-magnetico]");
         if (!el) return;
-        actual = { el, caja: cajaEnReposo(el) };
+        const { x, y } = imanDe(el);
+        const caja = el.getBoundingClientRect();
+        actual = { el, caja: new DOMRect(caja.x - x.get(), caja.y - y.get(), caja.width, caja.height) };
       }
 
       const { el, caja } = actual;
-      el.style.setProperty("--mx", `${(x - caja.left - caja.width / 2) * FUERZA}px`);
-      el.style.setProperty("--my", `${(y - caja.top - caja.height / 2) * FUERZA}px`);
+      llevar(
+        el,
+        (px - caja.left - caja.width / 2) * FUERZA,
+        (py - caja.top - caja.height / 2) * FUERZA,
+        transicion.resorte,
+      );
     };
 
     // Al scrollear la caja medida deja de valer.

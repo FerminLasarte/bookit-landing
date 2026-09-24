@@ -93,8 +93,8 @@ La base es [`motion`](https://motion.dev), montado una vez en
 transformaciones cuando el sistema pide Reducir movimiento, y `LazyMotion`
 carga el motor después de hidratar (se usa `m.*`, nunca `motion.*`).
 
-- **Lo que CSS resuelve, lo resuelve CSS:** reveals, `Plegable`, hovers, el
-  imán de los botones y el splash. Lo que depende del scroll, del puntero o de
+- **Lo que CSS resuelve, lo resuelve CSS:** reveals, `Plegable`, hovers y el
+  splash. Lo que depende del scroll, del puntero o de
   una presencia (algo que entra y sale) va con `motion`.
 - **Los valores no se escriben en el componente.** CSS lee los tokens de
   `globals.css`; `motion` lee `lib/movimiento.ts`, que los espeja y suma los
@@ -108,7 +108,7 @@ carga el motor después de hidratar (se usa `m.*`, nunca `motion.*`).
 |---|---|
 | Splash del tijeretazo, una vez por visita | `layout/Splash` + utilidad `splash` |
 | Cursor: una herramienta por sección | `layout/Cursor` + `content/cursor.ts` |
-| Botones magnéticos | `lib/useMagnetismo` + utilidad `magnetico` |
+| Botones magnéticos | `lib/useMagnetismo`, con resortes de `motion` |
 | El nav se compacta al scrollear | `layout/Nav` |
 
 ## Estructura
