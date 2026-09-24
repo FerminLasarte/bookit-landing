@@ -271,18 +271,6 @@
 }
 
 /*
- * Un botón que se deja llevar por el puntero (`lib/useMagnetismo` pone
- * `--mx` y `--my`). Es dueño de toda la transición del botón: el fondo y
- * el tap son chicos; el imán vuelve despacio a su lugar.
- */
-@utility magnetico {
-  translate: var(--mx, 0) var(--my, 0);
-  transition-property: background-color, scale, translate;
-  transition-duration: var(--duration-chico), var(--duration-chico), var(--duration-reveal);
-  transition-timing-function: var(--ease-out-cubic), var(--ease-out-cubic), var(--ease-reveal);
-}
-
-/*
  * El tijeretazo (`layout/Splash`). Corre con el primer cuadro, sin esperar a
  * JS: el logo entra, una línea lo corta de lado a lado con la tijera a la
  * cabeza y las dos mitades se abren. Si ya se vio en la visita, no se pinta.

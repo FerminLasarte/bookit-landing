@@ -33,7 +33,8 @@ type Props =
 
 export default function Button({ variant = "primary", size = "default", className, ...props }: Props) {
   const classes = cn(
-    "ring-focus magnetico inline-flex items-center justify-center gap-2 rounded-pill text-center font-semibold",
+    "ring-focus inline-flex items-center justify-center gap-2 rounded-pill text-center font-semibold",
+    "transition-[background-color,scale] duration-(--duration-chico) ease-out-cubic",
     "active:scale-(--scale-tap) motion-reduce:active:scale-100",
     "disabled:pointer-events-none disabled:opacity-55",
     variants[variant],
