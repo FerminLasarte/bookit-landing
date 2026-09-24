@@ -157,6 +157,14 @@
 
 @layer base {
   html {
+    /*
+     * En pantallas grandes el sitio entero crece desde acá: todo se mide en
+     * `rem`, así que texto, aire, anchos y capturas escalan juntos. Sin
+     * cambios hasta 1600 px; de ahí sube en línea recta hasta 125 % en 2560
+     * (un monitor de 27"). En `%` y no en px, para respetar la letra que
+     * eligió quien navega.
+     */
+    font-size: clamp(100%, 0.4167vw + 0.5833rem, 125%);
     scroll-behavior: smooth;
     scroll-padding-top: 7rem; /* el nav flotante no tapa el destino de un ancla */
     -webkit-text-size-adjust: 100%;
@@ -214,7 +222,7 @@
 
 @utility wrap {
   margin-inline: auto;
-  max-width: 1180px;
+  max-width: 73.75rem; /* 1180 px con la letra base; crece con ella */
   padding-inline: 1.25rem;
 
   @media (min-width: 768px) {
