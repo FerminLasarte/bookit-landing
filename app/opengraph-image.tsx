@@ -1,101 +1,51 @@
-import { ImageResponse } from "next/og";
+import { join } from "node:path";
 import { site } from "@/content/site";
+import { capturaOg, og, ogImage, ogSize } from "@/lib/og";
 
-export const size = { width: 1200, height: 630 };
+export const size = ogSize;
 export const contentType = "image/png";
-export const alt = "Bookit — Tu próximo turno, a un clic de distancia.";
+export const alt = "Bookit — Tu próximo turno, del rubro que sea.";
 
-/** OG de la home. Reemplaza al `banner_compartir.jpg` de Supabase. */
+const inicio = await capturaOg(join(process.cwd(), "assets/capturas/claro/01_cliente_inicio.webp"), 262);
+
+/** OG de la home: el título del hero y la app en un tile, cortada por el borde. */
 export default function OpengraphImage() {
-  return new ImageResponse(
-    (
+  return ogImage({
+    aside: (
       <div
         style={{
-          width: "100%",
-          height: "100%",
+          position: "absolute",
+          top: 64,
+          right: 64,
+          width: 360,
+          height: 640,
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          background: "#151311",
-          padding: "72px 80px",
-          fontFamily: "sans-serif",
+          justifyContent: "center",
+          paddingTop: 48,
+          borderRadius: 24,
+          background: og.arena,
+          boxShadow: og.tileShadow,
         }}
       >
-        {/* El glow ámbar, igual que en el hero */}
-        <div
-          style={{
-            position: "absolute",
-            top: -220,
-            left: 120,
-            width: 720,
-            height: 720,
-            borderRadius: 9999,
-            background:
-              "radial-gradient(circle, rgba(215,138,29,0.28) 0%, rgba(215,138,29,0) 70%)",
-          }}
-        />
-
-        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div style={{ display: "flex", fontSize: 40, fontWeight: 800, letterSpacing: "-0.04em" }}>
-            <span style={{ color: "#E8E2D9" }}>Book</span>
-            <span style={{ color: "rgba(215,138,29,0.7)" }}>·</span>
-            <span style={{ color: "#D78A1D" }}>it</span>
-          </div>
-          <div style={{ width: 40, height: 2, background: "#D78A1D" }} />
-          {/* Un solo nodo de texto: Satori exige display:flex si hay más de uno. */}
-          <div
-            style={{
-              display: "flex",
-              color: "#D9C6B4",
-              fontSize: 20,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-            }}
-          >
-            {`${site.city} · Próximo lanzamiento`}
-          </div>
-        </div>
-
+        {/* El marco de `Screen`: 24 afuera = 16 adentro + 8 de marco */}
         <div
           style={{
             display: "flex",
-            color: "#E8E2D9",
-            fontSize: 82,
-            fontWeight: 800,
-            lineHeight: 1,
-            letterSpacing: "-0.035em",
-            maxWidth: 900,
+            padding: 8,
+            height: 620,
+            borderRadius: 24,
+            background: og.surface,
+            boxShadow: og.tileShadow,
           }}
         >
-          Tu próximo turno, a un clic de distancia.
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          {["09:00", "10:30", "18:15"].map((slot) => (
-            <div
-              key={slot}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                border: "1px solid rgba(255,255,255,0.14)",
-                borderRadius: 48,
-                padding: "10px 22px",
-                color: "#E8E2D9",
-                fontSize: 22,
-              }}
-            >
-              <span style={{ color: "#D78A1D" }}>[</span>
-              {slot}
-              <span style={{ color: "#D78A1D" }}>]</span>
-            </div>
-          ))}
-          <div style={{ color: "#D9C6B4", fontSize: 22, marginLeft: 12 }}>
-            Barberías, peluquerías, uñas, estética y más.
-          </div>
+          {/* 1206 × 2622 a 262 de ancho */}
+          <img src={inicio} width={262} height={570} style={{ borderRadius: 16 }} alt="" />
         </div>
       </div>
     ),
-    size,
-  );
+    titulo: "Tu próximo turno,",
+    acento: "del rubro que sea.",
+    bajada: `Los locales de ${site.city} en una sola app. Reservá cuando se te ocurra.`,
+    anchoTexto: 600,
+  });
 }
