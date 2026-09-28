@@ -34,6 +34,8 @@ export const site = {
   },
   app: {
     bundleId: "ar.com.somosbookit.app",
+    // El esquema de los enlaces de la app que no son de cuenta (invitaciones).
+    esquema: "bookitapp",
     appleTeamId: "MPX5U375K6",
     appStore: null,
     playStore: null,

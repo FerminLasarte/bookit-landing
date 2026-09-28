@@ -124,7 +124,23 @@ export const verificar = {
     desc: "Pedí uno nuevo desde la app de Bookit y abrilo desde el mail.",
   },
   cta: "Abrir Bookit",
-  ayuda: invite.ayuda,
+} as const;
+
+/**
+ * `/equipo`: el botón del mail de invitación a un equipo. Como `/auth/v1/verify`,
+ * la ve quien no saltó a la app. Sin tiendas no hay link de descarga: quien no
+ * tiene Bookit la instala y vuelve al mail.
+ */
+export const equipo = {
+  conToken: {
+    title: "Abrí esta invitación en tu teléfono.",
+    desc: "Tocá el botón del mail desde el teléfono donde tenés Bookit y la app se abre sola. Si ya estás en ese teléfono, usá el botón de abajo. Si todavía no tenés Bookit, instalala y volvé a tocar el botón del mail.",
+  },
+  sinToken: {
+    title: "Este enlace está incompleto.",
+    desc: "Abrí otra vez el botón del mail de la invitación o pedile al local que te invite de nuevo.",
+  },
+  cta: "Ver la invitación",
 } as const;
 
 export const noEncontrada = {
