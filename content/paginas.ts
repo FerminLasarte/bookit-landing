@@ -108,6 +108,25 @@ export const invite = {
   },
 } as const;
 
+/**
+ * `/auth/v1/verify`: el botón de los mails de cuenta de la app. Con Bookit
+ * instalado la abre la app; esta página la ve quien lo abrió en la compu o en
+ * un navegador que no salta a la app (el de Gmail). No verifica nada: el token
+ * se gasta recién en la app.
+ */
+export const verificar = {
+  conToken: {
+    title: "Abrí este enlace en tu teléfono.",
+    desc: "Tocalo desde el teléfono donde tenés Bookit y la app se abre sola. Si ya estás en ese teléfono, usá el botón.",
+  },
+  sinToken: {
+    title: "Este enlace está incompleto.",
+    desc: "Pedí uno nuevo desde la app de Bookit y abrilo desde el mail.",
+  },
+  cta: "Abrir Bookit",
+  ayuda: invite.ayuda,
+} as const;
+
 export const noEncontrada = {
   title: "Esta página no existe.",
   lede: "Puede que el link esté mal escrito o que la hayamos movido. Volvé al inicio y seguí desde ahí.",
