@@ -92,4 +92,4 @@ export const flags = {
 } as const;
 
 /** Fecha de última actualización de los textos legales. */
-export const legalUpdatedAt = "21 de septiembre de 2026";
+export const legalUpdatedAt = "28 de septiembre de 2026";
