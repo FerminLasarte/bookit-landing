@@ -35,7 +35,7 @@ export const terminos: LegalDoc = {
   slug: "terminos",
   title: "Términos y Condiciones",
   intro:
-    "Las reglas de uso de Bookit: qué hacemos, qué no, cómo funcionan las reservas, los Puntos Bookit y las suscripciones de locales.",
+    "Las reglas de uso de Bookit: qué hacemos, qué no, cómo funcionan las reservas, los pagos, los Puntos Bookit y la suscripción de los locales.",
   sections: [
     {
       id: "servicio",
@@ -47,11 +47,11 @@ export const terminos: LegalDoc = {
         },
         {
           type: "p",
-          text: "Bookit intermedia la reserva del turno. El servicio en sí —el corte, el color, la sesión— lo presta el local, bajo su propia responsabilidad. Bookit no fija los precios, no define la duración de los servicios, no supervisa la calidad del trabajo ni responde por el resultado.",
+          text: `Bookit intermedia la reserva del turno. El servicio en sí —el corte, el color, la sesión— lo presta el local, que es el único responsable de su calidad, seguridad, idoneidad y cumplimiento normativo, conforme la ${site.legal.consumerLaw}. Bookit no fija los precios, no define la duración de los servicios, no supervisa la calidad del trabajo ni responde por el resultado.`,
         },
         {
           type: "p",
-          text: "Cada local es responsable de la información que publica: sus servicios, precios, horarios y condiciones de cancelación.",
+          text: "Cada local es responsable de la información que publica: sus servicios, precios, horarios, fotografías y condiciones de cancelación.",
         },
       ],
     },
@@ -61,7 +61,7 @@ export const terminos: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: "Para usar Bookit necesitás crear una cuenta con datos reales y mantenerlos actualizados. Sos responsable de la actividad que ocurra en tu cuenta y de mantener tus credenciales a resguardo.",
+          text: "Para usar Bookit necesitás crear una cuenta, con tu correo electrónico o con tu cuenta de Apple o de Google, con datos reales y mantenerlos actualizados. Sos responsable de la actividad que ocurra en tu cuenta y de mantener tus credenciales a resguardo.",
         },
         {
           type: "p",
@@ -69,7 +69,7 @@ export const terminos: LegalDoc = {
         },
         {
           type: "p",
-          text: "Podemos suspender o cerrar una cuenta que use la plataforma para fines fraudulentos, que cargue datos falsos o que perjudique a otros usuarios o locales.",
+          text: "Podemos suspender o cerrar una cuenta que use la plataforma para fines fraudulentos, que cargue datos falsos, que registre ausencias reiteradas o que perjudique a otros usuarios o locales.",
         },
       ],
     },
@@ -79,7 +79,7 @@ export const terminos: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: "Cuando reservás un turno por Bookit, estás tomando un horario real en la agenda de un local. Confirmada la reserva, el compromiso es entre vos y ese local.",
+          text: "Cuando reservás un turno por Bookit, estás tomando un horario real en la agenda de un local, y aceptás sus condiciones particulares: tolerancia horaria, política de cancelación y requisitos de admisión. Confirmada la reserva, el compromiso es entre vos y ese local.",
         },
         {
           type: "ul",
@@ -87,52 +87,56 @@ export const terminos: LegalDoc = {
             "Podés cancelar o reprogramar desde la app, con la antelación que cada local haya definido.",
             "Cancelar fuera de plazo o no presentarte puede tener consecuencias definidas por el local, y puede afectar tu posibilidad de reservar ahí en el futuro.",
             "Si el local cancela un turno, te avisamos por la app y, cuando corresponda, por email.",
-            "El uso reiterado de reservas sin presentarse puede derivar en la suspensión de la cuenta.",
+            "Bookit no responde si el local cancela, reprograma o rechaza un turno por una llegada tarde o por un imprevisto de fuerza mayor en el establecimiento.",
           ],
         },
-        ...(payments.mercadoPagoEnApp
-          ? ([
-              {
-                type: "p",
-                text: "Cada local define cómo se cobra su turno: puede cobrarlo en el local, como siempre, o habilitar el pago por Mercado Pago dentro de Bookit. Cuál de las dos vías acepta lo ves antes de confirmar la reserva.",
-              },
-              {
-                type: "p",
-                text: "Cuando el turno se paga por Mercado Pago dentro de Bookit, Bookit gestiona ese cobro por el precio y las condiciones que el local informa antes de que confirmes. El servicio lo presta el local, que sigue siendo el responsable de prestarlo.",
-              },
-              {
-                type: "p",
-                text: `Si cancelás un turno ya pagado, la devolución se rige por la política de cancelación que el local informó al reservar y por la ${site.legal.consumerLaw}. Además, si contrataste a distancia, tenés el derecho de revocación de los 10 días corridos.`,
-                link: {
-                  label: "Ver Botón de arrepentimiento",
-                  href: "/legal/boton-de-arrepentimiento",
-                },
-              },
-            ] as const)
-          : ([
-              {
-                type: "p",
-                text: "Reservar por Bookit no implica pagar por Bookit: el servicio lo abonás directamente en el local, según sus medios de pago.",
-              },
-            ] as const)),
       ],
     },
     {
-      id: "puntos",
-      heading: "4. Puntos Bookit",
+      id: "pagos",
+      heading: "4. Pagos, señas y devoluciones",
       blocks: [
         {
           type: "p",
-          text: "Los Puntos Bookit son un beneficio de fidelización que otorgamos de forma gratuita. Se acumulan por reservar y concretar turnos a través de la plataforma, y se canjean en turnos posteriores según las condiciones vigentes en cada momento.",
+          text: "Cada local define cómo se cobra su turno: puede cobrarlo en el local, como siempre, o habilitar el pago por Mercado Pago dentro de Bookit. Cuál de las dos vías acepta lo ves antes de confirmar la reserva.",
+        },
+        {
+          type: "p",
+          text: "Los pagos por Mercado Pago se acreditan directamente en la cuenta de Mercado Pago del local. Bookit no es una entidad financiera, no guarda datos de tarjetas ni retiene el dinero de los turnos.",
         },
         {
           type: "ul",
           items: [
-            "Los puntos no son dinero, no tienen valor monetario y no se cambian por efectivo.",
+            "Una reserva que se paga por Mercado Pago queda tomada por 15 minutos: si el pago no se completa en ese plazo, el horario se libera y la reserva vence.",
+            "Cada local fija hasta cuántas horas antes del turno devuelve lo pagado si cancelás, y te lo informa al reservar. También puede no hacer devoluciones.",
+            "Si el que cancela es el local, lo pagado se devuelve siempre.",
+            "Si un pago llega cuando la reserva ya venció o el horario ya no está disponible, también se devuelve.",
+          ],
+        },
+        {
+          type: "p",
+          text: "En esos casos, Bookit le pide la devolución a Mercado Pago de forma automática; los plazos de acreditación dependen de Mercado Pago y del medio de pago. Cualquier otro reclamo sobre pagos, contracargos o pérdida de señas por ausencia se gestiona con el local o con Mercado Pago.",
+        },
+      ],
+    },
+    {
+      id: "puntos",
+      heading: "5. Puntos Bookit",
+      blocks: [
+        {
+          type: "p",
+          text: "Los Puntos Bookit son un beneficio de fidelización que otorgamos de forma gratuita. Se suman con cada turno completado y por invitar a otras personas (sección 6), y se canjean por los premios que ofrece cada local.",
+        },
+        {
+          type: "ul",
+          items: [
+            "Los puntos vencen a los seis meses de haberse obtenido.",
+            "No son dinero, no tienen valor monetario y no se cambian por efectivo.",
             "No se transfieren, ceden ni venden a otras personas.",
-            "Pueden tener fecha de vencimiento, topes de acumulación o de canje.",
+            "Los premios los define y los entrega cada local, que es el responsable de cumplirlos. Al canjear uno se genera un código válido por 7 días, que presentás en el local.",
             "Podemos modificar, suspender o discontinuar el programa. Si lo hacemos, avisamos con antelación razonable y respetamos los canjes ya realizados.",
             "Los puntos obtenidos por medios irregulares (cuentas duplicadas, reservas simuladas, abuso del programa de referidos) se anulan.",
+            "Los puntos se pierden al eliminar la cuenta.",
           ],
         },
         {
@@ -143,11 +147,11 @@ export const terminos: LegalDoc = {
     },
     {
       id: "referidos",
-      heading: "5. Referidos e invitaciones",
+      heading: "6. Referidos e invitaciones",
       blocks: [
         {
           type: "p",
-          text: `El programa de referidos es exclusivo de las cuentas personales, es decir, de quienes sacan turnos. Cada una tiene un código de invitación propio, que se comparte como link (${site.dominio}/invite/TUCODIGO). Cuando alguien se registra como usuario usando tu código, las dos partes reciben el beneficio vigente al momento del registro.`,
+          text: `El programa de referidos es exclusivo de las cuentas personales, es decir, de quienes sacan turnos. Cada una tiene un código de invitación propio, que se comparte como link (${site.dominio}/invite/TUCODIGO). Cuando alguien se registra con tu código y completa su primer turno, los dos reciben los puntos que la app informe en ese momento.`,
         },
         {
           type: "ul",
@@ -162,11 +166,19 @@ export const terminos: LegalDoc = {
     },
     {
       id: "locales",
-      heading: "6. Locales: suscripción y precio fundador",
+      heading: "7. Locales: suscripción a Bookit Pro y precio fundador",
       blocks: [
         {
           type: "p",
-          text: "Los locales acceden a Bookit mediante una suscripción mensual. El precio, los medios de pago y el alcance del plan se informan antes de contratar.",
+          text: "Para publicar un local en Bookit hay que suscribirse a Bookit Pro, autorizando un débito automático en Mercado Pago. Los precios, la duración de cada plan y los días de prueba sin cargo se informan en la app antes de contratar.",
+        },
+        {
+          type: "ul",
+          items: [
+            "Al terminar la prueba, Mercado Pago cobra el plan elegido y lo renueva automáticamente en cada período, hasta que el local lo cancele.",
+            "Si el local cancela, conserva el servicio hasta el final del período ya pagado.",
+            "Si un cobro no se acredita, el local tiene un período de gracia para regularizarlo. Vencido ese plazo, deja de estar visible y de recibir reservas hasta que se regularice el pago.",
+          ],
         },
         {
           type: "p",
@@ -174,13 +186,24 @@ export const terminos: LegalDoc = {
         },
         {
           type: "p",
-          text: "El local es responsable de mantener su agenda, sus precios y su información actualizados, y de cumplir con los turnos que acepta. También de la normativa que aplique a su actividad (habilitaciones, facturación, higiene y seguridad).",
+          text: "El local es responsable de mantener su agenda, sus precios y su información actualizados, de cumplir con los turnos que acepta, de las personas que invita a su equipo y del uso que haga de los datos de sus clientes, que sólo puede usar para prestar el servicio reservado. También de la normativa que aplique a su actividad (habilitaciones, facturación, higiene y seguridad).",
+        },
+      ],
+    },
+    {
+      id: "baja",
+      heading: "8. Baja de la cuenta",
+      blocks: [
+        {
+          type: "p",
+          text: "Podés eliminar tu cuenta cuando quieras, desde la app. Tus turnos por venir se cancelan y, si estaban pagos por Mercado Pago, lo pagado se devuelve según la política de cancelación de cada local. Tus puntos se pierden. Si quien se da de baja es el dueño de un local, el local deja de estar visible y de recibir reservas, y se cancela el débito automático de su suscripción. La baja no se puede deshacer.",
+          link: { label: "Ver Eliminación de cuenta", href: "/legal/eliminar-cuenta" },
         },
       ],
     },
     {
       id: "responsabilidad",
-      heading: "7. Responsabilidad y limitaciones",
+      heading: "9. Responsabilidad y limitaciones",
       blocks: [
         {
           type: "p",
@@ -188,7 +211,7 @@ export const terminos: LegalDoc = {
         },
         {
           type: "p",
-          text: "Bookit no responde por la calidad, seguridad o legalidad de los servicios prestados por los locales, ni por daños derivados de la relación entre un usuario y un local. Tampoco por la exactitud de la información que cada local publica.",
+          text: "Bookit no responde por la calidad, seguridad o legalidad de los servicios prestados por los locales, ni por daños derivados de la relación entre un usuario y un local, ni por lo que ocurra dentro de sus instalaciones. Tampoco por la exactitud de la información que cada local publica.",
         },
         {
           type: "p",
@@ -197,8 +220,18 @@ export const terminos: LegalDoc = {
       ],
     },
     {
+      id: "propiedad",
+      heading: "10. Propiedad intelectual",
+      blocks: [
+        {
+          type: "p",
+          text: "El software, el diseño, los logotipos, el código y el contenido de Bookit son de sus desarrolladores. No se pueden copiar, reproducir, distribuir ni modificar sin autorización expresa.",
+        },
+      ],
+    },
+    {
       id: "cambios",
-      heading: "8. Cambios en estos Términos",
+      heading: "11. Cambios en estos Términos",
       blocks: [
         {
           type: "p",
@@ -208,7 +241,7 @@ export const terminos: LegalDoc = {
     },
     {
       id: "ley",
-      heading: "9. Ley aplicable y jurisdicción",
+      heading: "12. Ley aplicable y jurisdicción",
       blocks: [
         {
           type: "p",
@@ -218,7 +251,7 @@ export const terminos: LegalDoc = {
     },
     {
       id: "contacto",
-      heading: "10. Contacto",
+      heading: "13. Contacto",
       blocks: [
         {
           type: "p",
@@ -248,7 +281,7 @@ export const privacidad: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: `El responsable del tratamiento de tus datos personales es ${site.legalName}, con domicilio en ${site.city}, ${site.province}, ${site.country}.`,
+          text: `El responsable del tratamiento de tus datos personales es ${site.legalName}, con domicilio en ${site.city}, ${site.province}, ${site.country}. Los tratamos conforme la ${site.legal.dataProtectionLaw} y las normas de la Agencia de Acceso a la Información Pública (AAIP).`,
         },
         {
           type: "p",
@@ -265,10 +298,18 @@ export const privacidad: LegalDoc = {
       id: "datos",
       heading: "2. Qué datos recogemos",
       blocks: [
+        { type: "p", text: "Si usás la app:" },
         {
-          type: "p",
-          text: "Si te anotás a la lista de espera desde esta web, recogemos únicamente:",
+          type: "ul",
+          items: [
+            "Datos de registro: nombre y correo electrónico y, si los cargás, fotografía de perfil, teléfono y fecha de nacimiento. Si entrás con Apple o con Google, el nombre y el correo que esos servicios comparten.",
+            "Tu historial de reservas, pagos, Puntos Bookit y canjes, y tus locales favoritos.",
+            "La ubicación de tu teléfono, sólo si das el permiso y únicamente para mostrarte los locales cercanos. No la guardamos en nuestros servidores.",
+            "Un identificador de tu teléfono para mandarte notificaciones.",
+            "Si tenés un local: sus datos (nombre, dirección, horarios, servicios y fotografías) y los de tu equipo (nombre, fotografía y correo electrónico).",
+          ],
         },
+        { type: "p", text: "Si te anotás a la lista de espera desde esta web:" },
         {
           type: "ul",
           items: [
@@ -282,11 +323,7 @@ export const privacidad: LegalDoc = {
         },
         {
           type: "p",
-          text: "Cuando la app esté disponible, y si creás una cuenta, vamos a tratar además los datos necesarios para gestionar tus turnos (historial de reservas, locales favoritos, Puntos Bookit) y datos técnicos de uso. Esta política se actualizará en ese momento.",
-        },
-        {
-          type: "p",
-          text: "No pedimos ni almacenamos datos sensibles, y esta web no solicita datos de tarjetas ni credenciales bancarias.",
+          text: "No pedimos ni almacenamos datos sensibles, números de tarjetas ni credenciales bancarias. De cada pago guardamos sólo el número de operación de Mercado Pago, el monto y su estado.",
         },
       ],
     },
@@ -295,12 +332,19 @@ export const privacidad: LegalDoc = {
       heading: "3. Para qué los usamos y con qué base legal",
       blocks: [
         {
-          type: "p",
-          text: `Tratamos tus datos con la finalidad de avisarte del lanzamiento de Bookit en tu ciudad, acreditarte los beneficios de la lista de espera, contactarte si sos un local interesado en el precio fundador, y darte soporte si nos escribís.`,
+          type: "ul",
+          items: [
+            "Crear, verificar y gestionar tu cuenta.",
+            "Confirmar y seguir tus turnos, incluidos los recordatorios y el aviso del próximo turno en la pantalla del teléfono.",
+            "Mandarte notificaciones y correos sobre tus reservas y tu cuenta.",
+            "Administrar los Puntos Bookit y los premios.",
+            "Avisarte del lanzamiento de Bookit en tu ciudad, acreditarte los beneficios de la lista de espera y contactarte si sos un local interesado en el precio fundador.",
+            "Darte soporte si nos escribís, y mejorar la app con métricas internas.",
+          ],
         },
         {
           type: "p",
-          text: `La base legal es tu consentimiento libre, expreso e informado, prestado al marcar la casilla del formulario, conforme la ${site.legal.dataProtectionLaw}. Podés revocarlo en cualquier momento, sin efecto retroactivo.`,
+          text: `La base legal es tu consentimiento libre, expreso e informado —al crear la cuenta o al marcar la casilla del formulario de la lista de espera— y la ejecución del servicio que usás, conforme la ${site.legal.dataProtectionLaw}. Podés revocar el consentimiento en cualquier momento, sin efecto retroactivo.`,
         },
         {
           type: "p",
@@ -314,13 +358,21 @@ export const privacidad: LegalDoc = {
       blocks: [
         {
           type: "p",
+          text: "Cuando reservás, el local ve tu nombre y tu fotografía de perfil junto con los datos del turno. No ve tu correo electrónico ni tu teléfono.",
+        },
+        {
+          type: "p",
           text: "Para operar usamos proveedores que actúan como encargados del tratamiento, con acceso limitado a lo estrictamente necesario:",
         },
         {
           type: "ul",
           items: [
-            "Supabase — base de datos donde se guardan los registros de la lista de espera.",
-            "Resend — envío de los correos transaccionales (la confirmación que recibís al anotarte).",
+            "Supabase — base de datos y autenticación.",
+            "Google Firebase — envío de notificaciones.",
+            "Google Maps — mapas y búsqueda de direcciones.",
+            "Mercado Pago — pagos de turnos y de la suscripción de los locales.",
+            "Resend — envío de correos.",
+            "Apple y Google — inicio de sesión, si lo elegís.",
             "Vercel — hosting de este sitio y de su función de servidor.",
           ],
         },
@@ -336,7 +388,11 @@ export const privacidad: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: "Conservamos los datos de la lista de espera mientras la lista siga vigente y hasta 24 meses después del lanzamiento en tu ciudad, o hasta que pidas la baja —lo que ocurra primero—. Vencido ese plazo, los eliminamos o los anonimizamos.",
+          text: "Los datos de tu cuenta, mientras la cuenta esté activa. Al eliminarla, borramos tus datos personales y tus fotografías; los turnos pasados quedan en la agenda del local sin identificarte, y los registros de pagos se conservan por obligaciones legales y contables.",
+        },
+        {
+          type: "p",
+          text: "Los datos de la lista de espera, mientras la lista siga vigente y hasta 24 meses después del lanzamiento en tu ciudad, o hasta que pidas la baja —lo que ocurra primero—. Vencido ese plazo, los eliminamos o los anonimizamos.",
         },
         {
           type: "p",
@@ -354,7 +410,7 @@ export const privacidad: LegalDoc = {
         },
         {
           type: "p",
-          text: `Para ejercerlos, escribinos a ${site.email} desde la dirección con la que te registraste. Respondemos el pedido de acceso dentro de los 10 días corridos, y los de rectificación, actualización o supresión dentro de los 5 días hábiles de recibido el reclamo, conforme la ${site.legal.dataProtectionLaw}.`,
+          text: `Desde la app podés corregir tus datos en Información personal y eliminar tu cuenta desde esa misma sección. También podés escribirnos a ${site.email} desde la dirección con la que te registraste. Respondemos el pedido de acceso dentro de los 10 días corridos, y los de rectificación, actualización o supresión dentro de los 5 días hábiles de recibido el reclamo, conforme la ${site.legal.dataProtectionLaw}.`,
           link: { label: `Escribir a ${site.email}`, href: `mailto:${site.email}` },
         },
         {
@@ -390,7 +446,7 @@ export const privacidad: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: "Si actualizamos esta política, cambiamos la fecha de arriba y, cuando el cambio sea sustancial, te avisamos por email antes de que entre en vigencia.",
+          text: "Si actualizamos esta política, cambiamos la fecha de arriba y, cuando el cambio sea sustancial, te avisamos por la app o por email antes de que entre en vigencia.",
         },
       ],
     },
@@ -472,15 +528,15 @@ export const eliminarCuenta: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: "Cuando la app esté disponible, vas a poder eliminar tu cuenta sin intermediarios:",
+          text: "Podés eliminar tu cuenta sin intermediarios:",
         },
         {
           type: "ol",
           items: [
             "Abrí Bookit e iniciá sesión.",
-            "Entrá a Perfil y después a Configuración de la cuenta.",
-            "Tocá Eliminar mi cuenta.",
-            "Confirmá la eliminación. Te pedimos confirmarlo una vez más porque la acción no se puede deshacer.",
+            "Entrá a Perfil y después a Información personal. Si tenés un local, a Editar datos del negocio; si sos parte de un equipo, a Editar datos profesionales.",
+            "Tocá Eliminar cuenta.",
+            "Confirmá la eliminación. Antes de confirmar te mostramos qué turnos se cancelan, porque la acción no se puede deshacer.",
           ],
         },
       ],
@@ -508,10 +564,11 @@ export const eliminarCuenta: LegalDoc = {
         {
           type: "ul",
           items: [
-            "Tu nombre, correo electrónico y teléfono.",
+            "Tu nombre, correo electrónico, teléfono y fotografías.",
             "Tu registro en la lista de espera, si estabas anotado.",
             "Tu perfil, tus locales favoritos y tus preferencias.",
             "Tu saldo de Puntos Bookit, que se pierde y no se puede restituir ni convertir en dinero.",
+            "Tus turnos por venir, que se cancelan. Si estaban pagos por Mercado Pago, lo pagado se devuelve según la política de cancelación de cada local.",
           ],
         },
         { type: "p", text: "Se conserva, de forma acotada:" },
@@ -578,19 +635,12 @@ export const botonArrepentimiento: LegalDoc = {
           ? ([
               {
                 type: "p",
-                text: "Hay turnos que se pagan dentro de Bookit, por Mercado Pago, cuando el local habilita esa vía. Ese pago es una contratación a distancia, así que el derecho aplica de lleno y no es una explicación para el futuro: si pagaste un turno por la plataforma, podés revocar esa contratación dentro de los 10 días corridos, sin costo y sin justificar el motivo.",
+                text: "La suscripción de los locales a Bookit Pro se cobra por Mercado Pago. Es una contratación a distancia, así que este derecho y el canal de la sección siguiente aplican a esa contratación.",
               },
               {
                 type: "p",
-                text: "Si el local cobra en el local y no por la plataforma, no hubo contratación a distancia con Bookit por ese turno: la cancelación se rige por la política del local y por tus derechos como consumidor frente a él.",
-              },
-              {
-                type: "p",
-                text: "El canal para ejercerlo está en la sección siguiente, lo atendemos nosotros y no depende del local. Revocar la contratación no es lo mismo que cancelar un turno desde la app: podés usar cualquiera de las dos vías, y por esta tenemos que responderte igual.",
-              },
-              {
-                type: "p",
-                text: "La suscripción mensual de los locales también se cobra por Mercado Pago. Es igualmente una contratación a distancia, así que el mismo derecho y el mismo canal aplican a esa contratación.",
+                text: "Lo que pagás por un turno lo cobra el local, y su devolución se rige por la política de cancelación que el local te informa al reservar (Términos y Condiciones, sección 4).",
+                link: { label: "Ver Términos y Condiciones", href: "/legal/terminos" },
               },
             ] as const)
           : ([
