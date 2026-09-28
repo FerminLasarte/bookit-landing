@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Button from "@/components/ui/Button";
-import Section from "@/components/ui/Section";
-import TextLink from "@/components/ui/TextLink";
+import AbrirEnLaApp from "@/components/abrir-app/AbrirEnLaApp";
 import { verificar } from "@/content/paginas";
 import { site } from "@/content/site";
 
@@ -29,18 +27,5 @@ export default async function VerificarPage({ searchParams }: PageProps) {
       : null;
   const { title, desc } = abrirApp ? verificar.conToken : verificar.sinToken;
 
-  return (
-    <Section
-      id="verificar"
-      as="h1"
-      title={title}
-      lede={desc}
-      actions={abrirApp ? <Button href={abrirApp}>{verificar.cta}</Button> : undefined}
-    >
-      <p className="mx-auto max-w-[28rem] text-center text-small text-muted">
-        {verificar.ayuda.pregunta}{" "}
-        <TextLink href={verificar.ayuda.link.href}>{verificar.ayuda.link.label}</TextLink>
-      </p>
-    </Section>
-  );
+  return <AbrirEnLaApp title={title} desc={desc} cta={verificar.cta} abrirApp={abrirApp} />;
 }
