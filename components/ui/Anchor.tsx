@@ -3,9 +3,9 @@ import type { AnchorHTMLAttributes } from "react";
 
 export type AnchorProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string };
 
-/** `mailto:`, `tel:` y URLs absolutas salen del router de Next. */
+/** Todo lo que trae esquema —`https:`, `mailto:`, `tel:`, el de la app— sale del router de Next. */
 export function isExternal(href: string) {
-  return /^(https?:|mailto:|tel:)/.test(href);
+  return /^[a-z][a-z0-9+.-]*:/i.test(href);
 }
 
 /** La base de todo link del sitio: `Link` para rutas propias, `<a>` para el resto. */
