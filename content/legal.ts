@@ -166,23 +166,39 @@ export const terminos: LegalDoc = {
     },
     {
       id: "locales",
-      heading: "7. Locales: suscripción a Bookit Pro y precio fundador",
+      heading: "7. Locales: planes, suscripción y precio fundador",
       blocks: [
         {
           type: "p",
-          text: "Para publicar un local en Bookit hay que suscribirse a Bookit Pro, autorizando un débito automático en Mercado Pago. Los precios, la duración de cada plan y los días de prueba sin cargo se informan en la app antes de contratar.",
+          text: "Para publicar un local en Bookit hay que suscribirse a uno de sus planes —Esencial, Pro o Equipo—, que se diferencian por la cantidad de profesionales y las funciones que incluyen. Los precios, lo que incluye cada plan, la duración de cada período y los días de prueba sin cargo se informan en la app antes de contratar.",
+        },
+        {
+          type: "p",
+          text: "La suscripción se contrata por la tienda de aplicaciones del teléfono (App Store o Google Play) o por los otros medios que Bookit ofrezca. Cuando se contrata por una tienda:",
         },
         {
           type: "ul",
           items: [
-            "Al terminar la prueba, Mercado Pago cobra el plan elegido y lo renueva automáticamente en cada período, hasta que el local lo cancele.",
-            "Si el local cancela, conserva el servicio hasta el final del período ya pagado.",
-            "Si un cobro no se acredita, el local tiene un período de gracia para regularizarlo. Vencido ese plazo, deja de estar visible y de recibir reservas hasta que se regularice el pago.",
+            "El cobro se hace a la cuenta de Apple o de Google con la que se confirma la compra, al terminar la prueba sin cargo si la hay.",
+            "Se renueva automáticamente al final de cada período, mensual o anual, salvo que se cancele al menos 24 horas antes de que termine. La renovación se cobra dentro de las 24 horas previas al fin del período.",
+            "Se gestiona y se cancela desde los ajustes de la cuenta de Apple o de Google. Si se cancela, el local conserva el servicio hasta el final del período ya pagado.",
+            "La prueba sin cargo se ofrece una sola vez por cuenta de la tienda. Si el local se suscribe durante la prueba, la parte que no usó se pierde.",
+            "Pasar a un plan mayor vale desde ese momento; pasar a uno menor, desde la próxima renovación.",
+            "Si un cobro no se acredita, la tienda da un período de gracia para regularizarlo. Vencido ese plazo, el local deja de estar visible y de recibir reservas hasta que se regularice.",
+            "Los reembolsos de lo cobrado por la tienda los resuelven Apple o Google, según sus políticas.",
           ],
         },
         {
           type: "p",
-          text: "El precio fundador es un precio preferencial, de carácter limitado, para los locales que se sumen antes del lanzamiento en la ciudad. Se mantiene mientras la suscripción esté activa y al día; si se da de baja, el local pierde esa condición y vuelve al precio vigente.",
+          text: "Cuando se contrata por otro medio, las condiciones de cobro, renovación y cancelación se informan al contratar.",
+        },
+        {
+          type: "p",
+          text: "Al pasar a un plan con menos profesionales, los que superan el límite dejan de aparecer para reservar, sin perder los turnos que ya tenían, y el dueño elige cuáles siguen. Las funciones que el nuevo plan no incluye —como las señas, las promociones o las cuentas del equipo— dejan de estar disponibles, sin que se borre lo que el local había configurado.",
+        },
+        {
+          type: "p",
+          text: "El precio fundador es un descuento sobre el precio vigente, de carácter limitado, para los locales que se sumen antes del lanzamiento en la ciudad, y vale para cualquiera de los planes. Se mantiene mientras la suscripción esté activa y al día; si se da de baja, el local pierde esa condición y vuelve al precio vigente.",
         },
         {
           type: "p",
@@ -196,7 +212,7 @@ export const terminos: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: "Podés eliminar tu cuenta cuando quieras, desde la app. Tus turnos por venir se cancelan y, si estaban pagos por Mercado Pago, lo pagado se devuelve según la política de cancelación de cada local. Tus puntos se pierden. Si quien se da de baja es el dueño de un local, el local deja de estar visible y de recibir reservas, y se cancela el débito automático de su suscripción. La baja no se puede deshacer.",
+          text: "Podés eliminar tu cuenta cuando quieras, desde la app. Tus turnos por venir se cancelan y, si estaban pagos por Mercado Pago, lo pagado se devuelve según la política de cancelación de cada local. Tus puntos se pierden. Si quien se da de baja es el dueño de un local, el local deja de estar visible y de recibir reservas. Si su suscripción se contrató por la App Store o Google Play, eliminar la cuenta no la cancela: hay que cancelarla desde los ajustes de la cuenta de la tienda, o la tienda la sigue cobrando. Si se contrató por otro medio, Bookit la da de baja junto con la cuenta. La baja no se puede deshacer.",
           link: { label: "Ver Eliminación de cuenta", href: "/legal/eliminar-cuenta" },
         },
       ],
@@ -323,7 +339,7 @@ export const privacidad: LegalDoc = {
         },
         {
           type: "p",
-          text: "No pedimos ni almacenamos datos sensibles, números de tarjetas ni credenciales bancarias. De cada pago guardamos sólo el número de operación de Mercado Pago, el monto y su estado.",
+          text: "No pedimos ni almacenamos datos sensibles, números de tarjetas ni credenciales bancarias. De cada pago guardamos sólo el número de operación de Mercado Pago, el monto y su estado. De la suscripción de un local comprada en una tienda guardamos el plan, su estado y su vencimiento.",
         },
       ],
     },
@@ -371,8 +387,9 @@ export const privacidad: LegalDoc = {
             "Google Firebase — envío de notificaciones.",
             "Google Maps — mapas y búsqueda de direcciones.",
             "Mercado Pago — pagos de turnos y de la suscripción de los locales.",
+            "RevenueCat — gestión de las suscripciones compradas en las tiendas: recibe el identificador de la cuenta y los datos de la compra, no los de la tarjeta.",
             "Resend — envío de correos.",
-            "Apple y Google — inicio de sesión, si lo elegís.",
+            "Apple y Google — inicio de sesión, si lo elegís, y el cobro de la suscripción de los locales que la contratan por su tienda.",
             "Vercel — hosting de este sitio y de su función de servidor.",
           ],
         },
@@ -571,6 +588,10 @@ export const eliminarCuenta: LegalDoc = {
             "Tus turnos por venir, que se cancelan. Si estaban pagos por Mercado Pago, lo pagado se devuelve según la política de cancelación de cada local.",
           ],
         },
+        {
+          type: "note",
+          text: "Si tenés un local y su suscripción la contrataste por la App Store o Google Play, eliminar la cuenta no la cancela: cancelala desde los ajustes de tu cuenta de la tienda, o la tienda la va a seguir cobrando.",
+        },
         { type: "p", text: "Se conserva, de forma acotada:" },
         {
           type: "ul",
@@ -635,7 +656,11 @@ export const botonArrepentimiento: LegalDoc = {
           ? ([
               {
                 type: "p",
-                text: "La suscripción de los locales a Bookit Pro se cobra por Mercado Pago. Es una contratación a distancia, así que este derecho y el canal de la sección siguiente aplican a esa contratación.",
+                text: "La suscripción de los locales es una contratación a distancia, así que este derecho aplica a esa contratación.",
+              },
+              {
+                type: "p",
+                text: "Si la contrataste por la App Store o Google Play, lo que cobró la tienda lo devuelve la tienda: pedí el reembolso desde tu cuenta de Apple (reportaproblem.apple.com) o de Google Play, y avisanos por el canal de la sección siguiente para que dejemos constancia. Si la contrataste por otro medio, usá directamente ese canal.",
               },
               {
                 type: "p",
