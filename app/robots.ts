@@ -7,8 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Las invitaciones son personales y el endpoint no se indexa.
-        disallow: ["/invite/", "/api/"],
+        // Las invitaciones son personales, el endpoint no se indexa y el
+        // panel es del equipo.
+        disallow: ["/invite/", "/api/", "/admin"],
       },
     ],
     sitemap: `${site.url}/sitemap.xml`,

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Nav from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
 import Cursor from "@/components/layout/Cursor";
+import MarcoDelSitio from "@/components/layout/MarcoDelSitio";
 import Movimiento from "@/components/layout/Movimiento";
 import Splash from "@/components/layout/Splash";
 import { site } from "@/content/site";
@@ -116,13 +117,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <style>{".splash{display:none}"}</style>
         </noscript>
         <Movimiento>
-          <Splash />
-          <Cursor />
-          <Nav />
-          <main id="contenido" className="flex-1 pt-20 md:pt-24">
+          <MarcoDelSitio
+            arriba={
+              <>
+                <Splash />
+                <Cursor />
+                <Nav />
+              </>
+            }
+            abajo={<Footer />}
+          >
             {children}
-          </main>
-          <Footer />
+          </MarcoDelSitio>
         </Movimiento>
       </body>
     </html>
