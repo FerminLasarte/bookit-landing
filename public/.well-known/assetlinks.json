@@ -4,7 +4,10 @@
     "target": {
       "namespace": "android_app",
       "package_name": "ar.com.somosbookit.app",
-      "sha256_cert_fingerprints": ["C4:9D:54:73:F0:F8:C9:D9:42:9D:3C:E7:18:46:45:39:1A:33:BC:E8:27:39:4C:45:79:90:F5:DC:4A:0E:A4:40"]
+      "sha256_cert_fingerprints": [
+        "2E:B6:7D:37:C4:EA:07:30:F5:E3:5E:2D:53:3F:1A:5E:88:CE:47:03:EA:97:F1:DC:F7:1A:E0:19:1D:24:04:DB",
+        "E5:B0:0B:B1:29:BC:13:C3:8C:4A:44:D7:57:A2:A0:4D:06:06:8E:60:A2:4D:5C:10:8E:D8:11:99:12:20:14:F8"
+      ]
     }
   }
 ]
