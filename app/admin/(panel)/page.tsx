@@ -29,7 +29,7 @@ export default async function Pulso() {
           <Cifra
             etiqueta="Altas en 30 días"
             valor={numero(c.altas_30d)}
-            detalle={`${numero(c.bajas_30d)} bajas · ${numero(c.cancelan_al_vencer)} no renuevan`}
+            detalle={`${numero(c.bajas_30d)} ${c.bajas_30d === 1 ? "baja" : "bajas"} · ${numero(c.cancelan_al_vencer)} no ${c.cancelan_al_vencer === 1 ? "renueva" : "renuevan"}`}
           />
         </Cifras>
         <div className="grid gap-3 md:grid-cols-2">

@@ -142,13 +142,16 @@ export function Barras({
   const maximo = Math.max(1, ...valores);
   return (
     <div className={cn("flex items-end gap-[3px]", alto)} role="img" aria-label={etiquetas.map((e, i) => `${e}: ${valores[i]}`).join(", ")}>
+      {/* Con pocas barras, cada una tope de 3,5 rem: a todo el ancho de su
+          columna, seis meses eran seis bloques. */}
       {valores.map((v, i) => (
-        <div
-          key={etiquetas[i]}
-          title={`${etiquetas[i]}: ${v}`}
-          className={cn("flex-1 rounded-t-[4px]", v === 0 ? "bg-fg/8" : "bg-accent")}
-          style={{ height: v === 0 ? "2px" : `${Math.max(6, (v / maximo) * 100)}%` }}
-        />
+        <div key={etiquetas[i]} className="flex h-full flex-1 items-end justify-center">
+          <div
+            title={`${etiquetas[i]}: ${v}`}
+            className={cn("w-full max-w-14 rounded-t-[4px]", v === 0 ? "bg-fg/8" : "bg-accent")}
+            style={{ height: v === 0 ? "2px" : `${Math.max(6, (v / maximo) * 100)}%` }}
+          />
+        </div>
       ))}
     </div>
   );
