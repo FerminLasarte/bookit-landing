@@ -4,7 +4,7 @@ import { Bloque, Dato, Encabezado, EstadoBadge, Tabla, Vacio } from "@/component
 import Button from "@/components/ui/Button";
 import { canales, filtrosComercios, niveles, planes } from "@/content/admin";
 import { leerComercios, type FiltroComercios } from "@/lib/admin/datos";
-import { fecha, haceCuanto, numero } from "@/lib/admin/formato";
+import { fecha, haceCuanto, numero } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Comercios" };

@@ -35,6 +35,13 @@ las capturas.
 5. **Nada se escribe dos veces.** Si una combinación de clases o un bloque
    aparece en un segundo lugar, pasa al kit antes de usarse ahí.
 
+**Excepción declarada: `/planes`.** Es el paywall de la app tal cual, por
+decisión de Fermín (8/10/2026): la card de `plan_card.dart` con sus tres
+vestimentas, la premium oscura y el resplandor de la marca detrás de los
+emojis en 3D, el selector, el carrusel y el regalo con su hilo. Rompe las
+reglas 1 y 2 sólo ahí; sus utilidades (`card-plan-*`, `emoji-3d`) no se usan
+en otra página.
+
 ## Tokens
 
 Viven en [`app/globals.css`](../app/globals.css) en dos capas:
@@ -154,6 +161,7 @@ sin `Reveal`. Lo que se toma va en `Superficie tone="surface"`.
 | `/invite` | El código para copiar y el CTA; el copy no dice "Descargá" sin tiendas |
 | `/legal/*` | Una columna de lectura, con el índice fijo al costado desde `lg` |
 | 404 | Encabezado con los dos botones |
+| `/planes` | El paywall de la app (ver la excepción de arriba); sin sesión, las cards con el precio de lista y cómo entrar |
 
 ## Flujo de trabajo
 

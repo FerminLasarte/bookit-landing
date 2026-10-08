@@ -5,7 +5,7 @@ import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Tabla, Vacio } from "@/c
 import TextLink from "@/components/ui/TextLink";
 import { canales, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
 import { leerComercio } from "@/lib/admin/datos";
-import { fecha, fechaConAnio, haceCuanto, mes, numero, pesos } from "@/lib/admin/formato";
+import { fecha, fechaConAnio, haceCuanto, mes, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercio" };
 
