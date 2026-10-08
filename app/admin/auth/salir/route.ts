@@ -1,8 +1,6 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { clienteDelPanel } from "@/lib/admin/supabase";
+import type { NextRequest } from "next/server";
+import { salir } from "@/lib/supabase";
 
-export async function POST(request: NextRequest) {
-  const supabase = await clienteDelPanel();
-  await supabase.auth.signOut();
-  return NextResponse.redirect(new URL("/admin/entrar", request.url), 303);
+export function POST(request: NextRequest) {
+  return salir(request, "panel", "/admin/entrar");
 }

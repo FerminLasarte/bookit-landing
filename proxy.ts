@@ -1,22 +1,29 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { cookiesDeArea } from "@/lib/supabase";
 
 /*
- * Sólo corre en /admin. Renueva la sesión de Supabase antes de que se dibuje
- * la página —una página no puede escribir cookies, y sin esto el refresh
- * token se reusaría en cada request hasta que Supabase lo invalide— y manda a
- * /admin/entrar a quien no tenga sesión.
+ * Corre en /admin y en /planes. Renueva la sesión de Supabase del área antes
+ * de que se dibuje la página —una página no puede escribir cookies, y sin esto
+ * el refresh token se reusaría en cada request hasta que Supabase lo
+ * invalide—. En /admin, además, manda a /admin/entrar a quien no tenga sesión;
+ * /planes muestra los precios sin sesión y se ocupa sola.
  *
- * No decide quién es admin: eso lo hace la base en cada lectura. Esto es
- * sólo el chequeo optimista de que hay alguien logueado.
+ * No decide quién es admin ni qué puede comprar un local: eso lo hace la base
+ * en cada lectura. Esto es sólo el chequeo optimista de que hay alguien
+ * logueado.
  */
 export async function proxy(request: NextRequest) {
   const url = process.env.SUPABASE_URL;
   const anon = process.env.SUPABASE_ANON_KEY;
   if (!url || !anon) return NextResponse.next();
 
+  const { pathname } = request.nextUrl;
+  const esPanel = pathname.startsWith("/admin");
+
   let respuesta = NextResponse.next({ request });
   const supabase = createServerClient(url, anon, {
+    cookieOptions: cookiesDeArea[esPanel ? "panel" : "planes"],
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll: (aEscribir, headers) => {
@@ -33,9 +40,8 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
   const esPublica = pathname === "/admin/entrar" || pathname.startsWith("/admin/auth/");
-  if (!user && !esPublica) {
+  if (esPanel && !user && !esPublica) {
     const destino = request.nextUrl.clone();
     destino.pathname = "/admin/entrar";
     destino.search = "";
@@ -46,5 +52,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/planes", "/planes/:path*"],
 };

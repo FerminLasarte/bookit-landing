@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Bloque, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
 import { canales, estadosAlta, motivosIncidencia, planes, reembolsos } from "@/content/admin";
 import { leerCobros } from "@/lib/admin/datos";
-import { fecha, fechaConAnio, haceCuanto, pesos } from "@/lib/admin/formato";
+import { fecha, fechaConAnio, haceCuanto, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Cobros" };
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Barras, Bloque, Cifra, Cifras, Encabezado } from "@/components/admin/piezas";
 import { canales, niveles } from "@/content/admin";
 import { leerPulso } from "@/lib/admin/datos";
-import { fecha, numero, pesos } from "@/lib/admin/formato";
+import { fecha, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Pulso" };
 

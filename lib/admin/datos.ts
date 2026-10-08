@@ -1,6 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
-import { clienteDelPanel } from "./supabase";
+import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
  * Las lecturas del panel. Cada una es una función `admin_*` de la base
@@ -124,7 +124,7 @@ export type Cobros = {
  * layout, así que un layout que corta no evita que la página lea.
  */
 async function leer<T>(funcion: string, params?: Record<string, unknown>): Promise<T> {
-  const supabase = await clienteDelPanel();
+  const supabase = await clienteDeSupabase("panel");
   const { data, error } = await supabase.rpc(funcion, params);
   if (error) {
     if (error.code === "42501") redirect("/admin/sin-acceso");
