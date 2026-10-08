@@ -2,6 +2,7 @@ import Button from "@/components/ui/Button";
 import Reveal from "@/components/ui/Reveal";
 import Screen from "@/components/ui/Screen";
 import Section from "@/components/ui/Section";
+import TextLink from "@/components/ui/TextLink";
 import { paraLocales } from "@/content/home";
 import SelectorPantallas from "./SelectorPantallas";
 
@@ -27,6 +28,10 @@ export default function ParaLocales() {
         <Button href={paraLocales.cta.href} variant="secondary">
           {paraLocales.cta.label}
         </Button>
+        <p className="text-small text-muted">
+          {paraLocales.planes.pregunta}{" "}
+          <TextLink href={paraLocales.planes.href}>{paraLocales.planes.label}</TextLink>
+        </p>
       </Reveal>
     </Section>
   );

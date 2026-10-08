@@ -20,6 +20,7 @@ export const footerProducto: readonly NavLink[] = [
   { label: "Para locales", href: "/#locales" },
   { label: "Puntos Bookit", href: "/#puntos" },
   { label: "Lista VIP", href: "/lista-espera" },
+  { label: "Planes", href: "/planes" },
   { label: "Descargar", href: "/descargar" },
 ] as const;
 

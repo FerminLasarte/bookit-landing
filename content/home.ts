@@ -90,6 +90,8 @@ export const paraLocales = {
   pantallas: pantallasLocal,
   fundador: `Precio fundador de por vida, para los primeros locales de ${site.city}.`,
   cta: { label: "Quiero mi lugar como fundador", href: listaLocal },
+  /** Para el que ya tiene su local en la app. Pasa al nav cuando la app esté en las tiendas. */
+  planes: { pregunta: "¿Ya tenés tu local en Bookit?", label: "Mirá los planes", href: "/planes" },
 } as const;
 
 export const puntos = {

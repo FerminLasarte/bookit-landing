@@ -40,6 +40,11 @@ El trabajo de la web, mientras tanto, es **captar lista de espera calificada** d
 y sostener los deep links de invitación que ya circulan. El éxito se mide en leads en la tabla
 `waitlist_leads` de Supabase, segmentados por `user_type` (`cliente` / `local`), no en tráfico.
 
+Desde el 8 de octubre de 2026 la web también **vende los planes de los locales en pesos**, con
+Mercado Pago, en `/planes`. La página no decide nada: muestra lo que devuelve `mi_plan_web()`
+(contrato en BooKit, `docs/web-en-pesos.md`). La app no la nombra ni la enlaza (regla de Apple);
+la landing sí: desde el footer y desde "Para locales". Pasa al nav cuando la app esté en las tiendas.
+
 ## Positioning
 
 Lo que un producto vecino no podría copiar de verdad:
@@ -146,7 +151,7 @@ sección son SVG propios. Sin JS de terceros.
 | Qué falta | Estado | Dónde se cambia |
 |---|---|---|
 | Razón social, CUIT y domicilio fiscal | **Sigue faltando** (confirmado 21/9/2026). Hay un bloque visible avisándolo en Términos §10 y Privacidad §1 | `content/legal.ts` |
-| Precio de la suscripción para locales | No se menciona y así queda | — |
+| Precio de la suscripción para locales | Sólo en `/planes`, leído de la base (`precios_web`); la home no lo muestra | — |
 | Links de App Store / Google Play | No existen todavía | `flags.storeLinksLive` + `site.app` |
 | Analítica | No hay, y por eso tampoco hay banner de cookies | `flags.analytics` |
 | Revisión legal de los cinco documentos de `/legal/*` | Pendiente de una persona | — |
