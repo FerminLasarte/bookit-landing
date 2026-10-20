@@ -1,3 +1,4 @@
+import type { Pantalla } from "./home";
 import { site } from "./site";
 
 /** Copy de las rutas secundarias: soporte, descargar, invitación y 404. */
@@ -50,17 +51,60 @@ export const soporte = {
   },
 } as const;
 
+/**
+ * `/descargar`. Lo de Android depende de `site.app.playStore`: con link, el
+ * badge aparece solo y el aviso de "pronto" se va.
+ */
 export const descargar = {
+  descripcion: site.app.playStore
+    ? `Bajate Bookit en el App Store o en Google Play y sacá tus turnos en ${site.city}.`
+    : `Bajate Bookit en el App Store y sacá tus turnos en ${site.city}. La versión para Android sale pronto.`,
   conTiendas: {
     title: "Bajate Bookit.",
-    lede: "Disponible para iPhone. La versión para Android sale pronto.",
-    iphone: "Descargar para iPhone",
-    android: "Descargar para Android",
+    lede: `Buscá locales de ${site.city}, reservá en treinta segundos y tené tus turnos a mano. Gratis para quien saca turnos.`,
+    androidPronto: "La versión para Android sale pronto.",
+    // El texto alternativo de cada badge es el que dice el badge.
+    iphone: "Descárgalo en el App Store",
+    android: "Descargar en Google Play",
   },
   preLanzamiento: {
     title: "Todavía no se puede descargar.",
     lede: `Estamos terminando la app y arrancamos por ${site.city}. Cuando esté en App Store y Google Play, los links van a estar acá. Mientras tanto, anotate a la lista y te avisamos antes que a nadie.`,
     cta: { label: "Sumate a la lista VIP", href: "/lista-espera" },
+  },
+  enLaApp: {
+    title: "Tus turnos, en un solo lugar.",
+    lede: "Lo que reservaste queda en la app, listo para cuando lo necesites.",
+    items: [
+      {
+        title: "Tus turnos a mano",
+        body: "Los próximos, con el local, la hora y el servicio.",
+        captura: "misTurnos",
+      },
+      {
+        title: "Cambios sin llamar",
+        body: "Agendalo, mirá cómo llegar, reprogramalo o cancelalo.",
+        captura: "hojaTurno",
+        // La hoja con las acciones, sin la lista de atrás.
+        crop: { top: 1000, bottom: 2622 },
+      },
+      {
+        title: `${site.city} en un mapa`,
+        body: "Los locales cerca tuyo, por rubro.",
+        captura: "mapa",
+      },
+    ] satisfies readonly Pantalla[],
+  },
+  // El código lleva a https://apple.co/4dR0YKO, la ficha del App Store. Cuando
+  // salga Android hay que cambiarlo por uno que sirva a los dos.
+  qr: {
+    title: "¿Estás en la compu?",
+    body: "Apuntá la cámara del iPhone al código y abrís Bookit en el App Store.",
+    alt: "Código QR que abre Bookit en el App Store.",
+  },
+  local: {
+    pregunta: "¿Tenés un local? Bookit también es tu agenda.",
+    link: { label: "Mirá los planes", href: "/planes" },
   },
 } as const;
 
@@ -92,7 +136,6 @@ export const invite = {
     },
   } satisfies Record<string, Mensaje>,
   cta: {
-    conTiendas: "Descargar la app",
     preLanzamiento: { label: "Anotate y te avisamos", href: "/lista-espera" },
   },
   codigo: {

@@ -95,6 +95,13 @@ otra podría necesitar.
 | `Resaltado` | El fondo que se desliza entre los ítems de una lista (`layoutId`). |
 | `Herramienta` | Tijera, peine, secador, esmalte, navaja o brocha: el cursor y el splash. |
 
+**Las tiendas se muestran con sus badges oficiales**, nunca con un `Button`:
+`abrir-app/BotonesDeDescarga`, con los SVG de `assets/tiendas/` sin tocar.
+Negros en los dos temas, App Store primero, los dos a 48 px de alto y con un
+cuarto del alto de aire, como piden Apple y Google. Un solo grupo de badges
+por página, y la tienda sin link no aparece. La línea legal de las dos marcas
+va en el footer.
+
 Las capturas se importan una sola vez, en
 [`content/capturas.ts`](../content/capturas.ts), con su texto alternativo.
 
@@ -133,6 +140,7 @@ components/
   forms/     Field, AudienceSwitch, WaitlistForm
   legal/     LegalDoc: los cinco documentos de /legal
   invite/    ReferralCode: el código para copiar
+  descargar/ DesdeLaCompu: el QR al App Store
 content/     copy y datos: ningún texto de producto vive en un componente
 ```
 
@@ -157,8 +165,8 @@ sin `Reveal`. Lo que se toma va en `Superficie tone="surface"`.
 |---|---|
 | `/lista-espera` | Formulario en una superficie; cómo sigue en tres pasos; la letra chica |
 | `/soporte` | Los tres canales como superficies enlazadas; tiempos y borrado de datos |
-| `/descargar` | Encabezado con el CTA y un tile con la pantalla de bienvenida |
-| `/invite` | El código para copiar y el CTA; el copy no dice "Descargá" sin tiendas |
+| `/descargar` | Encabezado con los badges de las tiendas y un tile con el inicio de la app; tres tiles con lo que queda en la app; desde `md`, el QR al App Store; el renglón para locales |
+| `/invite` | El código para copiar y los badges; el copy no dice "Descargá" sin tiendas |
 | `/legal/*` | Una columna de lectura, con el índice fijo al costado desde `lg` |
 | 404 | Encabezado con los dos botones |
 | `/planes` | El paywall de la app (ver la excepción de arriba); sin sesión, las cards con el precio de lista y cómo entrar |

@@ -37,3 +37,13 @@ export const footerLegales: readonly NavLink[] = [
     external: true,
   },
 ] as const;
+
+/**
+ * Lo que piden Apple y Google por usar sus badges: una vez en el sitio, donde
+ * van los avisos legales. Cada línea aparece con el badge de su tienda.
+ */
+export const footerMarcas = [
+  site.app.appStore &&
+    "Apple y el logo de Apple son marcas de Apple Inc., registradas en EE. UU. y otros países. App Store es una marca de servicio de Apple Inc.",
+  site.app.playStore && "Google Play y el logo de Google Play son marcas de Google LLC.",
+].filter(Boolean);

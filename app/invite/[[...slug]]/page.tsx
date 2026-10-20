@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import BotonesDeDescarga from "@/components/abrir-app/BotonesDeDescarga";
 import ReferralCode from "@/components/invite/ReferralCode";
 import Button from "@/components/ui/Button";
 import Section from "@/components/ui/Section";
@@ -59,7 +60,7 @@ export default async function InvitePage({ params, searchParams }: PageProps) {
   const { title, desc } = (code ? invite.conCodigo : invite.sinCodigo)[etapa];
 
   const cta = flags.storeLinksLive ? (
-    <Button href={site.app.appStore ?? site.app.playStore ?? "/descargar"}>{invite.cta.conTiendas}</Button>
+    <BotonesDeDescarga />
   ) : (
     <Button href={invite.cta.preLanzamiento.href}>{invite.cta.preLanzamiento.label}</Button>
   );
