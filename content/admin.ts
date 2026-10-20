@@ -30,8 +30,12 @@ export const niveles: Record<string, string> = {
   equipo: "Equipo",
 };
 
+/** Quién cobra (`_canal_de_cobro()`): la tienda va por separado desde que la base la guarda. */
 export const canales: Record<string, string> = {
   mercado_pago: "Mercado Pago",
+  app_store: "Apple",
+  play_store: "Google Play",
+  // Un local de la tienda cuya compra el servidor todavía no volvió a aplicar.
   tienda: "Apple / Google",
 };
 
