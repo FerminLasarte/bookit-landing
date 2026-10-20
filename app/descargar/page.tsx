@@ -10,7 +10,7 @@ import { flags } from "@/content/site";
 export const metadata: Metadata = {
   title: "Descargar la app",
   description:
-    "Bookit está por lanzar en Tandil. Anotate a la lista VIP y te avisamos el día que la app esté disponible en App Store y Google Play.",
+    "Bajate Bookit en el App Store y sacá tus turnos en Tandil. La versión para Android sale pronto.",
   alternates: { canonical: "/descargar" },
 };
 

@@ -26,11 +26,11 @@ export function waitlistEmailHtml(name: string, userType: UserType): string {
   const body = isLocal
     ? `
         <p>Tu local ya está oficialmente en la lista VIP de fundadores de <strong>Bookit</strong>.</p>
-        <p>Vamos a contactarte por WhatsApp o email antes del lanzamiento en Tandil para contarte los detalles del <strong>precio fundador</strong>, con cupos limitados para los primeros locales que se sumen.</p>
+        <p>Vamos a contactarte por WhatsApp o email para contarte los detalles del <strong>precio fundador</strong>, con cupos limitados para los primeros locales que se sumen.</p>
         <p>Mientras tanto, seguinos en Instagram para enterarte de qué otros locales ya se están sumando.</p>`
     : `
         <p>Ya estás oficialmente en la lista VIP de <strong>Bookit</strong>.</p>
-        <p>Acabamos de guardar tus <strong>${site.puntosDeRegalo} puntos bajo llave</strong>. Te vamos a avisar antes que a nadie cuando la app esté lista para descargar en Tandil, para que puedas canjearlos en tu primer turno.</p>
+        <p>Acabamos de guardar tus <strong>${site.puntosDeRegalo} puntos bajo llave</strong>. Bajá la app del App Store y registrate con este mismo mail para canjearlos en tu primer turno.</p>
         <p>Mientras tanto, seguinos en Instagram para enterarte de qué locales ya se están sumando.</p>`;
 
   return `

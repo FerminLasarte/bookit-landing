@@ -12,7 +12,7 @@ export type Canal = {
 
 export const soporte = {
   title: "Estamos del otro lado.",
-  lede: "Bookit todavía no lanzó, así que somos un equipo chico contestando de a un mensaje por vez. Escribinos y te respondemos.",
+  lede: "Somos un equipo chico contestando de a un mensaje por vez. Escribinos y te respondemos.",
   canales: [
     {
       id: "email",
@@ -26,7 +26,7 @@ export const soporte = {
       label: "Instagram",
       value: site.instagram.handle,
       href: site.instagram.url,
-      hint: "Novedades del lanzamiento y mensajes directos.",
+      hint: "Novedades y mensajes directos.",
     },
     {
       id: "telefono",
@@ -53,7 +53,7 @@ export const soporte = {
 export const descargar = {
   conTiendas: {
     title: "Bajate Bookit.",
-    lede: "Disponible para iPhone y Android.",
+    lede: "Disponible para iPhone. La versión para Android sale pronto.",
     iphone: "Descargar para iPhone",
     android: "Descargar para Android",
   },

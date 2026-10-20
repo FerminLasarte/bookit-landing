@@ -18,8 +18,9 @@ export const preguntas = {
 
 export const faq: readonly FaqItem[] = [
   {
-    q: "¿Cuándo lanza la app?",
-    a: "Estamos terminando el desarrollo y arrancamos por Tandil. Si estás en la lista, te avisamos antes que a nadie.",
+    q: "¿Dónde descargo la app?",
+    a: "Ya está en el App Store para iPhone. La versión para Android sale pronto.",
+    link: { label: "Descargar Bookit", href: "/descargar" },
   },
   {
     q: "¿Cuánto cuesta para quien saca turnos?",
@@ -41,16 +42,14 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: "¿En qué ciudades está?",
-    // Antes: "Arrancamos en Tandil y vamos ciudad por ciudad" — presente, contra
-    // un hero que dice "Todavía no lanzamos". El visitante nota el tiempo verbal.
-    a: "Todavía en ninguna: estamos por lanzar. Arrancamos por Tandil y después vamos ciudad por ciudad.",
+    a: "Arrancamos por Tandil y vamos ciudad por ciudad.",
   },
   {
     q: "¿Cómo funcionan los puntos?",
     // El valor del punto no es fijo (confirmado 21/9/2026). Decirlo es mejor que
     // dejar el hueco: una moneda sin valor declarado es el clásico indicio de
     // que el beneficio no existe, y esta página ya admite lo que no sabe.
-    a: `Sumás puntos por cada turno y los canjeás en los siguientes. Por anotarte a la lista te llevás ${site.puntosDeRegalo} de regalo para el primero. Un punto no tiene un valor fijo en pesos.`,
+    a: `Sumás puntos por cada turno y los canjeás en los siguientes. Si te anotás en la lista VIP y te registrás con el mismo mail, te llevás ${site.puntosDeRegalo} de regalo para el primero. Un punto no tiene un valor fijo en pesos.`,
   },
   {
     q: "¿Cómo funcionan los referidos?",
@@ -58,7 +57,7 @@ export const faq: readonly FaqItem[] = [
   },
   {
     q: "¿Qué hacen con mis datos?",
-    a: "Sólo los usamos para avisarte del lanzamiento y darte soporte. Podés pedir la baja cuando quieras.",
+    a: "Los usamos para darte el servicio y soporte, como lo explica la Política de Privacidad. Podés pedir la baja cuando quieras.",
     link: { label: "Ver Política de Privacidad", href: "/legal/privacidad" },
   },
 ] as const;

@@ -3,6 +3,7 @@ import { categorias } from "./categorias";
 import { site } from "./site";
 
 /** A dónde llevan los CTA de cada público. */
+const descargar = "/descargar";
 const listaCliente = "/lista-espera?tipo=cliente";
 const listaLocal = "/lista-espera?tipo=local";
 
@@ -13,8 +14,8 @@ export const hero = {
   title: "Tu próximo turno de",
   rubros,
   lede: `Los locales de ${site.city} en una sola app. Reservá cuando se te ocurra, sin cadenas de WhatsApp ni llamados en horario de trabajo.`,
-  note: `Todavía no lanzamos. Anotate y llevate ${site.puntosDeRegalo} Puntos Bookit para tu primer turno.`,
-  ctaCliente: { label: "Sumate a la lista VIP", href: listaCliente },
+  note: `Ya está en el App Store. Si te anotás en la lista VIP y te registrás con el mismo mail, te llevás ${site.puntosDeRegalo} Puntos Bookit para tu primer turno.`,
+  ctaCliente: { label: "Descargá la app", href: descargar },
   ctaLocal: { label: "Tengo un local", href: "/#locales" },
 } as const;
 
@@ -98,7 +99,7 @@ export const puntos = {
   title: "Los turnos que ya te hacías, ahora te devuelven algo.",
   lede: "Cada turno que reservás te deja Puntos Bookit, y los canjeás en los que vienen.",
   cifra: site.puntosDeRegalo,
-  regalo: "Puntos Bookit de regalo por anotarte, guardados para tu primer turno.",
+  regalo: "Puntos Bookit de regalo si te anotás en la lista VIP y te registrás en la app con el mismo mail.",
   referidos: {
     title: "Invitá y ganen los dos.",
     body: "Cuando alguien se registra con tu código, suman puntos los dos.",
@@ -117,16 +118,16 @@ export type Puerta = {
 };
 
 export const cierre = {
-  title: `Cuando Bookit abra en ${site.city}, ya vas a estar adentro.`,
-  lede: "Todavía no lanzamos. Te avisamos antes que a nadie.",
+  title: `Bookit ya está en ${site.city}.`,
+  lede: "Bajala y sacá tu próximo turno en treinta segundos.",
   // De izquierda a derecha; la del medio va al frente.
   cascada: ["mapa", "ficha", "bienvenida", "misTurnos", "servicios"] satisfies readonly CapturaId[],
   puertas: [
     {
       label: "Sacás turnos",
-      body: `${site.puntosDeRegalo} Puntos Bookit de regalo, guardados para tu primer turno.`,
-      note: "Te avisamos por email cuando abramos. Un nombre y un correo: no pedimos tarjeta.",
-      cta: { label: "Sumate a la lista VIP", href: listaCliente },
+      body: "Gratis para quien saca turnos, en iPhone. La versión para Android sale pronto.",
+      note: `¿Te anotaste en la lista VIP? Registrate con el mismo mail y tus ${site.puntosDeRegalo} puntos te esperan.`,
+      cta: { label: "Descargá la app", href: descargar },
     },
     {
       label: "Tenés un local",

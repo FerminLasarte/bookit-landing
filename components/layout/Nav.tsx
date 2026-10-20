@@ -5,12 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, useMotionValueEvent, useScroll } from "motion/react";
-import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Resaltado from "@/components/ui/Resaltado";
 import Wordmark from "@/components/ui/Wordmark";
 import { navCta, navLinks } from "@/content/nav";
-import { site } from "@/content/site";
 import { useSeccionEnFoco } from "@/lib/useSeccionEnFoco";
 import { cn } from "@/lib/utils";
 
@@ -74,7 +72,6 @@ export default function Nav() {
             <Link href="/" className="ring-focus flex min-h-11 items-center rounded-pill">
               <Wordmark className="h-8" />
             </Link>
-            <Badge className="hidden sm:inline-flex">Pronto en {site.city}</Badge>
 
             <ul className="mx-auto hidden items-center lg:flex" onMouseLeave={() => setSobre(null)}>
               {navLinks.map((link) => (
