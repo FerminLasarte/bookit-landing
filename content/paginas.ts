@@ -143,6 +143,24 @@ export const equipo = {
   cta: "Ver la invitación",
 } as const;
 
+/**
+ * El enlace que un local pega en su historia de Instagram. Quien llega acá no
+ * tiene la app o la abrió en la compu: con la app, el enlace la abre sola.
+ */
+export const reservar = {
+  conLocal: {
+    title: (local: string, profesional: string | null) =>
+      profesional ? `Reservá con ${profesional} en ${local}.` : `Reservá en ${local}.`,
+    desc: "Abrí este enlace desde tu teléfono y Bookit te lleva directo al local para elegir tu horario.",
+  },
+  sinLocal: {
+    title: "Este local ya no está en Bookit.",
+    desc: "Puede que el enlace esté incompleto o que el local se haya dado de baja. En Bookit vas a encontrar otros locales cerca tuyo.",
+  },
+  cta: "Abrir en Bookit",
+  sinApp: "¿Todavía no tenés Bookit?",
+} as const;
+
 export const noEncontrada = {
   title: "Esta página no existe.",
   lede: "Puede que el link esté mal escrito o que la hayamos movido. Volvé al inicio y seguí desde ahí.",

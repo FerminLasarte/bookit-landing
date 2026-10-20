@@ -8,7 +8,8 @@
           "/auth/v1/verify", 
           "/reset-password/*",
           "/invite/*",
-          "/equipo"
+          "/equipo",
+          "/reservar/*"
         ]
       }
     ]

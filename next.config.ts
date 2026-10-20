@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         hostname: "ikfxokmxmbzfcdzjefzf.supabase.co",
         pathname: "/storage/v1/object/public/assets/**",
       },
+      {
+        // El logo del local en la página del enlace de su historia.
+        protocol: "https",
+        hostname: "ikfxokmxmbzfcdzjefzf.supabase.co",
+        pathname: "/storage/v1/object/public/logos/**",
+      },
     ],
   },
   async redirects() {

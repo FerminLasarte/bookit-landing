@@ -1,5 +1,6 @@
 import "server-only";
 import { createServerClient, type CookieOptionsWithName } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -26,6 +27,15 @@ export function credenciales() {
   const anon = process.env.SUPABASE_ANON_KEY;
   if (!url || !anon) throw new Error("Faltan SUPABASE_URL o SUPABASE_ANON_KEY");
   return { url, anon };
+}
+
+/**
+ * Para las páginas públicas, sin sesión: entra como `anon` y sólo ve lo que la
+ * base le abre a cualquiera (la ficha del enlace de una historia).
+ */
+export function clientePublico() {
+  const { url, anon } = credenciales();
+  return createClient(url, anon, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
 /**
