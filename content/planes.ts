@@ -10,8 +10,13 @@
 /** Los nombres de los niveles, para cuando la fila de `niveles` no está. */
 export const nombresDeNivel = { esencial: "Esencial", pro: "Pro", equipo: "Equipo" } as const;
 
+/*
+ * Sólo con un plan de la tienda que se renueva: a quien canceló la renovación
+ * allá, la web ya le vende, con el primer cobro el día que termina lo que
+ * pagó (BooKit, 20261020160000_quien_cobra.sql).
+ */
 const tiendaVigente = (vence: string) =>
-  `Tu plan se paga en la App Store o en Google Play y sigue hasta el ${vence}. Para pasarte a pagar acá, cancelalo allá y volvé cuando termine.`;
+  `Tu plan se paga en la App Store o en Google Play y se renueva el ${vence}. Para pasarte a pagar acá, cancelá la renovación allá y volvé: empezás a pagar acá cuando termine lo que ya pagaste.`;
 
 export const sufijoDeCiclo = { mensual: "por mes", anual: "por año" } as const;
 
