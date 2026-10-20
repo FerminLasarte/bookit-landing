@@ -10,6 +10,7 @@ export const navLinks: readonly NavLink[] = [
   { label: "Cómo funciona", href: "/#como-funciona" },
   { label: "Para locales", href: "/#locales" },
   { label: "Puntos", href: "/#puntos" },
+  { label: "Planes", href: "/planes" },
   { label: "Soporte", href: "/soporte" },
 ] as const;
 

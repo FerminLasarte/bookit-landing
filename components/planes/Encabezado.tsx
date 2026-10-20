@@ -1,4 +1,6 @@
-/** El título y la bajada del paywall, a la escala de la app. */
+import SectionHeader from "@/components/ui/SectionHeader";
+
+/** El título y la bajada del paywall, a la escala de las otras páginas: las cards siguen a la de la app. */
 export default function Encabezado({
   titulo,
   bajada,
@@ -10,11 +12,10 @@ export default function Encabezado({
   avisos?: string[];
 }) {
   return (
-    <div className="px-[1.125rem] text-center">
-      <h1 className="text-[1.5rem] leading-[1.1] font-bold tracking-[-0.025rem] text-fg">{titulo}</h1>
-      <p className="mt-[0.45rem] text-[0.87rem] leading-[1.3] text-muted">{bajada}</p>
+    <div className="px-5 text-center">
+      <SectionHeader as="h1" title={titulo} lede={bajada} />
       {avisos.map((aviso) => (
-        <p key={aviso} className="mt-[0.45rem] text-[0.87rem] leading-[1.3] font-semibold text-fg">
+        <p key={aviso} className="mx-auto mt-3 max-w-[46ch] text-pretty font-semibold text-fg">
           {aviso}
         </p>
       ))}

@@ -2,7 +2,6 @@ import Button from "@/components/ui/Button";
 import Reveal from "@/components/ui/Reveal";
 import Screen from "@/components/ui/Screen";
 import Section from "@/components/ui/Section";
-import TextLink from "@/components/ui/TextLink";
 import { paraLocales } from "@/content/home";
 import SelectorPantallas from "./SelectorPantallas";
 
@@ -25,13 +24,14 @@ export default function ParaLocales() {
 
       <Reveal className="mt-16 flex flex-col items-center gap-5 text-center md:mt-20">
         <p className="max-w-[40ch] text-pretty text-muted">{paraLocales.fundador}</p>
-        <Button href={paraLocales.cta.href} variant="secondary">
-          {paraLocales.cta.label}
-        </Button>
-        <p className="text-small text-muted">
-          {paraLocales.planes.pregunta}{" "}
-          <TextLink href={paraLocales.planes.href}>{paraLocales.planes.label}</TextLink>
-        </p>
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Button href={paraLocales.cta.href} variant="secondary">
+            {paraLocales.cta.label}
+          </Button>
+          <Button href={paraLocales.planes.href} variant="secondary">
+            {paraLocales.planes.label}
+          </Button>
+        </div>
       </Reveal>
     </Section>
   );
