@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import AltaDeLocal from "@/components/planes/AltaDeLocal";
 import Compra from "@/components/planes/Compra";
 import Encabezado from "@/components/planes/Encabezado";
 import Entrar from "@/components/planes/Entrar";
-import PieDelPaywall, { legalesDelPie } from "@/components/planes/PieDelPaywall";
+import PieDelPaywall, { legalesDelPie, salirDelPie } from "@/components/planes/PieDelPaywall";
 import Vitrina from "@/components/planes/Vitrina";
 import Button from "@/components/ui/Button";
 import Section from "@/components/ui/Section";
 import { nombresDeNivel, planes } from "@/content/planes";
+import { leerCategorias } from "@/lib/alta";
 import { diaYMes } from "@/lib/formato";
 import {
   armarTarjetas,
@@ -25,8 +27,9 @@ import {
  * Mercado Pago después de autorizar (lo fija el servidor). La app no nombra ni
  * enlaza esta página.
  *
- * Sin sesión muestra los precios de lista y cómo entrar; con sesión, lo que
- * dice `mi_plan_web()` (BooKit, docs/web-en-pesos.md).
+ * Sin sesión muestra los precios de lista y cómo entrar o crear la cuenta; con
+ * sesión, lo que dice `mi_plan_web()` (BooKit, docs/web-en-pesos.md). Una
+ * cuenta sin local ve el alta (§9).
  */
 
 export const metadata: Metadata = {
@@ -54,8 +57,12 @@ export default async function PlanesPage({ searchParams }: PageProps) {
 
   if (!sesion) {
     const [precios, niveles] = await Promise.all([leerPrecios(), leerNiveles()]);
-    const mensaje =
-      error === "sesion" ? planes.errores.sin_sesion : error === "ingreso" ? planes.sinSesion.errores.oauth : null;
+    const mensajes: Record<string, string> = {
+      sesion: planes.errores.sin_sesion,
+      ingreso: planes.sinSesion.errores.oauth,
+      confirmar: planes.sinSesion.errores.confirmar,
+    };
+    const mensaje = (error && mensajes[error]) ?? null;
 
     return (
       <div className="flex flex-col items-center gap-[1.56rem] pt-6 pb-20 md:pt-10">
@@ -73,6 +80,17 @@ export default async function PlanesPage({ searchParams }: PageProps) {
 
   const [mi, niveles] = await Promise.all([leerMiPlan(), leerNiveles()]);
 
+  if (mi.motivo === "sin_comercio") {
+    return (
+      <div className="flex flex-col items-center gap-[1.56rem] pt-6 pb-20 md:pt-10">
+        <Encabezado titulo={planes.alta.titulo} bajada={planes.alta.bajada} />
+        <div className="w-full px-5">
+          <AltaDeLocal categorias={await leerCategorias()} />
+        </div>
+        <PieDelPaywall>{[...legalesDelPie, salirDelPie]}</PieDelPaywall>
+      </div>
+    );
+  }
   if (mi.motivo) return <Motivo mi={mi} />;
 
   const s = mi.suscripcion;
@@ -83,6 +101,7 @@ export default async function PlanesPage({ searchParams }: PageProps) {
   return (
     <div className="pt-6 pb-20 md:pt-10">
       <Compra
+        local={mi.comercio?.nombre ?? planes.encabezado.tuLocal}
         encabezado={encabezado(mi)}
         tarjetas={armarTarjetas(opciones, niveles, nombresDeNivel)}
         inicial={{
@@ -102,7 +121,7 @@ export default async function PlanesPage({ searchParams }: PageProps) {
 function encabezado(mi: MiPlan) {
   const { encabezado: copy, estado: avisos } = planes;
   const s = mi.suscripcion;
-  const local = mi.comercio?.nombre ?? "Tu local";
+  const local = mi.comercio?.nombre ?? planes.encabezado.tuLocal;
   const dias = mi.prueba_dias ?? 0;
   const vence = diaYMes(s?.vence);
   const nombre = (nivel: Nivel | null, plan: string | null) =>
@@ -138,7 +157,7 @@ function encabezado(mi: MiPlan) {
   };
 }
 
-/** Lo que ve un dueño que no puede comprar acá: el porqué y la salida. */
+/** Lo que ve un dueño que no puede comprar acá (salvo `sin_comercio`, que es el alta): el porqué y la salida. */
 function Motivo({ mi }: { mi: MiPlan }) {
   const { motivos } = planes;
 
@@ -154,7 +173,7 @@ function Motivo({ mi }: { mi: MiPlan }) {
     );
   }
 
-  const motivo = mi.motivo === "suspendida" ? motivos.suspendida : motivos.sin_comercio;
+  const motivo = motivos.suspendida;
   return (
     <Section
       id="planes"

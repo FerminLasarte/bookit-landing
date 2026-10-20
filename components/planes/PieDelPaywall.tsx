@@ -38,3 +38,12 @@ export const legalesDelPie = [
     {planes.pie.privacidad}
   </TextLink>,
 ];
+
+/** Salir de la cuenta: el último enlace del pie cuando hay sesión. */
+export const salirDelPie = (
+  <form key="salir" action="/planes/auth/salir" method="post">
+    <button type="submit" className={enlaceDelPie}>
+      {planes.pie.salir}
+    </button>
+  </form>
+);
