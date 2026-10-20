@@ -30,12 +30,12 @@ export const waitlistCopy: Record<Audience, AudienceCopy> = {
     desc: {
       before: "Anotate en la lista VIP y llevate ",
       strong: `${site.puntosDeRegalo} Puntos Bookit`,
-      after: " de regalo para canjear en tu primer turno cuando lancemos la app.",
+      after: " de regalo para canjear en tu primer turno. Después registrate en la app con el mismo mail.",
     },
     button: `Quiero mis ${site.puntosDeRegalo} puntos`,
     success: {
       lead: "Ya estás oficialmente en la lista VIP.",
-      body: `Acabamos de enviarte un correo confirmando tus ${site.puntosDeRegalo} puntos (revisá spam por las dudas). Te vamos a avisar antes que a nadie cuando la app esté lista.`,
+      body: `Acabamos de enviarte un correo confirmando tus ${site.puntosDeRegalo} puntos (revisá spam por las dudas). Bajá la app y registrate con este mismo mail: los puntos te van a estar esperando.`,
     },
   },
   local: {
@@ -44,7 +44,7 @@ export const waitlistCopy: Record<Audience, AudienceCopy> = {
     desc: {
       before: "Anotate en la lista VIP y accedé a ",
       strong: "precio fundador de por vida",
-      after: ": es para los primeros locales que se sumen antes del lanzamiento.",
+      after: ": es para los primeros locales que se sumen.",
     },
     button: "Quiero mi lugar como fundador",
     success: {
@@ -65,7 +65,7 @@ export type Paso = { title: string; body: string };
 /** La página /lista-espera, alrededor del formulario. */
 export const listaEspera = {
   title: `Entrá antes que el resto de ${site.city}.`,
-  lede: "Todavía no lanzamos. La lista es para las personas y los locales que van a usar Bookit antes que nadie, y anotarte lleva menos de un minuto.",
+  lede: "La lista te deja puntos de regalo para tu primer turno, o el precio fundador si tenés un local. Anotarte lleva menos de un minuto.",
   garantias: [
     "Anotarte no cuesta nada.",
     "Sólo te escribimos por Bookit, nunca para otra cosa.",
@@ -84,8 +84,8 @@ export const listaEspera = {
         body: `Confirmamos tus ${site.puntosDeRegalo} puntos por email en el momento. Revisá spam por las dudas.`,
       },
       {
-        title: "Te avisamos del lanzamiento",
-        body: "El día que la app esté en App Store y Google Play, sos de los primeros en saberlo.",
+        title: "Te registrás en la app",
+        body: "Con el mismo mail con que te anotaste. Si tenés un local, te contactamos para el precio fundador.",
       },
     ] satisfies readonly Paso[],
   },

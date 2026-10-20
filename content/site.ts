@@ -37,7 +37,8 @@ export const site = {
     // El esquema de los enlaces de la app que no son de cuenta (invitaciones).
     esquema: "bookitapp",
     appleTeamId: "MPX5U375K6",
-    appStore: null,
+    appStore: "https://apps.apple.com/ar/app/bookit/id6792171664",
+    // Sigue en prueba interna: la ficha pública da 404 (20-oct-2026).
     playStore: null,
   },
   legal: {
@@ -86,7 +87,7 @@ export const flags = {
    * Mientras sea `false`, todo CTA de descarga manda a la lista de espera
    * con copy honesto en vez de un link muerto.
    */
-  storeLinksLive: false,
+  storeLinksLive: true,
   /** Analítica sin cookies. Mientras sea `false`, no hay banner ni tracking. */
   analytics: false,
 } as const;

@@ -24,7 +24,7 @@ export type Testimonio = {
 
 export const testimonios = {
   title: "Lo que dicen los primeros.",
-  lede: `Locales y clientes de ${site.city} que la usan antes del lanzamiento.`,
+  lede: `Locales y clientes de ${site.city} que ya la usan.`,
   // En orden de la grilla: la alta, la ancha y las dos chicas.
   citas: [
     {

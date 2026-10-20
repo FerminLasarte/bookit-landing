@@ -13,7 +13,7 @@ export const navLinks: readonly NavLink[] = [
   { label: "Soporte", href: "/soporte" },
 ] as const;
 
-export const navCta = { label: "Sumate a la lista VIP", href: "/lista-espera" } as const;
+export const navCta = { label: "Descargá la app", href: "/descargar" } as const;
 
 export const footerProducto: readonly NavLink[] = [
   { label: "Cómo funciona", href: "/#como-funciona" },
