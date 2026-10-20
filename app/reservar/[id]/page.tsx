@@ -94,9 +94,7 @@ export default async function ReservarPage({ params, searchParams }: PageProps) 
         )}
         {local.localidad && <p className="text-small text-muted">{local.localidad}</p>}
         <p className="mt-8 text-small text-muted">{reservar.sinApp}</p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <BotonesDeDescarga secundarios />
-        </div>
+        <BotonesDeDescarga />
       </div>
     </Section>
   );

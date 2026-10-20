@@ -425,9 +425,7 @@ function Bienvenida({ local, dias }: { local: string; dias: number }) {
         </p>
         <p className="mt-2 text-small text-muted">{copy.bajada}</p>
       </div>
-      <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-        <BotonesDeDescarga />
-      </div>
+      <BotonesDeDescarga />
     </Superficie>
   );
 }

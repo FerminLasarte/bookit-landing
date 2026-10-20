@@ -3,7 +3,7 @@ import { Mail, Phone } from "lucide-react";
 import TextLink from "@/components/ui/TextLink";
 import Wordmark from "@/components/ui/Wordmark";
 import { IconInstagram } from "@/components/ui/icons";
-import { footerLegales, footerProducto, type NavLink } from "@/content/nav";
+import { footerLegales, footerMarcas, footerProducto, type NavLink } from "@/content/nav";
 import { site } from "@/content/site";
 
 const ICONO = "size-3.5 shrink-0 self-center";
@@ -103,6 +103,8 @@ export default function Footer() {
         </p>
         <p>Datos personales tratados conforme a la Ley 25.326.</p>
       </div>
+
+      {footerMarcas.length > 0 && <p className="pb-6 text-micro text-muted">{footerMarcas.join(" ")}</p>}
     </footer>
   );
 }
