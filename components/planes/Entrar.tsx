@@ -1,20 +1,46 @@
 "use client";
 
-import { useActionState } from "react";
-import { entrarConMail, type EstadoDeEntrar } from "@/app/planes/acciones";
+import { useActionState, useState, useTransition } from "react";
+import {
+  crearCuenta,
+  entrarConMail,
+  reenviarMail,
+  type EstadoDeCrearCuenta,
+  type EstadoDeEntrar,
+} from "@/app/planes/acciones";
 import Field from "@/components/forms/Field";
 import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
+import TextLink, { textLinkClasses } from "@/components/ui/TextLink";
 import { planes } from "@/content/planes";
+import { enviarSinBorrar } from "@/lib/formularios";
 
 /*
- * Entrar con la cuenta de la app: Google, Apple o mail y contraseña, el mismo
- * Supabase Auth. No hay alta: la cuenta se crea en la app.
+ * Entrar con la cuenta de la app, o crearla: Google, Apple o mail y
+ * contraseña, el mismo Supabase Auth. Con Google o Apple la cuenta se crea al
+ * entrar; con mail, la crea `enviar_email_auth` y se confirma desde el mail
+ * (BooKit, docs/web-en-pesos.md §9).
  */
+
+type Modo = "entrar" | "crear";
+
 export default function Entrar({ error }: { error: string | null }) {
-  const copy = planes.sinSesion.entrar;
-  const [estado, enviar, enviando] = useActionState<EstadoDeEntrar, FormData>(entrarConMail, { error: null });
-  const mensaje = estado.error ?? error;
+  const { entrar: copyEntrar, crear: copyCrear } = planes.sinSesion;
+  const [modo, setModo] = useState<Modo>("entrar");
+  const [alEntrar, entrar, entrando] = useActionState<EstadoDeEntrar, FormData>(entrarConMail, { error: null });
+  const [alCrear, crear, creando] = useActionState<EstadoDeCrearCuenta, FormData>(crearCuenta, {
+    error: null,
+    enviadoA: null,
+  });
+  // El aviso que se descartó con "Usar otro mail". Cada respuesta es un objeto nuevo, así que el próximo envío se ve.
+  const [descartado, setDescartado] = useState<EstadoDeCrearCuenta | null>(null);
+
+  if (alCrear.enviadoA && alCrear !== descartado) {
+    return <MailEnviado mail={alCrear.enviadoA} onOtroMail={() => setDescartado(alCrear)} />;
+  }
+
+  const copy = modo === "entrar" ? copyEntrar : copyCrear;
+  const mensaje = modo === "entrar" ? (alEntrar.error ?? error) : alCrear.error;
 
   return (
     <Superficie tone="surface" className="mx-auto flex w-full max-w-[24rem] flex-col gap-5 p-6 md:p-8">
@@ -26,37 +52,110 @@ export default function Entrar({ error }: { error: string | null }) {
       <div className="flex flex-col gap-2">
         <form action="/planes/auth/google" method="post">
           <Button type="submit" variant="secondary" className="w-full">
-            {copy.google}
+            {copyEntrar.google}
           </Button>
         </form>
         <form action="/planes/auth/apple" method="post">
           <Button type="submit" variant="secondary" className="w-full">
-            {copy.apple}
+            {copyEntrar.apple}
           </Button>
         </form>
       </div>
 
       <p className="flex items-center gap-3 text-micro text-muted before:h-px before:flex-1 before:bg-line after:h-px after:flex-1 after:bg-line">
-        {copy.separador}
+        {copyEntrar.separador}
       </p>
 
-      <form action={enviar} className="flex flex-col gap-4">
-        <Field id="entrar-email" label={copy.mail}>
+      <form
+        key={modo}
+        onSubmit={enviarSinBorrar((datos) => (modo === "entrar" ? entrar(datos) : crear(datos)))}
+        className="flex flex-col gap-4"
+      >
+        {modo === "crear" && (
+          <Field id="crear-nombre" label={copyCrear.nombre}>
+            {(props) => <input {...props} name="nombre" type="text" autoComplete="name" required />}
+          </Field>
+        )}
+        <Field id={`${modo}-email`} label={copyEntrar.mail}>
           {(props) => <input {...props} name="email" type="email" autoComplete="email" required />}
         </Field>
-        <Field id="entrar-password" label={copy.contrasena}>
-          {(props) => <input {...props} name="password" type="password" autoComplete="current-password" required />}
+        <Field id={`${modo}-password`} label={copyEntrar.contrasena}>
+          {(props) => (
+            <input
+              {...props}
+              name="password"
+              type="password"
+              autoComplete={modo === "entrar" ? "current-password" : "new-password"}
+              minLength={modo === "crear" ? 6 : undefined}
+              required
+            />
+          )}
         </Field>
         {mensaje && (
           <p role="alert" className="text-small font-medium text-danger">
             {mensaje}
           </p>
         )}
-        <Button type="submit" disabled={enviando} className="w-full">
-          {copy.boton}
+        <Button type="submit" disabled={entrando || creando} className="w-full">
+          {modo === "entrar" ? copyEntrar.boton : creando ? copyCrear.creando : copyCrear.boton}
         </Button>
-        <p className="text-center text-micro text-muted">{copy.olvido}</p>
+        {modo === "entrar" ? (
+          <p className="text-center text-micro text-muted">{copyEntrar.olvido}</p>
+        ) : (
+          <p className="text-center text-micro text-muted">
+            {copyCrear.legal} <TextLink href="/legal/terminos">{planes.pie.terminos}</TextLink> y la{" "}
+            <TextLink href="/legal/privacidad">{planes.pie.privacidad}</TextLink>.
+          </p>
+        )}
       </form>
+
+      <button
+        type="button"
+        className={`${textLinkClasses()} self-center text-small`}
+        onClick={() => setModo(modo === "entrar" ? "crear" : "entrar")}
+      >
+        {modo === "entrar" ? copyEntrar.aCrear : copyCrear.aEntrar}
+      </button>
+    </Superficie>
+  );
+}
+
+/** Después de pedir la cuenta: que busque el mail, con reenvío. */
+function MailEnviado({ mail, onOtroMail }: { mail: string; onOtroMail: () => void }) {
+  const copy = planes.sinSesion.enviado;
+  const [aviso, setAviso] = useState<string | null>(null);
+  const [reenviando, reenviar] = useTransition();
+
+  return (
+    <Superficie
+      tone="surface"
+      className="mx-auto flex w-full max-w-[24rem] flex-col items-center gap-5 p-6 text-center md:p-8"
+    >
+      <div>
+        <h2 className="text-title font-bold text-fg">{copy.titulo}</h2>
+        <p className="mt-1 text-small text-muted">{copy.bajada(mail)}</p>
+      </div>
+      <Button
+        variant="secondary"
+        className="w-full"
+        disabled={reenviando}
+        onClick={() =>
+          reenviar(async () => {
+            const { error } = await reenviarMail(mail);
+            setAviso(error ?? copy.reenviado);
+          })
+        }
+      >
+        {copy.reenviar}
+      </Button>
+      {aviso && (
+        <p role="status" className="text-small text-muted">
+          {aviso}
+        </p>
+      )}
+      <button type="button" className={`${textLinkClasses()} text-small`} onClick={onOtroMail}>
+        {copy.otro}
+      </button>
     </Superficie>
   );
 }

@@ -3,14 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { cancelar, comprar } from "@/app/planes/acciones";
+import BotonesDeDescarga from "@/components/abrir-app/BotonesDeDescarga";
 import Button from "@/components/ui/Button";
+import Superficie from "@/components/ui/Superficie";
 import { planes, sufijoDeCiclo, type CodigoDeError } from "@/content/planes";
 import { diaYMes, pesos } from "@/lib/formato";
 import type { Frecuencia, Nivel, TarjetaDePlan } from "@/lib/planes";
 import { cn } from "@/lib/utils";
 import CarruselDePlanes from "./CarruselDePlanes";
 import Encabezado from "./Encabezado";
-import PieDelPaywall, { enlaceDelPie, legalesDelPie } from "./PieDelPaywall";
+import PieDelPaywall, { enlaceDelPie, legalesDelPie, salirDelPie } from "./PieDelPaywall";
 import RegaloDePrueba from "./RegaloDePrueba";
 import SelectorDeFrecuencia from "./SelectorDeFrecuencia";
 
@@ -26,7 +28,12 @@ import SelectorDeFrecuencia from "./SelectorDeFrecuencia";
  */
 
 type Eleccion = { nivel: Nivel; plan: Frecuencia };
-type Pedido = Eleccion & { prueba: boolean; en: number };
+/**
+ * `alta`: el local estaba pendiente, o sea que es su primer plan. Si se dio de
+ * alta acá, todavía no armó nada en la app, y la confirmación se lo dice.
+ * `dias`: la prueba que empezó, para decirlo aunque `mi_plan_web()` ya no la ofrezca.
+ */
+type Pedido = Eleccion & { prueba: boolean; en: number; alta?: boolean; dias?: number };
 
 const PEDIDO = "bookit:planes:pedido";
 /** Lo justo para no mandar un mail a medio escribir: el que valida es el servidor. */
@@ -70,6 +77,7 @@ function letraChica(tarjeta: TarjetaDePlan, pruebaDias: number, cambia: boolean)
 }
 
 export default function Compra({
+  local,
   encabezado,
   tarjetas,
   inicial,
@@ -78,6 +86,8 @@ export default function Compra({
   suscripcion,
   baja,
 }: {
+  /** El nombre del local, para la confirmación. */
+  local: string;
   encabezado: { titulo: string; bajada: string; avisos: string[] };
   tarjetas: Record<Frecuencia, TarjetaDePlan[]>;
   inicial: Eleccion;
@@ -95,7 +105,7 @@ export default function Compra({
   const [yendo, setYendo] = useState(false);
   const [pagando, empezarPago] = useTransition();
   const [fase, setFase] = useState<"eligiendo" | "confirmando" | "demora">("eligiendo");
-  const [confirmado, setConfirmado] = useState(false);
+  const [confirmado, setConfirmado] = useState<Pedido | null>(null);
 
   const cambia = suscripcion.debito !== null;
   const conPrueba = pruebaDias > 0 && !cambia;
@@ -114,7 +124,7 @@ export default function Compra({
     if (!pedido) return;
     if (listo(pedido)) {
       olvidarPedido();
-      setConfirmado(true);
+      setConfirmado(pedido);
     } else {
       setFase("confirmando");
     }
@@ -129,7 +139,7 @@ export default function Compra({
     if (pedido && listo(pedido)) {
       olvidarPedido();
       setFase("eligiendo");
-      setConfirmado(true);
+      setConfirmado(pedido);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [suscripcion, fase]);
@@ -175,7 +185,14 @@ export default function Compra({
       });
       if (!resultado.ok) return atenderError(resultado.codigo, resultado.vence);
       try {
-        const pedido: Pedido = { nivel: elegida.nivel, plan: elegida.plan, prueba: conPrueba, en: Date.now() };
+        const pedido: Pedido = {
+          nivel: elegida.nivel,
+          plan: elegida.plan,
+          prueba: conPrueba,
+          en: Date.now(),
+          alta: suscripcion.estado === "pendiente",
+          dias: conPrueba ? pruebaDias : 0,
+        };
         sessionStorage.setItem(PEDIDO, JSON.stringify(pedido));
       } catch {
         // Sin storage, a la vuelta no hay "Confirmando…": el plan aparece igual al releer.
@@ -201,10 +218,10 @@ export default function Compra({
     const { confirmando } = planes;
     return (
       <div className="flex flex-col items-center gap-6 px-[1.125rem] text-center" aria-live="polite">
-        <h1 className="text-[1.5rem] leading-[1.1] font-bold tracking-[-0.025rem] text-fg">{confirmando.titulo}</h1>
-        <p className="max-w-[22.9rem] text-[0.87rem] leading-[1.3] text-muted">
-          {fase === "confirmando" ? confirmando.bajada : confirmando.demora}
-        </p>
+        <Encabezado
+          titulo={confirmando.titulo}
+          bajada={fase === "confirmando" ? confirmando.bajada : confirmando.demora}
+        />
         {fase === "confirmando" ? (
           <span
             aria-hidden="true"
@@ -247,10 +264,16 @@ export default function Compra({
       <div className={conPrueba ? "mt-[0.7rem]" : undefined}>
         <Encabezado {...encabezado} />
       </div>
-      {confirmado && (
-        <p role="status" className="mt-4 px-[1.125rem] text-center text-[0.87rem] font-semibold text-accent-fg">
-          {planes.estado.confirmado}
-        </p>
+      {confirmado?.alta ? (
+        <div className="mt-6 w-full px-[1.125rem]">
+          <Bienvenida local={local} dias={confirmado.dias ?? 0} />
+        </div>
+      ) : (
+        confirmado && (
+          <p role="status" className="mt-4 px-[1.125rem] text-center text-[0.87rem] font-semibold text-accent-fg">
+            {planes.estado.confirmado}
+          </p>
+        )
       )}
 
       <div className="mt-[1.56rem] w-full px-[1.125rem]">
@@ -299,11 +322,7 @@ export default function Compra({
                 {planes.cancelar.enlace}
               </button>
             ),
-            <form key="s" action="/planes/auth/salir" method="post">
-              <button type="submit" className={enlaceDelPie}>
-                {planes.pie.salir}
-              </button>
-            </form>,
+            salirDelPie,
           ]}
         </PieDelPaywall>
       </div>
@@ -388,5 +407,27 @@ function MailDeMercadoPago({
       </div>
       {esRelay && <p className="text-[0.8rem] text-muted">{copy.relay}</p>}
     </form>
+  );
+}
+
+/** El primer plan, confirmado: desde acá el local sigue en la app. */
+function Bienvenida({ local, dias }: { local: string; dias: number }) {
+  const copy = planes.bienvenida;
+  return (
+    <Superficie
+      tone="surface"
+      role="status"
+      className="mx-auto flex max-w-[28rem] flex-col items-center gap-5 p-6 text-center md:p-8"
+    >
+      <div>
+        <p className="text-title font-bold text-fg">
+          {dias > 0 ? copy.tituloConPrueba(local, dias) : copy.titulo(local)}
+        </p>
+        <p className="mt-2 text-small text-muted">{copy.bajada}</p>
+      </div>
+      <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+        <BotonesDeDescarga />
+      </div>
+    </Superficie>
   );
 }
