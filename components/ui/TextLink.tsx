@@ -9,6 +9,13 @@ const tones: Record<Tone, string> = {
   quiet: "text-muted hover:text-fg",
 };
 
+/** Cómo se ve, para un `<button>` que hace de link sin navegar (cambiar de vista). */
+export const textLinkClasses = (tone: Tone = "accent") =>
+  cn(
+    "ring-focus group inline-flex items-baseline gap-1 rounded-pill transition-colors duration-(--duration-chico)",
+    tones[tone],
+  );
+
 /** El único link de texto del sitio. Los que abren otra pestaña llevan flecha. */
 export default function TextLink({
   tone = "accent",
@@ -21,11 +28,7 @@ export default function TextLink({
   return (
     <Anchor
       {...props}
-      className={cn(
-        "ring-focus group inline-flex items-baseline gap-1 rounded-pill transition-colors duration-(--duration-chico)",
-        tones[tone],
-        className,
-      )}
+      className={cn(textLinkClasses(tone), className)}
     >
       {children}
       {opensTab && (

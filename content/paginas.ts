@@ -124,6 +124,12 @@ export const verificar = {
     desc: "Pedí uno nuevo desde la app de Bookit y abrilo desde el mail.",
   },
   cta: "Abrir Bookit",
+  /** El enlace de una cuenta creada en la web (`desde=web`): se confirma acá y sigue en /planes. */
+  web: {
+    title: "Confirmá tu cuenta.",
+    desc: "Tocá el botón y seguí con el alta de tu local.",
+    cta: "Confirmar y seguir",
+  },
 } as const;
 
 /**
