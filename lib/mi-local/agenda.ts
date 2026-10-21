@@ -32,6 +32,8 @@ export type Turno = {
   precio: number;
   cliente: string | null;
   esManual: boolean;
+  /** Lo que se le devuelve si se cancela: lo pagado por Mercado Pago. */
+  pagadoPorMp: number;
   servicio: string | null;
   profesional: { id: string; nombre: string } | null;
 };
@@ -69,6 +71,9 @@ type FilaDeTurno = {
   precio_total: number | null;
   cliente_nombre: string | null;
   origen: string | null;
+  metodo_pago: string | null;
+  pago_estado: string | null;
+  monto_pagado: number | null;
   usuario: { nombre_completo: string | null } | null;
   servicios: { nombre: string | null } | null;
   profesionales: { id_profesional: string; nombre: string | null } | null;
@@ -92,6 +97,7 @@ export async function leerTurnosDelDia(idComercio: string, dia: string): Promise
     .from("turnos")
     .select(
       `id_turno, fecha_hora_inicio, fecha_hora_fin, estado, precio_total, cliente_nombre, origen,
+       metodo_pago, pago_estado, monto_pagado,
        usuario:usuario_visible(nombre_completo),
        servicios!fk_turnos_servicio!inner(id_comercio, nombre),
        profesionales(id_profesional, nombre)`,
@@ -111,6 +117,8 @@ export async function leerTurnosDelDia(idComercio: string, dia: string): Promise
     precio: fila.precio_total ?? 0,
     cliente: fila.cliente_nombre?.trim() || fila.usuario?.nombre_completo || null,
     esManual: fila.origen?.toLowerCase() === "manual",
+    // La misma condición que `trg_devolver_al_cancelar` (BooKit, `cobradoPorMp` en la app).
+    pagadoPorMp: fila.metodo_pago === "mercadopago" && fila.pago_estado === "pagado" ? (fila.monto_pagado ?? 0) : 0,
     servicio: fila.servicios?.nombre ?? null,
     profesional: fila.profesionales
       ? { id: String(fila.profesionales.id_profesional), nombre: fila.profesionales.nombre ?? "" }
@@ -134,9 +142,29 @@ export async function leerProfesionales(idComercio: string): Promise<Profesional
   }));
 }
 
+/** Reservado y sin resolver: pendiente o confirmado (`EstadoTurno.esActivo` en la app). */
+const estaAbierto = (turno: Turno) => turno.estado === "pendiente" || turno.estado === "confirmado";
+
 /** Terminó y nadie lo cerró: sigue pendiente o confirmado (`EstadoTurno.quedoSinCerrar` en la app). */
-export const quedoSinMarcar = (turno: Turno, ahora: Date) =>
-  (turno.estado === "pendiente" || turno.estado === "confirmado") && new Date(turno.fin) <= ahora;
+export const quedoSinMarcar = (turno: Turno, ahora: Date) => estaAbierto(turno) && new Date(turno.fin) <= ahora;
+
+/** Los estados a los que el local puede llevar un turno. Confirmar es cosa del pago (D1 del plan de la fase 2). */
+export const ACCIONES_DE_TURNO = ["completado", "ausente", "cancelado"] as const;
+export type AccionDeTurno = (typeof ACCIONES_DE_TURNO)[number];
+
+/** Qué se le puede hacer a un turno ahora. `null`: ya está cerrado. */
+export type AccionesDelTurno = { asistencia: boolean; cancelar: boolean } | null;
+
+/**
+ * La regla de `_turnos_quien_cambia_el_estado` (BooKit, 20260925150000), para
+ * no ofrecer lo que la base va a rechazar: completado y ausente desde que
+ * empieza, cancelar hasta que termina. La que decide es la base; si cambia
+ * allá, cambia acá.
+ */
+export function accionesDelTurno(turno: Turno, ahora: Date): AccionesDelTurno {
+  if (!estaAbierto(turno)) return null;
+  return { asistencia: new Date(turno.inicio) <= ahora, cancelar: new Date(turno.fin) > ahora };
+}
 
 /** Lo cobrado: sólo lo completado, la definición de ingreso de la app (`EstadoTurno.esIngreso`). */
 export const cobrado = (turnos: Turno[]) =>
