@@ -19,7 +19,7 @@ export const preguntas = {
 export const faq: readonly FaqItem[] = [
   {
     q: "¿Dónde descargo la app?",
-    a: "Ya está en el App Store para iPhone. La versión para Android sale pronto.",
+    a: "Está en el App Store para iPhone y en Google Play para Android.",
     link: { label: "Descargar Bookit", href: "/descargar" },
   },
   {

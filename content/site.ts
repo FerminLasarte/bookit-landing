@@ -38,8 +38,8 @@ export const site = {
     esquema: "bookitapp",
     appleTeamId: "MPX5U375K6",
     appStore: "https://apps.apple.com/ar/app/bookit/id6792171664",
-    // Sigue en prueba interna: la ficha pública da 404 (20-oct-2026).
-    playStore: null,
+    // Publicada el 21-oct-2026.
+    playStore: "https://play.google.com/store/apps/details?id=ar.com.somosbookit.app",
   },
   legal: {
     dataProtectionLaw: "Ley 25.326 de Protección de Datos Personales",

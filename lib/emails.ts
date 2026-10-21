@@ -30,7 +30,7 @@ export function waitlistEmailHtml(name: string, userType: UserType): string {
         <p>Mientras tanto, seguinos en Instagram para enterarte de qué otros locales ya se están sumando.</p>`
     : `
         <p>Ya estás oficialmente en la lista VIP de <strong>Bookit</strong>.</p>
-        <p>Acabamos de guardar tus <strong>${site.puntosDeRegalo} puntos bajo llave</strong>. Bajá la app del App Store y registrate con este mismo mail para canjearlos en tu primer turno.</p>
+        <p>Acabamos de guardar tus <strong>${site.puntosDeRegalo} puntos bajo llave</strong>. Bajá la app del App Store o de Google Play y registrate con este mismo mail para canjearlos en tu primer turno.</p>
         <p>Mientras tanto, seguinos en Instagram para enterarte de qué locales ya se están sumando.</p>`;
 
   return `

@@ -1,19 +1,21 @@
 import type { HTMLAttributes, ReactNode, Ref } from "react";
 import { cn } from "@/lib/utils";
 
-export type Tono = "arena" | "niebla" | "miel" | "surface";
+export type Tono = "arena" | "niebla" | "miel" | "surface" | "flota";
 
 /*
  * Los tres tonos de tile muestran y llevan sombra. `surface` es lo que se toma
- * —un formulario, un código—, y eso lleva borde en vez de sombra: MARCA,
- * Divergencia 7. El hueco del anillo es `surface` para lo de adentro; la
- * card misma, si se enfoca, está sobre la página.
+ * —un formulario, un código—, y eso lleva borde en vez de sombra; `flota` es
+ * la tarjeta que se apoya sobre un tile, y lleva la sombra de lo que flota:
+ * MARCA, Divergencia 7. El hueco del anillo es `surface` para lo de adentro;
+ * la card misma, si se enfoca, está sobre la página.
  */
 const tonos: Record<Tono, string> = {
   arena: "bg-tile-arena shadow-tile",
   niebla: "bg-tile-niebla shadow-tile",
   miel: "bg-tile-miel shadow-tile",
   surface: "border border-line bg-surface *:[--ring-hueco:var(--surface)]",
+  flota: "bg-surface shadow-float *:[--ring-hueco:var(--surface)]",
 };
 
 /**
