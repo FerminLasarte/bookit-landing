@@ -3,7 +3,7 @@ import Screen from "@/components/ui/Screen";
 import { AIRE_DE_PAGINA } from "@/components/ui/Section";
 import Superficie from "@/components/ui/Superficie";
 import { descargar } from "@/content/paginas";
-import { flags, site } from "@/content/site";
+import { flags } from "@/content/site";
 import DesdeLaCompu from "./DesdeLaCompu";
 import TelefonosInclinados from "./TelefonosInclinados";
 
@@ -28,9 +28,6 @@ export default function Cartel() {
             </h1>
             <p className="mx-auto mt-6 max-w-[46ch] text-pretty text-muted lg:mx-0">{lede}</p>
             <BotonesDeDescarga className="mt-10 lg:justify-start" />
-            {flags.storeLinksLive && !site.app.playStore && (
-              <p className="mt-4 text-small text-muted">{conTiendas.androidPronto}</p>
-            )}
             {flags.storeLinksLive && <DesdeLaCompu className="mt-8 border-t border-line pt-8" />}
           </Superficie>
 

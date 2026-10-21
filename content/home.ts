@@ -14,7 +14,7 @@ export const hero = {
   title: "Tu próximo turno de",
   rubros,
   lede: `Los locales de ${site.city} en una sola app. Reservá cuando se te ocurra, sin cadenas de WhatsApp ni llamados en horario de trabajo.`,
-  note: `Ya está en el App Store. Si te anotás en la lista VIP y te registrás con el mismo mail, te llevás ${site.puntosDeRegalo} Puntos Bookit para tu primer turno.`,
+  note: `Ya está en el App Store y en Google Play. Si te anotás en la lista VIP y te registrás con el mismo mail, te llevás ${site.puntosDeRegalo} Puntos Bookit para tu primer turno.`,
   ctaCliente: { label: "Descargá la app", href: descargar },
   ctaLocal: { label: "Tengo un local", href: "/#locales" },
 } as const;
@@ -125,7 +125,7 @@ export const cierre = {
   puertas: [
     {
       label: "Sacás turnos",
-      body: "Gratis para quien saca turnos, en iPhone. La versión para Android sale pronto.",
+      body: "Gratis para quien saca turnos, en iPhone y en Android.",
       note: `¿Te anotaste en la lista VIP? Registrate con el mismo mail y tus ${site.puntosDeRegalo} puntos te esperan.`,
       cta: { label: "Descargá la app", href: descargar },
     },

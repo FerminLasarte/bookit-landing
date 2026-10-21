@@ -51,18 +51,11 @@ export const soporte = {
   },
 } as const;
 
-/**
- * `/descargar`. Lo de Android depende de `site.app.playStore`: con link, el
- * badge aparece solo y el aviso de "pronto" se va.
- */
 export const descargar = {
-  descripcion: site.app.playStore
-    ? `Bajate Bookit en el App Store o en Google Play y sacá tus turnos en ${site.city}.`
-    : `Bajate Bookit en el App Store y sacá tus turnos en ${site.city}. La versión para Android sale pronto.`,
+  descripcion: `Bajate Bookit en el App Store o en Google Play y sacá tus turnos en ${site.city}.`,
   conTiendas: {
     title: "Bajate Bookit.",
     lede: `Buscá locales de ${site.city}, reservá en treinta segundos y tené tus turnos a mano. Gratis para quien saca turnos.`,
-    androidPronto: "La versión para Android sale pronto.",
     // El texto alternativo de cada badge es el que dice el badge.
     iphone: "Descárgalo en el App Store",
     android: "Descargar en Google Play",
