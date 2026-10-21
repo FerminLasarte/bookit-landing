@@ -1,10 +1,10 @@
+import Abanico from "@/components/ui/Abanico";
 import Button from "@/components/ui/Button";
 import Reveal from "@/components/ui/Reveal";
 import Screen from "@/components/ui/Screen";
 import Section from "@/components/ui/Section";
 import Superficie from "@/components/ui/Superficie";
 import { cierre } from "@/content/home";
-import Abanico from "./Abanico";
 
 export default function Cierre() {
   return (
@@ -21,10 +21,7 @@ export default function Cierre() {
           {/* En móvil tapan el corte de la cascada; en escritorio flotan sobre su mitad de abajo. */}
           <div className="relative z-30 -mt-24 grid gap-4 lg:absolute lg:inset-x-10 lg:bottom-10 lg:mt-0 lg:grid-cols-2 lg:gap-6">
             {cierre.puertas.map((puerta, i) => (
-              <div
-                key={puerta.label}
-                className="flex flex-col items-start rounded-card bg-surface p-7 text-left shadow-float"
-              >
+              <Superficie key={puerta.label} tone="flota" className="flex flex-col items-start p-7 text-left">
                 <h3 className="text-title font-bold text-fg">{puerta.label}</h3>
                 <p className="mt-2 text-pretty text-fg">{puerta.body}</p>
                 <p className="mt-2 text-pretty text-small text-muted">{puerta.note}</p>
@@ -34,7 +31,7 @@ export default function Cierre() {
                     {puerta.cta.label}
                   </Button>
                 </div>
-              </div>
+              </Superficie>
             ))}
           </div>
         </Superficie>

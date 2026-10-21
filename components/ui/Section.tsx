@@ -10,6 +10,9 @@ import SectionHeader from "./SectionHeader";
  * Con `as="h1"` es el encabezado de una página: arranca a la altura del hero y
  * el título no espera al `Reveal`, que retrasaría el LCP.
  */
+/** El aire de una sección que abre la página: arranca a la altura del hero. */
+export const AIRE_DE_PAGINA = "pt-12 pb-24 md:pt-20 md:pb-36";
+
 export default function Section({
   id,
   as = "h2",
@@ -34,7 +37,7 @@ export default function Section({
     <section
       id={id}
       aria-labelledby={titleId}
-      className={cn(esPagina ? "pt-12 pb-24 md:pt-20 md:pb-36" : "py-24 md:py-36", className)}
+      className={cn(esPagina ? AIRE_DE_PAGINA : "py-24 md:py-36", className)}
     >
       <div className="wrap">
         <SectionHeader

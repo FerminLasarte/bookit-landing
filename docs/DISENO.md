@@ -87,11 +87,12 @@ otra podría necesitar.
 | `Badge` | Etiqueta chica en píldora: "Pronto", "Ejemplo". |
 | `Section` | Aire vertical, `wrap` y el encabezado. Toda sección de contenido pasa por acá. Con `as="h1"` es el encabezado de una página. |
 | `SectionHeader` | Título `display` + bajada `muted` + botones, centrado. |
-| `Superficie` | La card: 24 px y un fondo plano. Los tonos de tile llevan sombra; `surface`, lo que se toma, lleva borde. |
+| `Superficie` | La card: 24 px y un fondo plano. Los tonos de tile llevan sombra; `surface`, lo que se toma, lleva borde; `flota`, la tarjeta que se apoya sobre un tile, lleva `shadow-float`. |
 | `Tile` | Card de 24 px con fondo plano, sombra y un medio adentro; título y bajada abajo. |
 | `Screen` | Una captura de la app dentro de un marco, con su versión clara y oscura. |
 | `Reveal` | Aparición al entrar en pantalla (sube 16 px, 560 ms). |
 | `Plegable` | Un bloque que se abre creciendo y se cierra encogiendo. Cerrado queda `inert`. |
+| `Abanico` | Capturas que llegan apiladas y se abren en abanico al entrar; con el puntero se separan. |
 | `Resaltado` | El fondo que se desliza entre los ítems de una lista (`layoutId`). |
 | `Herramienta` | Tijera, peine, secador, esmalte, navaja o brocha: el cursor y el splash. |
 
@@ -128,6 +129,7 @@ carga el motor después de hidratar (se usa `m.*`, nunca `motion.*`).
 | Splash del tijeretazo, una vez por visita | `layout/Splash` + utilidad `splash` |
 | Cursor: una herramienta por sección | `layout/Cursor` + `content/cursor.ts` |
 | Botones magnéticos | `lib/useMagnetismo`, con resortes de `motion` |
+| Teléfonos que se inclinan hacia el puntero | `lib/useInclinacion` (hero y cartel de /descargar) |
 | El nav se compacta al scrollear | `layout/Nav` |
 
 ## Estructura
@@ -140,7 +142,7 @@ components/
   forms/     Field, AudienceSwitch, WaitlistForm
   legal/     LegalDoc: los cinco documentos de /legal
   invite/    ReferralCode: el código para copiar
-  descargar/ DesdeLaCompu: el QR al App Store
+  descargar/ Cartel, TelefonosInclinados, Tira y DesdeLaCompu (el QR al App Store)
 content/     copy y datos: ningún texto de producto vive en un componente
 ```
 
@@ -159,13 +161,15 @@ content/     copy y datos: ningún texto de producto vive en un componente
 ## Las rutas secundarias
 
 Todas abren con `Section as="h1"`: el mismo encabezado centrado que el hero,
-sin `Reveal`. Lo que se toma va en `Superficie tone="surface"`.
+sin `Reveal`. Lo que se toma va en `Superficie tone="surface"`. La excepción
+es `/descargar`, que abre con un cartel apaisado (elegido por Fermín el
+20/10/2026 entre tres bocetos).
 
 | Ruta | Composición |
 |---|---|
 | `/lista-espera` | Formulario en una superficie; cómo sigue en tres pasos; la letra chica |
 | `/soporte` | Los tres canales como superficies enlazadas; tiempos y borrado de datos |
-| `/descargar` | Encabezado con los badges de las tiendas y un tile con el inicio de la app; tres tiles con lo que queda en la app; desde `md`, el QR al App Store; el renglón para locales |
+| `/descargar` | El cartel: una tarjeta flotante con el título, los badges y, desde `lg`, el QR al App Store, y tres teléfonos que se abren y se inclinan hacia el puntero; la tira con el recorrido de la app, que corre de costado con el scroll; para locales, el abanico de las pantallas del local |
 | `/invite` | El código para copiar y los badges; el copy no dice "Descargá" sin tiendas |
 | `/legal/*` | Una columna de lectura, con el índice fijo al costado desde `lg` |
 | 404 | Encabezado con los dos botones |

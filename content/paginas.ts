@@ -1,4 +1,4 @@
-import type { Pantalla } from "./home";
+import type { CapturaId } from "./capturas";
 import { site } from "./site";
 
 /** Copy de las rutas secundarias: soporte, descargar, invitación y 404. */
@@ -72,39 +72,25 @@ export const descargar = {
     lede: `Estamos terminando la app y arrancamos por ${site.city}. Cuando esté en App Store y Google Play, los links van a estar acá. Mientras tanto, anotate a la lista y te avisamos antes que a nadie.`,
     cta: { label: "Sumate a la lista VIP", href: "/lista-espera" },
   },
-  enLaApp: {
-    title: "Tus turnos, en un solo lugar.",
-    lede: "Lo que reservaste queda en la app, listo para cuando lo necesites.",
-    items: [
-      {
-        title: "Tus turnos a mano",
-        body: "Los próximos, con el local, la hora y el servicio.",
-        captura: "misTurnos",
-      },
-      {
-        title: "Cambios sin llamar",
-        body: "Agendalo, mirá cómo llegar, reprogramalo o cancelalo.",
-        captura: "hojaTurno",
-        // La hoja con las acciones, sin la lista de atrás.
-        crop: { top: 1000, bottom: 2622 },
-      },
-      {
-        title: `${site.city} en un mapa`,
-        body: "Los locales cerca tuyo, por rubro.",
-        captura: "mapa",
-      },
-    ] satisfies readonly Pantalla[],
-  },
   // El código lleva a https://apple.co/4dR0YKO, la ficha del App Store. Cuando
   // salga Android hay que cambiarlo por uno que sirva a los dos.
   qr: {
     title: "¿Estás en la compu?",
-    body: "Apuntá la cámara del iPhone al código y abrís Bookit en el App Store.",
+    body: "Escaneá con la cámara del iPhone.",
     alt: "Código QR que abre Bookit en el App Store.",
   },
-  local: {
-    pregunta: "¿Tenés un local? Bookit también es tu agenda.",
-    link: { label: "Mirá los planes", href: "/planes" },
+  porDentro: {
+    title: "Así es Bookit por dentro.",
+    lede: "Buscás un local, elegís el horario y confirmás. Después, tus turnos quedan a mano.",
+    // Nombre de la tira cuando se recorre a mano (con Reducir movimiento).
+    etiqueta: "Pantallas de la app",
+    pantallas: ["inicio", "cerca", "ficha", "horario", "revisa", "misTurnos", "hojaTurno"] satisfies readonly CapturaId[],
+  },
+  locales: {
+    title: "¿Tenés un local?",
+    lede: "La misma app es la agenda de tu barbería, peluquería o centro de estética: los turnos, los servicios, el equipo y cómo crece el local.",
+    cta: { label: "Mirá los planes", href: "/planes" },
+    pantallas: ["agenda", "servicios", "mostrador", "equipo", "crecimiento"] satisfies readonly CapturaId[],
   },
 } as const;
 

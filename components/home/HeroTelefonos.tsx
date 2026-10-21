@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
-import { m, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import type { ReactNode } from "react";
+import { m, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useIntro } from "@/components/layout/Movimiento";
-import { PUNTERO_FINO, transicion } from "@/lib/movimiento";
+import { transicion } from "@/lib/movimiento";
+import { useInclinacion } from "@/lib/useInclinacion";
 import { cn } from "@/lib/utils";
 
 /** Un teléfono de atrás: sale de detrás del central hacia su lado. */
@@ -32,27 +33,12 @@ export default function HeroTelefonos({
   const { scrollY } = useScroll();
   const deriva = useTransform(scrollY, [0, 800], [0, reducir ? 0 : 120]);
 
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const rotateY = useSpring(useTransform(px, [-1, 1], [-7, 7]), transicion.suave);
-  const rotateX = useSpring(useTransform(py, [-1, 1], [5, -5]), transicion.suave);
-
-  useEffect(() => {
-    if (reducir || !window.matchMedia(PUNTERO_FINO).matches) return;
-    const seguir = (event: PointerEvent) => {
-      px.set((event.clientX / window.innerWidth) * 2 - 1);
-      py.set((event.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("pointermove", seguir, { passive: true });
-    return () => window.removeEventListener("pointermove", seguir);
-  }, [reducir, px, py]);
+  const { rotateX, rotateY } = useInclinacion();
 
   const atras = { izquierda, derecha };
 
   return (
     <div className="relative mx-auto mt-16 max-w-[56rem] perspective-[1400px] md:mt-20">
-      {/* Sin `transform-3d`: el grupo gira como una lámina. Si los teléfonos compartieran
-          el espacio 3D, Safari no sabría cuál va adelante donde se pisan y los haría saltar. */}
       <m.div style={{ rotateX, rotateY }} className="relative flex justify-center">
         {(Object.keys(LADOS) as (keyof typeof LADOS)[]).map((key) => {
           const { lado, className } = LADOS[key];
