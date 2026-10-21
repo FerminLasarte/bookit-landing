@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   const tipo = String(datos.get("type") ?? "");
 
   if (tokenHash && TIPOS.includes(tipo as Tipo)) {
-    const supabase = await clienteDeSupabase("planes");
+    const supabase = await clienteDeSupabase("local");
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: tipo as Tipo });
     if (!error) return NextResponse.redirect(new URL("/planes", request.url), 303);
     console.error("planes/auth/confirmar:", error.code, error.message);

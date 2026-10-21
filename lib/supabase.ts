@@ -10,16 +10,20 @@ import { NextResponse, type NextRequest } from "next/server";
  * puede leer o hacer lo decide la base.
  *
  * Hay dos áreas con sesión y cada una tiene su cookie: el panel del equipo
- * (/admin) y la página de planes del dueño (/planes). Es el mismo Supabase
- * Auth, pero entrar o salir de una no toca la otra.
+ * (/admin) y la del dueño del local, que es una sola para /planes y /mi-local.
+ * Es el mismo Supabase Auth, pero entrar o salir de una no toca la otra.
  */
 
-export type Area = "panel" | "planes";
+export type Area = "panel" | "local";
 
-/** El panel conserva la cookie de siempre: cambiarla sacaría al equipo. */
+/**
+ * El panel conserva la cookie de siempre: cambiarla sacaría al equipo. La del
+ * local va en `/` porque la leen dos rutas; reemplazó a `sb-planes`, que vivía
+ * sólo en /planes.
+ */
 export const cookiesDeArea: Record<Area, CookieOptionsWithName | undefined> = {
   panel: undefined,
-  planes: { name: "sb-planes", path: "/planes" },
+  local: { name: "sb-local", path: "/" },
 };
 
 export function credenciales() {

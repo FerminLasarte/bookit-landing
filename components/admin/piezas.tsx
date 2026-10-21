@@ -78,22 +78,12 @@ export function Bloque({
 /** El estado de una suscripción, en el color de lo que significa. */
 export function EstadoBadge({ estado }: { estado: EstadoSuscripcion }) {
   const { label, tono } = estados[estado] ?? { label: estado, tono: "atencion" as const };
-  return (
-    <Badge
-      className={cn(
-        tono === "bien" && "bg-fg/8 text-fg",
-        tono === "atencion" && "bg-accent/20 text-accent-fg",
-        tono === "mal" && "bg-danger/12 text-danger",
-      )}
-    >
-      {label}
-    </Badge>
-  );
+  return <Badge tono={tono}>{label}</Badge>;
 }
 
 /** Una etiqueta neutra para un dato corto: el nivel, el canal. */
 export function Dato({ children }: { children: ReactNode }) {
-  return <Badge className="bg-fg/6 text-fg">{children}</Badge>;
+  return <Badge tono="neutro">{children}</Badge>;
 }
 
 /**
