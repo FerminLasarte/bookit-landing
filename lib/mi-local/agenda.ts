@@ -142,6 +142,41 @@ export async function leerProfesionales(idComercio: string): Promise<Profesional
   }));
 }
 
+export type ServicioDelProfesional = { id: number; nombre: string; precio: number; duracion: number };
+
+/**
+ * Lo que ofrece un profesional, con el precio que va a guardar
+ * `crear_turno_manual` y la duración que arma el fin del turno. Lo calcula la
+ * base (`servicios_del_profesional`, BooKit 20261021210000, D4).
+ */
+export async function leerServiciosDelProfesional(idProfesional: string): Promise<ServicioDelProfesional[]> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase.rpc("servicios_del_profesional", { p_profesional: idProfesional });
+  if (error) throw new Error(`servicios_del_profesional: ${error.message}`);
+  return (data as { id_servicio: number; nombre: string; precio: number; duracion_minutos: number }[]).map((s) => ({
+    id: s.id_servicio,
+    nombre: s.nombre,
+    precio: s.precio,
+    duracion: s.duracion_minutos,
+  }));
+}
+
+/**
+ * Los inicios libres de un profesional en un día para un servicio, con la
+ * misma cuenta que la reserva del cliente (`horarios_libres_del_profesional`).
+ * Los que ya pasaron no vienen.
+ */
+export async function leerHorariosLibres(idProfesional: string, dia: string, idServicio: number): Promise<string[]> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase.rpc("horarios_libres_del_profesional", {
+    p_profesional: idProfesional,
+    p_fecha: dia,
+    p_servicio: idServicio,
+  });
+  if (error) throw new Error(`horarios_libres_del_profesional: ${error.message}`);
+  return (data as { inicio: string }[]).map((h) => h.inicio);
+}
+
 /** Reservado y sin resolver: pendiente o confirmado (`EstadoTurno.esActivo` en la app). */
 const estaAbierto = (turno: Turno) => turno.estado === "pendiente" || turno.estado === "confirmado";
 

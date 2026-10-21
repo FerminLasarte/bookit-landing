@@ -249,10 +249,12 @@
  * Anillo de foco. `amber-700` en los dos temas: es el único ámbar que pasa 3:1
  * sobre todas las superficies con algo enfocable (MARCA, "Espacio y forma").
  * El hueco toma el color de la superficie de abajo; donde no es `page`, el
- * contenedor lo declara con `[--ring-hueco:…]`.
+ * contenedor lo declara con `[--ring-hueco:…]`. Una etiqueta que envuelve un
+ * radio escondido (los horarios de /mi-local/nuevo) lleva el anillo por él.
  */
 @utility ring-focus {
-  &:focus-visible {
+  &:focus-visible,
+  &:has(> input:focus-visible) {
     outline: none;
     box-shadow:
       0 0 0 2px var(--ring-hueco, var(--page)),
@@ -260,7 +262,8 @@
   }
 
   @media (forced-colors: active) {
-    &:focus-visible {
+    &:focus-visible,
+    &:has(> input:focus-visible) {
       outline: 2px solid;
       outline-offset: 2px;
     }

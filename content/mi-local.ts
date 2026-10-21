@@ -9,6 +9,9 @@ import { planes } from "@/content/planes";
 
 export type Aviso = { titulo: string; bajada: string; boton: string | null };
 
+/** Lo que contesta una acción cuando el local ya no entra a la agenda. */
+const sinAcceso = "Tu local no tiene acceso a la agenda. Regularizá tu plan para volver a usarla.";
+
 export const miLocal = {
   meta: { title: "Mi local" },
 
@@ -43,6 +46,35 @@ export const miLocal = {
     sinProfesional: "Sin profesional",
     sinMarcar: "Sin marcar",
     salir: "Salir",
+    cargar: "Cargar un turno",
+  },
+
+  /** Cargar un turno a mano, como `ManualBookingSheet` de la app: profesional, servicio, día y horario. */
+  nuevo: {
+    titulo: "Cargar un turno",
+    volver: "Volver a la agenda",
+    profesional: "Profesional",
+    servicio: "Servicio",
+    dia: "Día",
+    horario: "Horario",
+    /** "Corte de pelo · 45 min · $15.000". */
+    detalleDelServicio: (nombre: string, minutos: number, precio: string) => `${nombre} · ${minutos} min · ${precio}`,
+    elegirProfesional: "Elegí el profesional.",
+    elegirServicio: "Elegí el servicio.",
+    sinProfesionales: "Tu local no tiene profesionales activos. Se suman desde la app.",
+    sinServicios: (profesional: string) => `${profesional} no tiene servicios asignados. Se asignan desde la app.`,
+    sinHorarios: "No quedan horarios libres este día.",
+    error: "No pudimos traer los horarios. Recargá la página en un rato.",
+    nombre: "Nombre del cliente",
+    telefono: "Teléfono",
+    cargar: "Cargar turno",
+    cargando: "Cargando…",
+    errores: {
+      horario: "Elegí un horario.",
+      servicio: "Ese servicio ya no está. Elegí otro.",
+      generico: "No pudimos cargar el turno. Probá de nuevo en un rato.",
+      sinAcceso,
+    },
   },
 
   /** La ficha del turno: lo mismo que la hoja del turno de la app (BooKit, `SharedTurnoBottomSheet`). */
@@ -78,7 +110,7 @@ export const miLocal = {
     },
     errores: {
       generico: "No pudimos cambiar el estado del turno. Probá de nuevo en un rato.",
-      sinAcceso: "Tu local no tiene acceso a la agenda. Regularizá tu plan para volver a usarla.",
+      sinAcceso,
     },
   },
 
