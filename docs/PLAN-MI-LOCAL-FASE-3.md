@@ -497,6 +497,19 @@ tener trabajo sin commitear.
      otros dos en "Todos".
 6. **BooKit, la app** (D6): un PR aparte a `develop`.
 
+   *Hecho el 22-oct-2026: FacuAntivero/BooKit#85* (rama
+   `feat/app-huecos-del-dia`, worktree `../BooKit-app-huecos`).
+   - `AgendaHuecosLoader` llama a `huecos_del_dia`: una consulta por día,
+     con el local ya unido. Se borraron `rangosLibres`, `unirRangos` y los
+     `libres` de `ManualBookingDay`.
+   - La historia de disponibilidad no cambió: arma su grilla con
+     `horarios_libres_del_profesional` y nunca usó los rangos.
+   - La agenda del staff no sabe su local: el loader lo busca una vez por
+     profesional.
+   - `flutter analyze` y `flutter test` (847) pasan. En el simulador,
+     "Sucursal" y "Mis turnos" de Nogal muestran los mismos huecos que la
+     web. La agenda del staff no se probó en vivo.
+
 ## Cómo se prueba
 
 No hay tests automáticos en la web. Se prueba en el preview con Barbería Nogal,
