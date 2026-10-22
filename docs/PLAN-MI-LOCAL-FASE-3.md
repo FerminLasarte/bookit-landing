@@ -426,8 +426,8 @@ tener trabajo sin commitear.
      paso 3, como dice el plan del panel.
    - Las acciones van al lado de su página, con dos ayudantes nuevos:
      `mensajeDeLaBase` (`lib/mi-local/errores.ts`) y `leerLocalQueEntra`.
-   - `cambiarEstado` y `cargarTurno` pasan a usar `leerLocalQueEntra` cuando
-     se mergee `mi-local/sin-p-fin`, que toca esas mismas líneas.
+   - `cambiarEstado` y `cargarTurno` pasaron a usar `leerLocalQueEntra` en el
+     segundo PR, después de que se mergeara `mi-local/sin-p-fin` (#51).
 3. **Web, Equipo:**
    - el equipo y las invitaciones;
    - sumar, invitar, reenviar y revocar;

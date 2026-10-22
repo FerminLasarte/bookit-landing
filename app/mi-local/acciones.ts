@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
-import { daAcceso, leerMiLocal } from "@/lib/mi-local/agenda";
+import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
 import { ACCIONES_DE_TURNO, type AccionDeTurno } from "@/lib/mi-local/turnos";
 import { enlaceDeVista, esClaveDeDia } from "@/lib/mi-local/vista";
 import { clienteDeSupabase } from "@/lib/supabase";
@@ -28,8 +28,7 @@ export async function cambiarEstado(idTurno: string, estado: AccionDeTurno): Pro
   const leido = cambio.safeParse({ idTurno, estado });
   if (!leido.success) return { error: errores.generico };
 
-  const local = await leerMiLocal();
-  if (!daAcceso(local.suscripcion.estado)) return { error: errores.sinAcceso };
+  if (!(await leerLocalQueEntra())) return { error: errores.sinAcceso };
 
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase
@@ -85,8 +84,7 @@ export async function cargarTurno(_: EstadoDeCarga, datos: FormData): Promise<Es
   if (!leido.success) return { error: errores.generico };
   const d = leido.data;
 
-  const local = await leerMiLocal();
-  if (!daAcceso(local.suscripcion.estado)) return { error: errores.sinAcceso };
+  if (!(await leerLocalQueEntra())) return { error: errores.sinAcceso };
 
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.rpc("crear_turno_manual", {
