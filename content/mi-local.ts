@@ -100,7 +100,6 @@ export const miLocal = {
     cargando: "Cargando…",
     errores: {
       horario: "Elegí un horario.",
-      servicio: "Ese servicio ya no está. Elegí otro.",
       generico: "No pudimos cargar el turno. Probá de nuevo en un rato.",
       sinAcceso,
     },

@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
-import { daAcceso, leerMiLocal, leerServiciosDelProfesional } from "@/lib/mi-local/agenda";
+import { daAcceso, leerMiLocal } from "@/lib/mi-local/agenda";
 import { ACCIONES_DE_TURNO, type AccionDeTurno } from "@/lib/mi-local/turnos";
 import { enlaceDeVista, esClaveDeDia } from "@/lib/mi-local/vista";
 import { clienteDeSupabase } from "@/lib/supabase";
@@ -65,9 +65,10 @@ const carga = z.object({
 
 /**
  * Carga un turno a mano con `crear_turno_manual`, la misma función que la app.
- * La duración no viene del formulario: se relee de la base para armar el fin.
- * La base controla que el horario no se pise con otro y que el profesional sea
- * del local; si sale bien, vuelve a la agenda de ese día.
+ * El fin lo pone la base, con la duración del servicio para ese profesional
+ * (BooKit 20261021220000). La base también controla que el profesional ofrezca
+ * el servicio, que sea del local y que el horario no se pise con otro; si sale
+ * bien, vuelve a la agenda de ese día.
  */
 export async function cargarTurno(_: EstadoDeCarga, datos: FormData): Promise<EstadoDeCarga> {
   const { errores } = miLocal.nuevo;
@@ -87,23 +88,11 @@ export async function cargarTurno(_: EstadoDeCarga, datos: FormData): Promise<Es
   const local = await leerMiLocal();
   if (!daAcceso(local.suscripcion.estado)) return { error: errores.sinAcceso };
 
-  const servicio = await leerServiciosDelProfesional(d.profesional)
-    .then((servicios) => servicios.find((s) => s.id === d.servicio))
-    .catch((error: unknown) => {
-      console.error("mi-local/cargar-turno:", error);
-      return null;
-    });
-  if (servicio === null) return { error: errores.generico };
-  if (!servicio) return { error: errores.servicio };
-
-  const inicio = new Date(d.inicio);
-  const fin = new Date(inicio.getTime() + servicio.duracion * 60_000);
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.rpc("crear_turno_manual", {
     p_profesional_id: d.profesional,
     p_servicio_id: d.servicio,
-    p_inicio: inicio.toISOString(),
-    p_fin: fin.toISOString(),
+    p_inicio: new Date(d.inicio).toISOString(),
     p_cliente_nombre: d.nombre || null,
     p_cliente_telefono: d.telefono || null,
   });
@@ -111,7 +100,8 @@ export async function cargarTurno(_: EstadoDeCarga, datos: FormData): Promise<Es
     console.error("mi-local/cargar-turno:", error.code, error.message);
     return { error: errores.generico };
   }
-  // Lo que contesta la función ya es para personas ("El horario se solapa con otro turno"), D7.
+  // Lo que contesta la función ya es para personas ("El horario se solapa con otro turno",
+  // "Este profesional no ofrece ese servicio."), D7.
   const respuesta = data as { success?: boolean; message?: string } | null;
   if (!respuesta?.success) return { error: respuesta?.message || errores.generico };
 
