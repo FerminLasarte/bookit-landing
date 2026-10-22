@@ -453,8 +453,48 @@ tener trabajo sin commitear.
    - la semana, el editor del día en un `Dialogo` y "Repetir en";
    - los días especiales (D8);
    - lo que edita el dueño según D2.
+
+   *Hecho el 22-oct-2026, en la rama `mi-local/fase-3-horarios`:*
+   - Horarios está en la barra, entre Agenda y Servicios, y en las pestañas
+     del teléfono. Abre con el dueño, o con el único profesional.
+   - El editor del día ofrece las horas cada 30 minutos. "Agregar descanso"
+     suma uno sin horas: la sugerencia de la app no se copió.
+   - Lo que propone la app al abrir un día sí se copió: un día cerrado
+     arranca con la forma del primer día abierto y, con la semana vacía,
+     "Repetir en" viene de lunes a viernes.
+   - Los descansos se convierten en franjas sin arreglar nada, así que la
+     base rechaza lo que no va. Un descanso que pisa a otro o que cae fuera
+     del día da "El cierre tiene que ser después de la apertura.", que es la
+     frase de las franjas y no la de los descansos. Queda como pregunta.
+   - Los días especiales: día libre "del … al …" (una fila por día, hasta
+     60) o unas horas, con motivo y la nota de que los turnos no se cancelan.
+     El horario especial se muestra y se elimina, pero no se edita, como en
+     la app.
+   - Cada profesional tiene en su página el enlace a sus horarios.
+   - Lo compartido por las acciones (`errorDe` y `profesionalQueEdita`) salió
+     de `equipo/acciones.ts` a `lib/mi-local/acciones.ts`: lo que exporta un
+     archivo `"use server"` es una acción que el navegador puede llamar.
+   - Probado en vivo con Nico Ferreyra: guardar dos días con "Repetir en",
+     los descansos encimados y las horas al revés (los rechaza la base),
+     siete días libres y su vista en la agenda, editar y eliminar. Todo quedó
+     como estaba.
+   - Sin probar en vivo: la vista de sólo lectura de un profesional con
+     cuenta, porque Barbería Nogal no tiene ninguno.
 5. **Web, los huecos en la agenda** (D7). Te paso las pantallas y **segundo
    PR**.
+
+   *Hecho el 22-oct-2026:*
+   - La agenda lee `huecos_del_dia` junto con los turnos. Si falla, la
+     agenda va igual y dice que no pudo traer los horarios libres.
+   - Las filas "Libre · de 09:00 a 13:00" van entre los turnos, del
+     profesional elegido o del local con "Todos", y se esconden con un
+     estado elegido. Tocar una lleva a "Cargar un turno" con el día y el
+     profesional (con "Todos", sin profesional).
+   - El día vacío dice por qué con las frases de `AgendaDiaLibre`. "No atiende
+     este día" lleva a Horarios.
+   - Probado: los huecos de hoy arrancan en el próximo paso de la grilla, un
+     turno cancelado no ocupa y un día libre de Nico deja los huecos de los
+     otros dos en "Todos".
 6. **BooKit, la app** (D6): un PR aparte a `develop`.
 
 ## Cómo se prueba
