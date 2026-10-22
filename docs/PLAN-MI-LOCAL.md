@@ -166,12 +166,11 @@ Una rama, `mi-local/fase-1`, y un PR a `main`:
 
 - **Los profesionales del equipo.** En la fase 1 no entran: `mi_suscripcion()`
   sólo encuentra al dueño. Decidido el 21-oct-2026: entran **después de la fase
-  3**, ver la hoja de ruta.
+  3**, ver la hoja de ruta. Plan: `docs/PLAN-MI-LOCAL-EQUIPO.md`.
 - **"Mi local" en el nav.** Decidido el 21-oct-2026: va en el nav, como un
   enlace "Mi local" al lado del botón "Descargá la app", visible para todos. Un
   cliente que lo toca cae en "Esto es para los locales". Así el nav no tiene
-  que leer la sesión, y la landing se sigue sirviendo ya armada. Todavía no está
-  hecho: hasta entonces se llega con el link.
+  que leer la sesión, y la landing se sigue sirviendo ya armada. Hecho en #49.
 
 ## Hoja de ruta
 
@@ -182,12 +181,14 @@ lo que haya en la app y en la base en ese momento.
 | # | Qué | Estado |
 |---|---|---|
 | 1 | Entrar y ver la agenda | En `main` (#45) |
-| 2 | Completar, ausente, cancelar y cargar un turno a mano (`docs/PLAN-MI-LOCAL-FASE-2.md`) | En `main` (#46). Falta terminar la prueba |
+| 2 | Completar, ausente, cancelar y cargar un turno a mano (`docs/PLAN-MI-LOCAL-FASE-2.md`) | En `main` (#46). La prueba, terminada (#50) |
 | — | El panel como un sistema propio, y la selección de día, profesional y estado (`docs/PLAN-MI-LOCAL-PANEL.md`) | En `main` (#47) |
-| — | El enlace "Mi local" en el nav | Decidido, sin hacer |
-| 3 | **Gestión:** horarios y descansos, servicios y equipo. Incluye los **huecos libres** de la agenda, con una función SQL en BooKit (`huecos_del_dia`) que use la web y después la app (D3 de la fase 1). Plan: `docs/PLAN-MI-LOCAL-FASE-3.md` | Aprobada (D1–D9), sin empezar |
-| — | **Los profesionales del equipo entran a la web:** cada uno ve sólo su agenda y la marca, como en la app, con la regla de acceso de `staff_bottom_nav_bar.dart` | Después de la fase 3 |
+| — | El enlace "Mi local" en el nav | En `main` (#49) |
+| 3 | **Gestión:** horarios y descansos, servicios y equipo. Incluye los **huecos libres** de la agenda, con una función SQL en BooKit (`huecos_del_dia`) que use la web y después la app (D3 de la fase 1). Plan: `docs/PLAN-MI-LOCAL-FASE-3.md` | En `main` (#52, #54). En BooKit: #84 (la función, aplicada en la base) y #85 (la app), en `develop` |
+| — | **Los profesionales del equipo entran a la web:** cada uno ve sólo su agenda y la marca, como en la app, con la regla de acceso de `staff_bottom_nav_bar.dart`. Plan: `docs/PLAN-MI-LOCAL-EQUIPO.md` | Planeado, para aprobar (D1–D8) |
 | 4 | **Crecimiento** (estadísticas, promociones y recompensas) y **Perfil** del local | Sin planear |
 
 Aparte, en BooKit y sin frenar a la web: los tres arreglos que dejó anotados
-la fase 2 (ver "Para revisar más adelante" en su plan).
+la fase 2 (ver "Para revisar más adelante" en su plan) están en `develop`
+(BooKit#83) y aplicados en la base. La app con #83, #84 y #85 llega a los
+teléfonos con la próxima versión.
