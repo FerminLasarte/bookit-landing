@@ -4,7 +4,7 @@ import { FunctionsHttpError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { planes, type CodigoDeError } from "@/content/planes";
-import { esInstagramValido, nombreDelDuenio, normalizarInstagram } from "@/lib/alta";
+import { leerDatosDelLocal, nombreDelDuenio, type CampoDelLocal } from "@/lib/alta";
 import { leerDestino } from "@/lib/destinos";
 import { FRECUENCIAS, NIVELES } from "@/lib/planes";
 import { clienteDeSupabase, clientePublico } from "@/lib/supabase";
@@ -85,43 +85,12 @@ export async function reenviarMail(email: string): Promise<{ error: string | nul
 
 // ── El local ──
 
-export type CampoDelAlta = "nombre" | "categoria" | "localidad" | "direccion" | "instagram";
-export type EstadoDelAlta = { errores: Partial<Record<CampoDelAlta, string>>; general: string | null };
-
-const alta = z.object({
-  nombre: z.string().trim().min(1).max(80),
-  categoria: z.coerce.number().int().positive(),
-  localidad: z.string().min(1),
-  direccion: z.string().trim().min(1).max(200),
-  lat: z.coerce.number().min(-90).max(90),
-  lng: z.coerce.number().min(-180).max(180),
-});
+export type EstadoDelAlta = { errores: Partial<Record<CampoDelLocal, string>>; general: string | null };
 
 /** Da de alta el local con `crear_mi_comercio`: nace pendiente, y /planes pasa a ofrecer los planes. */
 export async function crearLocal(_: EstadoDelAlta, datos: FormData): Promise<EstadoDelAlta> {
-  const copy = planes.alta.errores;
-  const campo = (nombre: string) => String(datos.get(nombre) ?? "");
-
-  const errores: EstadoDelAlta["errores"] = {};
-  const leido = alta.safeParse({
-    nombre: campo("nombre"),
-    categoria: campo("categoria"),
-    localidad: campo("localidad"),
-    direccion: campo("direccion"),
-    lat: campo("lat"),
-    lng: campo("lng"),
-  });
-  if (!leido.success) {
-    for (const issue of leido.error.issues) {
-      const clave = issue.path[0];
-      if (clave === "nombre" || clave === "categoria") errores[clave] = copy.falta;
-      if (clave === "localidad") errores.localidad = copy.localidad;
-      if (clave === "direccion" || clave === "lat" || clave === "lng") errores.direccion = copy.direccion;
-    }
-  }
-  const instagram = normalizarInstagram(campo("instagram"));
-  if (instagram && !esInstagramValido(instagram)) errores.instagram = copy.instagram;
-  if (!leido.success || Object.keys(errores).length > 0) return { errores, general: null };
+  const leido = leerDatosDelLocal(datos, { ubicacion: "obligatoria" });
+  if (leido.errores) return { errores: leido.errores, general: null };
 
   const supabase = await clienteDeSupabase("local");
   const {
@@ -129,21 +98,21 @@ export async function crearLocal(_: EstadoDelAlta, datos: FormData): Promise<Est
   } = await supabase.auth.getUser();
   if (!user) redirect("/planes?error=sesion");
 
-  const d = leido.data;
+  const { nombre, categoria, instagram, ubicacion } = leido.datos;
   const { error } = await supabase.rpc("crear_mi_comercio", {
-    p_nombre: d.nombre,
-    p_direccion: d.direccion,
-    p_localidad_id: d.localidad,
-    p_id_categoria: d.categoria,
-    p_lat: d.lat,
-    p_lng: d.lng,
+    p_nombre: nombre,
+    p_direccion: ubicacion.direccion,
+    p_localidad_id: ubicacion.localidad,
+    p_id_categoria: categoria,
+    p_lat: ubicacion.lat,
+    p_lng: ubicacion.lng,
     p_instagram: instagram,
     p_nombre_duenio: nombreDelDuenio(user),
   });
   // `ya_tiene_comercio`: lo creó en otra pestaña o en la app. Releer muestra los planes.
   if (error && error.hint !== "ya_tiene_comercio") {
     console.error("planes/crear-local:", error.code, error.message);
-    return { errores: {}, general: copy.generico };
+    return { errores: {}, general: planes.alta.errores.generico };
   }
   redirect("/planes");
 }

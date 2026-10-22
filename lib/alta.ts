@@ -1,5 +1,8 @@
 import "server-only";
 import type { User } from "@supabase/supabase-js";
+import { z } from "zod";
+import { planes } from "@/content/planes";
+import { campo } from "@/lib/formularios";
 import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
@@ -115,6 +118,71 @@ export function normalizarInstagram(texto: string): string | null {
 
 /** El alfabeto de Instagram, igual que el CHECK de `comercios.instagram`. */
 export const esInstagramValido = (usuario: string) => /^[a-z0-9._]{1,30}$/.test(usuario);
+
+export type CampoDelLocal = "nombre" | "categoria" | "localidad" | "direccion" | "instagram";
+
+/** Dónde está el local: la localidad, la calle y el punto, como los eligió de las listas. */
+export type UbicacionDelLocal = { localidad: string; direccion: string; lat: number; lng: number };
+
+type Cuando = "obligatoria" | "si-viene";
+
+export type DatosDelLocal<C extends Cuando = Cuando> = {
+  nombre: string;
+  categoria: number;
+  instagram: string | null;
+  /** `null` si el formulario no la trae: en el perfil, la dirección no se cambió. */
+  ubicacion: C extends "obligatoria" ? UbicacionDelLocal : UbicacionDelLocal | null;
+};
+
+const basicos = z.object({
+  nombre: z.string().trim().min(1).max(80),
+  categoria: z.coerce.number().int().positive(),
+});
+
+const ubicacion = z.object({
+  localidad: z.string().min(1),
+  direccion: z.string().trim().min(1).max(200),
+  lat: z.coerce.number().min(-90).max(90),
+  lng: z.coerce.number().min(-180).max(180),
+});
+
+/**
+ * Los datos del local de un formulario, validados igual en el alta y en el
+ * perfil, o un error por campo. Con `ubicacion: "si-viene"`, una ubicación sin
+ * tocar no es un error: el perfil no la manda si no se cambió.
+ */
+export function leerDatosDelLocal<C extends Cuando>(
+  datos: FormData,
+  { ubicacion: cuando }: { ubicacion: C },
+): { datos: DatosDelLocal<C>; errores: null } | { datos: null; errores: Partial<Record<CampoDelLocal, string>> } {
+  const copy = planes.alta.errores;
+  const errores: Partial<Record<CampoDelLocal, string>> = {};
+
+  const leidos = basicos.safeParse({ nombre: campo(datos, "nombre"), categoria: campo(datos, "categoria") });
+  if (!leidos.success) for (const issue of leidos.error.issues) errores[issue.path[0] as "nombre" | "categoria"] = copy.falta;
+
+  const enElFormulario = {
+    localidad: campo(datos, "localidad"),
+    direccion: campo(datos, "direccion"),
+    lat: campo(datos, "lat"),
+    lng: campo(datos, "lng"),
+  };
+  const viene = cuando === "obligatoria" || Object.values(enElFormulario).some(Boolean);
+  const lugar = viene ? ubicacion.safeParse(enElFormulario) : null;
+  if (lugar && !lugar.success) {
+    for (const issue of lugar.error.issues) {
+      if (issue.path[0] === "localidad") errores.localidad = copy.localidad;
+      else errores.direccion = copy.direccion;
+    }
+  }
+
+  const instagram = normalizarInstagram(campo(datos, "instagram"));
+  if (instagram && !esInstagramValido(instagram)) errores.instagram = copy.instagram;
+
+  if (!leidos.success || lugar?.success === false || Object.keys(errores).length > 0) return { datos: null, errores };
+  const leidosDelLocal = { ...leidos.data, instagram, ubicacion: lugar?.data ?? null };
+  return { datos: leidosDelLocal as DatosDelLocal<C>, errores: null };
+}
 
 /** El nombre del dueño para su ficha de profesional, como lo arma la app. */
 export function nombreDelDuenio(user: User): string {
