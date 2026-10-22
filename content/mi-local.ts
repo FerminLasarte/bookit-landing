@@ -23,18 +23,36 @@ export const miLocal = {
   /** El marco del panel: la barra del local en la compu y el menú en el teléfono. */
   panel: {
     /**
-     * En el orden de la app (D1 del plan de la fase 3). Un profesional del
-     * equipo ve todas menos Equipo, como las pestañas del staff en la app (D2
+     * Las pestañas de la app, para cada uno (D1 del plan de la fase 5). El
+     * dueño: Agenda · Crecimiento · Gestión · Perfil, y Gestión junta
+     * Horarios, Servicios y Equipo (`rutas`). El profesional del equipo:
+     * Agenda · Horarios · Servicios · Perfil, como las pestañas del staff (D2
      * del plan del equipo). Perfil es el del local para el dueño y el suyo
      * para el profesional (D1 y D7 del plan de la fase 4).
      */
     secciones: [
-      { label: "Agenda", href: "/mi-local", delDuenio: false },
-      { label: "Horarios", href: "/mi-local/horarios", delDuenio: false },
-      { label: "Servicios", href: "/mi-local/servicios", delDuenio: false },
-      { label: "Equipo", href: "/mi-local/equipo", delDuenio: true },
-      { label: "Perfil", href: "/mi-local/perfil", delDuenio: false },
+      { id: "agenda", label: "Agenda", href: "/mi-local", para: "todos", rutas: ["/mi-local"] },
+      { id: "crecimiento", label: "Crecimiento", href: "/mi-local/crecimiento", para: "duenio", rutas: ["/mi-local/crecimiento"] },
+      {
+        id: "gestion",
+        label: "Gestión",
+        href: "/mi-local/servicios",
+        para: "duenio",
+        rutas: ["/mi-local/horarios", "/mi-local/servicios", "/mi-local/equipo"],
+      },
+      { id: "horarios", label: "Horarios", href: "/mi-local/horarios", para: "profesional", rutas: ["/mi-local/horarios"] },
+      { id: "servicios", label: "Servicios", href: "/mi-local/servicios", para: "profesional", rutas: ["/mi-local/servicios"] },
+      { id: "perfil", label: "Perfil", href: "/mi-local/perfil", para: "todos", rutas: ["/mi-local/perfil"] },
     ],
+    /** Las tres partes de Gestión, arriba de cada una, como el selector de la app. La pestaña abre en Servicios, como la app. */
+    gestion: {
+      titulo: "Gestión",
+      partes: [
+        { id: "horarios", label: "Horarios", href: "/mi-local/horarios" },
+        { id: "servicios", label: "Servicios", href: "/mi-local/servicios" },
+        { id: "equipo", label: "Equipo", href: "/mi-local/equipo" },
+      ],
+    },
     /** Las pestañas de abajo, en el teléfono: las secciones (D1 del plan de la fase 3). */
     pestanas: "Secciones",
     navegacion: "Secciones del panel",

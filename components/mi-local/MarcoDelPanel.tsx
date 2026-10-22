@@ -48,7 +48,7 @@ function Cuenta({ lugar }: { lugar: Lugar }) {
 }
 
 export default function MarcoDelPanel({ lugar, children }: { lugar: Lugar; children: ReactNode }) {
-  const secciones = miLocal.panel.secciones.filter((s) => lugar.rol === "duenio" || !s.delDuenio);
+  const secciones = miLocal.panel.secciones.filter((s) => s.para === "todos" || s.para === lugar.rol);
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[16rem_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-dvh flex-col gap-8 border-r border-line px-3 py-6 lg:flex">

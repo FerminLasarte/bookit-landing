@@ -1,17 +1,19 @@
 "use client";
 
-import { CalendarDays, CircleUserRound, Clock, Scissors, Users, type LucideIcon } from "lucide-react";
+import { CalendarDays, ChartColumnIncreasing, CircleUserRound, Clock, Scissors, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { miLocal } from "@/content/mi-local";
 import { cn } from "@/lib/utils";
 import { useSeccionActual, type Seccion } from "./SeccionesDelPanel";
 
+/** Los de la app: Gestión lleva el de servicios, que es donde abre. */
 const iconos: Record<string, LucideIcon> = {
-  "/mi-local": CalendarDays,
-  "/mi-local/horarios": Clock,
-  "/mi-local/servicios": Scissors,
-  "/mi-local/equipo": Users,
-  "/mi-local/perfil": CircleUserRound,
+  agenda: CalendarDays,
+  crecimiento: ChartColumnIncreasing,
+  gestion: Scissors,
+  horarios: Clock,
+  servicios: Scissors,
+  perfil: CircleUserRound,
 };
 
 /**
@@ -21,7 +23,7 @@ const iconos: Record<string, LucideIcon> = {
  */
 export default function PestanasDelPanel({ secciones }: { secciones: Seccion[] }) {
   const { pestanas } = miLocal.panel;
-  const actual = useSeccionActual();
+  const actual = useSeccionActual(secciones);
 
   return (
     <nav
@@ -30,10 +32,10 @@ export default function PestanasDelPanel({ secciones }: { secciones: Seccion[] }
     >
       <ul className="flex">
         {secciones.map((s) => {
-          const Icono = iconos[s.href];
-          const activa = s.href === actual;
+          const Icono = iconos[s.id];
+          const activa = s.id === actual;
           return (
-            <li key={s.href} className="flex-1">
+            <li key={s.id} className="flex-1">
               <Link
                 href={s.href}
                 aria-current={activa ? "page" : undefined}
