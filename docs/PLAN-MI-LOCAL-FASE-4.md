@@ -379,6 +379,33 @@ Una rama `mi-local/perfil` y **un PR** a `main`, más el de BooKit.
    profesional en Equipo y "Mi perfil" del profesional.
 5. **La prueba** (abajo). Te paso las pantallas y **PR**.
 
+**Hecho (22 de octubre de 2026)**, en la rama `mi-local/perfil` (worktree
+`../bookit-landing-perfil`):
+
+0. **El paso 0**, con el OK de Fermín:
+   - El bucket `logos` es público, acepta `image/*` y hasta 5 MB.
+   - `_es_mi_ruta_de_logos` en la base es la de la migración.
+   - `authenticated` puede escribir en `comercios` todas las columnas que usa
+     el perfil. También `auth_user_id`, `id_comercio` y `creado_el` (ver "Lo
+     que vi").
+   - `comercios` no tiene `CHECK` de nombre ni de dirección: sólo los de
+     Instagram, `cancelacion_horas` y `tienda_cobro`, y las FK de categoría y
+     localidad.
+   - Los 8 locales tienen una sola fila en `comercios_categorias`, igual a
+     `id_categoria`: la función de D3 no pisa nada.
+1. **BooKit:** el prompt está listo; falta pasarlo y aplicar la migración.
+2. **Los datos del local:** la sección Perfil, "Así te ven" y el formulario.
+   Antes, en un commit aparte, `LocalidadYDireccion` y `leerDatosDelLocal`
+   salieron del alta, que los sigue usando. Después de guardar, los campos
+   muestran lo que quedó (el Instagram ya normalizado).
+3. **La foto del local:** `lib/encuadre.ts` (la geometría de
+   `photo_framing.dart`), `CambiarFoto` (el encuadre, con arrastre, flechas y
+   zoom) y `lib/mi-local/fotos.ts` (subir, guardar las URLs y borrar las
+   reemplazadas, con `guardarFoto` para las tres acciones).
+4. **El equipo y "Mi perfil":** la foto en la ficha de cada profesional que
+   maneja el dueño, y "Mi perfil" del profesional (su nombre y su foto). La
+   categoría y la foto de un profesional sin cuenta esperan la migración.
+
 ## Cómo se prueba
 
 En el preview, contra la base, con Barbería Nogal, dejando todo como estaba.
@@ -417,6 +444,42 @@ reemplazada es de verdad**: sin esa copia, la foto de Nogal se pierde.
 
 Si algún caso no se puede armar, se dice.
 
+**Lo que dio (22 de octubre de 2026)**, en el preview contra la base, con
+Barbería Nogal (la cuenta demo, id `11111111-…`):
+
+- **Los datos:** el Instagram pegado como link quedó `barberianogal.prueba` y
+  volvió a `barberianogal`; uno inválido muestra "Ese no es un usuario de
+  Instagram.". La dirección pasó a Pinto 500 y volvió a Av. Santamarina 480,
+  con la localidad y el punto que da Google.
+- **La foto del local:** una vertical en PNG y una apaisada en JPG, con el
+  círculo arrastrado y la portada con zoom. Cada una subió los dos JPEG con los
+  nombres de la app y, al reemplazarla, la anterior se borró del bucket. Un
+  archivo que no es una imagen: "No pudimos abrir esa foto.". Las fotos de
+  Nogal volvieron a ser las de antes (ver abajo).
+- **La foto del dueño** (Julián Peralta), desde su ficha en Equipo: subió a
+  `profesionales/<id>_<sello>.jpg` y se ve en el encabezado.
+- 375 px y 1280 px, claro y oscuro, sin scroll de costado; las cinco pestañas
+  entran en el teléfono.
+
+**Lo que no se probó todavía:**
+- La categoría y la foto de un profesional sin cuenta: esperan la migración.
+- "Mi perfil" del profesional: hace falta que Fermín entre con la cuenta del
+  equipo, activada en Nogal.
+- El alta en `/planes` después de sacarle la localidad y la dirección: el
+  typecheck y el build pasan, pero no hay una cuenta sin local a mano para
+  verla.
+
+**Lo que quedó distinto en la base:**
+- **Las fotos de Nogal** se volvieron a subir desde la misma pantalla, armando
+  una imagen con la portada y el círculo originales lado a lado y llevando cada
+  encuadre a su borde. Son las mismas imágenes, recomprimidas, con otro nombre
+  de archivo. Las originales siguen en el bucket: las subió otra cuenta
+  (`ba61f91a…`), y la política sólo deja borrar lo propio.
+- **El punto de Nogal** es el de Google para Av. Santamarina 480
+  (-37.3257, -59.1301). El de antes (-37.3217, -59.1332) estaba redondeado.
+- **Julián Peralta** quedó con una foto de prueba ("JP"). No hay "quitar la
+  foto" en la app ni en la web.
+
 ## Lo que vi y no toca este plan
 
 - **`comercios.acepta_efectivo` no lo edita nadie.** La ficha dice "Efectivo ·
@@ -439,3 +502,14 @@ Si algún caso no se puede armar, se dice.
 - **La hoja de ruta** (`docs/PLAN-MI-LOCAL.md`) se actualiza al aprobar este
   plan: la fila 4 se parte en Perfil (esta fase) y Crecimiento. No la toco
   ahora porque la está editando la otra conversación ("Otra hora").
+- **`authenticated` puede escribir `comercios.auth_user_id`, `id_comercio` y
+  `creado_el`** (los grants de `20260909170000` dan todas las columnas menos
+  las de la suscripción). La política exige que `auth_user_id` siga siendo el
+  de quien escribe, pero `id_comercio` y `creado_el` se pueden cambiar. Es una
+  tarea de BooKit: sacarlas del grant.
+- **Un guardado del perfil con dirección tardó 40 s** en la acción, sin nada
+  colgado en la base mientras tanto. El siguiente, igual, tardó 0,65 s. No lo
+  pude reproducir.
+- **Barbería Nogal tiene cuatro fotos sueltas en el bucket**, de la cuenta
+  `ba61f91a…`: dos que ya no usaba nadie y las dos originales que reemplazó
+  esta prueba. Nogal no las puede borrar porque no son suyas.
