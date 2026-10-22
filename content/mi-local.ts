@@ -2,6 +2,7 @@ import type { TonoDeBadge } from "@/components/ui/Badge";
 import type { Bloqueo } from "@/lib/mi-local/lugar";
 import type { EstadoTurno, FueraDeHorario, Grupo } from "@/lib/mi-local/turnos";
 import { planes } from "@/content/planes";
+import { numero } from "@/lib/formato";
 import { site } from "@/content/site";
 
 /*
@@ -588,6 +589,231 @@ export const miLocal = {
     servicios: {
       titulo: "Servicios",
       info: "Qué parte de tus turnos se lleva cada servicio y lo que facturó. El de abajo es el que menos sale: un buen candidato para un cupón.",
+    },
+    /** Las dos palancas, debajo de los números, como `_AccionesCrecimiento` (D3). */
+    acciones: {
+      titulo: "Para crecer",
+      recompensas: { titulo: "Recompensas", bajada: "Fidelizá a tus clientes con beneficios" },
+      cupones: { titulo: "Cupones", bajada: "Creá descuentos para atraer más clientes" },
+    },
+    volver: "Volver a Crecimiento",
+  },
+
+  /** Cuándo vale un cupón o un premio: la misma pieza en los dos, como `AvailabilitySection` de la app. */
+  disponibilidad: {
+    dias: "Días",
+    franja: "Franja horaria",
+    franjaBajada: "Opcional: para llenar las horas flojas.",
+    desde: "Desde",
+    hasta: "Hasta",
+    sinFranja: "Todo el día",
+    servicios: "Servicios",
+    serviciosBajada: "Sin ninguno marcado, vale en todos.",
+    todos: "Todos los servicios",
+    todosLosDias: "Todos los días",
+    letras: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+    dia: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"],
+    /** "Lun, Mié y Vie · de 9:00 a 13:00". */
+    resumen: (dias: string[], franja: string | null) => {
+      const lista = dias.length === 7 ? "Todos los días" : dias.length === 1 ? dias[0] : `${dias.slice(0, -1).join(", ")} y ${dias.at(-1)}`;
+      return franja ? `${lista} · ${franja}` : lista;
+    },
+    deA: (desde: string, hasta: string) => `de ${desde} a ${hasta}`,
+  },
+
+  /** Los cupones del local, como `PromotionsListScreen`. */
+  cupones: {
+    titulo: "Cupones",
+    nuevo: "Nuevo cupón",
+    resumen: (total: number, enUso: number, canjes: number) =>
+      [total === 1 ? "1 cupón" : `${total} cupones`, `${enUso} en uso`, canjes > 0 && (canjes === 1 ? "1 canje" : `${canjes} canjes`)]
+        .filter(Boolean)
+        .join(" · "),
+    error: "No pudimos traer los cupones. Recargá la página en un rato.",
+    vacio: {
+      titulo: "Todavía no hay cupones",
+      bajada: "Creá un código de descuento para llenar los días flojos y traer clientes nuevos.",
+    },
+    pausadosPorElPlan: { titulo: "Pausados por tu plan", bajada: (nivel: string) => `Vuelven solos si pasás a ${nivel}.` },
+    sinEfecto: {
+      titulo: "Sin efecto",
+      bajada: (n: number) => (n === 1 ? "1 cupón pausado o vencido" : `${n} cupones pausados o vencidos`),
+    },
+    bloqueado: (nivel: string) => `Crear cupones está disponible en ${nivel}.`,
+    verPlanes: "Ver planes",
+    hasta: (dia: string) => `Hasta el ${dia}`,
+    vencio: (dia: string) => `Venció el ${dia}`,
+    pausado: "Pausado",
+    vencido: "Vencido",
+    canjes: (usos: number, limite: number | null) =>
+      limite === null ? (usos === 1 ? "1 canje" : `${usos} canjes`) : `${usos} de ${limite} canjes`,
+    editar: (codigo: string) => `Editar el cupón ${codigo}`,
+  },
+
+  /** Crear o editar un cupón, como `CreatePromotionScreen`. */
+  cupon: {
+    nuevo: "Nuevo cupón",
+    editar: "Editar cupón",
+    volver: "Volver a los cupones",
+    errorDeLectura: "No pudimos traer este cupón. Recargá la página en un rato.",
+    identificacion: "Identificación",
+    identificacionNota: "El nombre es para vos. El código es el que le pasás al cliente.",
+    nombre: "Nombre interno",
+    nombreEjemplo: "Ej: Promo primavera",
+    codigo: "Código de canje",
+    codigoEjemplo: "Ej: PRIMAVERA20",
+    descuento: "El descuento",
+    tipo: "Tipo",
+    tipos: { porcentaje: "Porcentaje", monto: "Monto fijo" },
+    valor: { porcentaje: "Cuánto descuenta (%)", monto: "Cuánto descuenta ($)" },
+    valorEjemplo: { porcentaje: "Ej: 20", monto: "Ej: 5000" },
+    limite: "Límite de canjes",
+    limiteEjemplo: "Sin límite",
+    vigencia: "Vigencia",
+    desde: "Desde",
+    hasta: "Hasta",
+    disponibilidad: "Cuándo vale",
+    crear: "Crear cupón",
+    guardar: "Guardar cambios",
+    guardando: "Guardando…",
+    bloqueado: (nivel: string) =>
+      `Tu plan no incluye cupones: este no lo puede usar ningún cliente. Vuelve solo si pasás a ${nivel}.`,
+    errores: {
+      faltan: (campos: string[]) =>
+        campos.length === 1 ? `Falta ${campos[0]}.` : `Faltan ${campos.slice(0, -1).join(", ")} y ${campos.at(-1)}.`,
+      campos: { nombre: "el nombre", codigo: "el código", valor: "cuánto descuenta", desde: "desde cuándo vale", hasta: "hasta cuándo vale" },
+      valor: "Cuánto descuenta tiene que ser mayor a 0.",
+      porcentaje: "El máximo es 100%.",
+      limite: "El límite de canjes tiene que ser mayor a 0.",
+      fechas: "La vigencia termina antes de empezar.",
+      dias: "Elegí al menos un día.",
+      franja: "Poné las dos horas de la franja, o ninguna.",
+      franjaAlReves: "La franja termina antes de empezar.",
+      codigoRepetido: "Ese código ya existe.",
+      generico: "No pudimos guardar el cupón. Probá de nuevo en un rato.",
+    },
+    /** Pausar o activar, del menú de la tarjeta en la app. */
+    estado: {
+      pausar: "Pausar cupón",
+      activar: "Activar cupón",
+      pausarBajada: "Deja de valer hasta que lo actives. Los clientes que tienen el código no lo pueden usar.",
+      activarBajada: "Vuelve a valer hasta el final de su vigencia.",
+      guardando: "Guardando…",
+      generico: "No pudimos cambiar el estado. Probá de nuevo en un rato.",
+    },
+    baja: {
+      boton: "Eliminar cupón",
+      titulo: "Eliminar cupón",
+      texto: (nombre: string) => `"${nombre}" se borra para siempre y los clientes que tengan el código ya no van a poder usarlo.`,
+      confirmar: "Eliminar",
+      eliminando: "Eliminando…",
+      volver: "Volver",
+      generico: "No pudimos eliminar el cupón. Probá de nuevo en un rato.",
+    },
+  },
+
+  /** El programa de puntos y sus premios, como `RewardsManagementScreen`. */
+  recompensas: {
+    titulo: "Recompensas",
+    programa: {
+      titulo: "Sistema de puntos",
+      prendido: "Prendido",
+      apagado: "Apagado",
+      bajadaPrendido: "Tus clientes suman en cada visita.",
+      bajadaApagado: "Nadie está sumando puntos.",
+      prender: "Prender",
+      apagar: "Apagar",
+      guardando: "Guardando…",
+      generico: "No pudimos guardar. Probá de nuevo en un rato.",
+    },
+    /** "¿Cómo funcionan los puntos?", sin "Premios por estatus (Próximamente)" (D7). Los números son los de la base. */
+    reglas: {
+      titulo: "¿Cómo funcionan los puntos?",
+      items: [
+        { titulo: "Suman por tiempo", texto: "Tus clientes ganan 120 puntos por cada hora de servicio: un turno de 30 minutos suma 60." },
+        { titulo: "Con el turno completado", texto: "Los puntos se suman cuando marcás el turno como completado, para que nadie sume por un turno que no vino." },
+        { titulo: "Vencen a los 6 meses", texto: "Así el cliente vuelve pronto para no perderlos." },
+        { titulo: "Vos ponés las reglas", texto: "Cada premio puede valer sólo algunos días o en una franja horaria, ideal para las horas flojas, o pedir visitas previas." },
+      ],
+    },
+    nuevo: "Nuevo premio",
+    resumen: (total: number, activos: number) => `${total === 1 ? "1 premio" : `${total} premios`} · ${activos} para canjear`,
+    error: "Hubo un error al cargar tus premios.",
+    apagado: {
+      titulo: "Programa apagado",
+      bajada: "Prendé el sistema de puntos y tus clientes van a empezar a sumar en cada visita.",
+    },
+    vacio: {
+      titulo: "Sin premios todavía",
+      bajada: "Los puntos se suman pero no hay nada para canjear. Creá el primer premio: un corte gratis, un 50% off.",
+    },
+    pausado: "Pausado",
+    puntos: (n: number) => `${numero(n)} puntos`,
+    visitas: (n: number) => (n === 1 ? "con 1 visita previa" : `con ${n} visitas previas`),
+    gratis: "Gratis",
+    descuento: (valor: string) => `${valor} off`,
+    editar: (titulo: string) => `Editar el premio ${titulo}`,
+  },
+
+  /** Crear o editar un premio, como `CreateRewardScreen`. */
+  premio: {
+    nuevo: "Nuevo premio",
+    editar: "Editar premio",
+    volver: "Volver a las recompensas",
+    errorDeLectura: "No pudimos traer este premio. Recargá la página en un rato.",
+    apagado: "Con el sistema de puntos apagado no se crean premios.",
+    elPremio: "El premio",
+    elPremioNota: "La descripción es lo que lee el cliente en el catálogo.",
+    titulo: "Título",
+    tituloEjemplo: "Ej: Corte gratis",
+    descripcion: "Descripción",
+    descripcionEjemplo: "Ej: incluye lavado",
+    beneficio: "Beneficio",
+    tipos: { gratis: "Servicio gratis", porcentaje: "Porcentaje", monto: "Monto fijo" },
+    valor: { porcentaje: "Cuánto descuenta (%)", monto: "Cuánto descuenta ($)" },
+    valorEjemplo: { porcentaje: "Ej: 50", monto: "Ej: 5000" },
+    cuesta: "Qué cuesta",
+    cuestaNota: "Los puntos se suman en cada turno completado. Las visitas previas dejan el premio fuera del alcance de un cliente nuevo.",
+    puntos: "Costo en puntos",
+    puntosEjemplo: "Ej: 100",
+    visitas: "Visitas previas",
+    visitasEjemplo: "Ninguna",
+    disponibilidad: "Cuándo vale",
+    crear: "Crear premio",
+    guardar: "Guardar cambios",
+    guardando: "Guardando…",
+    errores: {
+      faltan: (campos: string[]) =>
+        campos.length === 1 ? `Falta ${campos[0]}.` : `Faltan ${campos.slice(0, -1).join(", ")} y ${campos.at(-1)}.`,
+      campos: { titulo: "el título", valor: "cuánto descuenta", puntos: "los puntos" },
+      valor: "Cuánto descuenta tiene que ser mayor a 0.",
+      porcentaje: "El máximo es 100%.",
+      puntos: "Los puntos tienen que ser más que 0.",
+      visitas: "Las visitas previas no pueden ser negativas.",
+      dias: "Elegí al menos un día.",
+      franja: "Poné las dos horas de la franja, o ninguna.",
+      franjaAlReves: "La franja termina antes de empezar.",
+      generico: "No pudimos guardar el premio. Probá de nuevo en un rato.",
+    },
+    estado: {
+      pausar: "Pausar premio",
+      activar: "Activar premio",
+      pausarBajada: "Deja de aparecer en el catálogo hasta que lo actives. Los canjes que ya hicieron siguen.",
+      activarBajada: "Vuelve a aparecer en el catálogo de tus clientes.",
+      guardando: "Guardando…",
+      generico: "No pudimos cambiar el estado. Probá de nuevo en un rato.",
+    },
+    baja: {
+      boton: "Eliminar premio",
+      titulo: "Eliminar premio",
+      texto: (titulo: string) => `"${titulo}" se borra para siempre y tus clientes dejan de verlo en el catálogo.`,
+      confirmar: "Eliminar",
+      eliminando: "Eliminando…",
+      volver: "Volver",
+      /** La base no deja borrar un premio que alguien canjeó (D6): se pausa. */
+      canjeado: "Este premio ya lo canjearon clientes, así que no se puede borrar. Pausalo y deja de aparecer en el catálogo.",
+      pausar: "Pausarlo",
+      generico: "No pudimos eliminar el premio. Probá de nuevo en un rato.",
     },
   },
 
