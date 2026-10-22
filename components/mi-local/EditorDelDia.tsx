@@ -6,7 +6,7 @@ import Field from "@/components/forms/Field";
 import Button from "@/components/ui/Button";
 import { Volver } from "@/components/ui/Dialogo";
 import { miLocal } from "@/content/mi-local";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 import {
   DIAS_DE_LA_SEMANA,
   INTERVALOS,
@@ -64,7 +64,7 @@ export default function EditorDelDia({
     setDescansos(descansos.map((d, j) => (j === i ? { ...d, ...cambio } : d)));
 
   return (
-    <form onSubmit={enviarSinBorrar(enviar)} className="flex flex-col gap-6">
+    <form {...formularioSinBorrar(enviar)} className="flex flex-col gap-6">
       <input type="hidden" name="profesional" value={profesional} />
       <input type="hidden" name="abierto" value={abierto ? "1" : "0"} />
       <input type="hidden" name="modalidad" value={modalidad} />

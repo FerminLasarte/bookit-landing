@@ -8,7 +8,7 @@ import Dialogo, { Volver } from "@/components/ui/Dialogo";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { dia as diaLargo } from "@/lib/formato";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 import { horaDe, type DiaEspecial } from "@/lib/mi-local/horario";
 import { useAccionQueCierra } from "@/lib/mi-local/respuesta";
 import { Apartado, claseDeBotonDeTexto, ElegirUno, SelectorDeHora } from "./HorasDelDia";
@@ -174,7 +174,7 @@ function FormularioDeDiaEspecial({
   const conRango = tipo === "dia_libre" && !dia;
 
   return (
-    <form onSubmit={enviarSinBorrar(enviar)} className="flex flex-col gap-5">
+    <form {...formularioSinBorrar(enviar)} className="flex flex-col gap-5">
       {dia && <input type="hidden" name="id" value={dia.id} />}
       <input type="hidden" name="profesional" value={profesional} />
       <input type="hidden" name="tipo" value={tipo} />
