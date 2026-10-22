@@ -465,7 +465,9 @@ tener trabajo sin commitear.
    - Los descansos se convierten en franjas sin arreglar nada, así que la
      base rechaza lo que no va. Un descanso que pisa a otro o que cae fuera
      del día da "El cierre tiene que ser después de la apertura.", que es la
-     frase de las franjas y no la de los descansos. Queda como pregunta.
+     frase de las franjas y no la de los descansos. Fermín decidió el
+     22-oct-2026 dejarla así: es un caso raro, la base lo frena igual, y una
+     frase propia en la web sería copiar la regla en TypeScript (D3).
    - Los días especiales: día libre "del … al …" (una fila por día, hasta
      60) o unas horas, con motivo y la nota de que los turnos no se cancelan.
      El horario especial se muestra y se elimina, pero no se edita, como en
@@ -481,7 +483,8 @@ tener trabajo sin commitear.
    - Sin probar en vivo: la vista de sólo lectura de un profesional con
      cuenta, porque Barbería Nogal no tiene ninguno.
 5. **Web, los huecos en la agenda** (D7). Te paso las pantallas y **segundo
-   PR**.
+   PR**: #54, mergeado en `main` el 22-oct-2026. El modo oscuro se miró
+   después del merge y se ve bien.
 
    *Hecho el 22-oct-2026:*
    - La agenda lee `huecos_del_dia` junto con los turnos. Si falla, la
@@ -497,8 +500,8 @@ tener trabajo sin commitear.
      otros dos en "Todos".
 6. **BooKit, la app** (D6): un PR aparte a `develop`.
 
-   *Hecho el 22-oct-2026: FacuAntivero/BooKit#85* (rama
-   `feat/app-huecos-del-dia`, worktree `../BooKit-app-huecos`).
+   *Hecho el 22-oct-2026: FacuAntivero/BooKit#85*, mergeado en `develop` el
+   mismo día. Llega a los teléfonos con la próxima versión de la app.
    - `AgendaHuecosLoader` llama a `huecos_del_dia`: una consulta por día,
      con el local ya unido. Se borraron `rangosLibres`, `unirRangos` y los
      `libres` de `ManualBookingDay`.
