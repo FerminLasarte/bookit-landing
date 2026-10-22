@@ -1,29 +1,62 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { guardarFotoDelLocal } from "@/app/mi-local/(panel)/perfil/acciones";
+import { guardarFotoDelLocal, guardarMiFoto } from "@/app/mi-local/(panel)/perfil/acciones";
 import AsiTeVen from "@/components/mi-local/AsiTeVen";
+import Avatar from "@/components/mi-local/Avatar";
 import CambiarFoto from "@/components/mi-local/CambiarFoto";
 import DatosDelLocal from "@/components/mi-local/DatosDelLocal";
 import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
+import MiNombre from "@/components/mi-local/MiNombre";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { leerCategorias } from "@/lib/alta";
-import { FORMAS_DEL_LOCAL } from "@/lib/encuadre";
+import { FORMAS_DEL_LOCAL, FORMAS_DEL_PROFESIONAL } from "@/lib/encuadre";
 import { leerMiCuenta } from "@/lib/mi-local/gestion";
-import { leerLugarQueEntra, type LugarDelDuenio } from "@/lib/mi-local/lugar";
-import { direccionParaMostrar, leerPerfilDelLocal } from "@/lib/mi-local/perfil";
+import { leerLugarQueEntra, type LugarDelDuenio, type LugarDelProfesional } from "@/lib/mi-local/lugar";
+import { direccionParaMostrar, leerMiFicha, leerPerfilDelLocal } from "@/lib/mi-local/perfil";
 
 export const metadata: Metadata = { title: miLocal.perfil.titulo };
 
 /*
  * El perfil (fase 4, docs/PLAN-MI-LOCAL-FASE-4.md). El dueño, lo que el
- * cliente ve de su local en la app: "Así te ven" y los datos.
+ * cliente ve de su local en la app: "Así te ven" y los datos. El profesional
+ * del equipo, "Mi perfil": su nombre y su foto en ese local (D7).
  */
 export default async function PerfilPage() {
   const lugar = (await leerLugarQueEntra()) ?? redirect("/mi-local");
-  if (lugar.rol === "profesional") redirect("/mi-local");
-  return <PerfilDelLocal local={lugar} />;
+  return lugar.rol === "profesional" ? <MiPerfil lugar={lugar} /> : <PerfilDelLocal local={lugar} />;
+}
+
+/** Su ficha en ese local, como "Información profesional" de la app: quien trabaja en dos locales tiene una en cada uno. */
+async function MiPerfil({ lugar }: { lugar: LugarDelProfesional }) {
+  const copy = miLocal.miPerfil;
+  const yo = await leerMiFicha(lugar.idProfesional).catch((error: unknown) => {
+    console.error("mi-local/mi-perfil:", error);
+    return null;
+  });
+
+  return (
+    <div className="flex max-w-3xl flex-col gap-6 md:gap-8">
+      <Encabezado titulo={copy.titulo} bajada={copy.bajada(lugar.nombre)} />
+      {yo ? (
+        <Superficie tone="surface" className="flex flex-col gap-6 p-5 md:p-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <Avatar nombre={yo.nombre} foto={yo.foto} tamano="ficha" />
+            <CambiarFoto
+              accion={guardarMiFoto}
+              formas={FORMAS_DEL_PROFESIONAL}
+              textos={miLocal.encuadre.profesional}
+              hayFoto={yo.foto !== null}
+            />
+          </div>
+          <MiNombre nombre={yo.nombre} />
+        </Superficie>
+      ) : (
+        <ErrorDeLectura>{miLocal.perfil.error}</ErrorDeLectura>
+      )}
+    </div>
+  );
 }
 
 async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {

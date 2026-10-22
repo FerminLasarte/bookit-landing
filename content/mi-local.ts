@@ -438,7 +438,7 @@ export const miLocal = {
       nombre: "Nombre",
       bio: "Presentación",
       guardar: "Guardar datos",
-      soloLectura: "Su nombre y su presentación los maneja desde su cuenta.",
+      soloLectura: "Su nombre, su foto y su presentación los maneja desde su cuenta.",
     },
     servicios: {
       titulo: "Servicios",

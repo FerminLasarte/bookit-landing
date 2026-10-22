@@ -59,3 +59,12 @@ export function direccionParaMostrar({ direccion, localidad }: Pick<PerfilDelLoc
   if (!localidad || direccion.toLowerCase().includes(localidad.toLowerCase())) return direccion;
   return `${direccion}, ${localidad}`;
 }
+
+/** La ficha del profesional del equipo en un local: su nombre y su foto, lo que ven los clientes al reservar. */
+export async function leerMiFicha(idProfesional: string): Promise<{ nombre: string; foto: string | null }> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase.from("profesionales").select("nombre, foto_url").eq("id_profesional", idProfesional).single();
+  if (error) throw new Error(`mi-ficha: ${error.message}`);
+  const fila = data as { nombre: string | null; foto_url: string | null };
+  return { nombre: fila.nombre ?? "", foto: fila.foto_url };
+}
