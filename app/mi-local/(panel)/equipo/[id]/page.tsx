@@ -101,6 +101,12 @@ export default async function ProfesionalPage({ params }: PageProps<"/mi-local/e
         )}
       </Bloque>
 
+      <Bloque titulo={copy.horarios.titulo} bajada={copy.horarios.bajada}>
+        <TextLink href={`/mi-local/horarios?profesional=${miembro.id}`} className="self-start">
+          {editable ? copy.horarios.editar : copy.horarios.ver}
+        </TextLink>
+      </Bloque>
+
       <Superficie tone="surface" className="p-5 md:p-6">
         <ActividadDelProfesional miembro={miembro} resumen={resumen} />
       </Superficie>

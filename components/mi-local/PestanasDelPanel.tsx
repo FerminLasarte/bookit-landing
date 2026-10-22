@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Scissors, Users, type LucideIcon } from "lucide-react";
+import { CalendarDays, Clock, Scissors, Users, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { miLocal } from "@/content/mi-local";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { useSeccionActual } from "./SeccionesDelPanel";
 
 const iconos: Record<string, LucideIcon> = {
   "/mi-local": CalendarDays,
+  "/mi-local/horarios": Clock,
   "/mi-local/servicios": Scissors,
   "/mi-local/equipo": Users,
 };

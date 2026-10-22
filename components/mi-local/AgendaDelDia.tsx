@@ -5,9 +5,11 @@ import { useTransition, type ReactNode } from "react";
 import Anchor from "@/components/ui/Anchor";
 import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
+import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
 import { dia as diaLargo, diaCorto, mesYAnio, pesos } from "@/lib/formato";
-import { cobrado, esGrupo, grupoDe, GRUPOS, type Profesional, type Turno } from "@/lib/mi-local/turnos";
+import type { HuecosDelDia, Libres } from "@/lib/mi-local/agenda";
+import { cobrado, esGrupo, grupoDe, GRUPOS, type Grupo, type Profesional, type Turno } from "@/lib/mi-local/turnos";
 import { diasDeLaSemana, enlaceDeCarga, enlaceDeVista, lunesDe } from "@/lib/mi-local/vista";
 import { cn } from "@/lib/utils";
 import Avatar from "./Avatar";
@@ -21,7 +23,9 @@ import { claseDeOpcion } from "./Opciones";
  * panel, D6–D9). El profesional y el estado se filtran acá, en el navegador:
  * los turnos del día ya llegaron, así que la lista cambia en el acto y la URL
  * se actualiza con `pushState`, que Next integra con `useSearchParams`. El día
- * sí va al servidor; mientras llega, la lista se atenúa.
+ * sí va al servidor; mientras llega, la lista se atenúa. Los huecos libres
+ * también llegan enteros (los del local y los de cada uno) y se eligen acá
+ * (D7 del plan de la fase 3).
  */
 
 type Props = {
@@ -31,13 +35,15 @@ type Props = {
   semana: Record<string, number>;
   turnos: Turno[];
   profesionales: Profesional[];
+  /** Los huecos libres del día, o `null` si no se pudieron leer: la agenda va igual. */
+  huecos: HuecosDelDia | null;
   /** Un momento fijo para todo el dibujo, como ISO: el servidor y el navegador ven la misma hora. */
   ahora: string;
   /** El aviso de la suscripción, si hay: va entre el encabezado y la barra. */
   aviso?: ReactNode;
 };
 
-export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, ahora, aviso }: Props) {
+export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, huecos, ahora, aviso }: Props) {
   const copy = miLocal.agenda;
   const router = useRouter();
   const parametros = useSearchParams();
@@ -63,6 +69,9 @@ export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, 
   const delProfesional = turnos.filter((t) => !profesional || t.profesional?.id === profesional);
   const lista = delProfesional.filter((t) => !grupo || grupoDe(t, momento) === grupo);
   const porGrupo = Object.fromEntries(GRUPOS.map((g) => [g, delProfesional.filter((t) => grupoDe(t, momento) === g).length]));
+  // Los del profesional elegido o los del local; con un estado elegido, sólo turnos.
+  const libres = huecos && (profesional ? huecos.profesionales[profesional] : huecos.local);
+  const huecosALaVista = grupo ? [] : (libres?.huecos ?? []);
 
   return (
     <>
@@ -167,19 +176,64 @@ export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, 
       <div aria-busy={cargando} className={cn("flex flex-col gap-4 transition-opacity", cargando && "opacity-55")}>
         <p className="flex flex-wrap gap-x-6 gap-y-1 text-small text-muted">
           <span>{copy.turnos(lista.length)}</span>
+          {!huecos && <span role="status">{copy.sinHuecos}</span>}
           <span>
             {copy.cobrado} <span className="font-semibold text-fg tabular-nums">{pesos(cobrado(delProfesional))}</span>
           </span>
         </p>
-        {lista.length > 0 ? (
-          <ListaDeTurnos turnos={lista} ahora={momento} />
+        {lista.length > 0 || huecosALaVista.length > 0 ? (
+          <ListaDeTurnos
+            turnos={lista}
+            huecos={huecosALaVista}
+            enlaceDeHueco={enlaceDeCarga({ dia, profesional, servicio: null })}
+            ahora={momento}
+          />
         ) : (
-          <Superficie tone="surface" className="p-6 text-center">
-            <p className="text-small text-muted">{turnos.length > 0 ? copy.vacioConFiltro : copy.vacio}</p>
-          </Superficie>
+          <DiaVacio {...vacioDe({ grupo, libres, profesional, dia, hoy })} />
         )}
       </div>
     </>
+  );
+}
+
+/**
+ * Por qué el día no tiene nada, como `AgendaDiaLibre` de la app: con un
+ * estado elegido no hay coincidencias; sin los huecos, sólo que no hay turnos;
+ * si no, si ya pasó, si no se atiende, si es por orden de llegada o si ya no
+ * quedan horarios. `href`: dónde se cambia.
+ */
+function vacioDe({
+  grupo,
+  libres,
+  profesional,
+  dia,
+  hoy,
+}: {
+  grupo: Grupo | null;
+  libres: Libres | null | undefined;
+  profesional: string | null;
+  dia: string;
+  hoy: string;
+}): { titulo?: string; bajada: string; href?: string } {
+  const { diaVacio, vacio, vacioConFiltro } = miLocal.agenda;
+  if (grupo) return { bajada: vacioConFiltro };
+  if (!libres) return { bajada: vacio };
+  if (dia < hoy) return diaVacio.paso;
+  if (libres.atencion === "no_atiende") {
+    return profesional
+      ? { ...diaVacio.noAtiende, href: `/mi-local/horarios?profesional=${profesional}` }
+      : { ...diaVacio.localNoAtiende, href: "/mi-local/horarios" };
+  }
+  if (libres.atencion === "orden_de_llegada") return diaVacio.ordenDeLlegada;
+  return dia === hoy ? diaVacio.hoyNoQuedan : diaVacio.sinLibres;
+}
+
+function DiaVacio({ titulo, bajada, href }: { titulo?: string; bajada: string; href?: string }) {
+  return (
+    <Superficie tone="surface" className="p-6 text-center">
+      {titulo && <p className="font-semibold text-fg">{titulo}</p>}
+      <p className="mt-1 text-small text-muted">{href ? <TextLink href={href}>{bajada}</TextLink> : bajada}</p>
+    </Superficie>
   );
 }
 

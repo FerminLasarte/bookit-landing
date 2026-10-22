@@ -1,3 +1,4 @@
+import Anchor from "@/components/ui/Anchor";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { hora, pesos } from "@/lib/formato";
@@ -6,17 +7,55 @@ import EstadoDelTurno from "./EstadoDelTurno";
 import FichaDelTurno from "./FichaDelTurno";
 
 /**
- * Los turnos del día, uno por fila. En el teléfono se apilan; desde `md`, la
- * hora, el cliente, el precio y el estado van en columnas. Cada fila abre la
- * ficha del turno.
+ * Los turnos del día, uno por fila, con los huecos libres entre ellos (D7 del
+ * plan de la fase 3). En el teléfono se apilan; desde `md`, la hora, el
+ * cliente, el precio y el estado van en columnas. Cada fila abre la ficha del
+ * turno; cada hueco lleva a cargar un turno, con el día y el profesional.
  */
-export default function ListaDeTurnos({ turnos, ahora }: { turnos: Turno[]; ahora: Date }) {
+export default function ListaDeTurnos({
+  turnos,
+  huecos,
+  enlaceDeHueco,
+  ahora,
+}: {
+  turnos: Turno[];
+  huecos: { inicio: string; fin: string }[];
+  enlaceDeHueco: string;
+  ahora: Date;
+}) {
   const copy = miLocal.agenda;
+  // Turnos y huecos, en orden de hora.
+  const filas = [
+    ...turnos.map((turno) => ({ turno, inicio: turno.inicio })),
+    ...huecos.map((hueco) => ({ hueco, inicio: hueco.inicio })),
+  ].sort((a, b) => new Date(a.inicio).getTime() - new Date(b.inicio).getTime());
 
   return (
     <Superficie tone="surface">
       <ul className="divide-y divide-line">
-        {turnos.map((turno) => {
+        {filas.map((fila) => {
+          if ("hueco" in fila) {
+            const desde = hora(fila.hueco.inicio);
+            const hasta = hora(fila.hueco.fin);
+            return (
+              <li key={`libre-${fila.inicio}`}>
+                <Anchor
+                  href={enlaceDeHueco}
+                  aria-label={copy.cargarEnHueco(desde, hasta)}
+                  className="ring-focus flex w-full items-center justify-between gap-4 bg-accent/6 px-5 py-3.5 transition-colors duration-(--duration-chico) hover:bg-accent/12 md:px-6"
+                >
+                  <span>
+                    <span className="font-semibold text-accent-fg">{copy.libre}</span>
+                    <span className="text-small text-muted"> · {copy.hueco(desde, hasta)}</span>
+                  </span>
+                  <span aria-hidden className="text-small font-semibold text-accent-fg">
+                    + {copy.cargar}
+                  </span>
+                </Anchor>
+              </li>
+            );
+          }
+          const { turno } = fila;
           const sinMarcar = quedoSinMarcar(turno, ahora);
           const cliente = turno.cliente ?? (turno.esManual ? copy.deMostrador : copy.sinNombre);
           return (
