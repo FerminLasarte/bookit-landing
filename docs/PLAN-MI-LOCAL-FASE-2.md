@@ -309,7 +309,9 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
   pestaña abierta hacía unos segundos. No lo seguí: puede ser el rato entre que
   el canal se une y que Realtime contesta "Subscribed to PostgreSQL", porque
   `EnVivo` sólo relee cuando el canal vuelve, no la primera vez.
-  **La app: falta**, la tiene que mirar Fermín.
+  **La app, también** (22-oct, con Fermín mirando la agenda de hoy en el
+  teléfono): un turno cargado desde la web a las 16:00 apareció solo como
+  "Pendiente", y al cancelarlo pasó solo a "Cancelado", sin recargar.
 - Cancelar en una pestaña y después en la otra, que todavía no se actualizó:
   sale "Este turno ya está cerrado y no admite cambios."
   **Distinto de lo esperado, sin daño.** La segunda cancelación no da error: la
@@ -352,6 +354,11 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
   **Falta**: en Nogal los tres tienen servicios, y sacárselos es tocar la app o
   la base.
 - Un profesional de otro local en la URL. **Anduvo** (probado antes).
+- **Visto de paso:** "Cargar turno" apretado antes de que la página termine de
+  cargar el JavaScript no guarda nada y no avisa. Pasó con el servidor recién
+  levantado. El formulario usa `onSubmit` y no `action`, así que sin
+  JavaScript se manda como un GET a la misma página, con el nombre y el
+  teléfono en la URL. No es lo que dice D6 ("funciona sin JavaScript").
 
 **Siempre**
 - En gracia, todo anda; con el local cortado no se llega (lo tapa la fase 1) y
@@ -369,8 +376,8 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
   abierta en la confirmación de cancelar (la ficha, 335). Cómo se ve lo mira
   Fermín.
 
-Quedan en Nogal, del 22/10: cancelados a las 10:00, 11:00, 12:00 y 19:00, y
-los dos de las 9:00, uno completado y otro ausente.
+Quedan en Nogal, del 22/10: cancelados a las 10:00, 11:00, 12:00, 19:00 y
+dos a las 16:00, y los dos de las 9:00, uno completado y otro ausente.
 
 ## Cómo se termina la prueba
 
