@@ -1,62 +1,15 @@
 import "server-only";
-import { redirect } from "next/navigation";
-import { cache } from "react";
-import { leerMiPlan, type MiPlan } from "@/lib/planes";
 import { diaDe } from "@/lib/formato";
 import { clienteDeSupabase } from "@/lib/supabase";
 import { esEstadoTurno, type Profesional, type Turno } from "./turnos";
 
 /*
- * Lo que la agenda del local lee de Supabase, con la sesión del dueño. Las
- * mismas consultas que la app (BooKit, `BusinessCalendarRepository` y
+ * Lo que la agenda del local lee de Supabase, con la sesión de quien entra:
+ * el dueño, o un profesional que ve sólo lo suyo. Las mismas consultas que la
+ * app (BooKit, `BusinessCalendarRepository` y
  * `ManualBookingRepository.fetchProfesionales`): lo que se ve lo decide la
  * política de `turnos`, no esta página.
  */
-
-export type MiLocal = {
-  id: string;
-  nombre: string;
-  suscripcion: NonNullable<MiPlan["suscripcion"]>;
-};
-
-/**
- * El local de la cuenta. Una cuenta sin local va a /mi-local/sin-local. El
- * chequeo vive acá y no en el layout: Next dibuja la página en paralelo al
- * layout, así que un layout que corta no evita que la página lea. Con
- * `cache`, el marco del panel y la página comparten la lectura.
- */
-export const leerMiLocal = cache(async (): Promise<MiLocal> => {
-  const plan = await leerMiPlan();
-  if (!plan.comercio || !plan.suscripcion) redirect("/mi-local/sin-local");
-  return { id: plan.comercio.id, nombre: plan.comercio.nombre, suscripcion: plan.suscripcion };
-});
-
-/**
- * El círculo del local en la app (`comercios.logo_url`), o `null` si no subió
- * uno. Aparte de `leerMiLocal`: lo pide sólo el marco, y así la página no lo
- * espera. Un error no tapa la agenda: el marco muestra la inicial.
- */
-export async function leerLogoDelLocal(idComercio: string): Promise<string | null> {
-  const supabase = await clienteDeSupabase("local");
-  const { data } = await supabase.from("comercios").select("logo_url").eq("id_comercio", idComercio).maybeSingle();
-  return (data as { logo_url: string | null } | null)?.logo_url ?? null;
-}
-
-/**
- * Si el local entra a su agenda. Es la regla del gate de la app
- * (`EstadoSuscripcion.daAcceso`): al día o en gracia.
- */
-export const daAcceso = (estado: MiLocal["suscripcion"]["estado"]) => estado === "al_dia" || estado === "en_gracia";
-
-/**
- * El local, si entra al panel, o `null`. Las pantallas de adentro mandan a la
- * agenda, que dice por qué no entra y cómo regularizarlo; las acciones
- * contestan que no tiene acceso.
- */
-export async function leerLocalQueEntra(): Promise<MiLocal | null> {
-  const local = await leerMiLocal();
-  return daAcceso(local.suscripcion.estado) ? local : null;
-}
 
 type FilaDeTurno = {
   id_turno: string;

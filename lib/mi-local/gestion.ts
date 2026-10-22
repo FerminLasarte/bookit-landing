@@ -259,6 +259,18 @@ export async function leerPreciosLibres(idComercio: string): Promise<boolean> {
   return Boolean((data as { permitir_precios_profesionales: boolean | null } | null)?.permitir_precios_profesionales);
 }
 
+/**
+ * Si valen los precios de cada profesional: el switch y el plan, en la
+ * columna que mantiene la base (`comercios.precios_libres`). Es lo que lee la
+ * app del profesional, que no puede leer el plan del local.
+ */
+export async function leerPreciosQueValen(idComercio: string): Promise<boolean> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase.from("comercios").select("precios_libres").eq("id_comercio", idComercio).maybeSingle();
+  if (error) throw new Error(`precios libres: ${error.message}`);
+  return Boolean((data as { precios_libres: boolean | null } | null)?.precios_libres);
+}
+
 export type Asignado = { servicio: number; precio: number | null; duracion: number | null };
 
 /** Los servicios que hace un profesional, con su precio y su duración propios (`null`: los del servicio). */

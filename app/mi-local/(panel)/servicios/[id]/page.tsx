@@ -7,15 +7,15 @@ import FormularioDeServicio from "@/components/mi-local/FormularioDeServicio";
 import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
 import { contarTurnosPorVenir, leerPlanDelLocal, leerServicio } from "@/lib/mi-local/gestion";
+import { leerLocalDelDuenio } from "@/lib/mi-local/lugar";
 
 export const metadata: Metadata = { title: miLocal.servicio.editar };
 
 /** Editar un servicio y, abajo, eliminarlo. Uno de otro local o ya dado de baja es un 404. */
 export default async function EditarServicioPage({ params }: PageProps<"/mi-local/servicios/[id]">) {
   const { id } = await params;
-  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
+  const local = (await leerLocalDelDuenio()) ?? redirect("/mi-local");
 
   const numero = Number(id);
   if (!Number.isInteger(numero) || numero <= 0) notFound();

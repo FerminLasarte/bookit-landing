@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
+import { lugarParaActuar } from "@/lib/mi-local/acciones";
 import { ACCIONES_DE_TURNO, type AccionDeTurno } from "@/lib/mi-local/turnos";
 import { enlaceDeVista, esClaveDeDia } from "@/lib/mi-local/vista";
 import { clienteDeSupabase } from "@/lib/supabase";
@@ -12,8 +12,10 @@ import { mensajeDeLaBase } from "@/lib/mi-local/errores";
 
 /*
  * Lo que la agenda del local le pide al servidor. Escribe siempre con la sesión
- * del dueño: con otro rol no corre `_turnos_quien_cambia_el_estado`, y
- * `notificar_turno` no sabe que fue el local (docs/PLAN-MI-LOCAL-FASE-2.md).
+ * de quien entra, el dueño o un profesional del equipo: con otro rol no corre
+ * `_turnos_quien_cambia_el_estado`, y `notificar_turno` no sabe que fue el
+ * local (docs/PLAN-MI-LOCAL-FASE-2.md). Al profesional, la base lo deja sobre
+ * sus turnos y nada más.
  * La devolución de Mercado Pago, los puntos, el cupón y los avisos los
  * disparan los triggers de `turnos`: acá no se llama a nada más.
  */
@@ -28,7 +30,8 @@ export async function cambiarEstado(idTurno: string, estado: AccionDeTurno): Pro
   const leido = cambio.safeParse({ idTurno, estado });
   if (!leido.success) return { error: errores.generico };
 
-  if (!(await leerLocalQueEntra())) return { error: errores.sinAcceso };
+  const { error: noPuede } = await lugarParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase
@@ -84,7 +87,10 @@ export async function cargarTurno(_: EstadoDeCarga, datos: FormData): Promise<Es
   if (!leido.success) return { error: errores.generico };
   const d = leido.data;
 
-  if (!(await leerLocalQueEntra())) return { error: errores.sinAcceso };
+  const { lugar, error: noPuede } = await lugarParaActuar();
+  if (noPuede !== null) return { error: noPuede };
+  // El profesional del equipo se carga turnos a sí mismo, como en la app.
+  if (lugar.rol === "profesional" && d.profesional !== lugar.idProfesional) return { error: errores.generico };
 
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.rpc("crear_turno_manual", {

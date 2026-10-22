@@ -10,7 +10,7 @@ import ServiciosDelProfesional from "@/components/mi-local/ServiciosDelProfesion
 import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
+import { leerLocalDelDuenio } from "@/lib/mi-local/lugar";
 import {
   leerMiCuenta,
   leerMiembro,
@@ -31,7 +31,7 @@ export const metadata: Metadata = { title: miLocal.equipo.titulo };
  */
 export default async function ProfesionalPage({ params }: PageProps<"/mi-local/equipo/[id]">) {
   const { id } = await params;
-  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
+  const local = (await leerLocalDelDuenio()) ?? redirect("/mi-local");
   const copy = miLocal.profesional;
   const volver = <TextLink href="/mi-local/equipo">{copy.volver}</TextLink>;
 

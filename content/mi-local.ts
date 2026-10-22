@@ -1,4 +1,5 @@
 import type { TonoDeBadge } from "@/components/ui/Badge";
+import type { Bloqueo } from "@/lib/mi-local/lugar";
 import type { EstadoTurno, Grupo } from "@/lib/mi-local/turnos";
 import { planes } from "@/content/planes";
 import { site } from "@/content/site";
@@ -9,9 +10,6 @@ import { site } from "@/content/site";
  */
 
 export type Aviso = { titulo: string; bajada: string; boton: string | null };
-
-/** Lo que contesta una acción cuando el local ya no entra al panel: la agenda, los servicios. */
-const sinAcceso = "Tu local no tiene acceso al panel. Regularizá tu plan para volver a usarlo.";
 
 export const miLocal = {
   meta: { title: "Mi local" },
@@ -24,12 +22,16 @@ export const miLocal = {
 
   /** El marco del panel: la barra del local en la compu y el menú en el teléfono. */
   panel: {
-    /** En el orden de la app; las de la fase 3 se suman cuando existen (D1 del plan de la fase 3). */
+    /**
+     * En el orden de la app (D1 del plan de la fase 3). Un profesional del
+     * equipo ve las tres primeras, como las pestañas del staff en la app (D2
+     * del plan del equipo).
+     */
     secciones: [
-      { label: "Agenda", href: "/mi-local" },
-      { label: "Horarios", href: "/mi-local/horarios" },
-      { label: "Servicios", href: "/mi-local/servicios" },
-      { label: "Equipo", href: "/mi-local/equipo" },
+      { label: "Agenda", href: "/mi-local", delDuenio: false },
+      { label: "Horarios", href: "/mi-local/horarios", delDuenio: false },
+      { label: "Servicios", href: "/mi-local/servicios", delDuenio: false },
+      { label: "Equipo", href: "/mi-local/equipo", delDuenio: true },
     ],
     /** Las pestañas de abajo, en el teléfono: las secciones (D1 del plan de la fase 3). */
     pestanas: "Secciones",
@@ -41,6 +43,20 @@ export const miLocal = {
     /** La firma de abajo, al lado del isotipo: el logo completo no baja de 28 px (manual de marca). */
     firma: "con Bookit",
     irALaWeb: "Ir a la web de Bookit",
+    /** Quien tiene más de un lugar elige dónde está, como "Cambiar de lado" en la app (D1 del plan del equipo). */
+    cambiarDeLugar: {
+      titulo: "Cambiar de local",
+      tuLocal: "Tu local",
+      trabajasAca: "Trabajás acá",
+      sinNombre: "Un local",
+    },
+  },
+
+  /** Lo que contesta una acción cuando no se puede: el lugar no entra, o es algo del dueño. */
+  acceso: {
+    sinAcceso: "Tu local no tiene acceso al panel. Regularizá tu plan para volver a usarlo.",
+    sinAccesoDelEquipo: "Tu lugar en este local no está disponible. Hablá con quien administra el local.",
+    soloDuenio: "Esto lo maneja quien administra el local.",
   },
 
   /** Entrar y "sin local": fuera del sitio, con su pantalla propia. */
@@ -81,6 +97,8 @@ export const miLocal = {
       paso: { titulo: "Sin turnos", bajada: "No hubo turnos este día." },
       localNoAtiende: { titulo: "El local no atiende este día", bajada: "Nadie del equipo tiene horario este día." },
       noAtiende: { titulo: "No atiende este día", bajada: "Lo cambiás en Horarios." },
+      /** La agenda de un profesional del equipo: la de la app dice "Tú", la web dice "Vos". */
+      noAtendes: { titulo: "No atendés este día", bajada: "Lo cambiás en Horarios." },
       ordenDeLlegada: { titulo: "Por orden de llegada", bajada: "Este día se atiende sin turno." },
       hoyNoQuedan: { titulo: "Hoy ya no quedan horarios", bajada: "El horario de hoy ya pasó." },
       sinLibres: { titulo: "Sin horarios libres", bajada: "Este día no tiene turnos ni horarios para reservar." },
@@ -107,6 +125,7 @@ export const miLocal = {
     elegirServicio: "Elegí el servicio.",
     sinProfesionales: "Tu local no tiene profesionales activos. Se suman desde la app.",
     sinServicios: (profesional: string) => `${profesional} no tiene servicios asignados. Se asignan desde la app.`,
+    sinServiciosPropios: "Todavía no tenés servicios. Te los asigna quien administra el local.",
     sinHorarios: "No quedan horarios libres este día.",
     error: "No pudimos traer los horarios. Recargá la página en un rato.",
     nombre: "Nombre del cliente",
@@ -116,7 +135,6 @@ export const miLocal = {
     errores: {
       horario: "Elegí un horario.",
       generico: "No pudimos cargar el turno. Probá de nuevo en un rato.",
-      sinAcceso,
     },
   },
 
@@ -175,7 +193,6 @@ export const miLocal = {
       errores: {
         descanso: "Elegí desde y hasta qué hora es cada descanso.",
         generico: "No pudimos guardar el horario. Probá de nuevo en un rato.",
-        sinAcceso,
       },
     },
     /** Los días especiales, como `ExceptionsTab` y `ExcepcionSheet`. */
@@ -222,7 +239,6 @@ export const miLocal = {
         horas: "Elegí desde y hasta qué hora.",
         generico: "No pudimos guardar el día especial. Probá de nuevo en un rato.",
         eliminar: "No pudimos eliminar el día especial. Probá de nuevo en un rato.",
-        sinAcceso,
       },
     },
   },
@@ -243,6 +259,20 @@ export const miLocal = {
     minutos: (n: number) => `${n} min`,
     /** `Servicio.senaLegible` de la app: "Seña 20%" o "Seña $5.000". */
     sena: (valor: string) => `Seña ${valor}`,
+  },
+
+  /** Los servicios de un profesional del equipo, como "Mis Servicios" de la app (D3 del plan del equipo). */
+  misServicios: {
+    titulo: "Mis servicios",
+    bajada: "Tu duración y tu precio en cada servicio. Vacío, vale el del servicio.",
+    vacio: {
+      titulo: "Aún no tenés servicios",
+      bajada: "Te los asigna quien administra el local.",
+    },
+    error: "No pudimos traer tus servicios. Recargá la página en un rato.",
+    duracion: "Tu duración, en minutos",
+    precio: "Tu precio",
+    guardar: "Guardar cambios",
   },
 
   /** Crear o editar un servicio, como `AddEditServiceScreen`. */
@@ -276,7 +306,6 @@ export const miLocal = {
       campos: { nombre: "el nombre", precio: "el precio", duracion: "la duración" },
       faltaSena: { porcentaje: "Falta el porcentaje de la seña.", fijo: "Falta el monto de la seña." },
       generico: "No pudimos guardar el servicio. Probá de nuevo en un rato.",
-      sinAcceso,
     },
     /** La baja, como `EliminarServicioBoton`: el servicio se oculta y sus turnos siguen. */
     baja: {
@@ -294,7 +323,6 @@ export const miLocal = {
       volver: "Volver",
       errores: {
         generico: "No pudimos eliminar el servicio. Probá de nuevo en un rato.",
-        sinAcceso,
       },
     },
   },
@@ -376,7 +404,6 @@ export const miLocal = {
       email: "Ingresá un email válido.",
       invitacionRepetida: "Ya hay una invitación pendiente para ese mail.",
       generico: "No pudimos agregar al profesional. Probá de nuevo en un rato.",
-      sinAcceso,
     },
   },
 
@@ -444,7 +471,6 @@ export const miLocal = {
     errores: {
       generico: "No pudimos guardar los cambios. Probá de nuevo en un rato.",
       soloLectura: "Los datos de un profesional con cuenta los maneja él.",
-      sinAcceso,
     },
   },
 
@@ -458,7 +484,6 @@ export const miLocal = {
     volver: "Volver al equipo",
     errores: {
       generico: "No pudimos guardar los cambios. Probá de nuevo en un rato.",
-      sinAcceso,
     },
   },
 
@@ -495,7 +520,6 @@ export const miLocal = {
     },
     errores: {
       generico: "No pudimos cambiar el estado del turno. Probá de nuevo en un rato.",
-      sinAcceso,
     },
   },
 
@@ -542,6 +566,39 @@ export const miLocal = {
       boton: null,
     },
   } satisfies Record<string, Aviso>,
+
+  /**
+   * Lo que tapa la agenda de un profesional del equipo: las frases de la app
+   * (`StaffSuspendedScreen`), más la del plan sin cuentas del equipo (D4 del
+   * plan del equipo). Sin botón: lo resuelve quien administra el local.
+   */
+  bloqueoDelEquipo: {
+    cerrado: (local: string): Aviso => ({
+      titulo: `${local} cerró su cuenta`,
+      bajada: "El local se dio de baja en Bookit, así que su panel ya no está disponible. Tu cuenta personal sigue como siempre.",
+      boton: null,
+    }),
+    fueraDelEquipo: (local: string): Aviso => ({
+      titulo: "Ya no estás en el equipo",
+      bajada: `${local} te desactivó, así que su agenda ya no está disponible para vos. Si es un error, hablá con quien administra el local.`,
+      boton: null,
+    }),
+    enPausa: (local: string): Aviso => ({
+      titulo: "Espacio de trabajo en pausa",
+      bajada: `${local} no tiene la suscripción al día, así que su panel no está disponible. Hablá con quien administra el local: tu agenda y tu historial siguen donde los dejaste.`,
+      boton: null,
+    }),
+    sinCuentas: (local: string): Aviso => ({
+      titulo: "Sin cuentas del equipo",
+      bajada: `${local} no tiene las cuentas del equipo en su plan, así que su panel no está disponible para vos. Hablá con quien administra el local.`,
+      boton: null,
+    }),
+    sinLugar: (): Aviso => ({
+      titulo: "No encontramos tu lugar",
+      bajada: "No encontramos tu lugar en este local. Probá de nuevo en un rato.",
+      boton: null,
+    }),
+  } satisfies Record<Bloqueo, (local: string) => Aviso>,
 
   /** Lo que va arriba de la agenda: el local entra, pero hay algo pendiente. */
   avisos: {

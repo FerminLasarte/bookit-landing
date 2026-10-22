@@ -84,11 +84,14 @@ export function SelectorDeHora({
 /** Elegir una entre pocas opciones, con la píldora de la agenda: radios que se ven como botones. */
 export function ElegirUno<T extends string>({
   etiqueta,
+  nombre,
   opciones,
   valor,
   onChange,
 }: {
   etiqueta: string;
+  /** El nombre del campo, si el formulario lo manda: si no, el de la etiqueta. */
+  nombre?: string;
   opciones: { valor: T; label: string }[];
   valor: T;
   onChange: (valor: T) => void;
@@ -99,7 +102,7 @@ export function ElegirUno<T extends string>({
         <label key={o.valor} className={cn(claseDeOpcion(valor === o.valor), "cursor-pointer")}>
           <input
             type="radio"
-            name={etiqueta}
+            name={nombre ?? etiqueta}
             value={o.valor}
             checked={valor === o.valor}
             onChange={() => onChange(o.valor)}

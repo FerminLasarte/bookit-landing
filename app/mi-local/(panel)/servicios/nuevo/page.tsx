@@ -5,13 +5,13 @@ import FormularioDeServicio from "@/components/mi-local/FormularioDeServicio";
 import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
 import { leerPlanDelLocal } from "@/lib/mi-local/gestion";
+import { leerLocalDelDuenio } from "@/lib/mi-local/lugar";
 
 export const metadata: Metadata = { title: miLocal.servicio.nuevo };
 
 export default async function NuevoServicioPage() {
-  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
+  const local = (await leerLocalDelDuenio()) ?? redirect("/mi-local");
   const copy = miLocal.servicio;
   const plan = await leerPlanDelLocal(local.suscripcion.nivel);
 

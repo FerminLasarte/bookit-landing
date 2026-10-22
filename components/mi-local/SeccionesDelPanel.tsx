@@ -10,9 +10,12 @@ export function useSeccionActual() {
   return miLocal.panel.secciones.findLast((s) => ruta === s.href || ruta.startsWith(`${s.href}/`));
 }
 
-/** Las secciones del panel, en la barra de la compu. */
-export default function SeccionesDelPanel() {
-  const { secciones, navegacion } = miLocal.panel;
+/** Una sección del panel, con su enlace. */
+export type Seccion = (typeof miLocal.panel.secciones)[number];
+
+/** Las secciones del panel que ve quien entra, en la barra de la compu. */
+export default function SeccionesDelPanel({ secciones }: { secciones: Seccion[] }) {
+  const { navegacion } = miLocal.panel;
   const actual = useSeccionActual();
 
   return (

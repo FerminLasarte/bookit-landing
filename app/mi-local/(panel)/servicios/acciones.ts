@@ -4,8 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
 import { campo } from "@/lib/formularios";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
-import { mensajeDeLaBase } from "@/lib/mi-local/errores";
+import { errorDe, localParaActuar } from "@/lib/mi-local/acciones";
 import type { Respuesta } from "@/lib/mi-local/respuesta";
 import { clienteDeSupabase } from "@/lib/supabase";
 
@@ -55,8 +54,8 @@ export async function guardarServicio(_: EstadoDeServicio, datos: FormData): Pro
   if (!leido.success) return { error: errores.generico };
   const d = leido.data;
 
-  const local = await leerLocalQueEntra();
-  if (!local) return { error: errores.sinAcceso };
+  const { local, error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const fila = {
     nombre: d.nombre,
@@ -72,11 +71,7 @@ export async function guardarServicio(_: EstadoDeServicio, datos: FormData): Pro
         .from("servicios")
         .insert({ ...fila, id_comercio: local.id })
         .select("id_servicio");
-  if (error) {
-    const deLaBase = mensajeDeLaBase(error);
-    if (!deLaBase) console.error("mi-local/guardar-servicio:", error.code, error.message);
-    return { error: deLaBase ?? errores.generico };
-  }
+  if (error) return errorDe(error, errores.generico, "guardar-servicio");
   // Uno de otro local o ya dado de baja no da error: el update no toca nada.
   if (!data?.length) {
     console.error("mi-local/guardar-servicio: ninguna fila", d.id);
@@ -96,7 +91,8 @@ export async function darDeBajaServicio(_: EstadoDeServicio, datos: FormData): P
   const id = z.coerce.number().int().positive().safeParse(datos.get("id"));
   if (!id.success) return { error: errores.generico };
 
-  if (!(await leerLocalQueEntra())) return { error: errores.sinAcceso };
+  const { error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase
