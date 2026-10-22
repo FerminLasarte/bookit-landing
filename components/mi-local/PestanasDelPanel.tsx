@@ -4,7 +4,7 @@ import { CalendarDays, Clock, Scissors, Users, type LucideIcon } from "lucide-re
 import Link from "next/link";
 import { miLocal } from "@/content/mi-local";
 import { cn } from "@/lib/utils";
-import { useSeccionActual } from "./SeccionesDelPanel";
+import { useSeccionActual, type Seccion } from "./SeccionesDelPanel";
 
 const iconos: Record<string, LucideIcon> = {
   "/mi-local": CalendarDays,
@@ -18,8 +18,8 @@ const iconos: Record<string, LucideIcon> = {
  * (plan del panel: con tres o más secciones). El menú de arriba queda para el
  * plan y salir.
  */
-export default function PestanasDelPanel() {
-  const { secciones, pestanas } = miLocal.panel;
+export default function PestanasDelPanel({ secciones }: { secciones: Seccion[] }) {
+  const { pestanas } = miLocal.panel;
   const actual = useSeccionActual();
 
   return (

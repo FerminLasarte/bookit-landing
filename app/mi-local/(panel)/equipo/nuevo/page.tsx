@@ -4,14 +4,14 @@ import AltaDeProfesional from "@/components/mi-local/AltaDeProfesional";
 import Encabezado from "@/components/mi-local/Encabezado";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
 import { leerEquipo, leerMiCuenta, leerPlanDelLocal } from "@/lib/mi-local/gestion";
+import { leerLocalDelDuenio } from "@/lib/mi-local/lugar";
 
 export const metadata: Metadata = { title: miLocal.sumar.titulo };
 
 /** Sumar a alguien al equipo. "Agregarme" sólo aparece si el dueño todavía no atiende. */
 export default async function SumarProfesionalPage() {
-  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
+  const local = (await leerLocalDelDuenio()) ?? redirect("/mi-local");
   const copy = miLocal.sumar;
 
   const [cuenta, plan] = await Promise.all([leerMiCuenta().catch(() => null), leerPlanDelLocal(local.suscripcion.nivel)]);

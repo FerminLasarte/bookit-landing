@@ -14,7 +14,9 @@ import RespuestaDeAccion from "./RespuestaDeAccion";
 /**
  * Qué servicios hace un profesional, como `AssignServicesBottomSheet`. Si lo
  * maneja el dueño (D2), también su duración propia y, con "Precios libres",
- * su precio propio; vacío es el del servicio.
+ * su precio propio; vacío es el del servicio. `propios`: es el profesional
+ * del equipo con los suyos, como "Mis Servicios" de la app; edita su duración
+ * y su precio, y no se asigna ni se quita servicios (D3 del plan del equipo).
  */
 export default function ServiciosDelProfesional({
   idProfesional,
@@ -22,6 +24,7 @@ export default function ServiciosDelProfesional({
   asignados,
   editable,
   conPrecio,
+  propios = false,
 }: {
   idProfesional: string;
   servicios: Servicio[];
@@ -29,8 +32,10 @@ export default function ServiciosDelProfesional({
   editable: boolean;
   /** "Precios libres" vale para el local: el switch y el plan. */
   conPrecio: boolean;
+  propios?: boolean;
 }) {
   const copy = miLocal.profesional.servicios;
+  const rotulos = propios ? miLocal.misServicios : copy;
   const [estado, enviar, enviando] = useActionState<EstadoDeEquipo, FormData>(guardarServiciosDelProfesional, { error: null });
   const [elegidos, setElegidos] = useState(() => new Set(asignados.map((a) => a.servicio)));
   const propio = (id: number) => asignados.find((a) => a.servicio === id);
@@ -52,28 +57,30 @@ export default function ServiciosDelProfesional({
           const marcado = elegidos.has(s.id);
           return (
             <li key={s.id} className="flex flex-col gap-3 py-3 first:pt-0">
-              <label className="flex cursor-pointer items-start gap-3">
-                <input
-                  type="checkbox"
-                  name="servicios"
-                  value={s.id}
-                  checked={marcado}
-                  onChange={(e) => alternar(s.id, e.target.checked)}
-                  className="ring-focus mt-1 size-4 accent-fg"
-                />
-                <span>
-                  <span className="block font-semibold text-fg">{s.nombre}</span>
-                  <span className="block text-small text-muted">
-                    {miLocal.servicios.minutos(s.duracion)} · {pesos(s.precio)}
-                  </span>
-                </span>
-              </label>
+              {propios ? (
+                <div>
+                  <input type="hidden" name="servicios" value={s.id} />
+                  <Detalle servicio={s} />
+                </div>
+              ) : (
+                <label className="flex cursor-pointer items-start gap-3">
+                  <input
+                    type="checkbox"
+                    name="servicios"
+                    value={s.id}
+                    checked={marcado}
+                    onChange={(e) => alternar(s.id, e.target.checked)}
+                    className="ring-focus mt-1 size-4 accent-fg"
+                  />
+                  <Detalle servicio={s} />
+                </label>
+              )}
               {editable && marcado && (
-                <div className="grid gap-3 pl-7 sm:grid-cols-2">
+                <div className={cn("grid gap-3 sm:grid-cols-2", !propios && "pl-7")}>
                   <Propio
                     id={`duracion-${s.id}`}
                     nombre={`duracion_${s.id}`}
-                    rotulo={copy.duracion}
+                    rotulo={rotulos.duracion}
                     valor={propio(s.id)?.duracion}
                     ayuda={copy.delServicio(miLocal.servicios.minutos(s.duracion))}
                     paso={1}
@@ -82,7 +89,7 @@ export default function ServiciosDelProfesional({
                     <Propio
                       id={`precio-${s.id}`}
                       nombre={`precio_${s.id}`}
-                      rotulo={copy.precio}
+                      rotulo={rotulos.precio}
                       valor={propio(s.id)?.precio}
                       ayuda={copy.delServicio(pesos(s.precio))}
                       paso="any"
@@ -97,9 +104,21 @@ export default function ServiciosDelProfesional({
       {!editable && <p className="text-small text-muted">{copy.soloLectura}</p>}
       <RespuestaDeAccion estado={estado} />
       <Button type="submit" size="compact" disabled={enviando} className="self-start">
-        {enviando ? miLocal.profesional.guardando : copy.guardar}
+        {enviando ? miLocal.profesional.guardando : rotulos.guardar}
       </Button>
     </form>
+  );
+}
+
+/** El nombre del servicio, con su duración y su precio de base. */
+function Detalle({ servicio }: { servicio: Servicio }) {
+  return (
+    <span>
+      <span className="block font-semibold text-fg">{servicio.nombre}</span>
+      <span className="block text-small text-muted">
+        {miLocal.servicios.minutos(servicio.duracion)} · {pesos(servicio.precio)}
+      </span>
+    </span>
   );
 }
 

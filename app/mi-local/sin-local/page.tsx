@@ -7,7 +7,7 @@ import { miLocal } from "@/content/mi-local";
 
 export const metadata: Metadata = { title: "Sin local" };
 
-/** Una cuenta que no es dueña de un local: la de un cliente, o la de un profesional del equipo. */
+/** Una cuenta sin lugar en ningún local: no es dueña de uno ni trabaja en uno con su cuenta. Es la de un cliente. */
 export default function SinLocalPage() {
   const copy = miLocal.sinLocal;
 

@@ -6,9 +6,18 @@ import { site } from "@/content/site";
 /**
  * Un aviso de la suscripción. Arriba de la agenda, cuando el local entra pero
  * debe o no renueva; solo, cuando no entra. El botón lleva a /planes: la web
- * sí puede mandar a pagar. Sin botón, el contacto.
+ * sí puede mandar a pagar. Sin botón, el contacto; el profesional del equipo,
+ * ni eso: lo resuelve quien administra el local.
  */
-export default function Aviso({ aviso, conBoton }: { aviso: CopyDeAviso; conBoton: boolean }) {
+export default function Aviso({
+  aviso,
+  conBoton,
+  conContacto = true,
+}: {
+  aviso: CopyDeAviso;
+  conBoton: boolean;
+  conContacto?: boolean;
+}) {
   return (
     <Superficie
       tone="miel"
@@ -23,7 +32,8 @@ export default function Aviso({ aviso, conBoton }: { aviso: CopyDeAviso; conBoto
           {aviso.boton}
         </Button>
       ) : (
-        !aviso.boton && (
+        !aviso.boton &&
+        conContacto && (
           // En `fg` y no en el link de acento: el ámbar sobre el tile miel no llega a AA.
           <a
             href={`mailto:${site.email}`}

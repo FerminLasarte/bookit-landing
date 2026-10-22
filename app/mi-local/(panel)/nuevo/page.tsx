@@ -8,13 +8,8 @@ import TextLink from "@/components/ui/TextLink";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { dia as diaLargo, hoy, pesos } from "@/lib/formato";
-import {
-  leerHorariosLibres,
-  leerLocalQueEntra,
-  leerProfesionales,
-  leerServiciosDelProfesional,
-  type ServicioDelProfesional,
-} from "@/lib/mi-local/agenda";
+import { leerHorariosLibres, leerProfesionales, leerServiciosDelProfesional, type ServicioDelProfesional } from "@/lib/mi-local/agenda";
+import { leerLugarQueEntra } from "@/lib/mi-local/lugar";
 import type { Profesional } from "@/lib/mi-local/turnos";
 import { enlaceDeCarga, enlaceDeVista, esClaveDeDia, type Carga } from "@/lib/mi-local/vista";
 
@@ -24,14 +19,16 @@ export const metadata: Metadata = { title: miLocal.nuevo.titulo };
  * Cargar un turno a mano (D5 y D6 del plan de la fase 2). Cada elección es un
  * enlace y queda en la URL, como los filtros de la agenda: profesional,
  * servicio y día se leen acá, en el servidor. Sólo el último paso, el horario
- * y el cliente, es una acción.
+ * y el cliente, es una acción. El profesional del equipo se carga turnos a sí
+ * mismo: va elegido, como en la app.
  */
 
 type PageProps = { searchParams: Promise<{ dia?: string; profesional?: string; servicio?: string }> };
 
 export default async function NuevoTurnoPage({ searchParams }: PageProps) {
   const pedido = await searchParams;
-  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
+  const local = (await leerLugarQueEntra()) ?? redirect("/mi-local");
+  const propio = local.rol === "profesional" ? local.idProfesional : null;
 
   const copy = miLocal.nuevo;
   const hoyEnTandil = hoy();
@@ -39,7 +36,7 @@ export default async function NuevoTurnoPage({ searchParams }: PageProps) {
 
   // Con uno solo, elegirlo sería una decisión sin alternativas: va elegido, como en la app.
   const lectura = await (async () => {
-    const profesionales = await leerProfesionales(local.id);
+    const profesionales = (await leerProfesionales(local.id)).filter((p) => !propio || p.id === propio);
     const profesional =
       profesionales.find((p) => p.id === pedido.profesional) ?? (profesionales.length === 1 ? (profesionales[0] ?? null) : null);
     const servicios = profesional ? await leerServiciosDelProfesional(profesional.id) : null;
@@ -62,7 +59,7 @@ export default async function NuevoTurnoPage({ searchParams }: PageProps) {
       {!lectura ? (
         <Aviso tono="error">{copy.error}</Aviso>
       ) : (
-        <Pasos {...lectura} dia={dia} hoy={hoyEnTandil} />
+        <Pasos {...lectura} propia={propio !== null} dia={dia} hoy={hoyEnTandil} />
       )}
     </div>
   );
@@ -76,7 +73,16 @@ type Lectura = {
   horarios: string[] | null;
 };
 
-function Pasos({ profesionales, profesional, servicios, servicio, horarios, dia, hoy }: Lectura & { dia: string; hoy: string }) {
+function Pasos({
+  profesionales,
+  profesional,
+  servicios,
+  servicio,
+  horarios,
+  propia,
+  dia,
+  hoy,
+}: Lectura & { propia: boolean; dia: string; hoy: string }) {
   const copy = miLocal.nuevo;
   const carga: Carga = { dia, profesional: profesional?.id ?? null, servicio: servicio ? String(servicio.id) : null };
 
@@ -112,7 +118,7 @@ function Pasos({ profesionales, profesional, servicios, servicio, horarios, dia,
       {!profesional ? (
         <Aviso>{copy.elegirProfesional}</Aviso>
       ) : servicios?.length === 0 ? (
-        <Aviso>{copy.sinServicios(profesional.nombre)}</Aviso>
+        <Aviso>{propia ? copy.sinServiciosPropios : copy.sinServicios(profesional.nombre)}</Aviso>
       ) : !servicio ? (
         <Aviso>{copy.elegirServicio}</Aviso>
       ) : (

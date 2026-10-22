@@ -37,13 +37,15 @@ type Props = {
   profesionales: Profesional[];
   /** Los huecos libres del día, o `null` si no se pudieron leer: la agenda va igual. */
   huecos: HuecosDelDia | null;
+  /** Es la agenda de un profesional del equipo: la suya, y el día vacío le habla a él. */
+  propia?: boolean;
   /** Un momento fijo para todo el dibujo, como ISO: el servidor y el navegador ven la misma hora. */
   ahora: string;
   /** El aviso de la suscripción, si hay: va entre el encabezado y la barra. */
   aviso?: ReactNode;
 };
 
-export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, huecos, ahora, aviso }: Props) {
+export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, huecos, propia = false, ahora, aviso }: Props) {
   const copy = miLocal.agenda;
   const router = useRouter();
   const parametros = useSearchParams();
@@ -189,7 +191,7 @@ export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, 
             ahora={momento}
           />
         ) : (
-          <DiaVacio {...vacioDe({ grupo, libres, profesional, dia, hoy })} />
+          <DiaVacio {...vacioDe({ grupo, libres, profesional, propia, dia, hoy })} />
         )}
       </div>
     </>
@@ -206,12 +208,14 @@ function vacioDe({
   grupo,
   libres,
   profesional,
+  propia,
   dia,
   hoy,
 }: {
   grupo: Grupo | null;
   libres: Libres | null | undefined;
   profesional: string | null;
+  propia: boolean;
   dia: string;
   hoy: string;
 }): { titulo?: string; bajada: string; href?: string } {
@@ -220,6 +224,7 @@ function vacioDe({
   if (!libres) return { bajada: vacio };
   if (dia < hoy) return diaVacio.paso;
   if (libres.atencion === "no_atiende") {
+    if (propia) return { ...diaVacio.noAtendes, href: "/mi-local/horarios" };
     return profesional
       ? { ...diaVacio.noAtiende, href: `/mi-local/horarios?profesional=${profesional}` }
       : { ...diaVacio.localNoAtiende, href: "/mi-local/horarios" };

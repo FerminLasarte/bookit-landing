@@ -10,8 +10,8 @@ import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
 import { hoy } from "@/lib/formato";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
-import { leerDiasEspeciales, leerEquipo, leerFranjas, leerMiCuenta, loEditaElDuenio } from "@/lib/mi-local/gestion";
+import { leerDiasEspeciales, leerEquipo, leerFranjas, leerMiCuenta, leerMiembro, loEditaElDuenio } from "@/lib/mi-local/gestion";
+import { leerLugarQueEntra } from "@/lib/mi-local/lugar";
 import { semanaDe } from "@/lib/mi-local/horario";
 
 export const metadata: Metadata = { title: miLocal.horarios.titulo };
@@ -21,21 +21,25 @@ export const metadata: Metadata = { title: miLocal.horarios.titulo };
  * especiales, como `ScheduleScreen` de la app. Abre con el dueño, o con el
  * único profesional; las píldoras cambian de profesional por la URL. Lo del
  * dueño y lo de los que no tienen cuenta se edita; lo de los que tienen
- * cuenta, se ve (D2).
+ * cuenta, se ve (D2). El profesional del equipo ve y edita sólo lo suyo, como
+ * en la app.
  */
 
 type PageProps = { searchParams: Promise<{ profesional?: string }> };
 
 export default async function HorariosPage({ searchParams }: PageProps) {
   const pedido = await searchParams;
-  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
+  const local = (await leerLugarQueEntra()) ?? redirect("/mi-local");
   const copy = miLocal.horarios;
   const hoyEnTandil = hoy();
 
   const lectura = await (async () => {
     const cuenta = await leerMiCuenta();
     // Los que reciben turnos, y el pedido aunque esté pausado: se llega desde su página.
-    const equipo = (await leerEquipo(local.id, cuenta.id)).filter((m) => m.activo || m.id === pedido.profesional);
+    const equipo =
+      local.rol === "duenio"
+        ? (await leerEquipo(local.id, cuenta.id)).filter((m) => m.activo || m.id === pedido.profesional)
+        : [await leerMiembro(local.id, local.idProfesional, cuenta.id)].filter((m) => m !== null);
     const elegido = equipo.find((m) => m.id === pedido.profesional) ?? equipo.find((m) => m.esDuenio) ?? equipo[0];
     if (!elegido) return { equipo, elegido: null };
     const [franjas, especiales] = await Promise.all([leerFranjas(elegido.id), leerDiasEspeciales(elegido.id, hoyEnTandil)]);

@@ -9,8 +9,8 @@ import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
 import { leerEquipo, leerInvitaciones, leerMiCuenta, leerPlanDelLocal, leerPreciosLibres } from "@/lib/mi-local/gestion";
+import { leerLocalDelDuenio } from "@/lib/mi-local/lugar";
 
 export const metadata: Metadata = { title: miLocal.equipo.titulo };
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = { title: miLocal.equipo.titulo };
  * app. Cada profesional tiene su página; sumar a alguien, también.
  */
 export default async function EquipoPage() {
-  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
+  const local = (await leerLocalDelDuenio()) ?? redirect("/mi-local");
   const copy = miLocal.equipo;
 
   const [lectura, plan] = await Promise.all([

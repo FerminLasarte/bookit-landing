@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
 import { campo } from "@/lib/formularios";
-import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
-import { errorDe, profesionalQueEdita } from "@/lib/mi-local/acciones";
+import { errorDe, localParaActuar, profesionalQueEdita } from "@/lib/mi-local/acciones";
 import { leerMiCuenta, leerServiciosAsignados } from "@/lib/mi-local/gestion";
 import type { Respuesta } from "@/lib/mi-local/respuesta";
 import { clienteDeSupabase } from "@/lib/supabase";
@@ -33,8 +32,8 @@ export async function sumarProfesional(_: EstadoDeEquipo, datos: FormData): Prom
   const nombre = z.string().trim().min(1).max(80).safeParse(campo(datos, "nombre"));
   if (!nombre.success) return { error: errores.nombre };
 
-  const local = await leerLocalQueEntra();
-  if (!local) return { error: errores.sinAcceso };
+  const { local, error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
   const soyYo = datos.get("soy_yo") === "1";
   const cuenta = soyYo ? await leerMiCuenta().catch(() => null) : null;
   if (soyYo && !cuenta) return { error: errores.generico };
@@ -57,8 +56,8 @@ export async function invitar(_: EstadoDeEquipo, datos: FormData): Promise<Estad
   const email = z.email().max(200).safeParse(campo(datos, "email").toLowerCase());
   if (!email.success) return { error: errores.email };
 
-  const local = await leerLocalQueEntra();
-  if (!local) return { error: errores.sinAcceso };
+  const { local, error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { error } = await supabase.from("invitaciones_equipo").insert({ id_comercio: local.id, email_invitado: email.data });
@@ -74,7 +73,8 @@ export async function reenviarInvitacion(_: EstadoDeEquipo, datos: FormData): Pr
   const { errores } = miLocal.equipo.invitaciones;
   const id = z.uuid().safeParse(datos.get("id"));
   if (!id.success) return { error: errores.reenviar };
-  if (!(await leerLocalQueEntra())) return { error: miLocal.sumar.errores.sinAcceso };
+  const { error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { error } = await supabase.rpc("reenviar_invitacion", { p_id_invitacion: id.data });
@@ -89,7 +89,8 @@ export async function revocarInvitacion(_: EstadoDeEquipo, datos: FormData): Pro
   const { errores } = miLocal.equipo.invitaciones;
   const id = z.uuid().safeParse(datos.get("id"));
   if (!id.success) return { error: errores.revocar };
-  if (!(await leerLocalQueEntra())) return { error: miLocal.sumar.errores.sinAcceso };
+  const { error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.from("invitaciones_equipo").delete().eq("id_invitacion", id.data).select("id_invitacion");
@@ -106,8 +107,8 @@ export async function revocarInvitacion(_: EstadoDeEquipo, datos: FormData): Pro
 /** Prende o apaga "Precios libres". El precio que vale lo arma la base con el switch y el plan. */
 export async function cambiarPreciosLibres(_: EstadoDeEquipo, datos: FormData): Promise<EstadoDeEquipo> {
   const { error: generico } = miLocal.equipo.preciosLibres;
-  const local = await leerLocalQueEntra();
-  if (!local) return { error: miLocal.sumar.errores.sinAcceso };
+  const { local, error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase
@@ -133,7 +134,8 @@ export async function cambiarActividad(_: EstadoDeEquipo, datos: FormData): Prom
   const { errores } = miLocal.profesional;
   const id = z.uuid().safeParse(datos.get("id"));
   if (!id.success) return { error: errores.generico };
-  if (!(await leerLocalQueEntra())) return { error: errores.sinAcceso };
+  const { error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { error } = await supabase.rpc("cambiar_actividad_profesional", {
@@ -152,8 +154,8 @@ export async function elegirQuienesSiguen(_: EstadoDeEquipo, datos: FormData): P
   const activos = z.array(z.uuid()).safeParse(datos.getAll("activos"));
   if (!activos.success) return { error: errores.generico };
 
-  const local = await leerLocalQueEntra();
-  if (!local) return { error: errores.sinAcceso };
+  const { local, error: noPuede } = await localParaActuar();
+  if (noPuede !== null) return { error: noPuede };
 
   const supabase = await clienteDeSupabase("local");
   const { error } = await supabase.rpc("elegir_profesionales_activos", { p_id_comercio: local.id, p_activos: activos.data });
@@ -168,7 +170,7 @@ const datosDelProfesional = z.object({
   bio: z.string().trim().max(300),
 });
 
-/** Guarda el nombre y la presentación de un profesional que maneja el dueño. */
+/** Guarda el nombre y la presentación de un profesional que maneja el dueño. El profesional del equipo no tiene perfil en la web (D2 del plan del equipo). */
 export async function guardarDatosDelProfesional(_: EstadoDeEquipo, datos: FormData): Promise<EstadoDeEquipo> {
   const { errores } = miLocal.profesional;
   const leido = datosDelProfesional.safeParse({ id: datos.get("id"), nombre: campo(datos, "nombre"), bio: campo(datos, "bio") });
@@ -176,6 +178,7 @@ export async function guardarDatosDelProfesional(_: EstadoDeEquipo, datos: FormD
 
   const permiso = await profesionalQueEdita(leido.data.id);
   if (permiso.error !== null) return { error: permiso.error };
+  if (!permiso.delDuenio) return { error: miLocal.acceso.soloDuenio };
   if (!permiso.editable) return { error: errores.soloLectura };
 
   const supabase = await clienteDeSupabase("local");
@@ -197,7 +200,9 @@ const numeroOpcional = z.preprocess((v) => (v === "" || v === null ? null : v), 
  * Guarda qué servicios hace un profesional y, si lo maneja el dueño, su precio
  * y su duración propios. Como la app: primero se suman los nuevos y después se
  * sacan los que ya no, así nunca queda sin ninguno a mitad de camino, y a los
- * que siguen no se les pierde el precio propio.
+ * que siguen no se les pierde el precio propio. El profesional del equipo
+ * guarda su precio y su duración en los que ya tiene, y nada más: asignarse o
+ * quitarse un servicio es del dueño (D3 del plan del equipo).
  */
 export async function guardarServiciosDelProfesional(_: EstadoDeEquipo, datos: FormData): Promise<EstadoDeEquipo> {
   const { errores } = miLocal.profesional;
@@ -222,20 +227,23 @@ export async function guardarServiciosDelProfesional(_: EstadoDeEquipo, datos: F
   const yaEstaban = new Set(antes.map((a) => a.servicio));
 
   // Los que maneja el dueño se guardan enteros; a los que tienen cuenta sólo se les suman servicios.
+  // El profesional guarda los suyos enteros, sólo los que ya tenía.
   const filas = permiso.editable
-    ? propios.map((p) => ({
-        id_profesional: id.data,
-        id_servicio: p.servicio,
-        duracion_personalizada: p.duracion.data ?? null,
-        ...(conPrecio && { precio_personalizado: p.precio.data ?? null }),
-      }))
+    ? propios
+        .filter((p) => permiso.delDuenio || yaEstaban.has(p.servicio))
+        .map((p) => ({
+          id_profesional: id.data,
+          id_servicio: p.servicio,
+          duracion_personalizada: p.duracion.data ?? null,
+          ...(conPrecio && { precio_personalizado: p.precio.data ?? null }),
+        }))
     : elegidos.data.filter((s) => !yaEstaban.has(s)).map((s) => ({ id_profesional: id.data, id_servicio: s }));
   if (filas.length) {
     const { error } = await supabase.from("profesionales_servicios").upsert(filas, { onConflict: "id_profesional,id_servicio" });
     if (error) return errorDe(error, errores.generico, "servicios-del-profesional");
   }
 
-  const sacados = [...yaEstaban].filter((s) => !elegidos.data.includes(s));
+  const sacados = permiso.delDuenio ? [...yaEstaban].filter((s) => !elegidos.data.includes(s)) : [];
   if (sacados.length) {
     const { error } = await supabase
       .from("profesionales_servicios")
