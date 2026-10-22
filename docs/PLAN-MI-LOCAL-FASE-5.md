@@ -527,6 +527,65 @@ preview contra la base, como el dueño de Barbería Nogal:
 - 375 px y 1280 px, claro y oscuro, sin scroll de costado.
 - `npm run typecheck` y `npm run build`.
 
+**Cupones y recompensas (22 de octubre de 2026)**, en la rama `mi-local/cupones`
+(sale de `mi-local/numeros`), con la migración ya aplicada en la base:
+
+- `lib/mi-local/cupones.ts` lee cupones, premios y `habilita_puntos`;
+  `app/mi-local/(panel)/crecimiento/acciones.ts` crea, edita, pausa y borra,
+  y prende o apaga el programa.
+- **Las páginas:** `/mi-local/crecimiento/cupones` y
+  `/mi-local/crecimiento/recompensas`, cada una con `nuevo` y `[id]`.
+- **Las piezas:** `Disponibilidad`, que comparten los dos formularios (los
+  servicios, los días y la franja, con casillas y listas comunes);
+  `PausarYEliminar`, también compartida; `ProgramaDePuntos`, con las reglas
+  (D7); y `AccionesDeCrecimiento`, las dos filas de D3.
+- **Errores:** los del formulario se dicen en una frase, como en servicios. El
+  `23505` es "Ese código ya existe.", y el `23503` al borrar un premio es D6.
+  `plan_sin_promociones` se sumó a las pistas del plan.
+- **Distinto de la app:**
+  - un cupón o un premio nuevo arranca con los siete días marcados (en la
+    app, ninguno);
+  - Recompensas y Cupones siguen en Crecimiento aunque el local no tenga
+    turnos todavía (la app los esconde con el vacío);
+  - pausar, activar y eliminar van en la página de cada uno, no en un menú.
+
+**Lo que dio la prueba (22 de octubre de 2026)**, en el preview contra la base,
+como el dueño de Nogal:
+
+- **Premios:** se creó "Corte gratis (prueba web)" (gratis, 300 puntos, 2
+  visitas, sábados) y salió primero en la lista. Al editarlo, cada error se
+  dijo con su frase: porcentaje 150, una sola hora, una franja al revés y
+  sin días. El navegador también frena el 150. Se guardó como 50%, sábados
+  de 10:00 a 13:00, sólo en Color y decoloración, y volvió igual al abrirlo.
+  Se pausó, se activó y se borró: Nogal quedó con sus 4 premios.
+- **El programa:** se apagó (aparece "Programa apagado" y no se ofrece crear
+  premios) y se volvió a prender.
+- **Cupones:** se creó PRUEBAWEB (20%, 10 canjes, dos servicios, de lunes a
+  viernes de 9:00 a 13:00, hasta el 29/10) y volvió igual al abrirlo. Otro
+  con "PruebaWeb" dio "Ese código ya existe.". Las fechas al revés y los
+  campos vacíos dieron sus frases. Se pasó a monto fijo ($1.500) sin franja,
+  se pausó (pasa a "Sin efecto") y se activó. Se borró: Nogal quedó sin
+  cupones, como estaba.
+- **Esencial**, forzando el nivel en el preview: la lista dice "Crear cupones
+  está disponible en Pro", sin "Nuevo cupón", y el vigente queda en "Pausados
+  por tu plan". `/cupones/nuevo` vuelve a la lista. Al editar se dice que el
+  plan no lo incluye y sólo queda eliminar. En Crecimiento, la fila de
+  Cupones lleva "Pro".
+- **Las filas de D3:** en la compu, justo debajo de Facturado; en el teléfono,
+  al final.
+- 375 px y 1280 px, claro y oscuro, sin scroll de costado. `typecheck` y
+  `build`.
+
+**Lo que no se probó:**
+- **Un premio canjeado que no se borra (D6):** hace falta una cuenta de
+  cliente con 300 puntos que lo canjee en la app. La base lo frena (lo probó
+  BooKit#93); la frase y "Pausarlo" no se vieron en pantalla.
+- **Reservar con el código en la app** y que la cotización aplique el
+  descuento: hace falta una cuenta de cliente. La forma de `reglas_json` la
+  aceptan los CHECKs, que piden lo mismo que lee `_cotizar_turno`.
+- **El profesional** en las páginas nuevas: usan `leerLocalDelDuenio`, como
+  `/mi-local/crecimiento`, que sí se probó con la cuenta del equipo.
+
 **Lo que no se comparó:** los números contra la app abierta en el teléfono,
 uno por uno. Salen de la misma función y las cuentas de encima son las de
 `business_stats.dart`, pero no los puse lado a lado.
