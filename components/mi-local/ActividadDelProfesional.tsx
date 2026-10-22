@@ -1,12 +1,13 @@
 "use client";
 
-import { useActionState, useRef, type ReactNode } from "react";
-import { cambiarActividad, type EstadoDeEquipo } from "@/app/mi-local/(panel)/equipo/acciones";
+import { useRef, type ReactNode } from "react";
+import { cambiarActividad } from "@/app/mi-local/(panel)/equipo/acciones";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Dialogo, { Volver } from "@/components/ui/Dialogo";
 import { miLocal } from "@/content/mi-local";
 import type { Miembro, ResumenDeBaja } from "@/lib/mi-local/gestion";
+import { useAccionQueCierra } from "@/lib/mi-local/respuesta";
 import RespuestaDeAccion from "./RespuestaDeAccion";
 
 /**
@@ -18,15 +19,7 @@ import RespuestaDeAccion from "./RespuestaDeAccion";
 export default function ActividadDelProfesional({ miembro, resumen }: { miembro: Miembro; resumen: ResumenDeBaja | null }) {
   const copy = miLocal.profesional.actividad;
   const dialogo = useRef<HTMLDialogElement>(null);
-  // Como la ficha del turno: si sale bien, la página vuelve releída y el diálogo se cierra.
-  const [estado, enviar, enviando] = useActionState<EstadoDeEquipo, FormData>(
-    async (antes, datos) => {
-      const respuesta = await cambiarActividad(antes, datos);
-      if (!respuesta.error) dialogo.current?.close();
-      return respuesta;
-    },
-    { error: null },
-  );
+  const [estado, enviar, enviando] = useAccionQueCierra(cambiarActividad, () => dialogo.current?.close());
   const titulo = `baja-${miembro.id}`;
 
   const formulario = (activo: boolean, boton: ReactNode, className?: string) => (

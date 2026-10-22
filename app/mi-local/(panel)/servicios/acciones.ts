@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
 import { campo } from "@/lib/formularios";
+import { errorDe } from "@/lib/mi-local/acciones";
 import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
-import { mensajeDeLaBase } from "@/lib/mi-local/errores";
 import type { Respuesta } from "@/lib/mi-local/respuesta";
 import { clienteDeSupabase } from "@/lib/supabase";
 
@@ -72,11 +72,7 @@ export async function guardarServicio(_: EstadoDeServicio, datos: FormData): Pro
         .from("servicios")
         .insert({ ...fila, id_comercio: local.id })
         .select("id_servicio");
-  if (error) {
-    const deLaBase = mensajeDeLaBase(error);
-    if (!deLaBase) console.error("mi-local/guardar-servicio:", error.code, error.message);
-    return { error: deLaBase ?? errores.generico };
-  }
+  if (error) return errorDe(error, errores.generico, "guardar-servicio");
   // Uno de otro local o ya dado de baja no da error: el update no toca nada.
   if (!data?.length) {
     console.error("mi-local/guardar-servicio: ninguna fila", d.id);

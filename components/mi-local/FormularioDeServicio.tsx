@@ -8,8 +8,7 @@ import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
 import { formularioSinBorrar } from "@/lib/formularios";
 import type { Incluye, Servicio, TipoDeSena } from "@/lib/mi-local/gestion";
-import { cn } from "@/lib/utils";
-import { claseDeOpcion } from "./Opciones";
+import { ElegirUno } from "./HorasDelDia";
 import RespuestaDeAccion from "./RespuestaDeAccion";
 
 /**
@@ -76,21 +75,13 @@ export default function FormularioDeServicio({
             </label>
             {pide && (
               <div className="flex flex-col gap-4 sm:pl-7">
-                <div role="radiogroup" aria-label={copy.sena.tipo} className="flex flex-wrap gap-2">
-                  {(["porcentaje", "fijo"] as const).map((t) => (
-                    <label key={t} className={cn(claseDeOpcion(tipo === t), "cursor-pointer")}>
-                      <input
-                        type="radio"
-                        name="tipo_sena"
-                        value={t}
-                        checked={tipo === t}
-                        onChange={() => setTipo(t)}
-                        className="sr-only"
-                      />
-                      {copy.sena[t]}
-                    </label>
-                  ))}
-                </div>
+                <ElegirUno
+                  etiqueta={copy.sena.tipo}
+                  nombre="tipo_sena"
+                  opciones={(["porcentaje", "fijo"] as const).map((t) => ({ valor: t, label: copy.sena[t] }))}
+                  valor={tipo}
+                  onChange={setTipo}
+                />
                 <Field id="servicio-sena" label={copy.sena.valor[tipo]}>
                   {(props) => (
                     <input
