@@ -196,3 +196,25 @@ export async function leerHorariosLibres(idProfesional: string, dia: string, idS
   if (error) throw new Error(`horarios_libres_del_profesional: ${error.message}`);
   return (data as { inicio: string }[]).map((h) => h.inicio);
 }
+
+/** Si un día se atiende, como `AtencionDelDia` de la app: con turnos, por orden de llegada o nada. */
+export type Atencion = "con_horario" | "orden_de_llegada" | "no_atiende";
+
+/** Los ratos libres de un día, como momentos ISO, y si el día se atiende. */
+export type Libres = { atencion: Atencion; huecos: { inicio: string; fin: string }[] };
+
+/** Los del local entero, ya unidos por la base, y los de cada profesional activo, por su id. */
+export type HuecosDelDia = { local: Libres; profesionales: Record<string, Libres> };
+
+/**
+ * Los huecos libres de un día del local (`huecos_del_dia`, BooKit
+ * 20261022120000, D4): la misma cuenta que va a usar la app. Lo que ya empezó
+ * arranca en el próximo paso de la grilla, y lo más corto que el servicio más
+ * corto no cuenta.
+ */
+export async function leerHuecosDelDia(idComercio: string, dia: string): Promise<HuecosDelDia> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase.rpc("huecos_del_dia", { p_comercio: idComercio, p_fecha: dia });
+  if (error) throw new Error(`huecos_del_dia: ${error.message}`);
+  return data as HuecosDelDia;
+}

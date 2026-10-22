@@ -5,12 +5,20 @@ import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import { miLocal, type Aviso as CopyDeAviso } from "@/content/mi-local";
 import { dia as diaLargo, diaYMes, hoy } from "@/lib/formato";
-import { daAcceso, leerMiLocal, leerProfesionales, leerSemana, leerTurnosDelDia, type MiLocal } from "@/lib/mi-local/agenda";
+import {
+  daAcceso,
+  leerHuecosDelDia,
+  leerMiLocal,
+  leerProfesionales,
+  leerSemana,
+  leerTurnosDelDia,
+  type MiLocal,
+} from "@/lib/mi-local/agenda";
 import { esClaveDeDia, lunesDe } from "@/lib/mi-local/vista";
 import { cookiesDeArea, credenciales } from "@/lib/supabase";
 
 /*
- * La agenda del local en la web: los turnos de un día, de sólo lectura. Quién
+ * La agenda del local en la web: los turnos de un día y sus huecos libres. Quién
  * entra lo dice la base: el proxy manda a entrar a quien no tiene sesión, y
  * `leerMiLocal` manda a /mi-local/sin-local a quien no es dueño de un local.
  */
@@ -47,7 +55,7 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
 
   const hoyEnTandil = hoy();
   const dia = esClaveDeDia(pedido.dia) ? pedido.dia : hoyEnTandil;
-  const [turnos, semana, profesionales] = await Promise.all([
+  const [turnos, semana, profesionales, huecos] = await Promise.all([
     // Un día que no se pudo leer no se muestra vacío: se dice (el B1-11 de la app).
     leerTurnosDelDia(local.id, dia).catch((error: unknown) => {
       console.error("mi-local:", error);
@@ -56,6 +64,11 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
     // Sin la cuenta de la semana, la tira va sin cantidades.
     leerSemana(local.id, lunesDe(dia)).catch(() => ({})),
     leerProfesionales(local.id).catch(() => []),
+    // Sin los huecos, la agenda va igual: los turnos no dependen de ellos.
+    leerHuecosDelDia(local.id, dia).catch((error: unknown) => {
+      console.error("mi-local/huecos:", error);
+      return null;
+    }),
   ]);
   const aviso = avisoDe(local);
   const copy = miLocal.agenda;
@@ -74,6 +87,7 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
           semana={semana}
           turnos={turnos}
           profesionales={profesionales}
+          huecos={huecos}
           ahora={new Date().toISOString()}
           aviso={aviso && <Aviso aviso={aviso} conBoton={local.suscripcion.origen !== "tienda"} />}
         />

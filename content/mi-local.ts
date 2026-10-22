@@ -71,6 +71,20 @@ export const miLocal = {
     cobrado: "Cobrado",
     vacio: "No hay turnos este día.",
     vacioConFiltro: "No hay turnos con este filtro.",
+    /** Un rato libre entre los turnos (`AgendaHuecoFila` de la app): tocarlo carga un turno ahí. */
+    libre: "Libre",
+    hueco: (desde: string, hasta: string) => `de ${desde} a ${hasta}`,
+    cargarEnHueco: (desde: string, hasta: string) => `Libre de ${desde} a ${hasta}. Cargar un turno`,
+    sinHuecos: "No pudimos traer los horarios libres de este día.",
+    /** El día sin turnos ni huecos dice por qué, como `AgendaDiaLibre` de la app. */
+    diaVacio: {
+      paso: { titulo: "Sin turnos", bajada: "No hubo turnos este día." },
+      localNoAtiende: { titulo: "El local no atiende este día", bajada: "Nadie del equipo tiene horario este día." },
+      noAtiende: { titulo: "No atiende este día", bajada: "Lo cambiás en Horarios." },
+      ordenDeLlegada: { titulo: "Por orden de llegada", bajada: "Este día se atiende sin turno." },
+      hoyNoQuedan: { titulo: "Hoy ya no quedan horarios", bajada: "El horario de hoy ya pasó." },
+      sinLibres: { titulo: "Sin horarios libres", bajada: "Este día no tiene turnos ni horarios para reservar." },
+    },
     error: "No pudimos traer los turnos de este día. Recargá la página en un rato.",
     sinNombre: "Cliente sin nombre",
     deMostrador: "Cliente de mostrador",
