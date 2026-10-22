@@ -410,7 +410,8 @@ Una rama `mi-local/perfil` y **un PR** a `main`, más el de BooKit.
      localidad.
    - Los 8 locales tienen una sola fila en `comercios_categorias`, igual a
      `id_categoria`: la función de D3 no pisa nada.
-1. **BooKit:** el prompt está listo; falta pasarlo y aplicar la migración.
+1. **BooKit:** FacuAntivero/BooKit#92 (`20261022200000_perfil_del_local.sql`),
+   mergeado en `develop` y aplicado en la base el 22/10.
 2. **Los datos del local:** la sección Perfil, "Así te ven" y el formulario.
    Antes, en un commit aparte, `LocalidadYDireccion` y `leerDatosDelLocal`
    salieron del alta, que los sigue usando. Después de guardar, los campos
@@ -420,8 +421,7 @@ Una rama `mi-local/perfil` y **un PR** a `main`, más el de BooKit.
    zoom) y `lib/mi-local/fotos.ts` (subir, guardar las URLs y borrar las
    reemplazadas, con `guardarFoto` para las tres acciones).
 4. **El equipo y "Mi perfil":** la foto en la ficha de cada profesional que
-   maneja el dueño, y "Mi perfil" del profesional (su nombre y su foto). La
-   categoría y la foto de un profesional sin cuenta esperan la migración.
+   maneja el dueño, y "Mi perfil" del profesional (su nombre y su foto).
 
 ## Cómo se prueba
 
@@ -475,11 +475,18 @@ Barbería Nogal (la cuenta demo, id `11111111-…`):
   Nogal volvieron a ser las de antes (ver abajo).
 - **La foto del dueño** (Julián Peralta), desde su ficha en Equipo: subió a
   `profesionales/<id>_<sello>.jpg` y se ve en el encabezado.
+- **La categoría**, con la migración aplicada: Barbería pasó a Estética en
+  `comercios.id_categoria` y en `comercios_categorias`, y
+  `buscar_comercios_cercanos_por_categoria` encontró a Nogal en Estética y no
+  en Barbería. Volvió a Barbería.
+- **La foto de un profesional sin cuenta** (Nico Ferreyra), desde su ficha:
+  subió con la ruta que abrió la migración. En un profesional con cuenta no se
+  ofrece, y la ficha dice "Su nombre, su foto y su presentación los maneja
+  desde su cuenta.".
 - 375 px y 1280 px, claro y oscuro, sin scroll de costado; las cinco pestañas
   entran en el teléfono.
 
 **Lo que no se probó todavía:**
-- La categoría y la foto de un profesional sin cuenta: esperan la migración.
 - "Mi perfil" del profesional: hace falta que Fermín entre con la cuenta del
   equipo, activada en Nogal.
 - El alta en `/planes` después de sacarle la localidad y la dirección: el
@@ -494,8 +501,9 @@ Barbería Nogal (la cuenta demo, id `11111111-…`):
   (`ba61f91a…`), y la política sólo deja borrar lo propio.
 - **El punto de Nogal** es el de Google para Av. Santamarina 480
   (-37.3257, -59.1301). El de antes (-37.3217, -59.1332) estaba redondeado.
-- **Julián Peralta** quedó con una foto de prueba ("JP"). No hay "quitar la
-  foto" en la app ni en la web.
+- **Julián Peralta y Nico Ferreyra** quedaron con fotos de prueba ("JP" y
+  "NF"). No hay "quitar la foto" en la app ni en la web. "Prueba web (borrar)",
+  el profesional que iba a servir para esto, ya no está en Nogal.
 
 ## Lo que vi y no toca este plan
 
