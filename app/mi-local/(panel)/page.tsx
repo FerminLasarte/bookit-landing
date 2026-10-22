@@ -2,7 +2,7 @@ import Aviso from "@/components/mi-local/Aviso";
 import EnVivo from "@/components/mi-local/EnVivo";
 import AgendaDelDia from "@/components/mi-local/AgendaDelDia";
 import Encabezado from "@/components/mi-local/Encabezado";
-import Superficie from "@/components/ui/Superficie";
+import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import { miLocal, type Aviso as CopyDeAviso } from "@/content/mi-local";
 import { dia as diaLargo, diaYMes, hoy } from "@/lib/formato";
 import { daAcceso, leerMiLocal, leerProfesionales, leerSemana, leerTurnosDelDia, type MiLocal } from "@/lib/mi-local/agenda";
@@ -65,11 +65,7 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
       {turnos === null ? (
         <>
           <Encabezado titulo={copy.titulo} bajada={diaLargo(dia)} />
-          <Superficie tone="surface" className="p-6">
-            <p role="alert" className="text-small font-medium text-danger">
-              {copy.error}
-            </p>
-          </Superficie>
+          <ErrorDeLectura>{copy.error}</ErrorDeLectura>
         </>
       ) : (
         <AgendaDelDia

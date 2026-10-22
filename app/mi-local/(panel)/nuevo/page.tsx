@@ -9,9 +9,8 @@ import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { dia as diaLargo, hoy, pesos } from "@/lib/formato";
 import {
-  daAcceso,
   leerHorariosLibres,
-  leerMiLocal,
+  leerLocalQueEntra,
   leerProfesionales,
   leerServiciosDelProfesional,
   type ServicioDelProfesional,
@@ -32,9 +31,7 @@ type PageProps = { searchParams: Promise<{ dia?: string; profesional?: string; s
 
 export default async function NuevoTurnoPage({ searchParams }: PageProps) {
   const pedido = await searchParams;
-  const local = await leerMiLocal();
-  // La agenda dice por qué no entra y cómo regularizarlo.
-  if (!daAcceso(local.suscripcion.estado)) redirect("/mi-local");
+  const local = (await leerLocalQueEntra()) ?? redirect("/mi-local");
 
   const copy = miLocal.nuevo;
   const hoyEnTandil = hoy();
