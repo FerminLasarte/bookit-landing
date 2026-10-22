@@ -130,18 +130,16 @@ function Pasos({
             <NavegarDias dia={dia} hoy={hoy} ruta="/mi-local/nuevo" parametros={{ profesional: carga.profesional, servicio: carga.servicio }} />
           </div>
           <Superficie tone="surface" className="p-5 md:p-6">
-            {horarios && horarios.length > 0 ? (
-              // La clave cambia con lo elegido: un horario marcado no sobrevive a otro día u otro servicio.
-              <FormularioDeTurno
-                key={`${dia}-${profesional.id}-${servicio.id}`}
-                dia={dia}
-                profesional={profesional.id}
-                servicio={servicio.id}
-                horarios={horarios}
-              />
-            ) : (
-              <p className="text-center text-small text-muted">{copy.sinHorarios}</p>
-            )}
+            {/* Sin libres, el formulario igual se muestra: queda "Otra hora". La clave cambia con lo
+                elegido: un horario marcado no sobrevive a otro día u otro servicio. */}
+            <FormularioDeTurno
+              key={`${dia}-${profesional.id}-${servicio.id}`}
+              dia={dia}
+              profesional={profesional.id}
+              nombreDelProfesional={propia ? null : profesional.nombre}
+              servicio={servicio.id}
+              horarios={horarios ?? []}
+            />
           </Superficie>
         </>
       )}

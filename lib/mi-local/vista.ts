@@ -13,6 +13,12 @@ export function esClaveDeDia(valor: unknown): valor is string {
   return !Number.isNaN(fecha.getTime()) && fecha.toISOString().startsWith(valor);
 }
 
+/**
+ * Un momento de un día de Buenos Aires: `2026-10-21` y `14:30`. Argentina no
+ * tiene horario de verano desde 2009: va siempre a -03:00.
+ */
+export const enBuenosAires = (dia: string, hora = "00:00") => new Date(`${dia}T${hora}:00-03:00`);
+
 /** El día `n` días antes o después. A mediodía UTC, para que ningún cambio de hora lo corra. */
 export function sumarDias(dia: string, n: number): string {
   const fecha = new Date(`${dia}T12:00:00Z`);

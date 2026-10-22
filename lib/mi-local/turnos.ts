@@ -42,6 +42,13 @@ export const quedoSinMarcar = (turno: Turno, ahora: Date) => estaAbierto(turno) 
 
 /** Los estados a los que el local puede llevar un turno. Confirmar es cosa del pago (D1 del plan de la fase 2). */
 export const ACCIONES_DE_TURNO = ["completado", "ausente", "cancelado"] as const;
+
+/**
+ * Por qué un turno a mano cae fuera de la agenda del profesional, como lo
+ * contesta `crear_turno_manual` (BooKit, docs/turno-manual-fuera-de-horario.md).
+ */
+export const FUERA_DE_HORARIO = ["no_atiende", "fuera_de_hora"] as const;
+export type FueraDeHorario = (typeof FUERA_DE_HORARIO)[number];
 export type AccionDeTurno = (typeof ACCIONES_DE_TURNO)[number];
 
 /** Qué se le puede hacer a un turno ahora. `null`: ya está cerrado. */

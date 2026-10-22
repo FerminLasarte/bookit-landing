@@ -2,6 +2,7 @@ import "server-only";
 import { diaDe } from "@/lib/formato";
 import { clienteDeSupabase } from "@/lib/supabase";
 import { esEstadoTurno, type Profesional, type Turno } from "./turnos";
+import { enBuenosAires } from "./vista";
 
 /*
  * Lo que la agenda del local lee de Supabase, con la sesión de quien entra:
@@ -27,13 +28,9 @@ type FilaDeTurno = {
   profesionales: { id_profesional: string; nombre: string | null } | null;
 };
 
-/**
- * El principio de un día de Buenos Aires y el final de `dias` días después,
- * en UTC. Argentina no tiene horario de verano desde 2009: el día empieza
- * siempre a las 03:00 UTC.
- */
+/** El principio de un día de Buenos Aires y el final de `dias` días después, en UTC. */
 function rangoDeDias(dia: string, dias = 1) {
-  const inicio = new Date(`${dia}T00:00:00-03:00`);
+  const inicio = enBuenosAires(dia);
   const fin = new Date(inicio.getTime() + dias * 86_400_000);
   return { inicio: inicio.toISOString(), fin: fin.toISOString() };
 }

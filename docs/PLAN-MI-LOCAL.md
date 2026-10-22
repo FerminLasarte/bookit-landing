@@ -185,10 +185,13 @@ lo que haya en la app y en la base en ese momento.
 | — | El panel como un sistema propio, y la selección de día, profesional y estado (`docs/PLAN-MI-LOCAL-PANEL.md`) | En `main` (#47) |
 | — | El enlace "Mi local" en el nav | En `main` (#49) |
 | 3 | **Gestión:** horarios y descansos, servicios y equipo. Incluye los **huecos libres** de la agenda, con una función SQL en BooKit (`huecos_del_dia`) que use la web y después la app (D3 de la fase 1). Plan: `docs/PLAN-MI-LOCAL-FASE-3.md` | En `main` (#52, #54). En BooKit: #84 (la función, aplicada en la base) y #85 (la app), en `develop` |
-| — | **Los profesionales del equipo entran a la web:** cada uno ve sólo su agenda y la marca, como en la app, con la regla de acceso de `staff_bottom_nav_bar.dart`. Plan: `docs/PLAN-MI-LOCAL-EQUIPO.md` | Planeado, para aprobar (D1–D8) |
-| 4 | **Crecimiento** (estadísticas, promociones y recompensas) y **Perfil** del local | Sin planear |
+| — | **Los profesionales del equipo entran a la web:** cada uno ve sólo su agenda y la marca, como en la app, con la regla de acceso de `staff_bottom_nav_bar.dart`. Plan: `docs/PLAN-MI-LOCAL-EQUIPO.md` | En `main` (#56). En BooKit: #86 (la app lee `staff_incluido` y los motivos de la invitación), en `develop` |
+| — | **"Otra hora"** en la carga de un turno, y la pregunta cuando cae fuera de horario (contrato de BooKit#87). Plan: `docs/PLAN-MI-LOCAL-OTRA-HORA.md` | En este PR |
+| 4 | **Perfil** del local, primero; después **Crecimiento** (estadísticas, promociones y recompensas). Decidido por Fermín el 22-oct-2026 | Perfil: plan en curso (`docs/PLAN-MI-LOCAL-FASE-4.md`) |
 
 Aparte, en BooKit y sin frenar a la web: los tres arreglos que dejó anotados
 la fase 2 (ver "Para revisar más adelante" en su plan) están en `develop`
-(BooKit#83) y aplicados en la base. La app con #83, #84 y #85 llega a los
-teléfonos con la próxima versión.
+(BooKit#83) y aplicados en la base. La tanda que decidió Fermín el 22-oct
+(turno a mano confirmado y fuera de horario, horarios y precios de los sin
+cuenta en la app, aviso al dueño, precio por profesional desde la base) está
+en BooKit#87. La app con #83 a #87 llega a los teléfonos en una sola versión.

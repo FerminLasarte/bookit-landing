@@ -89,7 +89,7 @@ cerrar igual.
   `gestiona_profesional`, local al día o en gracia, que el servicio sea del
   local, que no se pise con otro turno (y la `exclusion_violation` si entra
   otro en el medio). Guarda el precio de `_oferta_de_servicios()`, `origen =
-  'manual'`, `estado = 'pendiente'`, `metodo_pago = 'manual'`. Devuelve
+  'manual'`, `estado = 'pendiente'` (desde BooKit#87, `'confirmado'`), `metodo_pago = 'manual'`. Devuelve
   `{ success, id_turno }` o `{ success: false, message }` con un mensaje para
   personas.
 - Después del INSERT, `notificar_turno` le avisa al profesional si tiene
@@ -397,8 +397,9 @@ Tres cosas que salieron de la fase 2 y que pueden volverse decisiones en un
 futuro cercano. Ninguna cambia lo que hace esta fase. Anotadas por pedido de
 Fermín el 21-oct-2026.
 
-1. **Confirmar no se puede.** *Revisado el 21-oct-2026: sigue fuera, y el
-   turno a mano sigue naciendo pendiente.* La base no deja que el local confirme un turno,
+1. **Confirmar no se puede.** *Resuelto el 22-oct-2026 (BooKit#87): el turno
+   a mano nace confirmado, y los manuales que estaban pendientes pasaron a
+   confirmado. El local sigue sin poder confirmar un turno de otro origen.* La base no deja que el local confirme un turno,
    ni desde la app ni desde la web: confirmar le toca al pago
    (`_turnos_quien_cambia_el_estado`, BooKit 20260925150000). Por eso la hoja
    del turno en la app tampoco tiene ese botón. Si algún día se quiere
