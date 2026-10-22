@@ -307,13 +307,24 @@ preview, con la agenda abierta en dos pestañas y la app en el teléfono.
   `crear_turno_manual` igual lo rechaza.
 - En el teléfono, a 375 px: la ficha y el formulario sin scroll de costado.
 
+## Cómo se termina la prueba
+
+Decidido por Fermín el 21-oct-2026:
+
+- Los casos pendientes de "Cómo se prueba" los arma Claude con turnos de
+  prueba en Barbería Nogal (empezados, por venir, en dos pestañas). Fermín
+  sólo mira las pushes en el teléfono cuando se le avisa.
+- **La devolución real de Mercado Pago se posterga**, como la prueba del
+  débito real. La hace la base, la misma que ya usa la app.
+
 ## Para revisar más adelante
 
 Tres cosas que salieron de la fase 2 y que pueden volverse decisiones en un
 futuro cercano. Ninguna cambia lo que hace esta fase. Anotadas por pedido de
 Fermín el 21-oct-2026.
 
-1. **Confirmar no se puede.** La base no deja que el local confirme un turno,
+1. **Confirmar no se puede.** *Revisado el 21-oct-2026: sigue fuera, y el
+   turno a mano sigue naciendo pendiente.* La base no deja que el local confirme un turno,
    ni desde la app ni desde la web: confirmar le toca al pago
    (`_turnos_quien_cambia_el_estado`, BooKit 20260925150000). Por eso la hoja
    del turno en la app tampoco tiene ese botón. Si algún día se quiere
@@ -334,6 +345,10 @@ Fermín el 21-oct-2026.
    el turno: `actualizarEstadoTurno` en `BusinessCalendarRepository` y en
    `StaffAppointmentsRepository` hacen el update sin `.select()`. El arreglo es
    en BooKit: pedir la fila de vuelta y fallar si viene vacía, como la web.
+
+Decidido el 21-oct-2026: el arreglo del punto 3 y los dos de abajo ("Lo que
+vi y no toca este plan") van juntos, como **una tarea aparte en BooKit**, con
+su propio plan. No frenan a la web.
 
 ## Lo que vi y no toca este plan
 

@@ -162,18 +162,32 @@ Una rama, `mi-local/fase-1`, y un PR a `main`:
    (tiene que caer en `sin-local`) y un profesional que no es dueño (también
    `sin-local` en esta fase). Te paso las pantallas para que las mires.
 
-## Lo que no decide este plan
+## Lo que no decidía este plan, y cómo se decidió
 
-- Si entran los profesionales del equipo. En la fase 1 no: `mi_suscripcion()`
-  sólo encuentra al dueño. Sumarlos es leer `profesionales` por
-  `auth_user_id` y aplicar la regla de acceso de `staff_bottom_nav_bar.dart`.
-- Si "Mi local" va al nav o al footer. **Decidido por Fermín el 21-oct-2026:
-  va en el nav.** Todavía no está hecho: hasta que se implemente, se llega con
-  el link. Antes de hacerlo hay que contestar tres preguntas (el nav hoy tiene
-  Cómo funciona, Para locales, Puntos, Planes, Soporte y el botón "Descargá la
-  app"):
-  - Dónde va: un sexto enlace, o una entrada aparte cerca del botón, como un
-    "Entrar".
-  - El texto: "Mi local" o "Entrar".
-  - A quién se le muestra: a todos, o sólo a quien ya tiene sesión de dueño. Un
-    cliente que lo toca termina en "Esto es para los locales".
+- **Los profesionales del equipo.** En la fase 1 no entran: `mi_suscripcion()`
+  sólo encuentra al dueño. Decidido el 21-oct-2026: entran **después de la fase
+  3**, ver la hoja de ruta.
+- **"Mi local" en el nav.** Decidido el 21-oct-2026: va en el nav, como un
+  enlace "Mi local" al lado del botón "Descargá la app", visible para todos. Un
+  cliente que lo toca cae en "Esto es para los locales". Así el nav no tiene
+  que leer la sesión, y la landing se sigue sirviendo ya armada. Todavía no está
+  hecho: hasta entonces se llega con el link.
+
+## Hoja de ruta
+
+Decidida por Fermín el 21-oct-2026. El orden es el de abajo. Cada fase se
+planea por escrito justo antes de empezarla, no antes: el detalle depende de
+lo que haya en la app y en la base en ese momento.
+
+| # | Qué | Estado |
+|---|---|---|
+| 1 | Entrar y ver la agenda | En `main` (#45) |
+| 2 | Completar, ausente, cancelar y cargar un turno a mano (`docs/PLAN-MI-LOCAL-FASE-2.md`) | En `main` (#46). Falta terminar la prueba |
+| — | El panel como un sistema propio, y la selección de día, profesional y estado (`docs/PLAN-MI-LOCAL-PANEL.md`) | En `main` (#47) |
+| — | El enlace "Mi local" en el nav | Decidido, sin hacer |
+| 3 | **Gestión:** horarios y descansos, servicios y equipo. Incluye los **huecos libres** de la agenda, con una función SQL en BooKit (`huecos_del_dia`) que use la web y después la app (D3 de la fase 1) | Sin planear |
+| — | **Los profesionales del equipo entran a la web:** cada uno ve sólo su agenda y la marca, como en la app, con la regla de acceso de `staff_bottom_nav_bar.dart` | Después de la fase 3 |
+| 4 | **Crecimiento** (estadísticas, promociones y recompensas) y **Perfil** del local | Sin planear |
+
+Aparte, en BooKit y sin frenar a la web: los tres arreglos que dejó anotados
+la fase 2 (ver "Para revisar más adelante" en su plan).
