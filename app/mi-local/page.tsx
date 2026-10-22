@@ -4,6 +4,7 @@ import Filtros from "@/components/mi-local/Filtros";
 import ListaDeTurnos from "@/components/mi-local/ListaDeTurnos";
 import NavegarDias from "@/components/mi-local/NavegarDias";
 import Salir from "@/components/mi-local/Salir";
+import Button from "@/components/ui/Button";
 import Section from "@/components/ui/Section";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal, type Aviso as CopyDeAviso } from "@/content/mi-local";
@@ -17,7 +18,7 @@ import {
   leerTurnosDelDia,
   type MiLocal,
 } from "@/lib/mi-local/agenda";
-import { esClaveDeDia, type Vista } from "@/lib/mi-local/vista";
+import { enlaceDeCarga, esClaveDeDia, type Vista } from "@/lib/mi-local/vista";
 import { cookiesDeArea, credenciales } from "@/lib/supabase";
 
 /*
@@ -87,13 +88,18 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
           </h1>
           <p className="mt-1 text-body text-fg first-letter:uppercase">{dia(vista.dia)}</p>
         </div>
-        {salir}
+        <div className="flex items-center gap-4">
+          <Button href={enlaceDeCarga({ dia: vista.dia, profesional: vista.profesional, servicio: null })} size="compact">
+            {copy.cargar}
+          </Button>
+          {salir}
+        </div>
       </header>
 
       {aviso && <Aviso aviso={aviso} conBoton={local.suscripcion.origen !== "tienda"} />}
 
       <div className="flex flex-col gap-4">
-        <NavegarDias vista={vista} hoy={hoyEnTandil} />
+        <NavegarDias dia={vista.dia} hoy={hoyEnTandil} ruta="/mi-local" parametros={{ profesional: vista.profesional, estado: vista.estado }} />
         <Filtros vista={vista} profesionales={profesionales} />
       </div>
 

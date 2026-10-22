@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { cancelar, comprar } from "@/app/planes/acciones";
 import BotonesDeDescarga from "@/components/abrir-app/BotonesDeDescarga";
 import Button from "@/components/ui/Button";
+import Dialogo, { Volver } from "@/components/ui/Dialogo";
 import Superficie from "@/components/ui/Superficie";
 import { planes, sufijoDeCiclo, type CodigoDeError } from "@/content/planes";
 import { diaYMes, pesos } from "@/lib/formato";
@@ -328,11 +329,7 @@ export default function Compra({
       </div>
 
       {baja && (
-        <dialog
-          ref={dialogo}
-          aria-labelledby="baja-pregunta"
-          className="m-auto w-[min(24rem,calc(100%-2.5rem))] rounded-card bg-surface p-6 text-fg shadow-float backdrop:bg-ink-950/50"
-        >
+        <Dialogo ref={dialogo} etiqueta="baja-pregunta">
           <p id="baja-pregunta" className="text-body text-fg">
             {planes.cancelar.pregunta(baja.vence)}
           </p>
@@ -340,14 +337,11 @@ export default function Compra({
             <Button onClick={darDeBaja} disabled={cancelando} variant="secondary" className="flex-1">
               {cancelando ? planes.cancelar.cancelando : planes.cancelar.confirmar}
             </Button>
-            <Button
-              onClick={() => dialogo.current?.close()}
-              className="flex-1 border border-line bg-surface text-fg hover:bg-fg/6"
-            >
+            <Volver onClick={() => dialogo.current?.close()} className="flex-1">
               {planes.cancelar.volver}
-            </Button>
+            </Volver>
           </div>
-        </dialog>
+        </Dialogo>
       )}
     </div>
   );
