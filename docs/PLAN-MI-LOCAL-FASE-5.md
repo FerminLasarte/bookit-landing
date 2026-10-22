@@ -480,6 +480,57 @@ lecturas:
   sigue borrando canjes.
 - **Como la app:** se borra todo. No lo recomiendo.
 
+**Hecho (22 de octubre de 2026):**
+
+1. **BooKit:** FacuAntivero/BooKit#93 (`20261022210000_crecimiento_del_local.sql`),
+   mergeado en `develop` y pasado a `main` en FacuAntivero/BooKit#94. Hace los
+   cuatro puntos del prompt, probado con 98 casos en un Postgres suelto. Los
+   `CHECK`s rechazan con `23514` y el nombre de la restricción; también
+   rechazan `reglas_json`, `codigo` y `nombre` en `null`, y aceptan
+   `hora_inicio` y `hora_fin` en `null` como ausentes, igual que
+   `_cotizar_turno`. Falta confirmar que esté aplicada en la base.
+2. **La navegación**, en la rama `mi-local/numeros` (worktree
+   `../bookit-landing-numeros`): el dueño ve Agenda · Crecimiento · Gestión ·
+   Perfil. Gestión abre en Servicios y lleva arriba Horarios · Servicios ·
+   Equipo (`PartesDeGestion`). Las secciones del contenido pasaron a tener
+   `id`, `para` (todos, el dueño o el profesional) y `rutas`.
+3. **Los números**, en `/mi-local/crecimiento`: `lib/mi-local/crecimiento.ts`,
+   las tarjetas (`TarjetasDeCrecimiento`) y `leerPlanDelLocal` con
+   `estadisticasHistorial`. Dos cambios contra el plan:
+   - el selector Ingresos / Turnos es un enlace (`?ver=turnos`), como el
+     período: anda sin JavaScript y queda en la URL;
+   - las filas de Cupones y Recompensas al pie (D3) van en el segundo PR: en
+     este llevarían a páginas que todavía no existen.
+
+**Lo que dio la prueba de los números (22 de octubre de 2026)**, en el
+preview contra la base, como el dueño de Barbería Nogal:
+
+- **12 meses:** $9.150.000 y 550 turnos, ticket promedio $16.636, "↓ 10% ·
+  Sept contra Ago". Son los totales que dio `estadisticas_comercio` en el paso
+  0. Clientes: 66 volvieron y 1 vino por primera vez (99%). No se hizo el 1%
+  (3 cancelados, 1 ausente). Lo más lleno, martes de 12 a 15; lo más vacío,
+  viernes de 9 a 12. Cuatro profesionales y cinco servicios.
+- **6 meses y Turnos** (`?meses=6&ver=turnos`): $5.625.000, con el número de
+  turnos sobre cada barra.
+- **Esencial**, forzando el nivel en el preview sin tocar la base: "Facturado
+  este mes" ($15.000, 1 turno), el gráfico y el mapa borrosos con "Todo tu
+  historial, en Pro" y "Tus horarios pico, en Pro", y "Ver planes" a
+  `/planes`. Clientes, lo que no se hizo y servicios, con el mes en curso.
+- **La ⓘ** se abre y se cierra (`<details>`), sin errores en la consola.
+- **La navegación:** Crecimiento y Gestión quedan marcadas en la barra; Gestión
+  también en `/mi-local/horarios`, `/mi-local/equipo` y
+  `/mi-local/servicios/nuevo`, y las píldoras marcan la parte en la que se
+  está.
+- **El profesional** (la cuenta del equipo de Fermín, antes de entrar como el
+  dueño): `/mi-local/crecimiento` lo manda a la agenda, y su barra sigue
+  siendo Agenda · Horarios · Servicios · Perfil.
+- 375 px y 1280 px, claro y oscuro, sin scroll de costado.
+- `npm run typecheck` y `npm run build`.
+
+**Lo que no se comparó:** los números contra la app abierta en el teléfono,
+uno por uno. Salen de la misma función y las cuentas de encima son las de
+`business_stats.dart`, pero no los puse lado a lado.
+
 ## Cómo se prueba
 
 En el preview, contra la base, con Barbería Nogal, dejando todo como estaba.
