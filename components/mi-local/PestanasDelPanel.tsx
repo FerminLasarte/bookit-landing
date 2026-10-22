@@ -31,7 +31,7 @@ export default function PestanasDelPanel({ secciones }: { secciones: Seccion[] }
       <ul className="flex">
         {secciones.map((s) => {
           const Icono = iconos[s.href];
-          const activa = s === actual;
+          const activa = s.href === actual;
           return (
             <li key={s.href} className="flex-1">
               <Link
