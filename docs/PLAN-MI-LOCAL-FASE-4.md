@@ -503,7 +503,8 @@ Barbería Nogal (la cuenta demo, id `11111111-…`):
   (-37.3257, -59.1301). El de antes (-37.3217, -59.1332) estaba redondeado.
 - **Julián Peralta y Nico Ferreyra** quedaron con fotos de prueba ("JP" y
   "NF"). No hay "quitar la foto" en la app ni en la web. "Prueba web (borrar)",
-  el profesional que iba a servir para esto, ya no está en Nogal.
+  el profesional que iba a servir para esto, ya no está en Nogal. Fermín
+  decidió dejarlas así (22/10).
 
 ## Lo que vi y no toca este plan
 
