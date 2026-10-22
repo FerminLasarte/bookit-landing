@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Encabezado from "@/components/mi-local/Encabezado";
 import FormularioDeTurno from "@/components/mi-local/FormularioDeTurno";
 import NavegarDias from "@/components/mi-local/NavegarDias";
 import { Grupo, Opcion } from "@/components/mi-local/Opciones";
@@ -57,16 +58,9 @@ export default async function NuevoTurnoPage({ searchParams }: PageProps) {
   const volver = enlaceDeVista({ dia, profesional: null, estado: null });
 
   return (
-    <div className="wrap flex flex-col gap-6 py-8 md:gap-8 md:py-12">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-title font-bold text-fg md:text-[2rem] md:leading-tight md:tracking-[-0.02em]">
-            {copy.titulo}
-          </h1>
-          <p className="mt-1 text-body text-fg">{local.nombre}</p>
-        </div>
-        <TextLink href={volver}>{copy.volver}</TextLink>
-      </header>
+    // Un formulario no se estira: ancho de lectura, a la izquierda (D2 del plan del panel).
+    <div className="flex max-w-3xl flex-col gap-6 md:gap-8">
+      <Encabezado titulo={copy.titulo} accion={<TextLink href={volver}>{copy.volver}</TextLink>} />
 
       {!lectura ? (
         <Aviso tono="error">{copy.error}</Aviso>

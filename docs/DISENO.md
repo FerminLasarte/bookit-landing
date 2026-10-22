@@ -175,6 +175,28 @@ es `/descargar`, que abre con un cartel apaisado (elegido por Fermín el
 | 404 | Encabezado con los dos botones |
 | `/planes` | El paywall de la app (ver la excepción de arriba); sin sesión, las cards con el precio de lista y cómo entrar |
 
+## Las herramientas: /admin y /mi-local
+
+No son páginas del sitio: `MarcoDelSitio` no les pone splash, cursor, nav ni
+footer, y cada una tiene su marco. Siguen la marca (la fuente, los tokens, el
+kit y las reglas 1, 2 y 5), pero no la composición de la landing: nada de
+`wrap` ni de encabezados centrados.
+
+- **`/admin`**, el panel del equipo: la píldora flotante de `AdminNav` arriba.
+- **`/mi-local`**, el panel del local (`docs/PLAN-MI-LOCAL-PANEL.md`, aprobado
+  el 21/10/2026). Se siente como el espacio del local, no como una página de
+  Bookit:
+  - En la compu, una barra clara fija a la izquierda, separada con un filete.
+    Arriba, el logo y el nombre del local (sin logo, la inicial). Al medio,
+    las secciones. Abajo, "Tu plan", "Salir" y la firma "con Bookit" con el
+    isotipo.
+  - En el teléfono, una barra arriba con el local y un menú con lo mismo.
+  - El área de trabajo va a todo el ancho, alineada a la izquierda, con
+    márgenes chicos. Los formularios mantienen un ancho de lectura.
+  - Entrar y "sin local" tienen su pantalla propia (`PantallaDeEntrada`): el
+    logo de Bookit, el título y la tarjeta, y un enlace chico para volver a la
+    web.
+
 ## Flujo de trabajo
 
 Rama de integración `diseno/v4`, un commit por sección. `main` no cambia hasta

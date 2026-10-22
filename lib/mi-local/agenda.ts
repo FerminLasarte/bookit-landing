@@ -1,5 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { leerMiPlan, type MiPlan } from "@/lib/planes";
 import { clienteDeSupabase } from "@/lib/supabase";
 
@@ -43,19 +44,30 @@ export type Profesional = { id: string; nombre: string };
 export type MiLocal = {
   id: string;
   nombre: string;
+  /** El círculo del local en la app (`comercios.logo_url`), o `null` si no subió uno. */
+  logo: string | null;
   suscripcion: NonNullable<MiPlan["suscripcion"]>;
 };
 
 /**
  * El local de la cuenta. Una cuenta sin local va a /mi-local/sin-local. El
  * chequeo vive acá y no en el layout: Next dibuja la página en paralelo al
- * layout, así que un layout que corta no evita que la página lea.
+ * layout, así que un layout que corta no evita que la página lea. Con
+ * `cache`, el marco del panel y la página comparten la lectura.
  */
-export async function leerMiLocal(): Promise<MiLocal> {
+export const leerMiLocal = cache(async (): Promise<MiLocal> => {
   const plan = await leerMiPlan();
   if (!plan.comercio || !plan.suscripcion) redirect("/mi-local/sin-local");
-  return { id: plan.comercio.id, nombre: plan.comercio.nombre, suscripcion: plan.suscripcion };
-}
+  const supabase = await clienteDeSupabase("local");
+  // Sin logo el marco muestra la inicial: un error acá no tapa la agenda.
+  const { data } = await supabase.from("comercios").select("logo_url").eq("id_comercio", plan.comercio.id).maybeSingle();
+  return {
+    id: plan.comercio.id,
+    nombre: plan.comercio.nombre,
+    logo: (data as { logo_url: string | null } | null)?.logo_url ?? null,
+    suscripcion: plan.suscripcion,
+  };
+});
 
 /**
  * Si el local entra a su agenda. Es la regla del gate de la app

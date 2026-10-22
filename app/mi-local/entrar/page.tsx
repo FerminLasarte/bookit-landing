@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Entrar from "@/components/planes/Entrar";
-import Section from "@/components/ui/Section";
+import PantallaDeEntrada from "@/components/mi-local/PantallaDeEntrada";
 import { miLocal } from "@/content/mi-local";
 import { leerSesion } from "@/lib/planes";
 
@@ -14,8 +14,8 @@ export default async function EntrarPage({ searchParams }: { searchParams: Promi
   const { entrar } = miLocal;
 
   return (
-    <Section id="entrar" as="h1" title={entrar.titulo} lede={entrar.bajada}>
+    <PantallaDeEntrada titulo={entrar.titulo} bajada={entrar.bajada}>
       <Entrar error={(error && entrar.errores[error]) ?? null} destino="/mi-local" conAlta={false} />
-    </Section>
+    </PantallaDeEntrada>
   );
 }

@@ -3,9 +3,8 @@ import EnVivo from "@/components/mi-local/EnVivo";
 import Filtros from "@/components/mi-local/Filtros";
 import ListaDeTurnos from "@/components/mi-local/ListaDeTurnos";
 import NavegarDias from "@/components/mi-local/NavegarDias";
-import Salir from "@/components/mi-local/Salir";
+import Encabezado from "@/components/mi-local/Encabezado";
 import Button from "@/components/ui/Button";
-import Section from "@/components/ui/Section";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal, type Aviso as CopyDeAviso } from "@/content/mi-local";
 import { dia, diaYMes, hoy, pesos } from "@/lib/formato";
@@ -43,19 +42,16 @@ function bloqueoDe({ suscripcion }: MiLocal): CopyDeAviso {
   return suscripcion.plan === "prueba" ? miLocal.bloqueo.prueba : miLocal.bloqueo.cortada;
 }
 
-const salir = <Salir>{miLocal.agenda.salir}</Salir>;
-
 export default async function MiLocalPage({ searchParams }: PageProps) {
   const pedido = await searchParams;
   const local = await leerMiLocal();
 
   if (!daAcceso(local.suscripcion.estado)) {
     return (
-      <Section id="mi-local" as="h1" title={local.nombre} actions={salir}>
-        <div className="mx-auto max-w-2xl">
-          <Aviso aviso={bloqueoDe(local)} conBoton />
-        </div>
-      </Section>
+      <div className="flex max-w-2xl flex-col gap-6">
+        <Encabezado titulo={miLocal.agenda.titulo} />
+        <Aviso aviso={bloqueoDe(local)} conBoton />
+      </div>
     );
   }
 
@@ -80,21 +76,16 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
   const copy = miLocal.agenda;
 
   return (
-    <div className="wrap flex flex-col gap-6 py-8 md:gap-8 md:py-12">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-title font-bold text-fg md:text-[2rem] md:leading-tight md:tracking-[-0.02em]">
-            {local.nombre}
-          </h1>
-          <p className="mt-1 text-body text-fg first-letter:uppercase">{dia(vista.dia)}</p>
-        </div>
-        <div className="flex items-center gap-4">
+    <div className="flex flex-col gap-6 md:gap-8">
+      <Encabezado
+        titulo={copy.titulo}
+        bajada={dia(vista.dia)}
+        accion={
           <Button href={enlaceDeCarga({ dia: vista.dia, profesional: vista.profesional, servicio: null })} size="compact">
             {copy.cargar}
           </Button>
-          {salir}
-        </div>
-      </header>
+        }
+      />
 
       {aviso && <Aviso aviso={aviso} conBoton={local.suscripcion.origen !== "tienda"} />}
 
