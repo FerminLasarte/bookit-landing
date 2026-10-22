@@ -197,3 +197,26 @@ la fase 2 (ver "Para revisar más adelante" en su plan) están en `develop`
 cuenta en la app, aviso al dueño, precio por profesional desde la base) está
 en BooKit#87. Todo eso, y también #92 y #93, está en `develop`; la app con #83 a #93
 llega a los teléfonos en una sola versión.
+
+## Para más adelante
+
+Las cinco fases están hechas. Lo que la app tiene para el dueño y la web no,
+anotado el 22-oct-2026 para cuando se retome. Cada cosa se planea por escrito
+antes de empezarla, como las fases.
+
+| Qué | Qué pide |
+|---|---|
+| **Cobros:** vincular Mercado Pago ("Recibir pagos", con sus estados: vinculado, desconectado, el plan que no lo incluye) y "Si el cliente cancela" (48, 24, 12 o 2 h, o no se devuelve) | Es la que más le sirve al dueño desde la compu. Pide un cambio en BooKit: `mp_oauth_callback` vuelve a la home y no al panel. "Si el cliente cancela" sólo sirve con Mercado Pago vinculado, así que van juntas |
+| **Avisos** ("Nuevos turnos y cancelaciones") | En la app son notificaciones del teléfono. En la web hay que decidir qué son: mail, notificaciones del navegador o sólo el ajuste |
+| **Compartir disponibilidad:** la imagen con los turnos libres para las redes | Una pieza de diseño. Los turnos libres ya los da `huecos_del_dia` |
+| **Eliminar la cuenta** | Cierra el local y borra datos: decidir si va en la web. Si va, con la misma función de la base que la app |
+| **El pin del mapa** (D8 de la fase 4) | La API de mapas de Google en el navegador: otra clave y otro costo. El alta también lo usaría |
+| **"Acepta efectivo"** | No lo edita nadie, ni la app ni la web: todos los locales dicen que aceptan efectivo |
+
+**Pruebas que quedaron pendientes:**
+- **Crecimiento, con una cuenta de cliente en la app:** reservar en Nogal con un
+  código creado desde la web, y ver que la cotización aplique el descuento;
+  y canjear un premio, intentar borrarlo desde la web y ver el aviso con
+  "Pausarlo".
+- **El alta en `/planes` después de la fase 4**, con una cuenta sin local. El
+  código se revisó y no se ve nada roto.
