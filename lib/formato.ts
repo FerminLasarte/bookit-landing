@@ -19,6 +19,8 @@ const mesCorto = new Intl.DateTimeFormat("es-AR", { month: "short", timeZone: "U
 const horaYMinutos = new Intl.DateTimeFormat("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: ZONA });
 // Un día de la agenda es una clave `2026-10-21`, sin hora: se lee a mediodía UTC para que ninguna zona lo corra.
 const diaDeAgenda = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+const diaDeLaSemanaCorto = new Intl.DateTimeFormat("es-AR", { weekday: "short", timeZone: "UTC" });
+const mesYAnioLargo = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "UTC" });
 // `en-CA` escribe la fecha como `2026-10-21`.
 const claveDeDia = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: ZONA });
 const relativo = new Intl.RelativeTimeFormat("es-AR", { numeric: "auto" });
@@ -61,5 +63,14 @@ export const hora = (iso: string) => horaYMinutos.format(new Date(iso));
 /** `miércoles, 21 de octubre`, a partir de `2026-10-21`. */
 export const dia = (clave: string) => diaDeAgenda.format(new Date(`${clave}T12:00:00Z`));
 
+/** `lun`, a partir de `2026-10-21`. */
+export const diaCorto = (clave: string) => diaDeLaSemanaCorto.format(new Date(`${clave}T12:00:00Z`)).replace(".", "");
+
+/** `octubre de 2026`, a partir de `2026-10-21`. */
+export const mesYAnio = (clave: string) => mesYAnioLargo.format(new Date(`${clave}T12:00:00Z`));
+
 /** El día de hoy en Buenos Aires, como `2026-10-21`. */
 export const hoy = () => claveDeDia.format(new Date());
+
+/** El día de Buenos Aires de un momento, como `2026-10-21`. */
+export const diaDe = (iso: string) => claveDeDia.format(new Date(iso));

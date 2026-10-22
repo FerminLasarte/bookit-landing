@@ -40,16 +40,16 @@ function Contenido() {
   );
 }
 
-export default function MarcoDelPanel({ local, children }: { local: MiLocal; children: ReactNode }) {
+export default function MarcoDelPanel({ local, logo, children }: { local: MiLocal; logo: string | null; children: ReactNode }) {
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[16rem_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-dvh flex-col gap-8 border-r border-line px-3 py-6 lg:flex">
-        <IdentidadDelLocal local={local} className="px-2" />
+        <IdentidadDelLocal nombre={local.nombre} logo={logo} className="px-2" />
         <Contenido />
       </aside>
 
       <header className="sticky top-0 z-40 flex h-16 items-center justify-between gap-4 border-b border-line bg-page px-4 lg:hidden">
-        <IdentidadDelLocal local={local} />
+        <IdentidadDelLocal nombre={local.nombre} logo={logo} />
         <MenuDelPanel>
           <Contenido />
         </MenuDelPanel>

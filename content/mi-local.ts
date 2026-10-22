@@ -1,5 +1,5 @@
 import type { TonoDeBadge } from "@/components/ui/Badge";
-import type { EstadoTurno } from "@/lib/mi-local/agenda";
+import type { EstadoTurno, Grupo } from "@/lib/mi-local/turnos";
 import { planes } from "@/content/planes";
 import { site } from "@/content/site";
 
@@ -52,6 +52,9 @@ export const miLocal = {
     hoy: "Hoy",
     anterior: "Día anterior",
     siguiente: "Día siguiente",
+    semanaAnterior: "Semana anterior",
+    semanaSiguiente: "Semana siguiente",
+    semana: "Días de la semana",
     elegir: "Elegir el día",
     profesional: "Profesional",
     estado: "Estado",
@@ -132,6 +135,15 @@ export const miLocal = {
       sinAcceso,
     },
   },
+
+  /** Cómo mira el local su día (D9 del plan del panel). */
+  grupos: {
+    "sin-marcar": "Sin marcar",
+    "por-atender": "Por atender",
+    completados: "Completados",
+    ausentes: "Ausentes",
+    cancelados: "Cancelados",
+  } satisfies Record<Grupo, string>,
 
   /** El tono sale de lo que significa para el local: lo que pide atención, lo que se cayó. */
   estados: {

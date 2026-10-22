@@ -14,9 +14,9 @@ import {
   leerMiLocal,
   leerProfesionales,
   leerServiciosDelProfesional,
-  type Profesional,
   type ServicioDelProfesional,
 } from "@/lib/mi-local/agenda";
+import type { Profesional } from "@/lib/mi-local/turnos";
 import { enlaceDeCarga, enlaceDeVista, esClaveDeDia, type Carga } from "@/lib/mi-local/vista";
 
 export const metadata: Metadata = { title: miLocal.nuevo.titulo };

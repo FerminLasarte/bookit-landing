@@ -20,6 +20,15 @@ export function sumarDias(dia: string, n: number): string {
   return fecha.toISOString().slice(0, 10);
 }
 
+/** El lunes de la semana de un día. */
+export function lunesDe(dia: string): string {
+  const diaDeLaSemana = new Date(`${dia}T12:00:00Z`).getUTCDay();
+  return sumarDias(dia, -((diaDeLaSemana + 6) % 7));
+}
+
+/** Los siete días de la semana que empieza en `lunes`. */
+export const diasDeLaSemana = (lunes: string) => Array.from({ length: 7 }, (_, i) => sumarDias(lunes, i));
+
 /** Lo que no se eligió no va en la URL; el día va siempre. */
 export type Parametros = Record<string, string | null>;
 

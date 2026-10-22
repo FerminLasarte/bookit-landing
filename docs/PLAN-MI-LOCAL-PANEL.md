@@ -197,3 +197,108 @@ Una rama, `mi-local/panel`, y un PR a `main`:
 - 375 px y 1280 px, claro y oscuro, sin scroll de costado.
 - El teclado: se puede recorrer la barra y abrir el menú del teléfono.
 - `npm run typecheck` y `npm run build`.
+
+---
+
+# Segunda vuelta: el día, el profesional y el estado
+
+> Aprobada por Fermín el 21 de octubre de 2026, con la recomendación de cada
+> decisión **D6–D9**. Sale de lo que vio ese día al usar el panel: tarda mucho en cambiar de estado o de
+> profesional, y a la selección le falta "una vuelta de tuerca". Le gusta el
+> concepto.
+
+## Por qué tarda
+
+Cada filtro es un enlace: elegir un profesional o un estado vuelve a pedir la
+página entera al servidor. En el log de desarrollo, cada clic tarda entre 1 y
+2 segundos:
+
+- el proxy valida la sesión contra Supabase Auth: entre 220 y 780 ms;
+- la página hace tres consultas en fila: `mi_plan_web()`, el logo del local y,
+  después, los turnos y los profesionales juntos. Suman entre 800 y 1100 ms.
+
+En producción baja, pero la forma es la misma: varias idas y vueltas a
+Supabase por clic. Y el profesional y el estado no necesitan nada nuevo: los
+turnos del día ya están en la pantalla. Sólo cambiar de día pide datos nuevos.
+
+## La propuesta
+
+Hay un boceto en la conversación del 21 de octubre. Los colores son
+genéricos; el panel usa los de la marca.
+
+1. **Una barra de selección arriba de la lista**, en una superficie, con tres
+   pisos:
+   - **El día:** una tira con los siete días de la semana (día abreviado,
+     número y cantidad de turnos). El elegido va lleno y hoy lleva una marca.
+     Arriba, el mes, las flechas de semana anterior y siguiente, "Hoy" y el
+     calendario del navegador para saltar lejos.
+   - **El profesional:** píldoras con la foto (`profesionales.foto_url`) o las
+     iniciales, el nombre y cuántos turnos tiene ese día. "Todos" primero.
+   - **El estado:** un control segmentado con la cantidad de cada grupo (ver
+     D9).
+2. **Profesional y estado se filtran en el navegador:** al tocar uno, la lista
+   cambia en el acto y la URL se actualiza con `window.history.pushState`, que
+   Next 16 integra con `useSearchParams`. Recargar o compartir el enlace
+   sigue mostrando lo mismo.
+3. **El día sigue yendo al servidor**, pero la lista se atenúa apenas tocás
+   otro día, mientras llega la nueva. Las lecturas que no dependen una de otra
+   se piden juntas.
+4. **En el teléfono** la tira de la semana entra entera (siete columnas). Las
+   píldoras de profesionales y de estados van en una sola línea que se desliza
+   de costado, en vez de partirse en tres renglones como hoy.
+
+Lo que no cambia: la lista, la ficha, "Cargar un turno", el resumen de turnos
+y lo cobrado, y que todo quede en la URL.
+
+## Decisiones tuyas
+
+**D6 · La velocidad.**
+- **(Recomendada) Profesional y estado en el navegador, y el día con aviso de
+  carga.** Filtrar es instantáneo; cambiar de día tarda lo mismo que hoy, pero
+  se ve que está cargando. Costo: la lista y los filtros pasan a ser un
+  componente de cliente que recibe los turnos del día.
+- Dejar todo en el servidor y sólo mostrar que está cargando. Es menos
+  trabajo, pero cada filtro sigue tardando uno o dos segundos.
+
+**D7 · El día.**
+- **(Recomendada) La tira de la semana con la cantidad de turnos de cada
+  día.** De un vistazo se ve qué días están cargados. Costo: una consulta
+  liviana más (los turnos de la semana, sólo la fecha y el estado), pedida en
+  paralelo con la del día.
+- La tira de la semana sin cantidades. Sin consulta extra, pero pierde la
+  mitad de lo que aporta.
+- Dejar el selector de hoy (flechas, fecha y "Hoy") y sólo ordenarlo dentro de
+  la barra nueva.
+
+**D8 · El profesional.**
+- **(Recomendada) Píldoras con foto o iniciales y la cantidad del día.** Se
+  reconoce a cada uno sin leer, y se ve cómo viene cargado cada uno.
+- Un desplegable. Ocupa menos lugar, pero esconde a los profesionales detrás
+  de un clic.
+
+**D9 · El estado.** Hoy son siete píldoras (Todos y los seis estados de la
+base), siempre visibles aunque no haya turnos en ese estado.
+- **(Recomendada) Agrupar por lo que el local mira, con la cantidad de cada
+  grupo, y mostrar sólo los grupos que tienen turnos:**
+  - **Sin marcar:** abiertos y ya terminados. En ámbar, porque son los que
+    hay que cerrar.
+  - **Por atender:** pendientes o confirmados que todavía no terminaron.
+  - **Completados.**
+  - **Ausentes.**
+  - **Cancelados:** cancelados y vencidos sin pagar (`expirado`).
+
+  Costo: la URL deja de usar el nombre del estado de la base y pasa a usar el
+  del grupo.
+- Los seis estados de la base, cada uno con su cantidad y escondiendo los que
+  no tienen turnos. Es más exacto, pero el local no distingue "pendiente" de
+  "confirmado" a la hora de mirar el día.
+
+## Orden de trabajo
+
+En la misma rama, `mi-local/panel`:
+
+1. La lectura de la semana (según D7) y las lecturas del día en paralelo.
+2. La barra de selección: la tira, las píldoras y el segmentado.
+3. Filtrar en el navegador (D6) y el aviso de carga al cambiar de día.
+4. El teléfono: la tira entera y las píldoras que se deslizan.
+5. Te paso las pantallas antes de subir la rama.

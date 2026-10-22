@@ -1,7 +1,7 @@
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { hora, pesos } from "@/lib/formato";
-import { accionesDelTurno, quedoSinMarcar, type Turno } from "@/lib/mi-local/agenda";
+import { accionesDelTurno, quedoSinMarcar, type Turno } from "@/lib/mi-local/turnos";
 import EstadoDelTurno from "./EstadoDelTurno";
 import FichaDelTurno from "./FichaDelTurno";
 
