@@ -4,8 +4,10 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
+import { FORMAS_DEL_PROFESIONAL } from "@/lib/encuadre";
 import { campo } from "@/lib/formularios";
 import { errorDe, localParaActuar, profesionalQueEdita } from "@/lib/mi-local/acciones";
+import { cambiarFotoDelProfesional, guardarFoto } from "@/lib/mi-local/fotos";
 import { leerMiCuenta, leerServiciosAsignados } from "@/lib/mi-local/gestion";
 import type { Respuesta } from "@/lib/mi-local/respuesta";
 import { clienteDeSupabase } from "@/lib/supabase";
@@ -192,6 +194,23 @@ export async function guardarDatosDelProfesional(_: EstadoDeEquipo, datos: FormD
 
   refresh();
   return { error: null, listo: true };
+}
+
+/**
+ * La foto de un profesional que maneja el dueño: la suya y la de los que no
+ * tienen cuenta (D6 del plan de la fase 4). Los que tienen cuenta ponen la
+ * suya desde "Mi perfil".
+ */
+export async function guardarFotoDelProfesional(_: EstadoDeEquipo, datos: FormData): Promise<EstadoDeEquipo> {
+  const id = z.uuid().safeParse(datos.get("id"));
+  if (!id.success) return { error: miLocal.encuadre.errores.subir };
+
+  const permiso = await profesionalQueEdita(id.data);
+  if (permiso.error !== null) return { error: permiso.error };
+  if (!permiso.delDuenio) return { error: miLocal.acceso.soloDuenio };
+  if (!permiso.editable) return { error: miLocal.profesional.errores.soloLectura };
+
+  return guardarFoto(datos, FORMAS_DEL_PROFESIONAL, (recortes) => cambiarFotoDelProfesional(id.data, recortes.perfil), "foto-del-profesional");
 }
 
 const numeroOpcional = z.preprocess((v) => (v === "" || v === null ? null : v), z.coerce.number().finite().nullable());

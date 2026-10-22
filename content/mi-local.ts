@@ -533,6 +533,42 @@ export const miLocal = {
     },
   },
 
+  /** El perfil del profesional del equipo en ese local, como "Información profesional" de la app (D7 del plan de la fase 4). */
+  miPerfil: {
+    titulo: "Mi perfil",
+    bajada: (local: string) => `Cómo te ven los clientes de ${local}.`,
+    nombre: "Nombre visible",
+    guardar: "Guardar nombre",
+    guardando: "Guardando…",
+    errores: {
+      nombre: "Escribí tu nombre.",
+      generico: "No pudimos guardar tu nombre. Probá de nuevo en un rato.",
+    },
+  },
+
+  /** Acomodar una foto antes de subirla, como `PhotoFramerScreen` de la app (D4 del plan de la fase 4). */
+  encuadre: {
+    local: { titulo: "Foto del local", bajada: "La ven tus clientes en la búsqueda y en tu ficha." },
+    profesional: { titulo: "Foto de perfil", bajada: "La ven tus clientes al elegir con quién reservar." },
+    cambiar: "Cambiar la foto",
+    poner: "Poner una foto",
+    formas: { perfil: "Perfil", portada: "Portada" },
+    ayudas: {
+      perfil: "El círculo de las listas, el mapa y la búsqueda.",
+      portada: "La banda de arriba de tu ficha.",
+    },
+    mover: "Arrastrá la foto o usá las flechas para acomodarla.",
+    zoom: "Zoom",
+    otra: "Elegir otra foto",
+    guardar: "Guardar la foto",
+    guardando: "Subiendo…",
+    volver: "Volver",
+    errores: {
+      abrir: "No pudimos abrir esa foto. Probá con una JPG o PNG.",
+      subir: "No pudimos guardar la foto. Probá de nuevo en un rato.",
+    },
+  },
+
   /** Elegir quiénes siguen dentro del tope del plan, como `ElegirQuienesSiguenSheet`. */
   quienesSiguen: {
     titulo: "Elegí quiénes siguen",

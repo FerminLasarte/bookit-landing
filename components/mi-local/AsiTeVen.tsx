@@ -31,7 +31,7 @@ export default function AsiTeVen({
       <Superficie tone="surface" className="overflow-hidden">
         <div className="relative aspect-[2/1] bg-fg/6">
           {banda && (
-            <Image src={banda} alt="" fill sizes="(min-width: 768px) 48rem, 100vw" className="object-cover" />
+            <Image src={banda} alt="" fill loading="eager" sizes="(min-width: 768px) 48rem, 100vw" className="object-cover" />
           )}
         </div>
         <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-5">

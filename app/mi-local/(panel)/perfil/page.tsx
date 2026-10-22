@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { guardarFotoDelLocal } from "@/app/mi-local/(panel)/perfil/acciones";
 import AsiTeVen from "@/components/mi-local/AsiTeVen";
+import CambiarFoto from "@/components/mi-local/CambiarFoto";
 import DatosDelLocal from "@/components/mi-local/DatosDelLocal";
 import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { leerCategorias } from "@/lib/alta";
+import { FORMAS_DEL_LOCAL } from "@/lib/encuadre";
 import { leerMiCuenta } from "@/lib/mi-local/gestion";
 import { leerLugarQueEntra, type LugarDelDuenio } from "@/lib/mi-local/lugar";
 import { direccionParaMostrar, leerPerfilDelLocal } from "@/lib/mi-local/perfil";
@@ -56,6 +59,14 @@ async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {
         logo={perfil.logo}
         portada={perfil.portada}
         detalle={[categoria, direccion].filter(Boolean).join(" · ") || null}
+        accion={
+          <CambiarFoto
+            accion={guardarFotoDelLocal}
+            formas={FORMAS_DEL_LOCAL}
+            textos={miLocal.encuadre.local}
+            hayFoto={perfil.logo !== null}
+          />
+        }
       />
 
       <section aria-labelledby="datos-del-local">
