@@ -8,7 +8,7 @@ import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
 import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
-import { contarTurnosPorVenir, leerSenaDelPlan, leerServicio } from "@/lib/mi-local/gestion";
+import { contarTurnosPorVenir, leerPlanDelLocal, leerServicio } from "@/lib/mi-local/gestion";
 
 export const metadata: Metadata = { title: miLocal.servicio.editar };
 
@@ -21,13 +21,13 @@ export default async function EditarServicioPage({ params }: PageProps<"/mi-loca
   if (!Number.isInteger(numero) || numero <= 0) notFound();
 
   const copy = miLocal.servicio;
-  const [servicio, sena, reservados] = await Promise.all([
+  const [servicio, plan, reservados] = await Promise.all([
     // `undefined`: no se pudo leer, que no es lo mismo que no existir.
     leerServicio(local.id, numero).catch((error: unknown) => {
       console.error("mi-local/editar-servicio:", error);
       return undefined;
     }),
-    leerSenaDelPlan(local.suscripcion.nivel),
+    leerPlanDelLocal(local.suscripcion.nivel),
     contarTurnosPorVenir(numero),
   ]);
   if (servicio === null) notFound();
@@ -49,7 +49,7 @@ export default async function EditarServicioPage({ params }: PageProps<"/mi-loca
         accion={<TextLink href="/mi-local/servicios">{copy.volver}</TextLink>}
       />
       <Superficie tone="surface" className="p-5 md:p-6">
-        <FormularioDeServicio servicio={servicio} sena={sena} />
+        <FormularioDeServicio servicio={servicio} sena={plan.cobroMp} />
       </Superficie>
       <BajaDeServicio id={servicio.id} nombre={servicio.nombre} reservados={reservados} />
     </div>

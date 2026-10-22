@@ -5,6 +5,7 @@ import { darDeBajaServicio, type EstadoDeServicio } from "@/app/mi-local/(panel)
 import Button from "@/components/ui/Button";
 import Dialogo, { Volver } from "@/components/ui/Dialogo";
 import { miLocal } from "@/content/mi-local";
+import RespuestaDeAccion from "./RespuestaDeAccion";
 
 /**
  * Eliminar un servicio, con confirmación: dice cuántos turnos tiene por venir,
@@ -40,11 +41,7 @@ export default function BajaDeServicio({ id, nombre, reservados }: { id: number;
             {copy.volver}
           </Volver>
         </form>
-        {estado.error && (
-          <p role="alert" className="mt-3 text-center text-small font-medium text-danger">
-            {estado.error}
-          </p>
-        )}
+        <RespuestaDeAccion estado={estado} className="mt-3 text-center" />
       </Dialogo>
     </>
   );

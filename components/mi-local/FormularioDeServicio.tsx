@@ -7,9 +7,10 @@ import Button from "@/components/ui/Button";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
 import { enviarSinBorrar } from "@/lib/formularios";
-import type { Servicio, TipoDeSena } from "@/lib/mi-local/gestion";
+import type { Incluye, Servicio, TipoDeSena } from "@/lib/mi-local/gestion";
 import { cn } from "@/lib/utils";
 import { claseDeOpcion } from "./Opciones";
+import RespuestaDeAccion from "./RespuestaDeAccion";
 
 /**
  * Crear o editar un servicio: nombre, descripción, precio, duración y la seña.
@@ -22,7 +23,7 @@ export default function FormularioDeServicio({
 }: {
   /** El que se edita, o nada para uno nuevo. */
   servicio?: Servicio;
-  sena: { incluida: boolean; desde: string | null };
+  sena: Incluye;
 }) {
   const copy = miLocal.servicio;
   const [estado, enviar, enviando] = useActionState<EstadoDeServicio, FormData>(guardarServicio, { error: null });
@@ -118,11 +119,7 @@ export default function FormularioDeServicio({
         )}
       </fieldset>
 
-      {estado.error && (
-        <p role="alert" className="text-small font-medium text-danger">
-          {estado.error}
-        </p>
-      )}
+      <RespuestaDeAccion estado={estado} />
       <Button type="submit" disabled={enviando} className="w-full sm:w-auto sm:self-start">
         {enviando ? copy.guardando : servicio ? copy.guardar : copy.crear}
       </Button>

@@ -434,6 +434,21 @@ tener trabajo sin commitear.
    - dar de baja con su resumen, y elegir quiénes siguen;
    - los servicios de cada uno y "Precios libres".
    Te paso las pantallas y **primer PR**.
+
+   *Hecho el 22-oct-2026:*
+   - Equipo está en la barra y en las pestañas de abajo del teléfono.
+   - Cada profesional tiene su página: datos, servicios con precio y duración
+     propios (D2) y "Recibe turnos" con el resumen de la baja.
+   - Sumar tiene sus tres caminos: sin cuenta, con su cuenta y "Agregarme".
+   - "Agregarme" ata al dueño con su cuenta, que sale de la sesión. La app no
+     lo hace: el `toJson` del profesional no manda `auth_user_id`, así que el
+     dueño que se suma desde la app no queda reconocido como él mismo. Queda
+     para una tarea de BooKit.
+   - Sin probar en vivo:
+     - invitar, reenviar y revocar, porque manda un mail de verdad;
+     - el tope del plan, porque probarlo deja tres profesionales de prueba;
+     - la vista de sólo lectura de un profesional con cuenta, porque Barbería
+       Nogal no tiene ninguno.
 4. **Web, Horarios:**
    - la semana, el editor del día en un `Dialogo` y "Repetir en";
    - los días especiales (D8);

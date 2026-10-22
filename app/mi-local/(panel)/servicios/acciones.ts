@@ -3,8 +3,10 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
+import { campo } from "@/lib/formularios";
 import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
 import { mensajeDeLaBase } from "@/lib/mi-local/errores";
+import type { Respuesta } from "@/lib/mi-local/respuesta";
 import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
@@ -15,7 +17,7 @@ import { clienteDeSupabase } from "@/lib/supabase";
  * forma (D3 del plan de la fase 3).
  */
 
-export type EstadoDeServicio = { error: string | null };
+export type EstadoDeServicio = Respuesta;
 
 const servicio = z.object({
   id: z.coerce.number().int().positive().nullable(),
@@ -32,24 +34,23 @@ const servicio = z.object({
 /** Crea un servicio o guarda los cambios de uno, y vuelve a la lista. */
 export async function guardarServicio(_: EstadoDeServicio, datos: FormData): Promise<EstadoDeServicio> {
   const { errores } = miLocal.servicio;
-  const campo = (nombre: string) => String(datos.get(nombre) ?? "").trim();
 
   // Lo que falta se dice junto, como en la app: "Faltan el nombre y el precio."
-  const faltan = (["nombre", "precio", "duracion"] as const).filter((c) => !campo(c)).map((c) => errores.campos[c]);
+  const faltan = (["nombre", "precio", "duracion"] as const).filter((c) => !campo(datos, c)).map((c) => errores.campos[c]);
   if (faltan.length) return { error: errores.faltan(faltan) };
 
   const conSena = datos.get("con_sena") === "1";
   const pide = datos.get("pide_sena") === "on";
-  const tipo = campo("tipo_sena") === "fijo" ? "fijo" : "porcentaje";
-  if (conSena && pide && !campo("valor_sena")) return { error: errores.faltaSena[tipo] };
+  const tipo = campo(datos, "tipo_sena") === "fijo" ? "fijo" : "porcentaje";
+  if (conSena && pide && !campo(datos, "valor_sena")) return { error: errores.faltaSena[tipo] };
 
   const leido = servicio.safeParse({
-    id: campo("id") || null,
-    nombre: campo("nombre"),
-    descripcion: campo("descripcion"),
-    precio: campo("precio"),
-    duracion: campo("duracion"),
-    sena: conSena ? { pide, tipo, valor: campo("valor_sena") || 0 } : null,
+    id: campo(datos, "id") || null,
+    nombre: campo(datos, "nombre"),
+    descripcion: campo(datos, "descripcion"),
+    precio: campo(datos, "precio"),
+    duracion: campo(datos, "duracion"),
+    sena: conSena ? { pide, tipo, valor: campo(datos, "valor_sena") || 0 } : null,
   });
   if (!leido.success) return { error: errores.generico };
   const d = leido.data;
