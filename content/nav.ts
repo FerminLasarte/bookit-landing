@@ -16,6 +16,9 @@ export const navLinks: readonly NavLink[] = [
 
 export const navCta = { label: "Descargá la app", href: "/descargar" } as const;
 
+/** La puerta al panel del local: al lado del botón, para todos (hoja de ruta de `docs/PLAN-MI-LOCAL.md`). */
+export const navPanel = { label: "Mi local", href: "/mi-local" } as const;
+
 export const footerProducto: readonly NavLink[] = [
   { label: "Cómo funciona", href: "/#como-funciona" },
   { label: "Para locales", href: "/#locales" },
