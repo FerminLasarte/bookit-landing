@@ -558,7 +558,7 @@ export const miLocal = {
     },
     clientes: {
       titulo: "Tus clientes",
-      info: "Un cliente es nuevo el mes de su primera visita al local; después, cada mes que vuelve cuenta como recurrente. Se reconoce por su cuenta o, en un turno de mostrador, por su teléfono: sin ninguno de los dos no se cuenta.",
+      info: "Un cliente es nuevo el mes de su primera visita al local; después, cada mes que vuelve cuenta como recurrente. Se reconoce por su cuenta o, en un turno de mostrador, por su teléfono: sin ninguno de los dos no se cuenta. Los números suman los meses del período: un cliente que vino en tres meses cuenta tres veces.",
       volvieron: (n: number) => (n === 1 ? "volvió" : "volvieron"),
       nuevos: (n: number) => (n === 1 ? "vino por primera vez" : "vinieron por primera vez"),
       nadie: "Todavía nadie volvió: las recompensas sirven para eso.",
