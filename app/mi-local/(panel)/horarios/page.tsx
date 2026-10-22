@@ -5,6 +5,7 @@ import DiasEspeciales from "@/components/mi-local/DiasEspeciales";
 import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import { Grupo, Opcion } from "@/components/mi-local/Opciones";
+import PartesDeGestion from "@/components/mi-local/PartesDeGestion";
 import SemanaDelProfesional from "@/components/mi-local/SemanaDelProfesional";
 import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
@@ -51,6 +52,7 @@ export default async function HorariosPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex max-w-3xl flex-col gap-6 md:gap-8">
+      {local.rol === "duenio" && <PartesDeGestion actual="horarios" />}
       <Encabezado titulo={copy.titulo} />
 
       {!lectura ? (

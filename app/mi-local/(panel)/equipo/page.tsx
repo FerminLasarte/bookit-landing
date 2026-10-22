@@ -4,6 +4,7 @@ import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import Invitaciones from "@/components/mi-local/Invitaciones";
 import ListaDelEquipo from "@/components/mi-local/ListaDelEquipo";
+import PartesDeGestion from "@/components/mi-local/PartesDeGestion";
 import PreciosLibres from "@/components/mi-local/PreciosLibres";
 import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
@@ -36,6 +37,7 @@ export default async function EquipoPage() {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
+      <PartesDeGestion actual="equipo" />
       <Encabezado
         titulo={copy.titulo}
         bajada={plan.tope !== null ? copy.tope(plan.tope) : undefined}

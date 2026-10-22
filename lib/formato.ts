@@ -34,6 +34,21 @@ export function pesos(valor: number | null | undefined): string {
   return `${n < 0 ? "-" : ""}$${entero.format(Math.abs(n))}`;
 }
 
+/**
+ * Un monto abreviado, para donde no entra entero: `$850`, `$180k`, `$1,2M`,
+ * como `pesosCortos` de la app. Lo usan los rótulos del gráfico por mes.
+ */
+export function pesosCortos(valor: number): string {
+  const v = Math.abs(valor);
+  const signo = valor < 0 ? "-" : "";
+  if (v >= 1_000_000) {
+    const m = v / 1_000_000;
+    return `${signo}$${(m >= 10 ? String(Math.round(m)) : m.toFixed(1).replace(/\.0$/, "")).replace(".", ",")}M`;
+  }
+  if (v >= 1000) return `${signo}$${Math.round(v / 1000)}k`;
+  return `${signo}$${Math.round(v)}`;
+}
+
 /** `1.234`. */
 export const numero = (valor: number) => entero.format(valor);
 
@@ -49,6 +64,12 @@ export const diaYMes = (iso: string | null | undefined) => (iso ? diaYMesLargo.f
 
 /** `may.` a partir de `2026-05`. */
 export const mes = (clave: string) => mesCorto.format(new Date(`${clave}-01T12:00:00Z`));
+
+/** `May`, como lo rotula el gráfico de la app: con mayúscula y sin el punto. */
+export const mesRotulo = (clave: string) => {
+  const corto = mes(clave).replace(".", "");
+  return corto.charAt(0).toUpperCase() + corto.slice(1);
+};
 
 /** `hace 3 días`, `mañana`. Por días: el panel no necesita más precisión. */
 export function haceCuanto(iso: string | null | undefined): string {

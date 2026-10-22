@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import ListaDeServicios from "@/components/mi-local/ListaDeServicios";
+import PartesDeGestion from "@/components/mi-local/PartesDeGestion";
 import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
@@ -30,6 +31,7 @@ export default async function ServiciosPage() {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
+      <PartesDeGestion actual="servicios" />
       <Encabezado
         titulo={copy.titulo}
         bajada={servicios?.length ? copy.resumen(servicios.length, servicios.filter((s) => s.sena).length) : undefined}
