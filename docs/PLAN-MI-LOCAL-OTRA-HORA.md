@@ -121,8 +121,24 @@ cambio (el turno forzado ya mostró que el manual nace confirmado).
 **Quedó en la base:** el turno cancelado "Prueba web (borrar)" de Nogal del
 23/10 a las 21:00. Se suma a la lista de borrado del chat de BooKit.
 
-Quedan para después, sin cambios: la prueba con el id de un turno de otro
-local y el borrado de los datos de prueba (los dos esperan al chat de BooKit),
-y completar o marcar ausente desde la cuenta de profesional. Para eso último,
-"Otra hora" puede servir para cargar un turno que ya empezó, si la base lo
-deja: se ve en la prueba.
+**Desde la cuenta de profesional (22/10, después del Perfil, #58):** con la
+cuenta del equipo de Fermín activada un rato en Nogal y, con su OK, Corte de
+pelo asignado por SQL (sin horario):
+- "Otra hora" el jueves 22 a las 15:00: "¿Lo cargás igual?" con "Ese día no
+  atendés.". "Cargar igual" lo carga aunque ya haya empezado: la base lo
+  deja, y nace confirmado ("Sin marcar" en la agenda).
+- Otro igual a las 16:00. Desde la ficha, el de las 15:00 quedó
+  **Completado** (el cobrado del día pasó a $15.000) y el de las 16:00
+  **Ausente**.
+- "Ese horario queda fuera de tu agenda." no se vio: hace falta horario ese
+  día. Sale de la misma regla que "Ese día no atendés." (el profesional sin
+  nombre), que sí se vio.
+- Al terminar, por SQL y con su OK, se le sacó el servicio y la ficha volvió a
+  quedar desactivada: su sesión ve "Ya no estás en el equipo".
+
+**Quedaron en la base** los dos turnos "Prueba web (borrar)" del 22/10 de
+Fermin Lasarte en Nogal (15:00 completado y 16:00 ausente). Se suman a la
+lista de borrado del chat de BooKit.
+
+Queda para después, sin cambios: la prueba con el id de un turno de otro local
+y el borrado de los datos de prueba (los dos esperan al chat de BooKit).
