@@ -274,38 +274,97 @@ va un PR en BooKit.
 El repo no tiene tests automáticos: se prueba con un local de prueba en el
 preview, con la agenda abierta en dos pestañas y la app en el teléfono.
 
+**Resultado, 21-oct-2026.** En Barbería Nogal, con turnos "Prueba web
+(borrar)" cargados desde `/mi-local/nuevo` y sin tocar la base a mano. Debajo
+de cada caso está lo que pasó; los que faltan dicen por qué.
+
 **Cambiar el estado**
 - Un turno que ya empezó: Completar → "Completado", sube "Cobrado" y el
   cliente tiene los puntos en la billetera.
+  **Falta.** A las 22:40 no quedaban horarios del día: quedó cargado uno para
+  el 22/10 a las 9:00 con Julián Peralta, que empieza mañana. Los puntos no se
+  ven con un turno a mano, porque no tiene cliente con cuenta.
 - Otro: Ausente → "Ausente", sin push.
+  **Falta**, por lo mismo: quedó otro el 22/10 a las 9:00 con Nico Ferreyra.
 - Un turno de mañana en efectivo: no ofrece completar; Cancelar pide
   confirmación, queda "Cancelado", al cliente le llega "El local canceló tu
   turno", el horario vuelve a estar libre en la app y, si usó un cupón, vuelve
   a la billetera.
+  **Anduvo**, con un turno a mano. La ficha dice "La asistencia se marca cuando
+  empieza el turno." y sólo ofrece cancelar. La confirmación dice "Se cancela
+  el turno de Prueba web (borrar) y el horario queda libre. No se puede
+  deshacer.", el turno queda "Cancelado" y el formulario vuelve a ofrecer el
+  horario. El aviso al cliente y el cupón no se pueden probar con un turno a
+  mano: no hay cliente con cuenta.
 - La otra pestaña y la app se actualizan solas (Realtime).
+  **La otra pestaña, sí**: un turno cargado y uno cancelado en una pestaña
+  aparecieron en la otra sin recargar (llegaron el INSERT y el UPDATE por
+  `postgres_changes`). Las dos primeras veces no llegó nada, con la otra
+  pestaña abierta hacía unos segundos. No lo seguí: puede ser el rato entre que
+  el canal se une y que Realtime contesta "Subscribed to PostgreSQL", porque
+  `EnVivo` sólo relee cuando el canal vuelve, no la primera vez.
+  **La app: falta**, la tiene que mirar Fermín.
 - Cancelar en una pestaña y después en la otra, que todavía no se actualizó:
   sale "Este turno ya está cerrado y no admite cambios."
+  **Distinto de lo esperado, sin daño.** La segunda cancelación no da error: la
+  ficha se cierra y el turno sigue "Cancelado". El trigger deja pasar un cambio
+  al mismo estado (`new.estado is not distinct from old.estado` → `return
+  new`), el update toca la fila y `cambiarEstado` no ve cero filas. Los
+  triggers de los efectos (devolución, cupón, avisos) piden que `old.estado`
+  sea otro, así que no se dispara nada dos veces. El mensaje sí sale si la otra
+  pestaña pide otro estado: Ausente sobre el cancelado contesta "Este turno ya
+  está cerrado y no admite cambios."
 - Mandar la acción a mano con el id de un turno de otro local: cero filas,
   error genérico, nada cambia.
+  **A medias.** Con un uuid que no es de ningún turno de Nogal: cero filas, "No
+  pudimos cambiar el estado del turno. Probá de nuevo en un rato." y en el log
+  `mi-local/cambiar-estado: ninguna fila`. Falta con el id de un turno real de
+  otro local: sacarlo es leer la base por fuera de la web, y eso lo decide
+  Fermín.
 - Mandar Completar sobre un turno de mañana salteando la pantalla: la base lo
   rechaza con "El turno todavía no empezó."
+  **Anduvo**: la acción mandada a mano (un POST con `Next-Action`) contesta "El
+  turno todavía no empezó."
 - **Mercado Pago:** cancelar un turno pagado devuelve plata de verdad. En la
   prueba se mira sólo que la confirmación diga el monto; la devolución real,
   si la querés probar, con un pago chico tuyo, como la prueba del débito.
+  **Postergado** (ver "Cómo se termina la prueba"). En Nogal no hay turnos
+  pagados por Mercado Pago, así que tampoco se vio el monto en la confirmación.
 
 **Turno a mano**
 - Cargar uno para hoy: aparece en la agenda como "Pendiente", el horario deja
   de ofrecerse y al profesional con cuenta le llega "Te agendaron un turno".
-- Un día sin horarios: el mensaje de vacío.
+  **Anduvo** (probado antes, el mismo día). La push depende de que el
+  profesional tenga cuenta; si alguno de Nogal la tiene, Fermín dice si llegó.
+- Un día sin horarios: el mensaje de vacío. **Anduvo** (probado antes).
 - Dos pestañas eligiendo el mismo horario: la segunda recibe "El horario se
   solapa con otro turno".
+  **Anduvo.** La segunda pestaña sigue mostrando el horario tomado después del
+  error, hasta que se vuelve a elegir algo.
 - Un profesional sin servicios asignados: el mensaje de que se asignan desde
   la app.
+  **Falta**: en Nogal los tres tienen servicios, y sacárselos es tocar la app o
+  la base.
+- Un profesional de otro local en la URL. **Anduvo** (probado antes).
 
 **Siempre**
 - En gracia, todo anda; con el local cortado no se llega (lo tapa la fase 1) y
   `crear_turno_manual` igual lo rechaza.
+  **Anduvo en la web, simulado**: el estado de la suscripción forzado en
+  `leerMiLocal`, en local y sin commitear; la base no se tocó. En gracia sale
+  "Tenés un pago atrasado" y la agenda y la carga andan. Cortada, la agenda
+  muestra "Tu licencia venció", `/mi-local/nuevo` vuelve a la agenda y
+  `cambiarEstado` contesta "Tu local no tiene acceso a la agenda. Regularizá tu
+  plan para volver a usarla." Lo de la base no se probó: está leído del SQL
+  (`crear_turno_manual` rechaza todo lo que no sea `al_dia` o `en_gracia`,
+  BooKit 20260927140000).
 - En el teléfono, a 375 px: la ficha y el formulario sin scroll de costado.
+  **Anduvo**: la página mide 375 de ancho con el formulario y con la ficha
+  abierta en la confirmación de cancelar (la ficha, 335). Cómo se ve lo mira
+  Fermín.
+
+Quedan en Nogal, del 22/10: cancelados a las 10:00, 11:00, 12:00 y 19:00, y
+abiertos los dos de las 9:00, para completar y ausente.
 
 ## Cómo se termina la prueba
 
