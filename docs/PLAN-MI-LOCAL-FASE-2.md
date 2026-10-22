@@ -307,10 +307,36 @@ preview, con la agenda abierta en dos pestañas y la app en el teléfono.
   `crear_turno_manual` igual lo rechaza.
 - En el teléfono, a 375 px: la ficha y el formulario sin scroll de costado.
 
+## Para revisar más adelante
+
+Tres cosas que salieron de la fase 2 y que pueden volverse decisiones en un
+futuro cercano. Ninguna cambia lo que hace esta fase. Anotadas por pedido de
+Fermín el 21-oct-2026.
+
+1. **Confirmar no se puede.** La base no deja que el local confirme un turno,
+   ni desde la app ni desde la web: confirmar le toca al pago
+   (`_turnos_quien_cambia_el_estado`, BooKit 20260925150000). Por eso la hoja
+   del turno en la app tampoco tiene ese botón. Si algún día se quiere
+   confirmar, las alternativas y su costo están en D1: que el turno a mano nazca
+   confirmado, o abrir el trigger para los pendientes que no son de Mercado
+   Pago. Las dos son una migración en BooKit.
+2. **Cancelar no le pide nada extra a la web.** La devolución de Mercado Pago,
+   la vuelta del cupón y de la promoción, los puntos y los avisos los hacen
+   triggers de la base (la tabla de "Lo que hace la base con ese `update`").
+   Con una condición: la web tiene que escribir con la sesión del dueño. Con la
+   service role, el trigger que controla quién cambia qué no corre, y el aviso
+   al profesional no sale. Cualquier escritura nueva en `turnos` (fases 3 y 4,
+   un job, el panel) tiene que seguir esta regla o hacer a mano lo que hacen
+   los triggers.
+3. **Un cambio que no toca ninguna fila no da error.** Si la política no deja
+   ver el turno, el update no falla, simplemente no cambia nada. La web lo
+   trata como error (`cambiarEstado`). La app hoy no se entera y cree que cerró
+   el turno: `actualizarEstadoTurno` en `BusinessCalendarRepository` y en
+   `StaffAppointmentsRepository` hacen el update sin `.select()`. El arreglo es
+   en BooKit: pedir la fila de vuelta y fallar si viene vacía, como la web.
+
 ## Lo que vi y no toca este plan
 
-- `BusinessCalendarRepository.actualizarEstadoTurno` no se entera si el
-  update no tocó ninguna fila: la app cree que cerró el turno. Va para la app.
 - `crear_turno_manual` no controla que `p_fin` sea inicio más la duración del
   servicio: confía en lo que manda el teléfono. Con D4, la web lo calcula con
   la duración de la base; arreglarlo en la función es otra migración en BooKit.
