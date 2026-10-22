@@ -27,7 +27,7 @@ export type DireccionResuelta = { direccion: string; lat: number; lng: number };
 const RADIO_KM = 25;
 
 export async function leerCategorias(): Promise<Categoria[]> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.from("categorias").select("id_categoria, nombre").order("orden");
   if (error) throw new Error(`categorias: ${error.message}`);
   return data.map((c) => ({ id: c.id_categoria as number, nombre: c.nombre as string }));
@@ -43,7 +43,7 @@ type FilaDeLocalidad = {
 };
 
 export async function buscarLocalidades(termino: string): Promise<Localidad[]> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.rpc("buscar_localidades", { termino, limite: 10 });
   if (error) throw new Error(`buscar_localidades: ${error.message}`);
   return (data as FilaDeLocalidad[]).map((l) => ({
@@ -62,7 +62,7 @@ export async function sugerirDirecciones(
   texto: string,
   localidad: Pick<Localidad, "nombre" | "lat" | "lng">,
 ): Promise<SugerenciaDeDireccion[]> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.functions.invoke<{ sugerencias?: SugerenciaDeDireccion[] }>(
     "autocompletar_direccion",
     {
@@ -83,7 +83,7 @@ export async function sugerirDirecciones(
 
 /** La calle elegida, con su punto. Es la única llamada que Google cobra, y cierra la sesión. */
 export async function resolverDireccion(sesion: string, placeId: string): Promise<DireccionResuelta | null> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.functions.invoke<{ direccion?: string; latitud?: number; longitud?: number }>(
     "autocompletar_direccion",
     { body: { accion: "detalle", sesion, placeId } },

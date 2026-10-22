@@ -65,7 +65,7 @@ export type Sesion = { email: string | null };
 
 /** Quién entró a /planes, validado contra Supabase, o `null`. */
 export async function leerSesion(): Promise<Sesion | null> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -73,7 +73,7 @@ export async function leerSesion(): Promise<Sesion | null> {
 }
 
 export async function leerPrecios(): Promise<PrecioDeLista[]> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.from("precios_web").select("nivel, plan, precio");
   if (error) throw new Error(`precios_web: ${error.message}`);
   return data as PrecioDeLista[];
@@ -85,7 +85,7 @@ export async function leerPrecios(): Promise<PrecioDeLista[]> {
  * beneficios, en vez de inventarlos.
  */
 export async function leerNiveles(): Promise<CopyDeNivel[]> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase
     .from("niveles")
     .select("id, rotulo, bajada, beneficios, distintivo, destaque, recomendado, orden")
@@ -98,7 +98,7 @@ export async function leerNiveles(): Promise<CopyDeNivel[]> {
 }
 
 export async function leerMiPlan(): Promise<MiPlan> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.rpc("mi_plan_web");
   if (error) throw new Error(`mi_plan_web: ${error.message}`);
   return data as MiPlan;

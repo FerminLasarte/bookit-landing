@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { planes, type CodigoDeError } from "@/content/planes";
 import { esInstagramValido, nombreDelDuenio, normalizarInstagram } from "@/lib/alta";
+import { leerDestino } from "@/lib/destinos";
 import { FRECUENCIAS, NIVELES } from "@/lib/planes";
 import { clienteDeSupabase, clientePublico } from "@/lib/supabase";
 
@@ -21,7 +22,7 @@ export async function entrarConMail(_: EstadoDeEntrar, datos: FormData): Promise
   const password = String(datos.get("password") ?? "");
   if (!email || !password) return { error: errores.faltan };
 
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     if (error.code === "invalid_credentials") return { error: errores.credenciales };
@@ -29,7 +30,8 @@ export async function entrarConMail(_: EstadoDeEntrar, datos: FormData): Promise
     console.error("planes/entrar:", error.code, error.message);
     return { error: errores.generico };
   }
-  redirect("/planes");
+  // Entra desde /planes o desde /mi-local, y vuelve a la que eligió.
+  redirect(leerDestino(datos.get("destino")));
 }
 
 // ── La cuenta nueva (contrato §9) ──
@@ -62,7 +64,7 @@ export async function crearCuenta(_: EstadoDeCrearCuenta, datos: FormData): Prom
   const status = statusDe(error);
   // La cuenta existe y la contraseña es la suya: entra, como hace la app.
   if (status === 409) {
-    const supabase = await clienteDeSupabase("planes");
+    const supabase = await clienteDeSupabase("local");
     const { error: alEntrar } = await supabase.auth.signInWithPassword({ email, password });
     if (!alEntrar) redirect("/planes");
     console.error("planes/crear-cuenta: 409 sin poder entrar:", alEntrar.code);
@@ -121,7 +123,7 @@ export async function crearLocal(_: EstadoDelAlta, datos: FormData): Promise<Est
   if (instagram && !esInstagramValido(instagram)) errores.instagram = copy.instagram;
   if (!leido.success || Object.keys(errores).length > 0) return { errores, general: null };
 
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -183,7 +185,7 @@ export async function comprar(entrada: z.input<typeof pedido>): Promise<Resultad
   }
   const { nivel, plan, email } = leido.data;
 
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.functions.invoke<{ init_point?: string }>("crear-suscripcion-mp", {
     body: { nivel, plan, ...(email && { email_mercado_pago: email }) },
   });
@@ -200,7 +202,7 @@ export async function comprar(entrada: z.input<typeof pedido>): Promise<Resultad
 
 /** Da de baja el débito. El local sigue entrando hasta `vence`. */
 export async function cancelar(): Promise<ResultadoDeBaja> {
-  const supabase = await clienteDeSupabase("planes");
+  const supabase = await clienteDeSupabase("local");
   const { error } = await supabase.functions.invoke("cancelar-suscripcion-mp", { body: {} });
   if (error) return { ok: false, codigo: (await codigoDelError(error)).codigo };
   return { ok: true };

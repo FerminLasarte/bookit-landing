@@ -13,6 +13,7 @@ import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
 import TextLink, { textLinkClasses } from "@/components/ui/TextLink";
 import { planes } from "@/content/planes";
+import type { Destino } from "@/lib/destinos";
 import { enviarSinBorrar } from "@/lib/formularios";
 
 /*
@@ -20,11 +21,23 @@ import { enviarSinBorrar } from "@/lib/formularios";
  * contraseña, el mismo Supabase Auth. Con Google o Apple la cuenta se crea al
  * entrar; con mail, la crea `enviar_email_auth` y se confirma desde el mail
  * (BooKit, docs/web-en-pesos.md §9).
+ *
+ * Lo usan /planes y /mi-local, con la misma sesión: `destino` dice adónde
+ * vuelve. /mi-local no ofrece crear la cuenta: quien no tiene cuenta tampoco
+ * tiene local, y el alta está en /planes.
  */
 
 type Modo = "entrar" | "crear";
 
-export default function Entrar({ error }: { error: string | null }) {
+export default function Entrar({
+  error,
+  destino = "/planes",
+  conAlta = true,
+}: {
+  error: string | null;
+  destino?: Destino;
+  conAlta?: boolean;
+}) {
   const { entrar: copyEntrar, crear: copyCrear } = planes.sinSesion;
   const [modo, setModo] = useState<Modo>("entrar");
   const [alEntrar, entrar, entrando] = useActionState<EstadoDeEntrar, FormData>(entrarConMail, { error: null });
@@ -51,11 +64,13 @@ export default function Entrar({ error }: { error: string | null }) {
 
       <div className="flex flex-col gap-2">
         <form action="/planes/auth/google" method="post">
+          <input type="hidden" name="destino" value={destino} />
           <Button type="submit" variant="secondary" className="w-full">
             {copyEntrar.google}
           </Button>
         </form>
         <form action="/planes/auth/apple" method="post">
+          <input type="hidden" name="destino" value={destino} />
           <Button type="submit" variant="secondary" className="w-full">
             {copyEntrar.apple}
           </Button>
@@ -71,6 +86,7 @@ export default function Entrar({ error }: { error: string | null }) {
         onSubmit={enviarSinBorrar((datos) => (modo === "entrar" ? entrar(datos) : crear(datos)))}
         className="flex flex-col gap-4"
       >
+        <input type="hidden" name="destino" value={destino} />
         {modo === "crear" && (
           <Field id="crear-nombre" label={copyCrear.nombre}>
             {(props) => <input {...props} name="nombre" type="text" autoComplete="name" required />}
@@ -109,13 +125,15 @@ export default function Entrar({ error }: { error: string | null }) {
         )}
       </form>
 
-      <button
-        type="button"
-        className={`${textLinkClasses()} self-center text-small`}
-        onClick={() => setModo(modo === "entrar" ? "crear" : "entrar")}
-      >
-        {modo === "entrar" ? copyEntrar.aCrear : copyCrear.aEntrar}
-      </button>
+      {conAlta && (
+        <button
+          type="button"
+          className={`${textLinkClasses()} self-center text-small`}
+          onClick={() => setModo(modo === "entrar" ? "crear" : "entrar")}
+        >
+          {modo === "entrar" ? copyEntrar.aCrear : copyCrear.aEntrar}
+        </button>
+      )}
     </Superficie>
   );
 }
