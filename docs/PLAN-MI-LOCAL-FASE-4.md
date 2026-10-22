@@ -313,43 +313,60 @@ el alta de la web no, y usa el punto que da Google.
 
 ## El cambio en BooKit
 
-Si D3 y D6 salen como las recomendadas, hace falta **una migración**. No cambia
-la app. Prompt para pasarle al chat que tiene el repo de BooKit:
+Con D3 y D6 aprobadas, hace falta **una migración**. No cambia la app. El
+prompt va a una conversación del repo de BooKit, nueva o la de siempre: se
+entiende solo.
 
-> En BooKit (`develop`), una migración nueva para el panel web del local
-> (`bookit-landing`, fase 4: el Perfil). Dos cosas, en el mismo archivo:
->
-> 1. **`cambiar_categoria_de_mi_local(p_id_categoria integer) returns void`.**
->    La categoría de un local vive en dos lugares, `comercios.id_categoria` y
->    `comercios_categorias`, y `buscar_comercios_cercanos_por_categoria` mira
->    las dos. Hoy sólo las escribe `_alta_del_comercio`. La función:
->    - busca el local del que la sesión es dueña (`comercios.auth_user_id =
->      auth.uid()`); sin local, error `42501`;
->    - rechaza una categoría que no existe en `categorias`, con un mensaje para
->      personas ("Esa categoría no existe.") y un `hint`;
->    - en una transacción: `update comercios set id_categoria`, y deja en
->      `comercios_categorias` sólo esa fila para ese local (como el alta);
->    - `security invoker` si alcanza con los permisos del dueño (tiene `update`
->      sobre `id_categoria` y la política "las maneja el dueño"); si no,
->      `definer` con `search_path` fijo. `revoke` de `public` y `anon`,
->      `grant` a `authenticated`.
-> 2. **`_es_mi_ruta_de_logos(p_nombre)`** (de `20260928140000`) suma un caso:
->    `profesionales/<id_profesional>_` de un profesional **sin cuenta**
->    (`auth_user_id is null`) de un local del que la sesión es dueña. El resto
->    queda igual: el dueño sigue sin poder subir la foto de un profesional con
->    cuenta, y nadie sube a la ruta de otro local.
->
-> Probalo en un Postgres suelto, como `huecos_del_dia` (#84):
-> - la función con el dueño, con alguien sin local, con una categoría que no
->   existe; y que la búsqueda por categoría encuentre el local en la nueva y no
->   en la vieja;
-> - la ruta de logos para: el local propio, la ficha propia, un sin cuenta del
->   local propio (sí), uno con cuenta del local propio (no), uno de otro local
->   (no), y el profesional con cuenta en su propia ficha (sí, como hoy).
->
-> PR a `develop`. **No la apliques en la base** hasta que Fermín diga.
-> Actualizá `docs/schema-tablas.md` si nombra las políticas de Storage o la
-> categoría.
+```text
+En BooKit, desde develop: una migración nueva para el panel web del local
+(bookit-landing, /mi-local, fase 4: el Perfil del local). La web ya está
+hecha en la rama mi-local/perfil y llama a lo de abajo con estos nombres.
+No cambia la app.
+
+Dos cosas, en el mismo archivo (con un timestamp posterior a
+20261022190000_agenda_del_profesional.sql):
+
+1. Función nueva public.cambiar_categoria_de_mi_local(p_id_categoria integer)
+   returns void.
+   La categoría de un local vive en dos lugares, comercios.id_categoria y
+   comercios_categorias, y buscar_comercios_cercanos_por_categoria mira las
+   dos. Hoy sólo las escribe _alta_del_comercio. La función:
+   - busca el local del que la sesión es dueña (comercios.auth_user_id =
+     auth.uid()). Sin local: raise con errcode 42501 y el mensaje
+     "Esta cuenta no tiene un local.";
+   - si la categoría no existe en categorias: raise con errcode 22023 y el
+     mensaje "Esa categoría no existe." (la web muestra tal cual los 22023 y
+     los 42501 que no son "permission denied");
+   - en una transacción: update comercios set id_categoria, y deja en
+     comercios_categorias sólo esa fila para ese local, como el alta. Hoy los
+     8 locales tienen una sola fila, igual a id_categoria;
+   - security invoker si alcanza con los permisos del dueño (tiene update
+     sobre comercios.id_categoria y la política "comercios_categorias: las
+     maneja el dueño"); si no, security definer con search_path fijo;
+   - revoke de public y anon, grant execute a authenticated.
+
+2. public._es_mi_ruta_de_logos(p_nombre text), de
+   20260928140000_politicas_de_storage.sql, suma un caso: la ruta
+   'profesionales/<id_profesional>_' de un profesional SIN cuenta
+   (auth_user_id is null) de un local del que la sesión es dueña. Es para que
+   el dueño suba la foto de los profesionales que maneja él. El resto queda
+   igual: el dueño sigue sin poder subir la foto de un profesional con
+   cuenta, y nadie sube a la ruta de otro local. Mantené security definer,
+   stable y el search_path.
+
+Probalo en un Postgres suelto (como se probó huecos_del_dia en #84), con
+casos para:
+- la función: el dueño cambia la categoría y la búsqueda por categoría lo
+  encuentra en la nueva y no en la vieja; una cuenta sin local; una
+  categoría que no existe;
+- la ruta de logos: el local propio (sí), la ficha propia (sí), un sin
+  cuenta del local propio (sí), uno con cuenta del local propio (no), uno de
+  otro local (no), y el profesional con cuenta en su propia ficha (sí).
+
+PR a develop. No la apliques en la base hasta que yo diga. Si
+docs/schema-tablas.md nombra las políticas de Storage o la categoría,
+actualizalo.
+```
 
 ## Orden de trabajo
 
