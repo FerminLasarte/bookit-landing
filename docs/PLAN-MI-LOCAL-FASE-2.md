@@ -359,6 +359,7 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
   levantado. El formulario usa `onSubmit` y no `action`, así que sin
   JavaScript se manda como un GET a la misma página, con el nombre y el
   teléfono en la URL. No es lo que dice D6 ("funciona sin JavaScript").
+  Arreglado en #53, para los ocho formularios que usaban el mismo helper.
 
 **Siempre**
 - En gracia, todo anda; con el local cortado no se llega (lo tapa la fase 1) y
@@ -376,8 +377,9 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
   abierta en la confirmación de cancelar (la ficha, 335). Cómo se ve lo mira
   Fermín.
 
-Quedan en Nogal, del 22/10: cancelados a las 10:00, 11:00, 12:00, 19:00 y
-dos a las 16:00, y los dos de las 9:00, uno completado y otro ausente.
+Quedan en Nogal, del 22/10: cancelados a las 10:00, 11:00, 12:00, 16:30,
+17:00, 19:00 y dos a las 16:00, y los dos de las 9:00, uno completado y otro
+ausente.
 
 ## Cómo se termina la prueba
 
