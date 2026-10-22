@@ -6,7 +6,7 @@ import Field from "@/components/forms/Field";
 import Button from "@/components/ui/Button";
 import { miLocal } from "@/content/mi-local";
 import { hora } from "@/lib/formato";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 import { cn } from "@/lib/utils";
 import { claseDeOpcion } from "./Opciones";
 
@@ -30,7 +30,7 @@ export default function FormularioDeTurno({
   const [estado, enviar, enviando] = useActionState<EstadoDeCarga, FormData>(cargarTurno, { error: null });
 
   return (
-    <form onSubmit={enviarSinBorrar(enviar)} className="flex flex-col gap-5">
+    <form {...formularioSinBorrar(enviar)} className="flex flex-col gap-5">
       <input type="hidden" name="dia" value={dia} />
       <input type="hidden" name="profesional" value={profesional} />
       <input type="hidden" name="servicio" value={servicio} />

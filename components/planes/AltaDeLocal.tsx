@@ -8,7 +8,7 @@ import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
 import { planes } from "@/content/planes";
 import type { Categoria, DireccionResuelta, Localidad, SugerenciaDeDireccion } from "@/lib/alta";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 
 /*
  * El alta del local para una cuenta sin local: los datos que pide la app,
@@ -69,7 +69,7 @@ export default function AltaDeLocal({ categorias }: { categorias: Categoria[] })
 
   return (
     <Superficie tone="surface" className="mx-auto w-full max-w-[28rem] p-6 md:p-8">
-      <form onSubmit={enviarSinBorrar(enviar)} className="flex flex-col gap-5">
+      <form {...formularioSinBorrar(enviar)} className="flex flex-col gap-5">
         <Field id="alta-nombre" label={copy.nombre} error={errores.nombre}>
           {(props) => <input {...props} name="nombre" type="text" autoComplete="organization" maxLength={80} required />}
         </Field>

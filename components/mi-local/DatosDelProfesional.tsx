@@ -5,7 +5,7 @@ import { guardarDatosDelProfesional, type EstadoDeEquipo } from "@/app/mi-local/
 import Field from "@/components/forms/Field";
 import Button from "@/components/ui/Button";
 import { miLocal } from "@/content/mi-local";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 import type { Miembro } from "@/lib/mi-local/gestion";
 import RespuestaDeAccion from "./RespuestaDeAccion";
 
@@ -15,7 +15,7 @@ export default function DatosDelProfesional({ miembro }: { miembro: Miembro }) {
   const [estado, enviar, enviando] = useActionState<EstadoDeEquipo, FormData>(guardarDatosDelProfesional, { error: null });
 
   return (
-    <form onSubmit={enviarSinBorrar(enviar)} className="flex flex-col gap-4">
+    <form {...formularioSinBorrar(enviar)} className="flex flex-col gap-4">
       <input type="hidden" name="id" value={miembro.id} />
       <Field id="profesional-nombre" label={copy.datos.nombre}>
         {(props) => <input {...props} name="nombre" type="text" defaultValue={miembro.nombre} maxLength={80} autoComplete="off" />}

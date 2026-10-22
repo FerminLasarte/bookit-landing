@@ -6,7 +6,7 @@ import Field, { labelClasses } from "@/components/forms/Field";
 import Button from "@/components/ui/Button";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 import type { Incluye, Servicio, TipoDeSena } from "@/lib/mi-local/gestion";
 import { cn } from "@/lib/utils";
 import { claseDeOpcion } from "./Opciones";
@@ -31,7 +31,7 @@ export default function FormularioDeServicio({
   const [tipo, setTipo] = useState<TipoDeSena>(servicio?.sena?.tipo ?? "porcentaje");
 
   return (
-    <form onSubmit={enviarSinBorrar(enviar)} className="flex flex-col gap-5">
+    <form {...formularioSinBorrar(enviar)} className="flex flex-col gap-5">
       {servicio && <input type="hidden" name="id" value={servicio.id} />}
 
       <Field id="servicio-nombre" label={copy.nombre}>

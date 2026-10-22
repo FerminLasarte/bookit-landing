@@ -14,7 +14,7 @@ import Superficie from "@/components/ui/Superficie";
 import TextLink, { textLinkClasses } from "@/components/ui/TextLink";
 import { planes } from "@/content/planes";
 import type { Destino } from "@/lib/destinos";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 
 /*
  * Entrar con la cuenta de la app, o crearla: Google, Apple o mail y
@@ -83,7 +83,7 @@ export default function Entrar({
 
       <form
         key={modo}
-        onSubmit={enviarSinBorrar((datos) => (modo === "entrar" ? entrar(datos) : crear(datos)))}
+        {...formularioSinBorrar(modo === "entrar" ? entrar : crear)}
         className="flex flex-col gap-4"
       >
         <input type="hidden" name="destino" value={destino} />

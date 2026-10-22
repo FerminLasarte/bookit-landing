@@ -7,7 +7,7 @@ import Button from "@/components/ui/Button";
 import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 import type { Incluye } from "@/lib/mi-local/gestion";
 import RespuestaDeAccion from "./RespuestaDeAccion";
 
@@ -48,7 +48,7 @@ export default function AltaDeProfesional({
           </p>
         )
       ) : (
-        <form onSubmit={enviarSinBorrar(enviar)} className="mt-4 flex flex-col gap-4">
+        <form {...formularioSinBorrar(enviar)} className="mt-4 flex flex-col gap-4">
           {forma === "yo" && <input type="hidden" name="soy_yo" value="1" />}
           {forma === "conCuenta" ? (
             <Field id="alta-email" label={copy.conCuenta.email}>
