@@ -155,9 +155,9 @@ export async function leerProfesionales(idComercio: string): Promise<Profesional
 export type ServicioDelProfesional = { id: number; nombre: string; precio: number; duracion: number };
 
 /**
- * Lo que ofrece un profesional, con el precio que va a guardar
- * `crear_turno_manual` y la duración que arma el fin del turno. Lo calcula la
- * base (`servicios_del_profesional`, BooKit 20261021210000, D4).
+ * Lo que ofrece un profesional, con el precio y la duración que va a guardar
+ * `crear_turno_manual`. Lo calcula la base (`servicios_del_profesional`,
+ * BooKit 20261021210000, D4).
  */
 export async function leerServiciosDelProfesional(idProfesional: string): Promise<ServicioDelProfesional[]> {
   const supabase = await clienteDeSupabase("local");
