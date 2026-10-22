@@ -25,9 +25,19 @@ export const claseDeOpcion = (activa: boolean) =>
     activa ? "bg-fg text-page" : "bg-fg/6 text-fg hover:bg-fg/12",
   );
 
-export function Opcion({ href, activa, children }: { href: string; activa: boolean; children: ReactNode }) {
+export function Opcion({
+  href,
+  activa,
+  className,
+  children,
+}: {
+  href: string;
+  activa: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <Anchor href={href} aria-current={activa ? "true" : undefined} className={claseDeOpcion(activa)}>
+    <Anchor href={href} aria-current={activa ? "true" : undefined} className={cn(claseDeOpcion(activa), className)}>
       {children}
     </Anchor>
   );

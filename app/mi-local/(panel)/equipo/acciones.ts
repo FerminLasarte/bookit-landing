@@ -6,8 +6,8 @@ import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
 import { campo } from "@/lib/formularios";
 import { leerLocalQueEntra } from "@/lib/mi-local/agenda";
-import { mensajeDeLaBase, pideOtroPlan, type ErrorDeLaBase } from "@/lib/mi-local/errores";
-import { leerMiCuenta, leerMiembro, leerServiciosAsignados, loEditaElDuenio } from "@/lib/mi-local/gestion";
+import { errorDe, profesionalQueEdita } from "@/lib/mi-local/acciones";
+import { leerMiCuenta, leerServiciosAsignados } from "@/lib/mi-local/gestion";
 import type { Respuesta } from "@/lib/mi-local/respuesta";
 import { clienteDeSupabase } from "@/lib/supabase";
 
@@ -22,13 +22,6 @@ import { clienteDeSupabase } from "@/lib/supabase";
 
 /** `verPlanes`: lo que se rechazó se destraba con otro plan. `listo`: se guardó y la pantalla sigue. */
 export type EstadoDeEquipo = Respuesta;
-
-/** El error de una escritura: la frase de la base, o el genérico (y se anota). */
-function errorDe(error: ErrorDeLaBase, generico: string, donde: string): EstadoDeEquipo {
-  const deLaBase = mensajeDeLaBase(error);
-  if (!deLaBase) console.error(`mi-local/${donde}:`, error.code, error.message);
-  return { error: deLaBase ?? generico, verPlanes: pideOtroPlan(error) };
-}
 
 /**
  * Suma un profesional. Sin cuenta, sólo con el nombre. Si es el dueño
@@ -167,27 +160,6 @@ export async function elegirQuienesSiguen(_: EstadoDeEquipo, datos: FormData): P
   if (error) return errorDe(error, errores.generico, "quienes-siguen");
 
   redirect("/mi-local/equipo");
-}
-
-/**
- * Lo que el dueño puede tocar de un profesional, o el error. Lo suyo y lo de
- * los que no tienen cuenta (D2 del plan de la fase 3): se vuelve a mirar acá,
- * no se cree lo que dice el formulario.
- */
-async function profesionalQueEdita(
-  id: string,
-): Promise<{ error: string; editable?: undefined } | { error: null; editable: boolean }> {
-  const { errores } = miLocal.profesional;
-  const local = await leerLocalQueEntra();
-  if (!local) return { error: errores.sinAcceso };
-  try {
-    const cuenta = await leerMiCuenta();
-    const miembro = await leerMiembro(local.id, id, cuenta.id);
-    return miembro ? { error: null, editable: loEditaElDuenio(miembro) } : { error: errores.generico };
-  } catch (error) {
-    console.error("mi-local/profesional:", error);
-    return { error: errores.generico };
-  }
 }
 
 const datosDelProfesional = z.object({

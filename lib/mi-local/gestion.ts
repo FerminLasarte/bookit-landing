@@ -1,10 +1,11 @@
 import "server-only";
 import type { Nivel } from "@/lib/planes";
+import { minutosDe, type DiaEspecial, type Franja, type TipoDeDiaEspecial } from "@/lib/mi-local/horario";
 import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
  * Lo que la gestión del local lee de Supabase, con la sesión del dueño: los
- * servicios, el equipo y el plan (fase 3, docs/PLAN-MI-LOCAL-FASE-3.md). Las
+ * servicios, el equipo, los horarios y el plan (fase 3, docs/PLAN-MI-LOCAL-FASE-3.md). Las
  * mismas consultas que la app (BooKit, `BusinessServicesRepository` y
  * `BusinessTeamProvider`).
  */
@@ -285,4 +286,68 @@ export async function leerResumenDeBaja(idProfesional: string): Promise<ResumenD
   }
   const r = data as { turnos_a_cancelar: number; con_cliente: number; pagados_por_mp: number };
   return { turnos: r.turnos_a_cancelar, conCliente: r.con_cliente, pagadosPorMp: r.pagados_por_mp };
+}
+
+/** Las franjas de la semana de un profesional (`config_agenda`), por día y hora, como `ScheduleProvider` de la app. */
+export async function leerFranjas(idProfesional: string): Promise<Franja[]> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase
+    .from("config_agenda")
+    .select("dia_semana, hora_inicio, hora_fin, modalidad, intervalo_turnos, turnos_bloqueados")
+    .eq("id_profesional", idProfesional)
+    .order("dia_semana")
+    .order("hora_inicio");
+  if (error) throw new Error(`horario: ${error.message}`);
+  type Fila = {
+    dia_semana: number;
+    hora_inicio: string;
+    hora_fin: string;
+    modalidad: string | null;
+    intervalo_turnos: number | null;
+    turnos_bloqueados: string[] | null;
+  };
+  return (data as Fila[]).map((f) => ({
+    dia: f.dia_semana,
+    inicio: f.hora_inicio,
+    fin: f.hora_fin,
+    modalidad: f.modalidad,
+    intervalo: f.intervalo_turnos,
+    turnosBloqueados: f.turnos_bloqueados ?? [],
+  }));
+}
+
+/** Los días especiales de un profesional desde `desde`, en orden, como la pestaña Excepciones de la app. */
+export async function leerDiasEspeciales(idProfesional: string, desde: string): Promise<DiaEspecial[]> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase
+    .from("excepciones")
+    .select("id_excepcion, fecha, modalidad, hora_inicio, hora_fin, motivo")
+    .eq("id_profesional", idProfesional)
+    .gte("fecha", desde)
+    .order("fecha")
+    .order("hora_inicio", { nullsFirst: true });
+  if (error) throw new Error(`días especiales: ${error.message}`);
+  type Fila = {
+    id_excepcion: number;
+    fecha: string;
+    modalidad: string | null;
+    hora_inicio: string | null;
+    hora_fin: string | null;
+    motivo: string | null;
+  };
+  return (data as Fila[]).map((f) => {
+    const tipo: TipoDeDiaEspecial =
+      f.modalidad === "dia_libre" || f.modalidad === "horario_especial" ? f.modalidad : "bloqueo";
+    return {
+      id: f.id_excepcion,
+      fecha: f.fecha,
+      tipo,
+      // `_excepcion_toma_el_dia`: un día libre, o sin horas, es el día entero.
+      horas:
+        tipo !== "dia_libre" && f.hora_inicio && f.hora_fin
+          ? { desde: minutosDe(f.hora_inicio), hasta: minutosDe(f.hora_fin) }
+          : null,
+      motivo: f.motivo?.trim() || null,
+    };
+  });
 }

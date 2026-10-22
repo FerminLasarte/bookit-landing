@@ -27,6 +27,7 @@ export const miLocal = {
     /** En el orden de la app; las de la fase 3 se suman cuando existen (D1 del plan de la fase 3). */
     secciones: [
       { label: "Agenda", href: "/mi-local" },
+      { label: "Horarios", href: "/mi-local/horarios" },
       { label: "Servicios", href: "/mi-local/servicios" },
       { label: "Equipo", href: "/mi-local/equipo" },
     ],
@@ -102,6 +103,113 @@ export const miLocal = {
       horario: "Elegí un horario.",
       generico: "No pudimos cargar el turno. Probá de nuevo en un rato.",
       sinAcceso,
+    },
+  },
+
+  /**
+   * Los horarios de cada profesional, como `ScheduleScreen` de la app: la
+   * semana habitual y los días especiales (sus "Excepciones").
+   */
+  horarios: {
+    titulo: "Horarios",
+    profesional: "Profesional",
+    sinProfesionales: "Tu local no tiene profesionales activos. Se suman en Equipo.",
+    error: "No pudimos traer los horarios. Recargá la página en un rato.",
+    soloLectura: "Su horario lo maneja desde su cuenta.",
+    dias: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
+    semana: {
+      titulo: "Semana habitual",
+      /** "5 días abiertos · 49 h por semana". */
+      resumen: (dias: number, horas: string) =>
+        dias === 0 ? "Todavía no hay días abiertos" : `${dias === 1 ? "1 día abierto" : `${dias} días abiertos`} · ${horas} por semana`,
+      nota: "Tocá un día para cargar el horario. Ahí mismo lo repetís en el resto de la semana.",
+      cerrado: "Cerrado",
+      editar: (dia: string) => `Editar el horario del ${dia.toLowerCase()}`,
+    },
+    /** El editor de un día, como `EditorDiaSheet`. */
+    dia: {
+      abierto: "Abierto",
+      cerrado: "Cerrado",
+      /** "9 h de atención · 1 descanso". */
+      bajada: (atencion: string | null, descansos: number) =>
+        atencion === null
+          ? "Cerrado todo el día"
+          : [`${atencion} de atención`, descansos === 1 ? "1 descanso" : descansos > 1 && `${descansos} descansos`]
+              .filter(Boolean)
+              .join(" · "),
+      horario: "Horario",
+      abre: "Abre",
+      cierra: "Cierra",
+      descanso: (n: number) => `Descanso ${n}`,
+      desde: "Desde",
+      hasta: "Hasta",
+      elegir: "Elegí",
+      agregarDescanso: "Agregar descanso",
+      quitarDescanso: "Quitar",
+      turnos: "Turnos",
+      modalidades: {
+        con_turno: { titulo: "Con turno", bajada: "El cliente reserva un horario." },
+        orden_llegada: { titulo: "Por orden de llegada", bajada: "Se atiende a quien llega, sin reserva." },
+      },
+      intervalo: "Un turno cada",
+      intervaloBajada: "Son los horarios que el cliente ve para reservar.",
+      repetir: "Repetir en",
+      repetirNota: "Los días marcados quedan con este mismo horario.",
+      guardar: (dias: number) => (dias > 1 ? `Guardar en ${dias} días` : "Guardar"),
+      guardando: "Guardando…",
+      volver: "Volver",
+      errores: {
+        descanso: "Elegí desde y hasta qué hora es cada descanso.",
+        generico: "No pudimos guardar el horario. Probá de nuevo en un rato.",
+        sinAcceso,
+      },
+    },
+    /** Los días especiales, como `ExceptionsTab` y `ExcepcionSheet`. */
+    especiales: {
+      titulo: "Días especiales",
+      bajada: "Un día libre o unas horas cerradas que se salen de la semana habitual.",
+      proximos: (n: number) => (n === 1 ? "1 próximo" : `${n} próximos`),
+      vacio: "No hay días especiales por venir.",
+      nuevo: "Nuevo día especial",
+      editar: "Editar día especial",
+      editarUno: "Editar",
+      /** Para los lectores de pantalla: cada fila dice de qué día es. */
+      editarDia: (dia: string) => `Editar el ${dia}`,
+      eliminarDia: (dia: string) => `Eliminar el ${dia}`,
+      diaLibre: "Día libre",
+      unasHoras: "Unas horas",
+      del: "Del",
+      al: "Al",
+      alNota: "Vacío, es un solo día. Se guarda un día libre por cada día, hasta 60.",
+      dia: "Día",
+      horasCerradas: "Horas cerradas",
+      desde: "Desde",
+      hasta: "Hasta",
+      motivo: "Motivo",
+      motivoEjemplo: "Ej: vacaciones, médico, feriado",
+      aviso: "Los turnos que ya estén reservados esos días no se cancelan solos.",
+      /** "Día libre · Vacaciones", "Cerrado de 10:00 a 12:00" (`ExcepcionFila`). */
+      detalle: {
+        dia_libre: () => "Día libre",
+        bloqueo: (desde: string, hasta: string) => `Cerrado de ${desde} a ${hasta}`,
+        horario_especial: (desde: string, hasta: string) => `Horario especial de ${desde} a ${hasta}`,
+      },
+      guardar: "Guardar",
+      guardando: "Guardando…",
+      volver: "Volver",
+      eliminar: "Eliminar",
+      eliminarTitulo: "Eliminar día especial",
+      eliminarTexto: (dia: string | null) => `${dia ?? "Ese día"} vuelve al horario habitual.`,
+      eliminando: "Eliminando…",
+      errores: {
+        fecha: "Elegí el día.",
+        rango: "El último día tiene que ser después del primero.",
+        tope: "Elegí hasta 60 días seguidos.",
+        horas: "Elegí desde y hasta qué hora.",
+        generico: "No pudimos guardar el día especial. Probá de nuevo en un rato.",
+        eliminar: "No pudimos eliminar el día especial. Probá de nuevo en un rato.",
+        sinAcceso,
+      },
     },
   },
 
@@ -279,6 +387,12 @@ export const miLocal = {
       delServicio: (valor: string) => `Vacío: ${valor}, el del servicio.`,
       soloLectura: "Su precio y su duración los maneja desde su cuenta.",
       guardar: "Guardar servicios",
+    },
+    horarios: {
+      titulo: "Horarios",
+      bajada: "Los días y las horas en que recibe turnos.",
+      editar: "Editar sus horarios",
+      ver: "Ver sus horarios",
     },
     actividad: {
       titulo: "Recibe turnos",
