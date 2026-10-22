@@ -1,6 +1,6 @@
 import type { TonoDeBadge } from "@/components/ui/Badge";
 import type { Bloqueo } from "@/lib/mi-local/lugar";
-import type { EstadoTurno, Grupo } from "@/lib/mi-local/turnos";
+import type { EstadoTurno, FueraDeHorario, Grupo } from "@/lib/mi-local/turnos";
 import { planes } from "@/content/planes";
 import { site } from "@/content/site";
 
@@ -126,7 +126,26 @@ export const miLocal = {
     sinProfesionales: "Tu local no tiene profesionales activos. Se suman desde la app.",
     sinServicios: (profesional: string) => `${profesional} no tiene servicios asignados. Se asignan desde la app.`,
     sinServiciosPropios: "Todavía no tenés servicios. Te los asigna quien administra el local.",
-    sinHorarios: "No quedan horarios libres este día.",
+    /** Un horario que no está entre los libres, como "Otra hora" de la app: de 6 a 23:45, de a 15 minutos. */
+    otraHora: "Otra hora",
+    hora: "Hora",
+    horaBajada: "De 6 a 23:45, de a 15 minutos.",
+    sinHorariosConOtra: "No quedan horarios libres este día. Lo podés cargar en otra hora.",
+    /**
+     * Cuando la base dice que el turno cae fuera de la agenda: los textos del
+     * contrato de BooKit. Sin nombre, le habla al profesional que se carga un
+     * turno a sí mismo.
+     */
+    fueraDeHorario: {
+      titulo: "¿Lo cargás igual?",
+      motivos: {
+        no_atiende: (profesional: string | null) => (profesional ? `${profesional} no atiende ese día.` : "Ese día no atendés."),
+        fuera_de_hora: (profesional: string | null) =>
+          profesional ? `Ese horario queda fuera de la agenda de ${profesional}.` : "Ese horario queda fuera de tu agenda.",
+      } satisfies Record<FueraDeHorario, (profesional: string | null) => string>,
+      cargarIgual: "Cargar igual",
+      cambiarHorario: "Cambiar horario",
+    },
     error: "No pudimos traer los horarios. Recargá la página en un rato.",
     nombre: "Nombre del cliente",
     telefono: "Teléfono",
@@ -134,6 +153,7 @@ export const miLocal = {
     cargando: "Cargando…",
     errores: {
       horario: "Elegí un horario.",
+      hora: "Elegí una hora entre las 6 y las 23:45, de a 15 minutos.",
       generico: "No pudimos cargar el turno. Probá de nuevo en un rato.",
     },
   },
