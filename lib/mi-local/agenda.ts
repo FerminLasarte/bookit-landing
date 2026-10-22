@@ -1,7 +1,10 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { leerMiPlan, type MiPlan } from "@/lib/planes";
+import { diaDe } from "@/lib/formato";
 import { clienteDeSupabase } from "@/lib/supabase";
+import { esEstadoTurno, type Profesional, type Turno } from "./turnos";
 
 /*
  * Lo que la agenda del local lee de Supabase, con la sesión del dueño. Las
@@ -9,36 +12,6 @@ import { clienteDeSupabase } from "@/lib/supabase";
  * `ManualBookingRepository.fetchProfesionales`): lo que se ve lo decide la
  * política de `turnos`, no esta página.
  */
-
-export type EstadoTurno = "pendiente" | "confirmado" | "completado" | "ausente" | "cancelado" | "expirado";
-
-export const ESTADOS_TURNO: readonly EstadoTurno[] = [
-  "pendiente",
-  "confirmado",
-  "completado",
-  "ausente",
-  "cancelado",
-  "expirado",
-];
-
-export const esEstadoTurno = (valor: unknown): valor is EstadoTurno =>
-  typeof valor === "string" && (ESTADOS_TURNO as readonly string[]).includes(valor);
-
-export type Turno = {
-  id: string;
-  inicio: string;
-  fin: string;
-  estado: EstadoTurno;
-  precio: number;
-  cliente: string | null;
-  esManual: boolean;
-  /** Lo que se le devuelve si se cancela: lo pagado por Mercado Pago. */
-  pagadoPorMp: number;
-  servicio: string | null;
-  profesional: { id: string; nombre: string } | null;
-};
-
-export type Profesional = { id: string; nombre: string };
 
 export type MiLocal = {
   id: string;
@@ -49,12 +22,24 @@ export type MiLocal = {
 /**
  * El local de la cuenta. Una cuenta sin local va a /mi-local/sin-local. El
  * chequeo vive acá y no en el layout: Next dibuja la página en paralelo al
- * layout, así que un layout que corta no evita que la página lea.
+ * layout, así que un layout que corta no evita que la página lea. Con
+ * `cache`, el marco del panel y la página comparten la lectura.
  */
-export async function leerMiLocal(): Promise<MiLocal> {
+export const leerMiLocal = cache(async (): Promise<MiLocal> => {
   const plan = await leerMiPlan();
   if (!plan.comercio || !plan.suscripcion) redirect("/mi-local/sin-local");
   return { id: plan.comercio.id, nombre: plan.comercio.nombre, suscripcion: plan.suscripcion };
+});
+
+/**
+ * El círculo del local en la app (`comercios.logo_url`), o `null` si no subió
+ * uno. Aparte de `leerMiLocal`: lo pide sólo el marco, y así la página no lo
+ * espera. Un error no tapa la agenda: el marco muestra la inicial.
+ */
+export async function leerLogoDelLocal(idComercio: string): Promise<string | null> {
+  const supabase = await clienteDeSupabase("local");
+  const { data } = await supabase.from("comercios").select("logo_url").eq("id_comercio", idComercio).maybeSingle();
+  return (data as { logo_url: string | null } | null)?.logo_url ?? null;
 }
 
 /**
@@ -80,19 +65,20 @@ type FilaDeTurno = {
 };
 
 /**
- * El principio y el fin de un día de Buenos Aires, en UTC. Argentina no tiene
- * horario de verano desde 2009: el día empieza siempre a las 03:00 UTC.
+ * El principio de un día de Buenos Aires y el final de `dias` días después,
+ * en UTC. Argentina no tiene horario de verano desde 2009: el día empieza
+ * siempre a las 03:00 UTC.
  */
-function rangoDelDia(dia: string) {
+function rangoDeDias(dia: string, dias = 1) {
   const inicio = new Date(`${dia}T00:00:00-03:00`);
-  const fin = new Date(inicio.getTime() + 86_400_000);
+  const fin = new Date(inicio.getTime() + dias * 86_400_000);
   return { inicio: inicio.toISOString(), fin: fin.toISOString() };
 }
 
 /** Los turnos de un día del local, en orden. Un error sube: un día que no se leyó no es un día vacío. */
 export async function leerTurnosDelDia(idComercio: string, dia: string): Promise<Turno[]> {
   const supabase = await clienteDeSupabase("local");
-  const { inicio, fin } = rangoDelDia(dia);
+  const { inicio, fin } = rangoDeDias(dia);
   const { data, error } = await supabase
     .from("turnos")
     .select(
@@ -126,19 +112,43 @@ export async function leerTurnosDelDia(idComercio: string, dia: string): Promise
   }));
 }
 
-/** Los profesionales activos del local, para el filtro. */
+/**
+ * Cuántos turnos tiene cada día de una semana, de `lunes` a domingo, con la
+ * clave `2026-10-21`. Todos los turnos, como el total de la lista. Para la
+ * tira de la semana (D7 del plan del panel): sólo la fecha, nada más.
+ */
+export async function leerSemana(idComercio: string, lunes: string): Promise<Record<string, number>> {
+  const supabase = await clienteDeSupabase("local");
+  const { inicio, fin } = rangoDeDias(lunes, 7);
+  const { data, error } = await supabase
+    .from("turnos")
+    .select("fecha_hora_inicio, servicios!fk_turnos_servicio!inner(id_comercio)")
+    .eq("servicios.id_comercio", idComercio)
+    .gte("fecha_hora_inicio", inicio)
+    .lt("fecha_hora_inicio", fin);
+  if (error) throw new Error(`semana: ${error.message}`);
+  const cuenta: Record<string, number> = {};
+  for (const { fecha_hora_inicio } of data as { fecha_hora_inicio: string }[]) {
+    const clave = diaDe(fecha_hora_inicio);
+    cuenta[clave] = (cuenta[clave] ?? 0) + 1;
+  }
+  return cuenta;
+}
+
+/** Los profesionales activos del local, con su foto, para elegir uno. */
 export async function leerProfesionales(idComercio: string): Promise<Profesional[]> {
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase
     .from("profesionales")
-    .select("id_profesional, nombre")
+    .select("id_profesional, nombre, foto_url")
     .eq("id_comercio", idComercio)
     .eq("esta_activo", true)
     .order("nombre");
   if (error) throw new Error(`profesionales: ${error.message}`);
-  return (data as { id_profesional: string; nombre: string | null }[]).map((p) => ({
+  return (data as { id_profesional: string; nombre: string | null; foto_url: string | null }[]).map((p) => ({
     id: String(p.id_profesional),
     nombre: p.nombre ?? "",
+    foto: p.foto_url,
   }));
 }
 
@@ -176,31 +186,3 @@ export async function leerHorariosLibres(idProfesional: string, dia: string, idS
   if (error) throw new Error(`horarios_libres_del_profesional: ${error.message}`);
   return (data as { inicio: string }[]).map((h) => h.inicio);
 }
-
-/** Reservado y sin resolver: pendiente o confirmado (`EstadoTurno.esActivo` en la app). */
-const estaAbierto = (turno: Turno) => turno.estado === "pendiente" || turno.estado === "confirmado";
-
-/** Terminó y nadie lo cerró: sigue pendiente o confirmado (`EstadoTurno.quedoSinCerrar` en la app). */
-export const quedoSinMarcar = (turno: Turno, ahora: Date) => estaAbierto(turno) && new Date(turno.fin) <= ahora;
-
-/** Los estados a los que el local puede llevar un turno. Confirmar es cosa del pago (D1 del plan de la fase 2). */
-export const ACCIONES_DE_TURNO = ["completado", "ausente", "cancelado"] as const;
-export type AccionDeTurno = (typeof ACCIONES_DE_TURNO)[number];
-
-/** Qué se le puede hacer a un turno ahora. `null`: ya está cerrado. */
-export type AccionesDelTurno = { asistencia: boolean; cancelar: boolean } | null;
-
-/**
- * La regla de `_turnos_quien_cambia_el_estado` (BooKit, 20260925150000), para
- * no ofrecer lo que la base va a rechazar: completado y ausente desde que
- * empieza, cancelar hasta que termina. La que decide es la base; si cambia
- * allá, cambia acá.
- */
-export function accionesDelTurno(turno: Turno, ahora: Date): AccionesDelTurno {
-  if (!estaAbierto(turno)) return null;
-  return { asistencia: new Date(turno.inicio) <= ahora, cancelar: new Date(turno.fin) > ahora };
-}
-
-/** Lo cobrado: sólo lo completado, la definición de ingreso de la app (`EstadoTurno.esIngreso`). */
-export const cobrado = (turnos: Turno[]) =>
-  turnos.filter((t) => t.estado === "completado").reduce((suma, t) => suma + t.precio, 0);

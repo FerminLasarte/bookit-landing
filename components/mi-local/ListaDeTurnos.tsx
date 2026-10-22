@@ -1,7 +1,7 @@
 import Superficie from "@/components/ui/Superficie";
 import { miLocal } from "@/content/mi-local";
 import { hora, pesos } from "@/lib/formato";
-import { accionesDelTurno, quedoSinMarcar, type Turno } from "@/lib/mi-local/agenda";
+import { accionesDelTurno, quedoSinMarcar, type Turno } from "@/lib/mi-local/turnos";
 import EstadoDelTurno from "./EstadoDelTurno";
 import FichaDelTurno from "./FichaDelTurno";
 
@@ -40,7 +40,7 @@ export default function ListaDeTurnos({ turnos, ahora }: { turnos: Turno[]; ahor
                 <span className="col-start-2 row-start-1 text-right text-fg tabular-nums md:col-start-3">
                   {pesos(turno.precio)}
                 </span>
-                <span className="col-start-2 row-start-2 flex justify-end md:col-start-4 md:row-start-1">
+                <span className="col-start-2 row-start-2 flex items-start justify-end md:col-start-4 md:row-start-1 md:items-center">
                   <EstadoDelTurno estado={turno.estado} sinMarcar={sinMarcar} />
                 </span>
               </FichaDelTurno>

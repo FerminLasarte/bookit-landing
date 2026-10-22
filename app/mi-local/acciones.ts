@@ -4,13 +4,8 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { miLocal } from "@/content/mi-local";
-import {
-  ACCIONES_DE_TURNO,
-  daAcceso,
-  leerMiLocal,
-  leerServiciosDelProfesional,
-  type AccionDeTurno,
-} from "@/lib/mi-local/agenda";
+import { daAcceso, leerMiLocal, leerServiciosDelProfesional } from "@/lib/mi-local/agenda";
+import { ACCIONES_DE_TURNO, type AccionDeTurno } from "@/lib/mi-local/turnos";
 import { enlaceDeVista, esClaveDeDia } from "@/lib/mi-local/vista";
 import { clienteDeSupabase } from "@/lib/supabase";
 

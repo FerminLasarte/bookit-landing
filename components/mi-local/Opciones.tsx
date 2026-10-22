@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 
 /*
  * Elegir entre opciones con enlaces: funcionan sin JavaScript y lo elegido
- * queda en la URL. Los usan los filtros de la agenda y la carga de un turno.
+ * queda en la URL. Los usa la carga de un turno; la agenda filtra en el
+ * navegador con botones, pero con la misma píldora (`claseDeOpcion`).
  */
 
 /** Un rótulo y sus opciones, en una fila que se parte. */

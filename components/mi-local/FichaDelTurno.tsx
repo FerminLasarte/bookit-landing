@@ -7,7 +7,7 @@ import Button from "@/components/ui/Button";
 import Dialogo, { Volver } from "@/components/ui/Dialogo";
 import { miLocal } from "@/content/mi-local";
 import { hora, pesos } from "@/lib/formato";
-import type { AccionDeTurno, AccionesDelTurno, Turno } from "@/lib/mi-local/agenda";
+import type { AccionDeTurno, AccionesDelTurno, Turno } from "@/lib/mi-local/turnos";
 import EstadoDelTurno from "./EstadoDelTurno";
 
 /**

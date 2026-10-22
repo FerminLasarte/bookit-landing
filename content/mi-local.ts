@@ -1,6 +1,7 @@
 import type { TonoDeBadge } from "@/components/ui/Badge";
-import type { EstadoTurno } from "@/lib/mi-local/agenda";
+import type { EstadoTurno, Grupo } from "@/lib/mi-local/turnos";
 import { planes } from "@/content/planes";
+import { site } from "@/content/site";
 
 /*
  * El copy de /mi-local: la agenda del local en la web. Los avisos de la
@@ -21,6 +22,24 @@ export const miLocal = {
     errores: { ingreso: planes.sinSesion.errores.oauth } as Record<string, string>,
   },
 
+  /** El marco del panel: la barra del local en la compu y el menú en el teléfono. */
+  panel: {
+    secciones: [{ label: "Agenda", href: "/mi-local" }],
+    navegacion: "Secciones del panel",
+    menu: "Menú",
+    cerrarMenu: "Cerrar el menú",
+    tuPlan: "Tu plan",
+    salir: "Salir",
+    /** La firma de abajo, al lado del isotipo: el logo completo no baja de 28 px (manual de marca). */
+    firma: "con Bookit",
+    irALaWeb: "Ir a la web de Bookit",
+  },
+
+  /** Entrar y "sin local": fuera del sitio, con su pantalla propia. */
+  entrada: {
+    irALaWeb: `Ir a ${site.dominio}`,
+  },
+
   sinLocal: {
     titulo: "Esto es para los locales",
     bajada: "Tu cuenta no tiene un local en Bookit. Los turnos se sacan desde la app.",
@@ -29,9 +48,13 @@ export const miLocal = {
   },
 
   agenda: {
+    titulo: "Agenda",
     hoy: "Hoy",
     anterior: "Día anterior",
     siguiente: "Día siguiente",
+    semanaAnterior: "Semana anterior",
+    semanaSiguiente: "Semana siguiente",
+    semana: "Días de la semana",
     elegir: "Elegir el día",
     profesional: "Profesional",
     estado: "Estado",
@@ -45,7 +68,6 @@ export const miLocal = {
     deMostrador: "Cliente de mostrador",
     sinProfesional: "Sin profesional",
     sinMarcar: "Sin marcar",
-    salir: "Salir",
     cargar: "Cargar un turno",
   },
 
@@ -113,6 +135,15 @@ export const miLocal = {
       sinAcceso,
     },
   },
+
+  /** Cómo mira el local su día (D9 del plan del panel). */
+  grupos: {
+    "sin-marcar": "Sin marcar",
+    "por-atender": "Por atender",
+    completados: "Completados",
+    ausentes: "Ausentes",
+    cancelados: "Cancelados",
+  } satisfies Record<Grupo, string>,
 
   /** El tono sale de lo que significa para el local: lo que pide atención, lo que se cayó. */
   estados: {
