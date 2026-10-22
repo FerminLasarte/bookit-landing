@@ -8,6 +8,7 @@ import { daAcceso, leerMiLocal, leerServiciosDelProfesional } from "@/lib/mi-loc
 import { ACCIONES_DE_TURNO, type AccionDeTurno } from "@/lib/mi-local/turnos";
 import { enlaceDeVista, esClaveDeDia } from "@/lib/mi-local/vista";
 import { clienteDeSupabase } from "@/lib/supabase";
+import { mensajeDeLaBase } from "@/lib/mi-local/errores";
 
 /*
  * Lo que la agenda del local le pide al servidor. Escribe siempre con la sesión
@@ -20,15 +21,6 @@ import { clienteDeSupabase } from "@/lib/supabase";
 export type ResultadoDeCambio = { error: string | null };
 
 const cambio = z.object({ idTurno: z.uuid(), estado: z.enum(ACCIONES_DE_TURNO) });
-
-/**
- * Lo que dice la base cuando rechaza un cambio. El trigger contesta con frases
- * para personas ("El turno todavía no empezó."), y la app las muestra tal cual
- * (D7). El `42501` de Postgres sin trigger ("permission denied for table…") no
- * es una de ellas.
- */
-const mensajeDelTrigger = (error: { code: string; message: string }) =>
-  error.code === "42501" && !error.message.startsWith("permission denied") ? error.message : null;
 
 /** Completa, marca ausente o cancela un turno del local. */
 export async function cambiarEstado(idTurno: string, estado: AccionDeTurno): Promise<ResultadoDeCambio> {
@@ -46,7 +38,7 @@ export async function cambiarEstado(idTurno: string, estado: AccionDeTurno): Pro
     .eq("id_turno", leido.data.idTurno)
     .select("id_turno");
   if (error) {
-    const delTrigger = mensajeDelTrigger(error);
+    const delTrigger = mensajeDeLaBase(error);
     if (!delTrigger) console.error("mi-local/cambiar-estado:", error.code, error.message);
     return { error: delTrigger ?? errores.generico };
   }

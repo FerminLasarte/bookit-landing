@@ -48,6 +48,16 @@ export async function leerLogoDelLocal(idComercio: string): Promise<string | nul
  */
 export const daAcceso = (estado: MiLocal["suscripcion"]["estado"]) => estado === "al_dia" || estado === "en_gracia";
 
+/**
+ * El local, si entra al panel, o `null`. Las pantallas de adentro mandan a la
+ * agenda, que dice por qué no entra y cómo regularizarlo; las acciones
+ * contestan que no tiene acceso.
+ */
+export async function leerLocalQueEntra(): Promise<MiLocal | null> {
+  const local = await leerMiLocal();
+  return daAcceso(local.suscripcion.estado) ? local : null;
+}
+
 type FilaDeTurno = {
   id_turno: string;
   fecha_hora_inicio: string;

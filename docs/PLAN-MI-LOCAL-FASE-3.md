@@ -419,6 +419,15 @@ tener trabajo sin commitear.
    - las lecturas, la lista, crear, editar y dar de baja;
    - la seña según el plan;
    - la sección en el marco y las pestañas del teléfono (D1).
+
+   *Hecho el 22-oct-2026, en la rama `mi-local/fase-3`:*
+   - Servicios está en la barra.
+   - Las pestañas de abajo en el teléfono llegan con la tercera sección, en el
+     paso 3, como dice el plan del panel.
+   - Las acciones van al lado de su página, con dos ayudantes nuevos:
+     `mensajeDeLaBase` (`lib/mi-local/errores.ts`) y `leerLocalQueEntra`.
+   - `cambiarEstado` y `cargarTurno` pasan a usar `leerLocalQueEntra` cuando
+     se mergee `mi-local/sin-p-fin`, que toca esas mismas líneas.
 3. **Web, Equipo:**
    - el equipo y las invitaciones;
    - sumar, invitar, reenviar y revocar;

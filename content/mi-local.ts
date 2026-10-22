@@ -10,8 +10,8 @@ import { site } from "@/content/site";
 
 export type Aviso = { titulo: string; bajada: string; boton: string | null };
 
-/** Lo que contesta una acción cuando el local ya no entra a la agenda. */
-const sinAcceso = "Tu local no tiene acceso a la agenda. Regularizá tu plan para volver a usarla.";
+/** Lo que contesta una acción cuando el local ya no entra al panel: la agenda, los servicios. */
+const sinAcceso = "Tu local no tiene acceso al panel. Regularizá tu plan para volver a usarlo.";
 
 export const miLocal = {
   meta: { title: "Mi local" },
@@ -24,7 +24,11 @@ export const miLocal = {
 
   /** El marco del panel: la barra del local en la compu y el menú en el teléfono. */
   panel: {
-    secciones: [{ label: "Agenda", href: "/mi-local" }],
+    /** En el orden de la app; las de la fase 3 se suman cuando existen (D1 del plan de la fase 3). */
+    secciones: [
+      { label: "Agenda", href: "/mi-local" },
+      { label: "Servicios", href: "/mi-local/servicios" },
+    ],
     navegacion: "Secciones del panel",
     menu: "Menú",
     cerrarMenu: "Cerrar el menú",
@@ -96,6 +100,78 @@ export const miLocal = {
       servicio: "Ese servicio ya no está. Elegí otro.",
       generico: "No pudimos cargar el turno. Probá de nuevo en un rato.",
       sinAcceso,
+    },
+  },
+
+  /** Los servicios del local, como Gestión › Servicios de la app (BooKit, `business_services_view.dart`). */
+  servicios: {
+    titulo: "Servicios",
+    nuevo: "Nuevo servicio",
+    /** "5 servicios · 2 con seña". */
+    resumen: (total: number, conSena: number) =>
+      [total === 1 ? "1 servicio" : `${total} servicios`, conSena > 0 && `${conSena} con seña`].filter(Boolean).join(" · "),
+    vacio: {
+      titulo: "Sin servicios",
+      bajada: "Todavía no cargaste ningún servicio. Agregá el primero para que tus clientes puedan reservarlo.",
+    },
+    error: "No pudimos traer tus servicios. Recargá la página en un rato.",
+    editar: (nombre: string) => `Editar ${nombre}`,
+    minutos: (n: number) => `${n} min`,
+    /** `Servicio.senaLegible` de la app: "Seña 20%" o "Seña $5.000". */
+    sena: (valor: string) => `Seña ${valor}`,
+  },
+
+  /** Crear o editar un servicio, como `AddEditServiceScreen`. */
+  servicio: {
+    nuevo: "Nuevo servicio",
+    editar: "Editar servicio",
+    volver: "Volver a los servicios",
+    errorDeLectura: "No pudimos traer este servicio. Recargá la página en un rato.",
+    nombre: "Nombre",
+    descripcion: "Descripción",
+    precio: "Precio",
+    duracion: "Duración, en minutos",
+    sena: {
+      titulo: "Seña",
+      pide: "Pide seña",
+      bajada: "El cliente paga un adelanto con Mercado Pago para confirmar el turno.",
+      tipo: "Cómo se calcula",
+      porcentaje: "Porcentaje",
+      fijo: "Monto fijo",
+      valor: { porcentaje: "Porcentaje de la seña", fijo: "Monto de la seña" },
+      bloqueada: (nivel: string) => `Cobrar seña está disponible en ${nivel}.`,
+      verPlanes: "Ver planes",
+    },
+    crear: "Crear servicio",
+    guardar: "Guardar cambios",
+    guardando: "Guardando…",
+    errores: {
+      /** "Falta el nombre." o "Faltan el nombre, el precio y la duración." */
+      faltan: (campos: string[]) =>
+        campos.length === 1 ? `Falta ${campos[0]}.` : `Faltan ${campos.slice(0, -1).join(", ")} y ${campos.at(-1)}.`,
+      campos: { nombre: "el nombre", precio: "el precio", duracion: "la duración" },
+      faltaSena: { porcentaje: "Falta el porcentaje de la seña.", fijo: "Falta el monto de la seña." },
+      generico: "No pudimos guardar el servicio. Probá de nuevo en un rato.",
+      sinAcceso,
+    },
+    /** La baja, como `EliminarServicioBoton`: el servicio se oculta y sus turnos siguen. */
+    baja: {
+      boton: "Eliminar servicio",
+      titulo: "Eliminar servicio",
+      texto: (nombre: string, reservados: number | null) => {
+        const baja = `"${nombre}" deja de aparecer en tu ficha y ya no se va a poder reservar.`;
+        if (reservados === 0) return baja;
+        if (reservados === 1) return `${baja} El turno que tiene reservado sigue en pie.`;
+        if (reservados === null) return `${baja} Los turnos que ya tenga reservados siguen en pie.`;
+        return `${baja} Los ${reservados} turnos que tiene reservados siguen en pie.`;
+      },
+      confirmar: "Eliminar",
+      eliminando: "Eliminando…",
+      volver: "Volver",
+      errores: {
+        generico: "No pudimos eliminar el servicio. Probá de nuevo en un rato.",
+        sinAcceso,
+      },
     },
   },
 
