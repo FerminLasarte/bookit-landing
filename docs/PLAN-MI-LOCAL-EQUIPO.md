@@ -1,5 +1,8 @@
 # Mi local en la web: los profesionales del equipo
 
+> **Aprobado por Fermín el 22 de octubre de 2026**, con la recomendada de cada
+> decisión D1–D8.
+
 > Borrador del 22 de octubre de 2026, para que Fermín apruebe las decisiones
 > **D1–D8**. Es la fila "Los profesionales del equipo entran a la web" de la
 > hoja de ruta (`docs/PLAN-MI-LOCAL.md`), que va después de la fase 3.
