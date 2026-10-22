@@ -281,11 +281,16 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
 **Cambiar el estado**
 - Un turno que ya empezó: Completar → "Completado", sube "Cobrado" y el
   cliente tiene los puntos en la billetera.
-  **Falta.** A las 22:40 no quedaban horarios del día: quedó cargado uno para
-  el 22/10 a las 9:00 con Julián Peralta, que empieza mañana. Los puntos no se
-  ven con un turno a mano, porque no tiene cliente con cuenta.
+  **Anduvo** (22-oct, con un turno a mano del 22/10 a las 9:00 con Julián
+  Peralta, cargado la noche anterior porque ya no quedaban horarios). Pasada
+  la hora, la ficha ofrece "Asistió · Completar" y "No asistió · Ausente", y
+  ya no cancelar. Completar lo deja "Completado" y "Cobrado" pasa de $0 a
+  $9.000. Los puntos no se ven con un turno a mano, porque no tiene cliente con
+  cuenta.
 - Otro: Ausente → "Ausente", sin push.
-  **Falta**, por lo mismo: quedó otro el 22/10 a las 9:00 con Nico Ferreyra.
+  **Anduvo** (22-oct, el de las 9:00 con Nico Ferreyra): queda "Ausente" y
+  "Cobrado" no cambia. No tiene que salir push (`notificar_turno` no avisa
+  completado ni ausente); lo confirma Fermín en el teléfono.
 - Un turno de mañana en efectivo: no ofrece completar; Cancelar pide
   confirmación, queda "Cancelado", al cliente le llega "El local canceló tu
   turno", el horario vuelve a estar libre en la app y, si usó un cupón, vuelve
@@ -364,7 +369,7 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
   Fermín.
 
 Quedan en Nogal, del 22/10: cancelados a las 10:00, 11:00, 12:00 y 19:00, y
-abiertos los dos de las 9:00, para completar y ausente.
+los dos de las 9:00, uno completado y otro ausente.
 
 ## Cómo se termina la prueba
 
