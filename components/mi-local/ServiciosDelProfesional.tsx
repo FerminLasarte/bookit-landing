@@ -6,7 +6,7 @@ import { fieldClasses } from "@/components/forms/Field";
 import Button from "@/components/ui/Button";
 import { miLocal } from "@/content/mi-local";
 import { pesos } from "@/lib/formato";
-import { enviarSinBorrar } from "@/lib/formularios";
+import { formularioSinBorrar } from "@/lib/formularios";
 import type { Asignado, Servicio } from "@/lib/mi-local/gestion";
 import { cn } from "@/lib/utils";
 import RespuestaDeAccion from "./RespuestaDeAccion";
@@ -44,7 +44,7 @@ export default function ServiciosDelProfesional({
     });
 
   return (
-    <form onSubmit={enviarSinBorrar(enviar)} className="flex flex-col gap-4">
+    <form {...formularioSinBorrar(enviar)} className="flex flex-col gap-4">
       <input type="hidden" name="id" value={idProfesional} />
       {conPrecio && <input type="hidden" name="con_precio" value="1" />}
       <ul className="flex flex-col divide-y divide-line">
