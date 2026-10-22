@@ -8,9 +8,14 @@ import { AnimatePresence, useMotionValueEvent, useScroll } from "motion/react";
 import Button from "@/components/ui/Button";
 import Resaltado from "@/components/ui/Resaltado";
 import Wordmark from "@/components/ui/Wordmark";
-import { navCta, navLinks } from "@/content/nav";
+import { navCta, navLinks, navPanel } from "@/content/nav";
 import { useSeccionEnFoco } from "@/lib/useSeccionEnFoco";
 import { cn } from "@/lib/utils";
+
+/** Un enlace del nav en la compu; los que no son la sección actual van en gris. */
+const ENLACE =
+  "ring-focus relative isolate flex min-h-10 items-center rounded-pill px-4 text-small transition-colors duration-(--duration-chico)";
+const ENLACE_QUIETO = "text-muted hover:text-fg";
 
 /** Las anclas de la home que el nav marca como actuales. */
 const ANCLAS = navLinks.flatMap((link) => link.href.split("#")[1] ?? []);
@@ -84,10 +89,7 @@ export default function Nav() {
                   <Link
                     href={link.href}
                     aria-current={esActiva(link.href) ? "location" : undefined}
-                    className={cn(
-                      "ring-focus relative isolate flex min-h-10 items-center rounded-pill px-4 text-small transition-colors duration-(--duration-chico)",
-                      esActiva(link.href) ? "font-semibold text-fg" : "text-muted hover:text-fg",
-                    )}
+                    className={cn(ENLACE, esActiva(link.href) ? "font-semibold text-fg" : ENLACE_QUIETO)}
                   >
                     <AnimatePresence>{sobre === link.href && <Resaltado grupo="nav-resaltado" />}</AnimatePresence>
                     {link.label}
@@ -96,6 +98,9 @@ export default function Nav() {
               ))}
             </ul>
 
+            <Link href={navPanel.href} className={cn(ENLACE, ENLACE_QUIETO, "hidden lg:flex")}>
+              {navPanel.label}
+            </Link>
             <Button href={navCta.href} size="compact" className="ml-auto hidden lg:ml-0 lg:inline-flex">
               {navCta.label}
             </Button>
@@ -134,6 +139,13 @@ export default function Nav() {
             <Button href={navCta.href} className="mt-3 w-full">
               {navCta.label}
             </Button>
+            <Link
+              href={navPanel.href}
+              onClick={() => setAbierto(false)}
+              className="ring-focus mt-2 flex min-h-11 items-center justify-center rounded-pill text-small font-semibold text-muted hover:text-fg"
+            >
+              {navPanel.label}
+            </Link>
           </div>
         </nav>
       </header>
