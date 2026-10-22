@@ -169,4 +169,11 @@ Una rama, `mi-local/fase-1`, y un PR a `main`:
   `auth_user_id` y aplicar la regla de acceso de `staff_bottom_nav_bar.dart`.
 - Si "Mi local" va al nav o al footer. **Decidido por Fermín el 21-oct-2026:
   va en el nav.** Todavía no está hecho: hasta que se implemente, se llega con
-  el link.
+  el link. Antes de hacerlo hay que contestar tres preguntas (el nav hoy tiene
+  Cómo funciona, Para locales, Puntos, Planes, Soporte y el botón "Descargá la
+  app"):
+  - Dónde va: un sexto enlace, o una entrada aparte cerca del botón, como un
+    "Entrar".
+  - El texto: "Mi local" o "Entrar".
+  - A quién se le muestra: a todos, o sólo a quien ya tiene sesión de dueño. Un
+    cliente que lo toca termina en "Esto es para los locales".
