@@ -1,7 +1,10 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-const tamanos = { chico: 24, grande: 40 } as const;
+const tamanos = { chico: 24, grande: 40, ficha: 80 } as const;
+
+const medidas = { chico: "size-6", grande: "size-10", ficha: "size-20" } as const;
+const letras = { chico: "text-[0.625rem]", grande: "text-small", ficha: "text-title" } as const;
 
 /** Las iniciales de un nombre: "Barbería Nogal" → "BN", "Nico" → "N". */
 const iniciales = (nombre: string) =>
@@ -29,7 +32,7 @@ export default function Avatar({
   className?: string;
 }) {
   const px = tamanos[tamano];
-  const clases = cn("shrink-0 rounded-full", tamano === "chico" ? "size-6" : "size-10", className);
+  const clases = cn("shrink-0 rounded-full", medidas[tamano], className);
   if (foto) return <Image src={foto} alt="" width={px} height={px} className={cn(clases, "object-cover")} />;
   return (
     <span
@@ -37,7 +40,7 @@ export default function Avatar({
       className={cn(
         clases,
         "flex items-center justify-center bg-accent/20 font-bold text-accent-fg",
-        tamano === "chico" ? "text-[0.625rem]" : "text-small",
+        letras[tamano],
       )}
     >
       {iniciales(nombre)}

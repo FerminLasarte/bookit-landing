@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      // La foto del local viaja ya recortada: dos JPEG de unos cientos de KB, más lo que suma el multipart.
+      bodySizeLimit: "2mb",
+    },
+  },
   images: {
     remotePatterns: [
       {

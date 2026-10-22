@@ -24,14 +24,16 @@ export const miLocal = {
   panel: {
     /**
      * En el orden de la app (D1 del plan de la fase 3). Un profesional del
-     * equipo ve las tres primeras, como las pestañas del staff en la app (D2
-     * del plan del equipo).
+     * equipo ve todas menos Equipo, como las pestañas del staff en la app (D2
+     * del plan del equipo). Perfil es el del local para el dueño y el suyo
+     * para el profesional (D1 y D7 del plan de la fase 4).
      */
     secciones: [
       { label: "Agenda", href: "/mi-local", delDuenio: false },
       { label: "Horarios", href: "/mi-local/horarios", delDuenio: false },
       { label: "Servicios", href: "/mi-local/servicios", delDuenio: false },
       { label: "Equipo", href: "/mi-local/equipo", delDuenio: true },
+      { label: "Perfil", href: "/mi-local/perfil", delDuenio: false },
     ],
     /** Las pestañas de abajo, en el teléfono: las secciones (D1 del plan de la fase 3). */
     pestanas: "Secciones",
@@ -436,7 +438,7 @@ export const miLocal = {
       nombre: "Nombre",
       bio: "Presentación",
       guardar: "Guardar datos",
-      soloLectura: "Su nombre y su presentación los maneja desde su cuenta.",
+      soloLectura: "Su nombre, su foto y su presentación los maneja desde su cuenta.",
     },
     servicios: {
       titulo: "Servicios",
@@ -491,6 +493,79 @@ export const miLocal = {
     errores: {
       generico: "No pudimos guardar los cambios. Probá de nuevo en un rato.",
       soloLectura: "Los datos de un profesional con cuenta los maneja él.",
+    },
+  },
+
+  /** El perfil del local: lo que el cliente ve del local en la app (fase 4), como "Información del negocio". */
+  perfil: {
+    titulo: "Perfil",
+    bajada: "Lo que ven tus clientes de tu local en la app.",
+    asiTeVen: "Así te ven",
+    error: "No pudimos traer los datos de tu local. Recargá la página en un rato.",
+    datos: {
+      titulo: "Datos del local",
+      nombre: "Nombre",
+      categoria: "Categoría",
+      direccion: "Dirección",
+      sinDireccion: "Sin dirección",
+      cambiarDireccion: "Cambiar la dirección",
+      dejarDireccion: "Dejar la de ahora",
+      instagram: "Instagram",
+      usuarioDeInstagram: "@tulocal",
+      mail: "Mail de la cuenta",
+      mailNota: "Está atado a tu cuenta y no se cambia desde acá.",
+      guardar: "Guardar cambios",
+      guardando: "Guardando…",
+    },
+    /** Los buscadores del alta, con su copy; cambia sólo qué hacer si la calle no aparece. */
+    ubicacion: {
+      localidad: planes.alta.localidad,
+      buscarLocalidad: planes.alta.buscarLocalidad,
+      direccion: "Dirección nueva",
+      buscarDireccion: planes.alta.buscarDireccion,
+      sinLocalidad: planes.alta.sinLocalidad,
+      sinDireccion: (localidad: string) =>
+        `No encontramos esa calle en ${localidad}. Si no aparece, cambiala desde la app: ahí lo marcás en el mapa.`,
+      errores: { buscar: planes.alta.errores.buscar },
+    },
+    errores: {
+      generico: "No pudimos guardar los cambios. Probá de nuevo en un rato.",
+    },
+  },
+
+  /** El perfil del profesional del equipo en ese local, como "Información profesional" de la app (D7 del plan de la fase 4). */
+  miPerfil: {
+    titulo: "Mi perfil",
+    bajada: (local: string) => `Cómo te ven los clientes de ${local}.`,
+    nombre: "Nombre visible",
+    guardar: "Guardar nombre",
+    guardando: "Guardando…",
+    errores: {
+      nombre: "Escribí tu nombre.",
+      generico: "No pudimos guardar tu nombre. Probá de nuevo en un rato.",
+    },
+  },
+
+  /** Acomodar una foto antes de subirla, como `PhotoFramerScreen` de la app (D4 del plan de la fase 4). */
+  encuadre: {
+    local: { titulo: "Foto del local", bajada: "La ven tus clientes en la búsqueda y en tu ficha." },
+    profesional: { titulo: "Foto de perfil", bajada: "La ven tus clientes al elegir con quién reservar." },
+    cambiar: "Cambiar la foto",
+    poner: "Poner una foto",
+    formas: { perfil: "Perfil", portada: "Portada" },
+    ayudas: {
+      perfil: "El círculo de las listas, el mapa y la búsqueda.",
+      portada: "La banda de arriba de tu ficha.",
+    },
+    mover: "Arrastrá la foto o usá las flechas para acomodarla.",
+    zoom: "Zoom",
+    otra: "Elegir otra foto",
+    guardar: "Guardar la foto",
+    guardando: "Subiendo…",
+    volver: "Volver",
+    errores: {
+      abrir: "No pudimos abrir esa foto. Probá con una JPG o PNG.",
+      subir: "No pudimos guardar la foto. Probá de nuevo en un rato.",
     },
   },
 

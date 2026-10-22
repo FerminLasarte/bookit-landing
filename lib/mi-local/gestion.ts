@@ -145,13 +145,13 @@ export async function leerPlanDelLocal(nivel: Nivel | null): Promise<PlanDelLoca
   };
 }
 
-/** Quién está usando el panel: el id de su cuenta y el nombre con el que se registró. */
-export async function leerMiCuenta(): Promise<{ id: string; nombre: string | null }> {
+/** Quién está usando el panel: el id de su cuenta, el nombre con el que se registró y su mail. */
+export async function leerMiCuenta(): Promise<{ id: string; nombre: string | null; email: string | null }> {
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data) throw new Error(`cuenta: ${error?.message ?? "sin sesión"}`);
   const metadatos = data.claims.user_metadata as { nombre?: string } | undefined;
-  return { id: data.claims.sub, nombre: metadatos?.nombre?.trim() || null };
+  return { id: data.claims.sub, nombre: metadatos?.nombre?.trim() || null, email: data.claims.email ?? null };
 }
 
 export type Miembro = {

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import { guardarFotoDelProfesional } from "@/app/mi-local/(panel)/equipo/acciones";
 import ActividadDelProfesional from "@/components/mi-local/ActividadDelProfesional";
 import Avatar from "@/components/mi-local/Avatar";
+import CambiarFoto from "@/components/mi-local/CambiarFoto";
 import DatosDelProfesional from "@/components/mi-local/DatosDelProfesional";
 import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
@@ -10,6 +12,7 @@ import ServiciosDelProfesional from "@/components/mi-local/ServiciosDelProfesion
 import Superficie from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
+import { FORMAS_DEL_PROFESIONAL } from "@/lib/encuadre";
 import { leerLocalDelDuenio } from "@/lib/mi-local/lugar";
 import {
   leerMiCuenta,
@@ -76,7 +79,17 @@ export default async function ProfesionalPage({ params }: PageProps<"/mi-local/e
 
       <Bloque titulo={copy.datos.titulo}>
         {editable ? (
-          <DatosDelProfesional miembro={miembro} />
+          <>
+            {/* La foto, como el nombre: la suya y la de los que no tienen cuenta (D6 del plan de la fase 4). */}
+            <CambiarFoto
+              accion={guardarFotoDelProfesional}
+              formas={FORMAS_DEL_PROFESIONAL}
+              textos={miLocal.encuadre.profesional}
+              hayFoto={miembro.foto !== null}
+              campos={{ id: miembro.id }}
+            />
+            <DatosDelProfesional miembro={miembro} />
+          </>
         ) : (
           <>
             {miembro.bio && <p className="text-body text-fg">{miembro.bio}</p>}

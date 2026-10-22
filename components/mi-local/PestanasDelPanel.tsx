@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Clock, Scissors, Users, type LucideIcon } from "lucide-react";
+import { CalendarDays, CircleUserRound, Clock, Scissors, Users, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { miLocal } from "@/content/mi-local";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ const iconos: Record<string, LucideIcon> = {
   "/mi-local/horarios": Clock,
   "/mi-local/servicios": Scissors,
   "/mi-local/equipo": Users,
+  "/mi-local/perfil": CircleUserRound,
 };
 
 /**
@@ -30,7 +31,7 @@ export default function PestanasDelPanel({ secciones }: { secciones: Seccion[] }
       <ul className="flex">
         {secciones.map((s) => {
           const Icono = iconos[s.href];
-          const activa = s === actual;
+          const activa = s.href === actual;
           return (
             <li key={s.href} className="flex-1">
               <Link
