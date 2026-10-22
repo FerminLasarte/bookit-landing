@@ -235,21 +235,22 @@ export default function CambiarFoto({
                     aria-checked={forma === activa}
                     onClick={() => setActiva(forma)}
                     className={cn(
-                      "ring-focus flex flex-1 items-center gap-3 rounded-field border p-2 text-left transition-colors duration-(--duration-chico)",
+                      "ring-focus flex min-w-0 flex-1 items-center gap-2 rounded-field border p-2 text-left sm:gap-3 transition-colors duration-(--duration-chico)",
                       forma === activa ? "border-fg" : "border-line hover:border-fg/25",
                     )}
                   >
                     <span
                       className={cn(
                         "shrink-0 overflow-hidden bg-fg/6",
-                        forma === "perfil" ? "size-10 rounded-full" : "h-10 w-20 rounded-[4px]",
+                        forma === "perfil" ? "size-8 rounded-full sm:size-10" : "h-8 w-16 rounded-[4px] sm:h-10 sm:w-20",
                       )}
                     >
                       <Lienzo foto={foto} forma={forma} encuadre={encuadres[forma]!} />
                     </span>
                     <span className="min-w-0">
                       <span className="block text-small font-semibold text-fg">{copy.formas[forma]}</span>
-                      <span className="block text-micro text-muted">{copy.ayudas[forma]}</span>
+                      {/* En el teléfono no entra: queda el nombre de la forma y su miniatura. */}
+                      <span className="hidden text-micro text-muted sm:block">{copy.ayudas[forma]}</span>
                     </span>
                   </button>
                 ))}
