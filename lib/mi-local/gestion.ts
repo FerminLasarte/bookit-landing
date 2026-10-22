@@ -109,6 +109,8 @@ export type PlanDelLocal = {
   preciosPorProfesional: Incluye;
   /** Los meses anteriores de los números; sin esto, sólo el mes en curso. Lo frena la app, no la base (D4 de la fase 5). */
   estadisticasHistorial: Incluye;
+  /** Crear cupones. Sin esto, los que hay quedan pausados por la base sin tocarlos. */
+  promociones: Incluye;
 };
 
 type FilaDeNivel = {
@@ -119,6 +121,7 @@ type FilaDeNivel = {
   cuentas_staff: boolean;
   precios_por_profesional: boolean;
   estadisticas_historial: boolean;
+  promociones: boolean;
 };
 
 /**
@@ -131,12 +134,12 @@ export async function leerPlanDelLocal(nivel: Nivel | null): Promise<PlanDelLoca
   const supabase = await clienteDeSupabase("local");
   const { data, error } = await supabase
     .from("niveles")
-    .select("id, rotulo, tope_profesionales, cobro_mp, cuentas_staff, precios_por_profesional, estadisticas_historial")
+    .select("id, rotulo, tope_profesionales, cobro_mp, cuentas_staff, precios_por_profesional, estadisticas_historial, promociones")
     .order("orden");
   const niveles = (data ?? []) as FilaDeNivel[];
   if (error) console.error("mi-local/niveles:", error.code, error.message);
   const propio = niveles.find((n) => n.id === nivel);
-  const incluye = (funcion: "cobro_mp" | "cuentas_staff" | "precios_por_profesional" | "estadisticas_historial"): Incluye => ({
+  const incluye = (funcion: "cobro_mp" | "cuentas_staff" | "precios_por_profesional" | "estadisticas_historial" | "promociones"): Incluye => ({
     incluida: Boolean(propio?.[funcion]),
     desde: niveles.find((n) => n[funcion])?.rotulo ?? null,
   });
@@ -146,6 +149,7 @@ export async function leerPlanDelLocal(nivel: Nivel | null): Promise<PlanDelLoca
     cuentasStaff: incluye("cuentas_staff"),
     preciosPorProfesional: incluye("precios_por_profesional"),
     estadisticasHistorial: incluye("estadisticas_historial"),
+    promociones: incluye("promociones"),
   };
 }
 

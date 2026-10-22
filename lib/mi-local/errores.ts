@@ -1,7 +1,7 @@
 export type ErrorDeLaBase = { code: string; message: string; hint?: string | null };
 
 /** Las pistas con que la base dice que algo no entra en el plan (BooKit 20261003140000). */
-const PISTAS_DEL_PLAN = ["tope_profesionales", "plan_sin_staff"];
+const PISTAS_DEL_PLAN = ["tope_profesionales", "plan_sin_staff", "plan_sin_promociones"];
 
 /**
  * Lo que dice la base cuando rechaza algo, si es una frase para personas, o

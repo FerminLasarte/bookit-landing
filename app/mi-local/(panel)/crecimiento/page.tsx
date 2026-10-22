@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import AccionesDeCrecimiento from "@/components/mi-local/AccionesDeCrecimiento";
 import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import { Opcion } from "@/components/mi-local/Opciones";
@@ -58,12 +59,14 @@ export default async function CrecimientoPage({ searchParams }: PageProps) {
   };
 
   const encabezado = <Encabezado titulo={copy.titulo} bajada={copy.bajada} />;
+  const cuponesDesde = plan.promociones.incluida ? null : (plan.promociones.desde ?? copy.bloqueado.otroPlan);
 
   if (!estadisticas) {
     return (
       <div className="flex flex-col gap-6 md:gap-8">
         {encabezado}
         <ErrorDeLectura>{copy.error}</ErrorDeLectura>
+        <AccionesDeCrecimiento cuponesDesde={cuponesDesde} />
       </div>
     );
   }
@@ -78,6 +81,8 @@ export default async function CrecimientoPage({ searchParams }: PageProps) {
           <p className="font-semibold text-fg">{copy.vacio.titulo}</p>
           <p className="mt-1 text-small text-muted">{copy.vacio.bajada}</p>
         </Superficie>
+        {/* La app las esconde con el vacío; acá siguen: un local sin turnos también puede armar un cupón. */}
+        <AccionesDeCrecimiento cuponesDesde={cuponesDesde} />
       </div>
     );
   }
@@ -86,7 +91,11 @@ export default async function CrecimientoPage({ searchParams }: PageProps) {
     <div className="flex flex-col gap-6 md:gap-8">
       {encabezado}
 
-      {/* Cada tarjeta aparece sólo si tiene algo que decir, como en la app. */}
+      {/*
+       * Cada tarjeta aparece sólo si tiene algo que decir, como en la app. Las
+       * palancas van al final en el teléfono, como la app, y en la compu justo
+       * debajo de lo facturado, para que no queden bajo seis tarjetas (D3).
+       */}
       <div className="grid items-start gap-4 md:gap-6 lg:grid-cols-2">
         <Facturado
           estadisticas={estadisticas}
@@ -112,6 +121,7 @@ export default async function CrecimientoPage({ searchParams }: PageProps) {
             </nav>
           }
         />
+        <AccionesDeCrecimiento cuponesDesde={cuponesDesde} className="order-last lg:order-none lg:col-span-2" />
         <Clientes estadisticas={estadisticas} />
         <NoHechos estadisticas={estadisticas} />
         <CuandoSeLlena estadisticas={estadisticas} bloqueadoHasta={bloqueadoHasta} />
