@@ -185,7 +185,7 @@ lo que haya en la app y en la base en ese momento.
 | 2 | Completar, ausente, cancelar y cargar un turno a mano (`docs/PLAN-MI-LOCAL-FASE-2.md`) | En `main` (#46). Falta terminar la prueba |
 | — | El panel como un sistema propio, y la selección de día, profesional y estado (`docs/PLAN-MI-LOCAL-PANEL.md`) | En `main` (#47) |
 | — | El enlace "Mi local" en el nav | Decidido, sin hacer |
-| 3 | **Gestión:** horarios y descansos, servicios y equipo. Incluye los **huecos libres** de la agenda, con una función SQL en BooKit (`huecos_del_dia`) que use la web y después la app (D3 de la fase 1) | Sin planear |
+| 3 | **Gestión:** horarios y descansos, servicios y equipo. Incluye los **huecos libres** de la agenda, con una función SQL en BooKit (`huecos_del_dia`) que use la web y después la app (D3 de la fase 1). Plan: `docs/PLAN-MI-LOCAL-FASE-3.md` | Aprobada (D1–D9), sin empezar |
 | — | **Los profesionales del equipo entran a la web:** cada uno ve sólo su agenda y la marca, como en la app, con la regla de acceso de `staff_bottom_nav_bar.dart` | Después de la fase 3 |
 | 4 | **Crecimiento** (estadísticas, promociones y recompensas) y **Perfil** del local | Sin planear |
 
