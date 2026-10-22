@@ -545,7 +545,8 @@ Barbería Nogal (la cuenta demo, id `11111111-…`):
   ni en el teléfono: `SeccionesDelPanel` y `PestanasDelPanel` comparan
   `s === actual`, y las secciones llegan del marco (un componente del servidor)
   como copias, así que nunca son el mismo objeto. Viene del PR del equipo
-  (061cca0). Se arregla comparando por `href`.
+  (061cca0). **Arreglado en este PR, con el OK de Fermín:** se compara por
+  `href`.
 - **Barbería Nogal tiene cuatro fotos sueltas en el bucket**, de la cuenta
   `ba61f91a…`: dos que ya no usaba nadie y las dos originales que reemplazó
   esta prueba. Nogal no las puede borrar porque no son suyas.
