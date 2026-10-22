@@ -483,12 +483,15 @@ Barbería Nogal (la cuenta demo, id `11111111-…`):
   subió con la ruta que abrió la migración. En un profesional con cuenta no se
   ofrece, y la ficha dice "Su nombre, su foto y su presentación los maneja
   desde su cuenta.".
+- **"Mi perfil"**, con la cuenta del equipo de Fermín activada en Nogal: ve
+  Agenda, Horarios, Servicios y Perfil, sin Equipo; Perfil abre su ficha y no
+  la del local. Cambió el nombre y lo volvió, y subió una foto (sólo el
+  círculo). En Barbería Peña, cortada, `/mi-local/perfil` manda a la agenda
+  con "Espacio de trabajo en pausa".
 - 375 px y 1280 px, claro y oscuro, sin scroll de costado; las cinco pestañas
   entran en el teléfono.
 
 **Lo que no se probó todavía:**
-- "Mi perfil" del profesional: hace falta que Fermín entre con la cuenta del
-  equipo, activada en Nogal.
 - El alta en `/planes` después de sacarle la localidad y la dirección: el
   typecheck y el build pasan, pero no hay una cuenta sin local a mano para
   verla.
@@ -505,6 +508,8 @@ Barbería Nogal (la cuenta demo, id `11111111-…`):
   "NF"). No hay "quitar la foto" en la app ni en la web. "Prueba web (borrar)",
   el profesional que iba a servir para esto, ya no está en Nogal. Fermín
   decidió dejarlas así (22/10).
+- **La cuenta del equipo de Fermín** quedó activa en Nogal y con una foto de
+  prueba ("FL"). Antes estaba desactivada.
 
 ## Lo que vi y no toca este plan
 
@@ -536,6 +541,11 @@ Barbería Nogal (la cuenta demo, id `11111111-…`):
 - **Un guardado del perfil con dirección tardó 40 s** en la acción, sin nada
   colgado en la base mientras tanto. El siguiente, igual, tardó 0,65 s. No lo
   pude reproducir.
+- **La barra del panel no marca la sección en la que se está**, ni en la compu
+  ni en el teléfono: `SeccionesDelPanel` y `PestanasDelPanel` comparan
+  `s === actual`, y las secciones llegan del marco (un componente del servidor)
+  como copias, así que nunca son el mismo objeto. Viene del PR del equipo
+  (061cca0). Se arregla comparando por `href`.
 - **Barbería Nogal tiene cuatro fotos sueltas en el bucket**, de la cuenta
   `ba61f91a…`: dos que ya no usaba nadie y las dos originales que reemplazó
   esta prueba. Nogal no las puede borrar porque no son suyas.
