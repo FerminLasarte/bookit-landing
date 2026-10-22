@@ -289,8 +289,9 @@ de cada caso está lo que pasó; los que faltan dicen por qué.
   cuenta.
 - Otro: Ausente → "Ausente", sin push.
   **Anduvo** (22-oct, el de las 9:00 con Nico Ferreyra): queda "Ausente" y
-  "Cobrado" no cambia. No tiene que salir push (`notificar_turno` no avisa
-  completado ni ausente); lo confirma Fermín en el teléfono.
+  "Cobrado" no cambia. No salió ninguna push, como se esperaba
+  (`notificar_turno` no avisa completado ni ausente): lo confirmó Fermín en el
+  teléfono.
 - Un turno de mañana en efectivo: no ofrece completar; Cancelar pide
   confirmación, queda "Cancelado", al cliente le llega "El local canceló tu
   turno", el horario vuelve a estar libre en la app y, si usó un cupón, vuelve
