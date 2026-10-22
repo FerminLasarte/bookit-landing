@@ -514,6 +514,83 @@ export const miLocal = {
     },
   },
 
+  /**
+   * Los números del local, como la pestaña Crecimiento de la app (fase 5,
+   * BooKit `business_stats_screen.dart`). Las ⓘ dicen de dónde sale cada
+   * número, con el texto de la app.
+   */
+  crecimiento: {
+    titulo: "Crecimiento",
+    bajada: "Cómo le va a tu local, con los turnos que se prestaron.",
+    periodo: "Período",
+    meses: (n: number) => `${n} meses`,
+    ver: "Ver",
+    ingresos: "Ingresos",
+    turnos: "Turnos",
+    comoSeCuenta: "Cómo se cuenta",
+    error: "No pudimos cargar las estadísticas.",
+    vacio: {
+      titulo: "Todavía no hay datos",
+      bajada: "Cuando empieces a recibir turnos vas a ver acá cómo evoluciona tu negocio.",
+    },
+    /** Lo que el plan no trae, de muestra y borroso, con el aviso encima. */
+    bloqueado: {
+      historial: (nivel: string) => `Todo tu historial, en ${nivel}`,
+      bajadaHistorial: "Mes por mes, con tus horarios pico",
+      horarios: (nivel: string) => `Tus horarios pico, en ${nivel}`,
+      bajadaHorarios: "Qué días se llenan y cuáles quedan libres",
+      boton: "Ver planes",
+      /** Si `niveles` no dice cuál lo trae. */
+      otroPlan: "otro plan",
+    },
+    facturado: {
+      titulo: "Facturado",
+      tituloDelMes: "Facturado este mes",
+      info: "Lo que facturaron los turnos que se prestaron, al precio final. Los cancelados y los ausentes quedan afuera: sumarlos infla los números con trabajo que nunca se hizo. El último mes está en curso, por eso va marcado: todavía le faltan días.",
+      sinTurnos: "Sin turnos prestados todavía",
+      resumen: (turnos: string, ticket: string) => `${turnos} · ticket promedio ${ticket}`,
+      variacion: (porcentaje: number, mes: string, anterior: string) => `${porcentaje}% · ${mes} contra ${anterior}`,
+      sube: "Subió",
+      baja: "Bajó",
+      grafico: (ver: string) => `${ver} por mes`,
+      enCurso: "en curso",
+    },
+    clientes: {
+      titulo: "Tus clientes",
+      info: "Un cliente es nuevo el mes de su primera visita al local; después, cada mes que vuelve cuenta como recurrente. Se reconoce por su cuenta o, en un turno de mostrador, por su teléfono: sin ninguno de los dos no se cuenta.",
+      volvieron: (n: number) => (n === 1 ? "volvió" : "volvieron"),
+      nuevos: (n: number) => (n === 1 ? "vino por primera vez" : "vinieron por primera vez"),
+      nadie: "Todavía nadie volvió: las recompensas sirven para eso.",
+      proporcion: (porcentaje: number) => `${porcentaje}% de tus clientes ya se había atendido antes.`,
+    },
+    noHechos: {
+      titulo: "Turnos que no se hicieron",
+      info: "De todos los turnos reservados para el período que ya pasaron, cuántos se cancelaron y a cuántos el cliente no vino. Las reservas de Mercado Pago que nadie pagó no cuentan.",
+      deLoReservado: "de lo que se reservó",
+      cancelados: "Cancelados",
+      ausentes: "No vinieron",
+      sena: "Pedir seña baja los que no vienen: quien pagó una parte, viene.",
+    },
+    horarios: {
+      titulo: "Cuándo se llena",
+      info: "Los turnos prestados según el día y la hora en que empezaron, en franjas de tres horas. Cuanto más oscura la celda, más turnos.",
+      letras: ["L", "M", "M", "J", "V", "S", "D"],
+      dias: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"],
+      cuando: (dia: string, desde: number, hasta: number) => `${dia} de ${desde} a ${hasta}`,
+      masLleno: "Lo más lleno:",
+      masVacio: "Lo más vacío:",
+      hueco: "un buen hueco para un cupón",
+    },
+    profesionales: {
+      titulo: "Por profesional",
+      info: "Los turnos que atendió cada uno en el período y lo que facturaron. La barra es contra el que más atendió.",
+    },
+    servicios: {
+      titulo: "Servicios",
+      info: "Qué parte de tus turnos se lleva cada servicio y lo que facturó. El de abajo es el que menos sale: un buen candidato para un cupón.",
+    },
+  },
+
   /** El perfil del local: lo que el cliente ve del local en la app (fase 4), como "Información del negocio". */
   perfil: {
     titulo: "Perfil",
