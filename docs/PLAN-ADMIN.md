@@ -1,9 +1,10 @@
 # El panel del equipo (/admin) — v2
 
-> **Aprobado por Fermín el 23 de octubre de 2026**, con la recomendada de cada
-> decisión D1–D11. El paso A está en main (#65). BooKit dejó B a E en la base
-> (BooKit#99, contrato en BooKit `docs/admin-panel.md`), y la web los suma un
-> PR por paso.
+> **Hecho y en producción el 23 de octubre de 2026.** Aprobado ese día con la
+> recomendada de cada decisión D1–D11. La base es BooKit#99 y #100, con el
+> contrato en BooKit `docs/admin-panel.md`; la web, un PR por paso: A #65, B
+> #66, C #67, D #68 y F #69. E es sólo de BooKit. Lo probado y lo que quedó
+> afuera está al final, en **Estado** y **Para más adelante**.
 >
 > Decidido después, con el contrato a la vista: en Pulso, la comparación con
 > el mes anterior va como **los dos números, sin porcentaje** ("5 en octubre ·
@@ -334,3 +335,49 @@ Web:
 - **F:** con Nogal (la cuenta de prueba): ocultarlo con un turno por delante y
   ver el aviso, la marca en la lista y la fila en el registro; que no aparezca
   en la app ni en `/reservar/<id>`; volver a mostrarlo.
+
+## Estado (23-oct)
+
+Probado en producción con la sesión de Fermín:
+- **Lecturas:** Pulso con las cifras nuevas, Comercios (la búsqueda conserva el
+  filtro), la ficha del local, Personas (lista, búsqueda, ficha y puntos),
+  Cobros y el link "Panel" (aparece sólo con la sesión del panel; el HTML de la
+  landing no lo trae).
+- **Acciones:** Resolver (también el rechazo de la nota en blanco) y Extender
+  la prueba (un local cortado pasó a al día y quedó en el registro). Los datos
+  de prueba los creó y después los borró el chat de BooKit
+  (`prueba-panel-1` y el local "Prueba del panel (borrar)"), y se confirmó
+  desde el panel que no quedó nada.
+- **F:** se ocultó y se volvió a mostrar Nogal, que queda oculto a propósito.
+
+Sin probar porque no hay datos: la tabla de turnos de Personas (la base no
+tiene turnos), el link de WhatsApp (nadie tiene teléfono), el mail de las
+altas a medias en Cobros y el aviso de turnos por delante al ocultar. Se
+miran cuando aparezca un caso real.
+
+El monto de cada pago de suscripción se guarda desde el 23-oct: "Cobrado en
+suscripciones" de octubre es parcial, y septiembre da $0.
+
+## Para más adelante
+
+Lo que quedó afuera de la v2, para retomar con un plan nuevo:
+
+1. **Administradores desde el panel (D11).** Hoy la tabla `administradores`
+   se carga a mano. Tiene sentido cuando entre alguien más al equipo: una
+   sección para sumar y sacar admins por mail, con su fila en el registro.
+2. **Más acciones sobre la suscripción (D6).** Días de cortesía a un local de
+   Mercado Pago cortado, marcar o desmarcar fundador, cortar o reactivar a
+   mano. Antes hay que definir con BooKit qué hace el débito siguiente y qué
+   pasa con el precio que ya cobra Mercado Pago o la tienda.
+3. **Avisos en el momento (D9).** Hoy todo va en el mail de las 04:00. Un mail
+   apenas se corta un local, o push a la app (la app no sabe quién es admin).
+4. **La historia del estado de un local.** BooKit ya guarda cada cambio en
+   `comercios_cambios_de_estado` desde el 23-oct; la ficha podría mostrarla.
+5. **Lo que cobran Apple y Google.** No está en la base (vive en RevenueCat):
+   Pulso sólo cuenta cuántos locales pagan por la tienda.
+6. **Altas a medias con link a la persona.** `admin_cobros` no trae
+   `id_usuario`; el mail de las 04:00 sí linkea a `/admin/personas/<id>`.
+7. **Una acción que el registro no conoce** queda con la celda vacía. Podría
+   mostrar el nombre de la acción.
+8. **La pausa que pide el propio local** (idea 11 de BooKit): sería otro
+   motivo de "no aparece" para el bloque Visibilidad.
