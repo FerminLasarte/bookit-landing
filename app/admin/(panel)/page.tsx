@@ -3,16 +3,18 @@ import Link from "next/link";
 import { Barras, Bloque, Cifra, Cifras, Encabezado } from "@/components/admin/piezas";
 import { canales, niveles } from "@/content/admin";
 import { leerPulso } from "@/lib/admin/datos";
-import { fecha, numero, pesos } from "@/lib/formato";
+import { esteMesYElAnterior, fecha, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Pulso" };
 
 /** Cómo está la plataforma hoy: locales, gente, turnos y plata. */
 export default async function Pulso() {
   const p = await leerPulso();
-  const { comercios: c, usuarios: u, turnos: t, plata } = p;
+  const { comercios: c, usuarios: u, turnos: t, plata, mes_en_curso: ahora, mes_anterior: antes } = p;
   const dias = t.reservas_por_dia;
   const reservas30 = dias.reduce((s, d) => s + d.reservas, 0);
+  // Los dos meses lado a lado, sin porcentaje: el en curso va hasta hoy (docs/PLAN-ADMIN.md).
+  const meses = esteMesYElAnterior();
 
   return (
     <div className="flex flex-col gap-8">
@@ -23,13 +25,18 @@ export default async function Pulso() {
           Locales
         </h2>
         <Cifras>
-          <Cifra tono="arena" etiqueta="Pagando" valor={numero(c.pagando)} detalle={`de ${numero(c.total)} locales`} />
+          <Cifra
+            tono="arena"
+            etiqueta="Pagando"
+            valor={numero(c.pagando)}
+            detalle={`de ${numero(c.total)} locales · ${numero(c.cancelan_al_vencer)} no ${c.cancelan_al_vencer === 1 ? "renueva" : "renuevan"}`}
+          />
           <Cifra etiqueta="En prueba" valor={numero(c.en_prueba)} detalle="todavía no cobraron" />
           <Cifra etiqueta="Cortados" valor={numero(c.cortados)} detalle="no aparecen en la app" />
           <Cifra
-            etiqueta="Altas en 30 días"
-            valor={numero(c.altas_30d)}
-            detalle={`${numero(c.bajas_30d)} ${c.bajas_30d === 1 ? "baja" : "bajas"} · ${numero(c.cancelan_al_vencer)} no ${c.cancelan_al_vencer === 1 ? "renueva" : "renuevan"}`}
+            etiqueta={`Altas en ${meses.este}`}
+            valor={numero(ahora.altas)}
+            detalle={`${numero(antes.altas)} en ${meses.anterior} · ${numero(ahora.bajas)} ${ahora.bajas === 1 ? "baja" : "bajas"} (${numero(antes.bajas)} en ${meses.anterior})`}
           />
         </Cifras>
         <div className="grid gap-3 md:grid-cols-2">
@@ -48,7 +55,11 @@ export default async function Pulso() {
         </h2>
         <Cifras>
           <Cifra tono="arena" etiqueta="Turnos hoy" valor={numero(t.hoy)} detalle={`${numero(t.proximos_7d)} en los próximos 7 días`} />
-          <Cifra etiqueta="Completados en el mes" valor={numero(t.completados_mes)} />
+          <Cifra
+            etiqueta="Completados en el mes"
+            valor={numero(t.completados_mes)}
+            detalle={`de ${numero(ahora.reservas)} reservas en ${meses.este} (${numero(antes.reservas)} en ${meses.anterior})`}
+          />
           <Cifra
             etiqueta="Clientes activos"
             valor={numero(u.activos_30d)}
@@ -78,7 +89,16 @@ export default async function Pulso() {
             valor={pesos(plata.cobrado_por_locales_mes)}
             detalle="por Mercado Pago, en el mes"
           />
-          <Cifra etiqueta="Pagos de suscripción" valor={numero(plata.pagos_suscripcion_mes)} detalle="de Mercado Pago, en el mes" />
+          <Cifra
+            etiqueta="Cobrado en suscripciones"
+            valor={pesos(plata.cobrado_suscripciones_mes)}
+            detalle={`${numero(plata.pagos_suscripcion_mes)} ${plata.pagos_suscripcion_mes === 1 ? "pago" : "pagos"} de Mercado Pago · ${pesos(antes.cobrado_suscripciones)} en ${meses.anterior}`}
+          />
+          <Cifra
+            etiqueta="Ingreso mensual estimado"
+            valor={pesos(plata.ingreso_mensual_estimado)}
+            detalle={`Mercado Pago, a precio de lista · ${numero(plata.locales_tienda)} por Apple o Google`}
+          />
           <Cifra
             tono={plata.incidencias_abiertas > 0 ? "miel" : "niebla"}
             etiqueta="Incidencias abiertas"
