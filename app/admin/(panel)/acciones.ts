@@ -61,6 +61,45 @@ export async function darCortesia(_: Respuesta, datos: FormData): Promise<Respue
   return darDias("admin_dar_cortesia", acciones.cortesia.generico, "dar-cortesia", datos);
 }
 
+/** Marca o desmarca el precio fundador. No toca lo que ya cobra Mercado Pago ni la tienda (D12, D13). */
+export async function cambiarFundador(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  const { generico } = acciones.fundador;
+  const idComercio = campo(datos, "id_comercio");
+  const esFundador = campo(datos, "es_fundador");
+  if (!idComercio || (esFundador !== "true" && esFundador !== "false")) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { error } = await supabase.rpc("admin_cambiar_fundador", {
+    p_id_comercio: idComercio,
+    p_es_fundador: esFundador === "true",
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "cambiar-fundador") };
+
+  refresh();
+  return { error: null };
+}
+
+/** `quedan`: los lugares libres después de éste, de los 10. */
+export type RespuestaDeLanzamiento = Respuesta & { quedan?: number };
+
+/** Suma un local a los fundadores del lanzamiento. La fecha, el nivel y el tope los pone la base. */
+export async function sumarAlLanzamiento(_: RespuestaDeLanzamiento, datos: FormData): Promise<RespuestaDeLanzamiento> {
+  const { generico } = acciones.lanzamiento;
+  const idComercio = campo(datos, "id_comercio");
+  if (!idComercio) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { data, error } = await supabase.rpc("admin_sumar_fundador", {
+    p_id_comercio: idComercio,
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "sumar-fundador") };
+
+  refresh();
+  return { error: null, quedan: (data as { quedan: number }).quedan };
+}
+
 /** Suma una cuenta al equipo por su mail. La cuenta tiene que existir (D3 de la v3). */
 export async function sumarAdmin(_: Respuesta, datos: FormData): Promise<Respuesta> {
   const { generico } = acciones.equipo.sumar;
