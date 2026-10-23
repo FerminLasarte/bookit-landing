@@ -101,3 +101,23 @@ export async function cambiarVisibilidad(_: RespuestaDeVisibilidad, datos: FormD
   const { visible: quedo, turnos_por_delante } = data as { visible: boolean; turnos_por_delante: number };
   return { error: null, visible: quedo, turnosPorDelante: turnos_por_delante };
 }
+
+/** `quedan`: los lugares de fundador que siguen libres después de éste. */
+export type RespuestaDeFundador = Respuesta & { quedan?: number };
+
+/** Suma un local a los fundadores del lanzamiento. La fecha, el nivel y el tope de 10 los pone la base. */
+export async function sumarFundador(_: RespuestaDeFundador, datos: FormData): Promise<RespuestaDeFundador> {
+  const { generico } = acciones.fundador;
+  const idComercio = campo(datos, "id_comercio");
+  if (!idComercio) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { data, error } = await supabase.rpc("admin_sumar_fundador", {
+    p_id_comercio: idComercio,
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "sumar-fundador") };
+
+  refresh();
+  return { error: null, quedan: (data as { quedan: number }).quedan };
+}
