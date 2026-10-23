@@ -139,6 +139,12 @@ export type AccionDelEquipo =
       email: string | null;
       accion: "cambiar_visibilidad";
       detalle: { antes: { visible: boolean }; despues: { visible: boolean }; nota: string | null };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "sumar_fundador";
+      detalle: { despues: { vencimiento: string }; nota: string | null };
     };
 
 export type Incidencia = {
