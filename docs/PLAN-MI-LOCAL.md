@@ -214,6 +214,12 @@ antes de empezarla, como las fases.
 | **"Acepta efectivo"** | No lo edita nadie, ni la app ni la web: todos los locales dicen que aceptan efectivo |
 
 **Pruebas que quedaron pendientes:**
+
+> Desde el 23 de octubre **Barbería Nogal está oculta** (bloque Visibilidad de
+> su ficha en `/admin`, `docs/PLAN-ADMIN.md`, F). Un local oculto no aparece
+> ni toma turnos, tampoco el turno manual del propio local. Para probar con
+> Nogal, mostrarla antes desde el panel y volver a ocultarla después.
+
 - **Crecimiento, con una cuenta de cliente en la app:** reservar en Nogal con un
   código creado desde la web, y ver que la cotización aplique el descuento;
   y canjear un premio, intentar borrarlo desde la web y ver el aviso con
