@@ -74,3 +74,40 @@ export const estadosAlta: Record<string, string> = {
   usada: "Usada",
   cancelada: "Cancelada",
 };
+
+/** Lo que el equipo hace desde el panel (paso B de docs/PLAN-ADMIN.md). Los errores los escribe la base. */
+export const acciones = {
+  volver: "Volver",
+  resolver: {
+    boton: "Resolver",
+    titulo: "Resolver la incidencia",
+    bajada: "Sale de Cobros y del mail de las 04:00. Lo que escribas queda en la ficha del local.",
+    nota: "Qué se hizo con esta plata",
+    ejemplo: "La devolvió el local por transferencia",
+    confirmar: "Resolver",
+    enviando: "Resolviendo…",
+    generico: "No pudimos resolverla. Probá de nuevo.",
+  },
+  extender: {
+    boton: "Extender la prueba",
+    titulo: "Extender la prueba",
+    bajada: "Los días se cuentan desde el vencimiento, o desde hoy si ya venció. Si estaba en gracia o cortado, queda al día.",
+    conDebito:
+      "Ya autorizó el débito de Mercado Pago: el primer cobro sale igual el día pactado, y estos días se suman después.",
+    noRenueva: "Pidió no renovar: se apaga el día del vencimiento nuevo, sin gracia.",
+    dias: "Días",
+    rapidos: [7, 14, 30],
+    nota: "Nota",
+    ejemplo: "Le damos una semana",
+    confirmar: "Extender",
+    enviando: "Extendiendo…",
+    generico: "No pudimos extenderla. Probá de nuevo.",
+  },
+  registro: {
+    titulo: "Lo que hizo el equipo",
+    bajada: "Lo que se cambió desde el panel, de lo más nuevo a lo más viejo.",
+    sinCuenta: "Una cuenta borrada",
+    resolvio: (pago: string) => `Resolvió la incidencia del pago ${pago}`,
+    extendio: (dias: number, vence: string) => `Extendió la prueba ${dias} ${dias === 1 ? "día" : "días"}: vence el ${vence}`,
+  },
+};

@@ -1,8 +1,14 @@
 # El panel del equipo (/admin) — v2
 
 > **Aprobado por Fermín el 23 de octubre de 2026**, con la recomendada de cada
-> decisión D1–D11. El paso A está en la rama `admin/v2-acceso`; B a E esperan
-> a BooKit.
+> decisión D1–D11. El paso A está en main (#65). BooKit dejó B a E en la base
+> (BooKit#99, contrato en BooKit `docs/admin-panel.md`), y la web los suma un
+> PR por paso.
+>
+> Decidido después, con el contrato a la vista: en Pulso, la comparación con
+> el mes anterior va como **los dos números, sin porcentaje** ("5 en octubre ·
+> 3 en septiembre"), porque el mes en curso va hasta hoy y a principio de mes
+> el porcentaje daría siempre de menos.
 
 ## Qué es
 
@@ -204,12 +210,12 @@ BooKit, según **D8**:
     van aparte, como cantidad, porque lo que cobran Apple y Google no está en
     la base;
   - **el mes anterior** de altas, bajas, reservas y lo cobrado, para mostrar
-    "+12% contra septiembre".
+    los dos meses lado a lado.
 
 Web: en Pulso, la cifra "Pagos de suscripción" pasa a ser "Cobrado en
 suscripciones" (en pesos, con la cantidad de pagos en el detalle), se suma
-"Ingreso mensual estimado" y las cifras que tienen mes anterior muestran la
-variación en el detalle. Sin gráficos nuevos.
+"Ingreso mensual estimado" y las cifras que tienen mes anterior lo muestran
+en el detalle, sin porcentaje. Sin gráficos nuevos.
 
 ---
 
