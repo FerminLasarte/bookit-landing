@@ -64,6 +64,9 @@ function queHizo(a: AccionDelEquipo) {
       return a.detalle.despues.visible ? registro.mostro : registro.oculto;
     case "sumar_fundador":
       return registro.sumoFundador;
+    default:
+      // Una acción que la base ya anota y la web todavía no conoce: BooKit la suma primero.
+      return <span className="text-muted">{(a as { accion: string }).accion}</span>;
   }
 }
 
