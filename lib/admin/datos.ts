@@ -37,8 +37,18 @@ export type Pulso = {
     cobrado_por_locales_mes: number;
     pagos_suscripcion_mes: number;
     incidencias_abiertas: number;
+    /** Sólo los pagos con monto: se guarda desde el 23-oct-2026 (BooKit `docs/admin-panel.md`, sección 9). */
+    cobrado_suscripciones_mes: number;
+    /** Los que pagan por Mercado Pago y renuevan, a precio de lista, llevado a 30 días. */
+    ingreso_mensual_estimado: number;
+    locales_tienda: number;
   };
+  /** Meses calendario en Buenos Aires. El en curso va hasta ahora. */
+  mes_en_curso: Mes;
+  mes_anterior: Mes;
 };
+
+type Mes = { altas: number; bajas: number; reservas: number; cobrado_suscripciones: number };
 
 export type FilaComercio = {
   id_comercio: string;

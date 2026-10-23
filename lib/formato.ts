@@ -21,6 +21,7 @@ const horaYMinutos = new Intl.DateTimeFormat("es-AR", { hour: "2-digit", minute:
 const diaDeAgenda = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
 const diaDeLaSemanaCorto = new Intl.DateTimeFormat("es-AR", { weekday: "short", timeZone: "UTC" });
 const mesYAnioLargo = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "UTC" });
+const mesLargo = new Intl.DateTimeFormat("es-AR", { month: "long", timeZone: "UTC" });
 // `en-CA` escribe la fecha como `2026-10-21`.
 const claveDeDia = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: ZONA });
 const relativo = new Intl.RelativeTimeFormat("es-AR", { numeric: "auto" });
@@ -92,6 +93,15 @@ export const mesYAnio = (clave: string) => mesYAnioLargo.format(new Date(`${clav
 
 /** El día de hoy en Buenos Aires, como `2026-10-21`. */
 export const hoy = () => claveDeDia.format(new Date());
+
+/** `octubre` y `septiembre`: el mes en curso en Buenos Aires y el anterior. `Date.UTC` lleva enero a diciembre. */
+export function esteMesYElAnterior(): { este: string; anterior: string } {
+  const clave = hoy();
+  const anio = Number(clave.slice(0, 4));
+  const numeroDeMes = Number(clave.slice(5, 7));
+  const nombre = (indice: number) => mesLargo.format(new Date(Date.UTC(anio, indice, 15)));
+  return { este: nombre(numeroDeMes - 1), anterior: nombre(numeroDeMes - 2) };
+}
 
 /** El día de Buenos Aires de un momento, como `2026-10-21`. */
 export const diaDe = (iso: string) => claveDeDia.format(new Date(iso));
