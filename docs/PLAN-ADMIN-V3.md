@@ -1,8 +1,12 @@
 # El panel del equipo (/admin) — v3
 
-> **Aprobado el 23 de octubre de 2026** con la recomendada de cada decisión
-> D1–D14. Sale de **Para más adelante** de `docs/PLAN-ADMIN.md` (la v2). G
-> sale primero, sola; H a L esperan a la base (el prompt al chat de BooKit).
+> **Hecho y en `main` el 23 de octubre de 2026.** Aprobado ese día con la
+> recomendada de cada decisión D1–D14. Sale de **Para más adelante** de
+> `docs/PLAN-ADMIN.md` (la v2). La base es de BooKit, con el contrato en
+> BooKit `docs/admin-panel.md` (secciones 12 a 17); la web, un PR por paso: G
+> #72, H #74, I #75, K #76 y L #77. J es sólo de BooKit. Lo que cambió en el
+> camino, lo verificado y lo que quedó afuera está al final, en **Estado** y
+> **Para más adelante**.
 
 ## Qué es
 
@@ -415,3 +419,60 @@ chat de BooKit, como en la v2. Nogal no se toca: está oculta a propósito.
   deja al día a un local suspendido (la tienda no, `aplicar_suscripcion_tienda`
   lo respeta). Hoy sólo suspende la baja de cuenta, que además suelta el
   débito, así que no pasa. Importa si un día se elige suspender (D14).
+
+## Estado (23-oct)
+
+**En producción.** La base, del chat de BooKit: `20261023233000` (fundadores
+del lanzamiento) y `20261023234000` a `20261023235900` (H a L), con la edge
+function `alerta_al_momento` y su job cada 10 minutos (J). La web, en `main`
+desde #72, #74, #75, #76 y #77.
+
+**Lo que cambió en el camino:**
+- **Los fundadores del lanzamiento** no estaban en el plan. Fermín lo decidió
+  en el chat de BooKit: los 10 primeros locales, Pro gratis hasta el
+  1-jul-2027 y después el precio fundador (`admin_sumar_fundador`, contrato,
+  sección 12). El botón "Sumar como fundador" llegó por #73, de otra sesión,
+  mientras L hacía el mismo. Al mergear quedó uno solo, el de #73, con su
+  texto en `acciones.lanzamiento`; `acciones.fundador` es el precio fundador.
+  L suma la marca "Fundador del lanzamiento" en el encabezado de la ficha.
+- **El nav del panel en el teléfono ya no entraba**: medido en 375 px, las
+  cuatro secciones ocupaban 364 px en 319. Con Equipo, 448. Desde I, la tira se
+  desliza de costado, como los días de la agenda de `/mi-local`.
+- **Extender la prueba y la cortesía comparten el formulario**
+  (`DialogoDeDias`) y la server action (`darDias()`). `queHizo()` pasó a
+  `QueHizo`, que usan la ficha y Equipo.
+- **De BooKit, distinto o además de lo pedido:** `admin_cambiar_fundador`
+  rechaza `fundador_obligatorio` si falta el sí o el no; en la cortesía, el
+  primer cobro al terminar sólo vale para el mismo nivel o uno menor (uno
+  mayor se cobra en el momento); el mail de las 04:00 escribe en criollo los
+  motivos `cancelacion`, `suscripcion_no_verificada` y `suscripcion_doble`.
+
+**Verificado:** `tsc` y el build de Vercel en cada PR. El chat de BooKit
+probó la cortesía y el fundador en producción, en transacciones que se
+deshicieron (contrato, secciones 16 y 17). La tira del nav se midió en el
+navegador: desliza y la página no se ensancha.
+
+**Sin probar:** nada de G a L se vio todavía en `/admin` con una cuenta del
+equipo, y no consta que el mail de J haya llegado. Se prueba como dice
+**Cómo se prueba**, sobre datos que cree y después borre el chat de BooKit.
+Al sumar un local de prueba a los fundadores del lanzamiento, ojo: el lugar se
+cuenta por su fila `sumar_fundador` en `admin_acciones`, que queda aunque se
+borre el local. El chat de BooKit tiene que borrar esa fila, o el lugar queda
+ocupado.
+
+## Para más adelante
+
+1. **Lo que cobran Apple y Google** (ítem 5 de la v2): integración con
+   RevenueCat, en un plan propio.
+2. **La pausa que pide el propio local** (ítem 8 de la v2): primero BooKit
+   tiene que hacerla (idea 11).
+3. **Suspender a mano** (D14): si aparece un caso de abuso. Antes, que
+   `renovar_suscripcion()` respete `suspendida`.
+4. **Los avisos a todos los admins** (la otra opción de D8): cuando haya más
+   de una persona en el equipo.
+5. **Los días de gracia de cada plan** están copiados en `content/admin.ts`
+   (`diasDeGracia`) desde `planes.dias_gracia`. Si BooKit los cambia, hay que
+   cambiarlos ahí, o que `admin_comercio` los devuelva.
+6. **Pulso estima con el precio de lista**: un local marcado fundador cuyo
+   débito todavía cobra precio de lista hace que el ingreso estimado dé de
+   menos.

@@ -362,6 +362,10 @@ suscripciones" de octubre es parcial, y septiembre da $0.
 
 Lo que quedó afuera de la v2, para retomar con un plan nuevo:
 
+> **La v3 (`docs/PLAN-ADMIN-V3.md`, en `main` desde el 23-oct) hizo los ítems
+> 1, 2, 3, 4, 6 y 7.** Quedan el 5 y el 8, que pasaron a su **Para más
+> adelante**.
+
 1. **Administradores desde el panel (D11).** Hoy la tabla `administradores`
    se carga a mano. Tiene sentido cuando entre alguien más al equipo: una
    sección para sumar y sacar admins por mail, con su fila en el registro.
