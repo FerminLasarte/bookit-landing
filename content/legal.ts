@@ -206,6 +206,10 @@ export const terminos: LegalDoc = {
         },
         {
           type: "p",
+          text: "Según su plan, el local puede mandarles avisos a sus clientes desde la app: que tiene turnos libres, un cupón, que extraña a quien hace tiempo que no vuelve, o un cierre, un cambio de horario o una mudanza. Los textos los arma Bookit con los datos que el local elige; el local no escribe mensajes libres. Cada plan tiene un tope de avisos por mes, y Bookit no le manda a cada persona más de un aviso de locales por semana. Los avisos sólo les llegan a quienes tuvieron un turno en ese local o lo marcaron como favorito, y aceptaron recibirlos. El local es responsable de que lo que anuncia sea cierto y se cumpla: que el cupón valga, que los turnos estén disponibles y que las fechas sean las reales.",
+        },
+        {
+          type: "p",
           text: "El local es responsable de mantener su agenda, sus precios y su información actualizados, de cumplir con los turnos que acepta, de las personas que invita a su equipo y del uso que haga de los datos de sus clientes, que sólo puede usar para prestar el servicio reservado. También de la normativa que aplique a su actividad (habilitaciones, facturación, higiene y seguridad).",
         },
       ],
@@ -326,6 +330,7 @@ export const privacidad: LegalDoc = {
             "Tu historial de reservas, pagos, Puntos Bookit y canjes, y tus locales favoritos.",
             "La ubicación de tu teléfono, sólo si das el permiso y únicamente para mostrarte los locales cercanos. No la guardamos en nuestros servidores.",
             "Un identificador de tu teléfono para mandarte notificaciones.",
+            "Si aceptás recibir los avisos de los locales: la constancia de que aceptaste, con su fecha, los locales que silenciaste y qué avisos te llegaron, para no mandarte más de uno por semana.",
             "Si tenés un local: sus datos (nombre, dirección, horarios, servicios y fotografías) y los de tu equipo (nombre, fotografía y correo electrónico).",
           ],
         },
@@ -357,6 +362,7 @@ export const privacidad: LegalDoc = {
             "Crear, verificar y gestionar tu cuenta.",
             "Confirmar y seguir tus turnos, incluidos los recordatorios y el aviso del próximo turno en la pantalla del teléfono.",
             "Mandarte notificaciones y correos sobre tus reservas y tu cuenta.",
+            "Si lo aceptaste, mandarte los avisos de los locales donde reservaste o que tenés de favoritos —turnos libres, cupones y novedades del local—, como mucho uno por semana.",
             "Administrar los Puntos Bookit y los premios.",
             "Avisarte del lanzamiento de Bookit en tu ciudad, acreditarte los beneficios de la lista de espera y contactarte si sos un local interesado en el precio fundador.",
             "Darte soporte si nos escribís, y mejorar la app con métricas internas.",
@@ -364,7 +370,7 @@ export const privacidad: LegalDoc = {
         },
         {
           type: "p",
-          text: `La base legal es tu consentimiento libre, expreso e informado —al crear la cuenta o al marcar la casilla del formulario de la lista de espera— y la ejecución del servicio que usás, conforme la ${site.legal.dataProtectionLaw}. Podés revocar el consentimiento en cualquier momento, sin efecto retroactivo.`,
+          text: `La base legal es tu consentimiento libre, expreso e informado —al crear la cuenta, al aceptar los avisos de los locales o al marcar la casilla del formulario de la lista de espera— y la ejecución del servicio que usás, conforme la ${site.legal.dataProtectionLaw}. Podés revocar el consentimiento en cualquier momento, sin efecto retroactivo.`,
         },
         {
           type: "p",
@@ -379,6 +385,10 @@ export const privacidad: LegalDoc = {
         {
           type: "p",
           text: "Cuando reservás, el local ve tu nombre y tu fotografía de perfil junto con los datos del turno. No ve tu correo electrónico ni tu teléfono.",
+        },
+        {
+          type: "p",
+          text: "Para mandarte un aviso, el local no recibe tus datos ni la lista de a quiénes les llega: elige qué contar y Bookit lo envía.",
         },
         {
           type: "p",
@@ -431,7 +441,7 @@ export const privacidad: LegalDoc = {
         },
         {
           type: "p",
-          text: `Desde la app podés corregir tus datos en Información personal y eliminar tu cuenta desde esa misma sección. También podés escribirnos a ${site.email} desde la dirección con la que te registraste. Respondemos el pedido de acceso dentro de los 10 días corridos, y los de rectificación, actualización o supresión dentro de los 5 días hábiles de recibido el reclamo, conforme la ${site.legal.dataProtectionLaw}.`,
+          text: `Desde la app podés corregir tus datos en Información personal y eliminar tu cuenta desde esa misma sección. También podés escribirnos a ${site.email} desde la dirección con la que te registraste. Respondemos el pedido de acceso dentro de los 10 días corridos, y los de rectificación, actualización o supresión dentro de los 5 días hábiles de recibido el reclamo, conforme la ${site.legal.dataProtectionLaw}. Los avisos de los locales los dejás de recibir cuando quieras apagándolos en Perfil › Notificaciones, o silenciando un local desde su ficha. Los de tus turnos te siguen llegando.`,
           link: { label: `Escribir a ${site.email}`, href: `mailto:${site.email}` },
         },
         {
