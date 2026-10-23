@@ -1,9 +1,9 @@
 # El panel del equipo (/admin) — v4
 
-> **Borrador para aprobar (23-oct-2026).** Sale de los puntos 3 a 6 de **Para
-> más adelante** de `docs/PLAN-ADMIN-V3.md`. No hay código escrito: falta el OK
-> de Fermín y una opción en cada decisión (D1–D11). La recomendada está
-> marcada.
+> **Aprobado el 23 de octubre de 2026** con la recomendada de cada decisión
+> D1–D11. Sale de los puntos 3 a 6 de **Para más adelante** de
+> `docs/PLAN-ADMIN-V3.md`. M a P esperan a la base (el prompt al chat de
+> BooKit).
 
 ## Qué es
 
