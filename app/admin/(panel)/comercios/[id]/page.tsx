@@ -4,6 +4,7 @@ import CambiarVisibilidad from "@/components/admin/CambiarVisibilidad";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
+import SumarFundador from "@/components/admin/SumarFundador";
 import TextLink from "@/components/ui/TextLink";
 import { acciones, canales, estados, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
 import { leerComercio, type AccionDelEquipo, type FichaComercio } from "@/lib/admin/datos";
@@ -27,6 +28,19 @@ const sePuedeExtender = (c: FichaComercio) =>
   !c.dado_de_baja_el;
 
 /*
+ * Cuándo va "Sumar como fundador" (BooKit `docs/admin-panel.md`, sección 12):
+ * un local que nunca pagó y no se sumó antes. El que espera en `pendiente`
+ * figura como de la tienda sin haber comprado nada, por eso entra igual. El
+ * tope de 10 lo controla la base.
+ */
+const sePuedeSumarFundador = (c: FichaComercio) =>
+  !c.dado_de_baja_el &&
+  c.estado !== "suspendida" &&
+  !c.acciones.some((a) => a.accion === "sumar_fundador") &&
+  (c.estado === "pendiente" ||
+    (c.plan === "prueba" && !CANALES_DE_LA_TIENDA.includes(c.canal) && !c.tiene_debito_mp));
+
+/*
  * Por qué un local visible igual no aparece: la regla de la base
  * (`_local_a_la_vista()`) pide además que esté al día o en gracia. La baja lo
  * deja suspendido, pero se dice como baja.
@@ -48,6 +62,8 @@ function queHizo(a: AccionDelEquipo) {
       return registro.extendio(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
     case "cambiar_visibilidad":
       return a.detalle.despues.visible ? registro.mostro : registro.oculto;
+    case "sumar_fundador":
+      return registro.sumoFundador;
   }
 }
 
@@ -102,9 +118,12 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
             )}
             <Fila etiqueta="En Bookit desde">{fechaConAnio(c.creado_el)}</Fila>
           </dl>
-          {sePuedeExtender(c) && (
-            <div className="mt-3">
-              <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
+          {(sePuedeExtender(c) || sePuedeSumarFundador(c)) && (
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+              {sePuedeExtender(c) && (
+                <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
+              )}
+              {sePuedeSumarFundador(c) && <SumarFundador idComercio={c.id_comercio} />}
             </div>
           )}
         </Bloque>
