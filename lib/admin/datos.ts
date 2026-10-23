@@ -139,7 +139,34 @@ export type AccionDelEquipo =
       email: string | null;
       accion: "cambiar_visibilidad";
       detalle: { antes: { visible: boolean }; despues: { visible: boolean }; nota: string | null };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "sumar_admin";
+      detalle: { despues: { id_usuario: string; email: string }; nota: string | null };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "sacar_admin";
+      detalle: { antes: { id_usuario: string; email: string }; nota: string | null };
     };
+
+/** Una fila del registro entero: la de la ficha, más el local si la acción es de uno. */
+export type AccionDelRegistro = AccionDelEquipo & { id_comercio: string | null; comercio: string | null };
+
+/** Una cuenta del equipo. `sumado_por` es `null` si se cargó a mano o si esa cuenta ya no existe. */
+export type Administrador = {
+  id_usuario: string;
+  email: string;
+  nombre: string | null;
+  desde: string;
+  sumado_por: string | null;
+};
+
+/** Quién entra al panel y el registro entero (BooKit `docs/admin-panel.md`, sección 14). */
+export type Equipo = { administradores: Administrador[]; acciones: AccionDelRegistro[] };
 
 export type Incidencia = {
   id_pago_mp: string;
@@ -266,3 +293,11 @@ export const leerPersonas = (p: { busqueda?: string; limite: number; desde: numb
   });
 
 export const leerPersona = (id: string) => leer<FichaPersona | null>("admin_persona", { p_id_usuario: id });
+
+/** El equipo y quién lo está mirando, que no se puede sacar a sí mismo (D4 de la v3). */
+export async function leerEquipo(): Promise<Equipo & { yo: string | null }> {
+  const equipo = await leer<Equipo>("admin_equipo");
+  const supabase = await clienteDeSupabase("panel");
+  const { data } = await supabase.auth.getClaims();
+  return { ...equipo, yo: data?.claims.sub ?? null };
+}
