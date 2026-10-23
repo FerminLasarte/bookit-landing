@@ -57,6 +57,8 @@ export type FilaComercio = {
   nivel: string;
   plan: string;
   estado: EstadoSuscripcion;
+  /** `false`: lo ocultó el equipo (BooKit `docs/admin-panel.md`, sección 11). */
+  visible: boolean;
   canal: string;
   vencimiento: string | null;
   cancela_al_vencer: boolean;
@@ -79,6 +81,8 @@ export type FichaComercio = {
   nivel: string;
   plan: string;
   estado: EstadoSuscripcion;
+  /** `false`: lo ocultó el equipo. Con `true` igual aparece sólo si está al día o en gracia. */
+  visible: boolean;
   canal: string;
   es_fundador: boolean;
   vencimiento: string | null;
@@ -119,6 +123,12 @@ export type AccionDelEquipo =
       email: string | null;
       accion: "extender_prueba";
       detalle: { despues: { vencimiento: string }; dias: number; nota: string | null };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "cambiar_visibilidad";
+      detalle: { antes: { visible: boolean }; despues: { visible: boolean }; nota: string | null };
     };
 
 export type Incidencia = {

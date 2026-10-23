@@ -12,7 +12,7 @@ import {
   Tabla,
   Vacio,
 } from "@/components/admin/piezas";
-import { canales, filtrosComercios, niveles, planes } from "@/content/admin";
+import { acciones, canales, filtrosComercios, niveles, planes } from "@/content/admin";
 import { leerComercios, POR_PAGINA, type FiltroComercios } from "@/lib/admin/datos";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
 import { cn } from "@/lib/utils";
@@ -81,7 +81,10 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
                   </span>
                 </td>
                 <td>
-                  {c.dado_de_baja_el ? <Dato>De baja</Dato> : <EstadoBadge estado={c.estado} />}
+                  <div className="flex flex-wrap gap-1">
+                    {c.dado_de_baja_el ? <Dato>De baja</Dato> : <EstadoBadge estado={c.estado} />}
+                    {!c.visible && <Dato>{acciones.visibilidad.oculto}</Dato>}
+                  </div>
                 </td>
                 <td className="whitespace-nowrap">
                   <span className="text-fg">
