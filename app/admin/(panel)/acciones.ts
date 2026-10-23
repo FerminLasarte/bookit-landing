@@ -61,6 +61,25 @@ export async function darCortesia(_: Respuesta, datos: FormData): Promise<Respue
   return darDias("admin_dar_cortesia", acciones.cortesia.generico, "dar-cortesia", datos);
 }
 
+/** Marca o desmarca el precio fundador. No toca lo que ya cobra Mercado Pago ni la tienda (D12, D13). */
+export async function cambiarFundador(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  const { generico } = acciones.fundador;
+  const idComercio = campo(datos, "id_comercio");
+  const esFundador = campo(datos, "es_fundador");
+  if (!idComercio || (esFundador !== "true" && esFundador !== "false")) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { error } = await supabase.rpc("admin_cambiar_fundador", {
+    p_id_comercio: idComercio,
+    p_es_fundador: esFundador === "true",
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "cambiar-fundador") };
+
+  refresh();
+  return { error: null };
+}
+
 /** Suma una cuenta al equipo por su mail. La cuenta tiene que existir (D3 de la v3). */
 export async function sumarAdmin(_: Respuesta, datos: FormData): Promise<Respuesta> {
   const { generico } = acciones.equipo.sumar;
@@ -120,7 +139,7 @@ export type RespuestaDeFundador = Respuesta & { quedan?: number };
 
 /** Suma un local a los fundadores del lanzamiento. La fecha, el nivel y el tope de 10 los pone la base. */
 export async function sumarFundador(_: RespuestaDeFundador, datos: FormData): Promise<RespuestaDeFundador> {
-  const { generico } = acciones.fundador;
+  const { generico } = acciones.lanzamiento;
   const idComercio = campo(datos, "id_comercio");
   if (!idComercio) return { error: generico };
 

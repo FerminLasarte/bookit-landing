@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import CambiarFundador from "@/components/admin/CambiarFundador";
 import CambiarVisibilidad from "@/components/admin/CambiarVisibilidad";
 import DarCortesia from "@/components/admin/DarCortesia";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
@@ -56,10 +57,11 @@ const sePuedeDarCortesia = (c: FichaComercio) =>
  * figura como de la tienda sin haber comprado nada, por eso entra igual. El
  * tope de 10 lo controla la base.
  */
+const esDelLanzamiento = (c: FichaComercio) => c.acciones.some((a) => a.accion === "sumar_fundador");
 const sePuedeSumarFundador = (c: FichaComercio) =>
   !c.dado_de_baja_el &&
   c.estado !== "suspendida" &&
-  !c.acciones.some((a) => a.accion === "sumar_fundador") &&
+  !esDelLanzamiento(c) &&
   (c.estado === "pendiente" ||
     (c.plan === "prueba" && !CANALES_DE_LA_TIENDA.includes(c.canal) && !c.tiene_debito_mp));
 
@@ -83,6 +85,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
 
   const activos = c.profesionales.filter((p) => p.esta_activo);
   const noSeVe = porQueNoSeVe(c);
+  const delLanzamiento = esDelLanzamiento(c);
 
   return (
     <div className="flex flex-col gap-6">
@@ -97,7 +100,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
         <div className="flex flex-wrap gap-2">
           {c.dado_de_baja_el ? <Dato>De baja {fecha(c.dado_de_baja_el)}</Dato> : <EstadoBadge estado={c.estado} />}
           <Dato>{niveles[c.nivel] ?? c.nivel}</Dato>
-          {c.es_fundador && <Dato>Fundador</Dato>}
+          {c.es_fundador && <Dato>{delLanzamiento ? acciones.lanzamiento.marca : "Fundador"}</Dato>}
           {!c.visible && <Dato>{acciones.visibilidad.oculto}</Dato>}
         </div>
       </Encabezado>
@@ -118,6 +121,9 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
               {fechaConAnio(c.vencimiento)}
               {c.cancela_al_vencer && <span className="block text-micro text-danger">No renueva</span>}
             </Fila>
+            <Fila etiqueta={acciones.fundador.precio}>
+              {c.es_fundador ? acciones.fundador.conPrecio : acciones.fundador.deLista}
+            </Fila>
             <Fila etiqueta="Débito de Mercado Pago">{c.tiene_debito_mp ? "Activo" : "No"}</Fila>
             {c.alta && (
               <Fila etiqueta="Alta">
@@ -126,22 +132,29 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
             )}
             <Fila etiqueta="En Bookit desde">{fechaConAnio(c.creado_el)}</Fila>
           </dl>
-          {(sePuedeExtender(c) || sePuedeDarCortesia(c) || sePuedeSumarFundador(c)) && (
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
-              {sePuedeExtender(c) && (
-                <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
-              )}
-              {sePuedeDarCortesia(c) && (
-                <DarCortesia
-                  idComercio={c.id_comercio}
-                  plan={c.plan}
-                  conDebito={c.tiene_debito_mp}
-                  noRenueva={c.cancela_al_vencer}
-                />
-              )}
-              {sePuedeSumarFundador(c) && <SumarFundador idComercio={c.id_comercio} />}
-            </div>
-          )}
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+            {sePuedeExtender(c) && (
+              <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
+            )}
+            {sePuedeDarCortesia(c) && (
+              <DarCortesia
+                idComercio={c.id_comercio}
+                plan={c.plan}
+                conDebito={c.tiene_debito_mp}
+                noRenueva={c.cancela_al_vencer}
+              />
+            )}
+            {sePuedeSumarFundador(c) && <SumarFundador idComercio={c.id_comercio} />}
+            {!c.dado_de_baja_el && (
+              <CambiarFundador
+                idComercio={c.id_comercio}
+                esFundador={c.es_fundador}
+                deLaTienda={CANALES_DE_LA_TIENDA.includes(c.canal)}
+                conDebito={c.tiene_debito_mp}
+                delLanzamiento={delLanzamiento}
+              />
+            )}
+          </div>
         </Bloque>
 
         <Bloque titulo="Dueño">

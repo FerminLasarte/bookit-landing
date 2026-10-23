@@ -134,6 +134,37 @@ export const acciones = {
     enviando: "Dando los días…",
     generico: "No pudimos darle los días. Probá de nuevo.",
   },
+  /** El precio fundador: marcarlo o sacarlo cambia lo próximo, no lo que ya cobra (sección 17, D12 y D13). */
+  fundador: {
+    precio: "Precio",
+    conPrecio: "Fundador, 30% menos",
+    deLista: "De lista",
+    marcar: {
+      boton: "Marcar fundador",
+      titulo: "Marcar fundador",
+      sinCobrar: "Cuando se suscriba en la web, paga 30% menos. En la app ve los planes del fundador.",
+      conDebito:
+        "El débito que ya tiene sigue cobrando lo mismo. Para pagar 30% menos tiene que cambiar de plan en /planes, o cancelar y volver a suscribirse: si está al día, no pierde días.",
+      tienda: "Apple o Google le siguen cobrando lo mismo. En la app ve los planes del fundador y puede cambiarse.",
+      ejemplo: "Se sumó antes del lanzamiento en Junín",
+      confirmar: "Marcar",
+      enviando: "Marcando…",
+    },
+    sacar: {
+      boton: "Sacar el precio fundador",
+      titulo: "Sacar el precio fundador",
+      sinCobrar: "Lo próximo que contrate va a precio de lista.",
+      conDebito: "El débito que ya tiene sigue cobrando el precio fundador. Lo próximo que contrate va a precio de lista.",
+      tienda: "Apple o Google le siguen cobrando lo que tiene. Lo próximo que contrate en la app va a precio de lista.",
+      delLanzamiento:
+        "Es fundador del lanzamiento: el regalo sigue hasta el 1 de julio de 2027 y no libera su lugar. Desde ahí paga precio de lista.",
+      ejemplo: "Se marcó por error",
+      confirmar: "Sacar",
+      enviando: "Sacando…",
+    },
+    nota: "Por qué",
+    generico: "No pudimos cambiar el precio. Probá de nuevo.",
+  },
   /** El interruptor del equipo (BooKit `docs/admin-panel.md`, sección 11). */
   visibilidad: {
     titulo: "Visibilidad",
@@ -168,7 +199,8 @@ export const acciones = {
     generico: "No pudimos cambiarlo. Probá de nuevo.",
   },
   /** Los 10 primeros locales del lanzamiento (BooKit `docs/admin-panel.md`, sección 12). */
-  fundador: {
+  lanzamiento: {
+    marca: "Fundador del lanzamiento",
     boton: "Sumar como fundador",
     titulo: "Sumar como fundador del lanzamiento",
     bajada: [
@@ -195,6 +227,8 @@ export const acciones = {
     mostro: "Lo volvió a mostrar",
     cortesia: (dias: number, vence: string) =>
       `Dio ${dias} ${dias === 1 ? "día" : "días"} de cortesía: vence el ${vence}`,
+    marcoFundador: "Lo marcó fundador",
+    sacoFundador: "Le sacó el precio fundador",
     sumoAdmin: (email: string) => `Sumó a ${email} al equipo`,
     sacoAdmin: (email: string) => `Sacó a ${email} del equipo`,
     sumoFundador: "Lo sumó como fundador: Pro gratis hasta el 1 de julio de 2027",

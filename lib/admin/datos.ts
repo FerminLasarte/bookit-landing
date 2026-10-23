@@ -149,6 +149,12 @@ export type AccionDelEquipo =
   | {
       creado_el: string;
       email: string | null;
+      accion: "cambiar_fundador";
+      detalle: { antes: { es_fundador: boolean }; despues: { es_fundador: boolean }; nota: string };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
       accion: "sumar_admin";
       detalle: { despues: { id_usuario: string; email: string }; nota: string | null };
     }

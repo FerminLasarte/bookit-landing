@@ -10,7 +10,7 @@ import DialogoDeAccion from "./DialogoDeAccion";
  * dice cuántos lugares quedan (BooKit `docs/admin-panel.md`, sección 12).
  */
 export default function SumarFundador({ idComercio }: { idComercio: string }) {
-  const copy = acciones.fundador;
+  const copy = acciones.lanzamiento;
 
   return (
     <DialogoDeAccion
@@ -27,7 +27,7 @@ export default function SumarFundador({ idComercio }: { idComercio: string }) {
       }
     >
       <input type="hidden" name="id_comercio" value={idComercio} />
-      <Field id="nota-de-fundador" label={copy.nota} optional>
+      <Field id="nota-del-lanzamiento" label={copy.nota} optional>
         {(props) => <input {...props} name="nota" maxLength={300} placeholder={copy.ejemplo} />}
       </Field>
     </DialogoDeAccion>
