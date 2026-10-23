@@ -19,6 +19,9 @@ export const navCta = { label: "Descargá la app", href: "/descargar" } as const
 /** La puerta al panel del local: al lado del botón, para todos (hoja de ruta de `docs/PLAN-MI-LOCAL.md`). */
 export const navPanel = { label: "Mi local", href: "/mi-local" } as const;
 
+/** El panel del equipo: sólo aparece en el navegador que ya entró a /admin (`docs/PLAN-ADMIN.md`, A1). */
+export const navEquipo = { label: "Panel", href: "/admin" } as const;
+
 export const footerProducto: readonly NavLink[] = [
   { label: "Cómo funciona", href: "/#como-funciona" },
   { label: "Para locales", href: "/#locales" },

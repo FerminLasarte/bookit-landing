@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
 import TextLink from "@/components/ui/TextLink";
 import { canales, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
+import { enlaceDeTelefono } from "@/lib/admin/contacto";
 import { leerComercio } from "@/lib/admin/datos";
 import { fecha, fechaConAnio, haceCuanto, mes, numero, pesos } from "@/lib/formato";
 
@@ -18,6 +19,17 @@ function Fila({ etiqueta, children }: { etiqueta: string; children: ReactNode })
       <dt className="text-muted">{etiqueta}</dt>
       <dd className="text-right text-fg">{children}</dd>
     </div>
+  );
+}
+
+/** El teléfono del dueño: abre WhatsApp si el número da, si no llama. */
+function Telefono({ numero }: { numero: string }) {
+  const { href, whatsapp } = enlaceDeTelefono(numero);
+  return (
+    <TextLink href={href}>
+      {numero}
+      {whatsapp && " · WhatsApp"}
+    </TextLink>
   );
 }
 
@@ -68,8 +80,8 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
         <Bloque titulo="Dueño">
           <dl>
             <Fila etiqueta="Nombre">{c.duenio.nombre ?? "—"}</Fila>
-            <Fila etiqueta="Mail">{c.duenio.email ?? "—"}</Fila>
-            <Fila etiqueta="Teléfono">{c.duenio.telefono ?? "—"}</Fila>
+            <Fila etiqueta="Mail">{c.duenio.email ? <TextLink href={`mailto:${c.duenio.email}`}>{c.duenio.email}</TextLink> : "—"}</Fila>
+            <Fila etiqueta="Teléfono">{c.duenio.telefono ? <Telefono numero={c.duenio.telefono} /> : "—"}</Fila>
             <Fila etiqueta="Último ingreso">{haceCuanto(c.duenio.ultimo_ingreso)}</Fila>
             <Fila etiqueta="Mercado Pago para señas">
               {!c.mercado_pago

@@ -4,7 +4,7 @@ import AdminNav from "@/components/admin/AdminNav";
 /*
  * El marco del panel. Quién entra no se decide acá: el proxy manda a
  * /admin/entrar a quien no tiene sesión, y cada lectura de `lib/admin/datos`
- * manda a /admin/sin-acceso a quien no es del equipo.
+ * le cierra la sesión y manda a /admin/sin-acceso a quien no es del equipo.
  */
 export default function PanelLayout({ children }: { children: ReactNode }) {
   return (

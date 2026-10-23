@@ -17,7 +17,7 @@ import { cookiesDeArea } from "@/lib/supabase";
 
 /** Las áreas que no se ven sin sesión, con su página de entrar y lo que queda abierto. */
 const cerradas = [
-  { base: "/admin", entrada: "/admin/entrar", abiertas: ["/admin/entrar", "/admin/auth/"] },
+  { base: "/admin", entrada: "/admin/entrar", abiertas: ["/admin/entrar", "/admin/sin-acceso", "/admin/auth/"] },
   { base: "/mi-local", entrada: "/mi-local/entrar", abiertas: ["/mi-local/entrar"] },
 ];
 
