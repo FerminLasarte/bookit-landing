@@ -64,8 +64,10 @@ export default function CambiarVisibilidad({
     >
       <input type="hidden" name="id_comercio" value={idComercio} />
       <input type="hidden" name="visible" value={String(!visible)} />
+      {/* Con la key, la nota de un cambio no queda escrita para el siguiente:
+          el diálogo es el mismo en los dos sentidos. */}
       <Field id="nota-de-visibilidad" label={copy.nota} optional>
-        {(props) => <input {...props} name="nota" maxLength={300} placeholder={copy.ejemplo} />}
+        {(props) => <input {...props} key={String(visible)} name="nota" maxLength={300} placeholder={paso.ejemplo} />}
       </Field>
     </DialogoDeAccion>
   );
