@@ -143,6 +143,12 @@ export type AccionDelEquipo =
   | {
       creado_el: string;
       email: string | null;
+      accion: "dar_cortesia";
+      detalle: { despues: { vencimiento: string }; dias: number; nota: string };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
       accion: "sumar_admin";
       detalle: { despues: { id_usuario: string; email: string }; nota: string | null };
     }

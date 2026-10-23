@@ -30,22 +30,35 @@ export async function resolverIncidencia(_: Respuesta, datos: FormData): Promise
   return { error: null };
 }
 
-/** Corre el vencimiento de un local en prueba (D6: lo único que el panel toca de la suscripción). */
-export async function extenderPrueba(_: Respuesta, datos: FormData): Promise<Respuesta> {
-  const { generico } = acciones.extender;
+/**
+ * Le da días a un local con una función de la base que recibe local, días y
+ * nota: extender la prueba o la cortesía. Cuándo se puede y si la nota es
+ * obligatoria lo decide cada una.
+ */
+async function darDias(funcion: string, generico: string, donde: string, datos: FormData): Promise<Respuesta> {
   const idComercio = campo(datos, "id_comercio");
   if (!idComercio) return { error: generico };
 
   const supabase = await clienteDeSupabase("panel");
-  const { error } = await supabase.rpc("admin_extender_prueba", {
+  const { error } = await supabase.rpc(funcion, {
     p_id_comercio: idComercio,
     p_dias: Number(campo(datos, "dias")),
     p_nota: campo(datos, "nota") || null,
   });
-  if (error) return { error: errorDeAccion(error, generico, "extender-prueba") };
+  if (error) return { error: errorDeAccion(error, generico, donde) };
 
   refresh();
   return { error: null };
+}
+
+/** Corre el vencimiento de un local en prueba. */
+export async function extenderPrueba(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  return darDias("admin_extender_prueba", acciones.extender.generico, "extender-prueba", datos);
+}
+
+/** Días de cortesía a un local de Mercado Pago en gracia o cortado (K de la v3; la nota es obligatoria). */
+export async function darCortesia(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  return darDias("admin_dar_cortesia", acciones.cortesia.generico, "dar-cortesia", datos);
 }
 
 /** Suma una cuenta al equipo por su mail. La cuenta tiene que existir (D3 de la v3). */
