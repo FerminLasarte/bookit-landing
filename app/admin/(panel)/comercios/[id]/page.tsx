@@ -6,9 +6,19 @@ import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telef
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import SumarFundador from "@/components/admin/SumarFundador";
 import TextLink from "@/components/ui/TextLink";
-import { acciones, canales, estados, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
+import {
+  acciones,
+  canales,
+  estados,
+  estadosAlta,
+  historia,
+  motivosIncidencia,
+  niveles,
+  planes,
+  reembolsos,
+} from "@/content/admin";
 import { leerComercio, type AccionDelEquipo, type FichaComercio } from "@/lib/admin/datos";
-import { fecha, fechaConAnio, haceCuanto, mes, numero, pesos } from "@/lib/formato";
+import { fecha, fechaConAnio, haceCuanto, hora, mes, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercio" };
 
@@ -160,6 +170,34 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
           </dl>
         </Bloque>
       </div>
+
+      <Bloque titulo={historia.titulo} bajada={historia.bajada}>
+        {c.cambios_de_estado.length === 0 ? (
+          <Vacio>{historia.vacia}</Vacio>
+        ) : (
+          <ul className="flex flex-col">
+            {c.cambios_de_estado.map((k, i) => (
+              <li
+                key={`${k.cambiado_el}-${i}`}
+                className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line py-2.5 text-small last:border-0"
+              >
+                <span className="flex flex-wrap items-center gap-2">
+                  <EstadoBadge estado={k.estado_anterior} />
+                  <span aria-hidden className="text-muted">
+                    →
+                  </span>
+                  <span className="sr-only">a</span>
+                  <EstadoBadge estado={k.estado_nuevo} />
+                  {k.por_el_equipo && <span className="text-micro text-muted">{historia.desdeElPanel}</span>}
+                </span>
+                <span className="num whitespace-nowrap text-muted">
+                  {fechaConAnio(k.cambiado_el)} · {hora(k.cambiado_el)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Bloque>
 
       <Bloque titulo="Turnos por mes" bajada="Reservados, sin las reservas de Mercado Pago que nadie pagó.">
         <Barras

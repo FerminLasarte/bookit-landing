@@ -108,6 +108,16 @@ export type FichaComercio = {
   incidencias: Incidencia[];
   /** Lo que hizo el equipo desde el panel, de lo más nuevo a lo más viejo (BooKit `docs/admin-panel.md`, sección 5). */
   acciones: AccionDelEquipo[];
+  /** Cada cambio de estado, de lo más nuevo a lo más viejo. Se guardan desde el 23-oct-2026 (sección 13). */
+  cambios_de_estado: CambioDeEstado[];
+};
+
+/** `por_el_equipo`: lo cambió una acción del panel, en la misma transacción que su fila del registro. */
+export type CambioDeEstado = {
+  cambiado_el: string;
+  estado_anterior: EstadoSuscripcion;
+  estado_nuevo: EstadoSuscripcion;
+  por_el_equipo: boolean;
 };
 
 /** Una fila de `admin_acciones`. `email` es `null` si la cuenta de quien lo hizo ya no existe. */
@@ -158,7 +168,7 @@ export type Cobros = {
     canal: string;
     vencimiento: string | null;
   }[];
-  altas_abandonadas: { email: string | null; plan: string; estado: string; creado_el: string }[];
+  altas_abandonadas: { id_usuario: string; email: string | null; plan: string; estado: string; creado_el: string }[];
   incidencias_abiertas: Incidencia[];
   ultimos_pagos: {
     mp_payment_id: string;

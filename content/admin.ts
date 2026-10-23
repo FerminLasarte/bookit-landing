@@ -170,6 +170,14 @@ export const acciones = {
   },
 };
 
+/** Los cambios de estado de un local (paso H de docs/PLAN-ADMIN-V3.md, D1). */
+export const historia = {
+  titulo: "Historia de la suscripción",
+  bajada: "Cada cambio de estado, de lo más nuevo a lo más viejo.",
+  vacia: "Sin cambios desde el 23 de octubre de 2026, cuando se empezó a guardar.",
+  desdeElPanel: "Desde el panel",
+};
+
 /** Lo que es una persona en un local. */
 export const roles: Record<string, string> = {
   duenio: "Dueño",

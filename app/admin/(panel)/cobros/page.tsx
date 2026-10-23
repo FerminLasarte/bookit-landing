@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { Bloque, Encabezado, EstadoBadge, Mail, Tabla, Vacio } from "@/components/admin/piezas";
+import { Bloque, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import { canales, estadosAlta, motivosIncidencia, planes, reembolsos } from "@/content/admin";
 import { leerCobros } from "@/lib/admin/datos";
@@ -8,14 +9,19 @@ import { fecha, fechaConAnio, haceCuanto, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Cobros" };
 
+/** El link a una ficha del panel. */
+function AFicha({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Link href={href} className="ring-focus rounded-[4px] font-semibold text-fg hover:underline">
+      {children}
+    </Link>
+  );
+}
+
 /** El link a la ficha de un local, o su nombre suelto si ya no existe. */
 function AComercio({ id, nombre }: { id: string | null | undefined; nombre: string | null | undefined }) {
   if (!id) return <span className="text-muted">{nombre ?? "Sin local"}</span>;
-  return (
-    <Link href={`/admin/comercios/${id}`} className="ring-focus rounded-[4px] font-semibold text-fg hover:underline">
-      {nombre ?? "Sin nombre"}
-    </Link>
-  );
+  return <AFicha href={`/admin/comercios/${id}`}>{nombre ?? "Sin nombre"}</AFicha>;
 }
 
 /** Lo que hay que mirar de la plata: débitos que fallaron, altas a medias e incidencias. */
@@ -89,7 +95,8 @@ export default async function Cobros() {
               <tr key={`${a.email}-${a.creado_el}`}>
                 <td className="whitespace-nowrap">{fecha(a.creado_el)}</td>
                 <td>
-                  <Mail email={a.email} />
+                  {/* D2 de la v3: lleva a la ficha de la persona, que tiene el mailto. */}
+                  <AFicha href={`/admin/personas/${a.id_usuario}`}>{a.email ?? "Sin mail"}</AFicha>
                 </td>
                 <td>{planes[a.plan] ?? a.plan}</td>
                 <td>{estadosAlta[a.estado] ?? a.estado}</td>
