@@ -48,6 +48,37 @@ export async function extenderPrueba(_: Respuesta, datos: FormData): Promise<Res
   return { error: null };
 }
 
+/** Suma una cuenta al equipo por su mail. La cuenta tiene que existir (D3 de la v3). */
+export async function sumarAdmin(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  const { generico } = acciones.equipo.sumar;
+  const supabase = await clienteDeSupabase("panel");
+  const { error } = await supabase.rpc("admin_sumar_admin", {
+    p_email: campo(datos, "email"),
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "sumar-admin") };
+
+  refresh();
+  return { error: null };
+}
+
+/** Saca a alguien del equipo: cae en "Sin acceso" en su próxima página. Nadie se saca a sí mismo (D4). */
+export async function sacarAdmin(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  const { generico } = acciones.equipo.sacar;
+  const idUsuario = campo(datos, "id_usuario");
+  if (!idUsuario) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { error } = await supabase.rpc("admin_sacar_admin", {
+    p_id_usuario: idUsuario,
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "sacar-admin") };
+
+  refresh();
+  return { error: null };
+}
+
 /** `turnosPorDelante`: los pendientes y confirmados que no empezaron. Ocultar no los cancela. */
 export type RespuestaDeVisibilidad = Respuesta & { visible?: boolean; turnosPorDelante?: number };
 

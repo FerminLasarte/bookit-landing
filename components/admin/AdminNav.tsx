@@ -28,7 +28,9 @@ export default function AdminNav() {
           </Link>
           <Badge>Admin</Badge>
 
-          <ul className="order-last flex w-full items-center gap-1 md:order-none md:mx-auto md:w-auto">
+          {/* En el teléfono las secciones no entran en el ancho: la tira se
+              desliza de costado, como los días de la agenda de /mi-local. */}
+          <ul className="order-last -mx-4 flex w-[calc(100%+2rem)] items-center gap-1 overflow-x-auto px-4 py-1 [scrollbar-width:none] md:order-none md:mx-auto md:w-auto md:overflow-visible md:p-0">
             {seccionesAdmin.map((s) => (
               <li key={s.href}>
                 <EnlaceDeSeccion href={s.href} activa={activa(s.href)}>

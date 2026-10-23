@@ -6,6 +6,7 @@ export const seccionesAdmin = [
   { href: "/admin/comercios", label: "Comercios" },
   { href: "/admin/personas", label: "Personas" },
   { href: "/admin/cobros", label: "Cobros" },
+  { href: "/admin/equipo", label: "Equipo" },
 ] as const;
 
 /** Cómo se lee cada estado de la suscripción, y si es una buena noticia. */
@@ -166,7 +167,44 @@ export const acciones = {
     extendio: (dias: number, vence: string) => `Extendió la prueba ${dias} ${dias === 1 ? "día" : "días"}: vence el ${vence}`,
     oculto: "Lo ocultó",
     mostro: "Lo volvió a mostrar",
+    sumoAdmin: (email: string) => `Sumó a ${email} al equipo`,
+    sacoAdmin: (email: string) => `Sacó a ${email} del equipo`,
     sumoFundador: "Lo sumó como fundador: Pro gratis hasta el 1 de julio de 2027",
+  },
+  /** Quién entra al panel (paso I de docs/PLAN-ADMIN-V3.md). */
+  equipo: {
+    titulo: "Administradores",
+    bajada: "Las cuentas que entran a este panel.",
+    vos: "Vos",
+    aMano: "A mano",
+    sumar: {
+      boton: "Sumar a alguien",
+      titulo: "Sumar a alguien al equipo",
+      bajada:
+        "Entra al panel con su cuenta de Google. Si todavía no tiene cuenta, que entre una vez a /admin y probá de nuevo.",
+      mail: "Mail de su cuenta",
+      ejemplo: "alguien@gmail.com",
+      nota: "Nota",
+      notaEjemplo: "Se suma para atender a los locales",
+      confirmar: "Sumar",
+      enviando: "Sumando…",
+      generico: "No pudimos sumarlo. Probá de nuevo.",
+    },
+    sacar: {
+      boton: "Sacar",
+      titulo: (email: string) => `Sacar a ${email} del equipo`,
+      bajada: "Deja de entrar al panel desde su próxima página. Lo que hizo queda en el registro.",
+      nota: "Nota",
+      notaEjemplo: "Ya no trabaja con nosotros",
+      confirmar: "Sacar",
+      enviando: "Sacando…",
+      generico: "No pudimos sacarlo. Probá de nuevo.",
+    },
+    registro: {
+      titulo: "Lo que hizo el equipo",
+      bajada: "Todo el registro, también lo que no es de un local: las últimas 100 acciones, de la más nueva a la más vieja.",
+      vacio: "Todavía nadie cambió nada desde el panel.",
+    },
   },
 };
 

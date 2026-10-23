@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import CambiarVisibilidad from "@/components/admin/CambiarVisibilidad";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
+import QueHizo from "@/components/admin/QueHizo";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import SumarFundador from "@/components/admin/SumarFundador";
 import TextLink from "@/components/ui/TextLink";
@@ -17,7 +18,7 @@ import {
   planes,
   reembolsos,
 } from "@/content/admin";
-import { leerComercio, type AccionDelEquipo, type FichaComercio } from "@/lib/admin/datos";
+import { leerComercio, type FichaComercio } from "@/lib/admin/datos";
 import { fecha, fechaConAnio, haceCuanto, hora, mes, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercio" };
@@ -60,24 +61,6 @@ function porQueNoSeVe(c: FichaComercio) {
   if (c.dado_de_baja_el) return visibilidad.noSeVePorBaja;
   if (c.estado === "al_dia" || c.estado === "en_gracia") return null;
   return visibilidad.noSeVePorEstado((estados[c.estado]?.label ?? c.estado).toLowerCase());
-}
-
-/** Una fila del registro, en una frase. */
-function queHizo(a: AccionDelEquipo) {
-  const { registro } = acciones;
-  switch (a.accion) {
-    case "resolver_incidencia":
-      return registro.resolvio(a.detalle.antes.id_pago_mp);
-    case "extender_prueba":
-      return registro.extendio(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
-    case "cambiar_visibilidad":
-      return a.detalle.despues.visible ? registro.mostro : registro.oculto;
-    case "sumar_fundador":
-      return registro.sumoFundador;
-    default:
-      // Una acción que la base ya anota y la web todavía no conoce: BooKit la suma primero.
-      return <span className="text-muted">{(a as { accion: string }).accion}</span>;
-  }
 }
 
 export default async function Comercio({ params }: { params: Promise<{ id: string }> }) {
@@ -292,7 +275,9 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
               <tr key={`${a.creado_el}-${a.accion}`}>
                 <td className="whitespace-nowrap">{fecha(a.creado_el)}</td>
                 <td>{a.email ?? acciones.registro.sinCuenta}</td>
-                <td>{queHizo(a)}</td>
+                <td>
+                  <QueHizo accion={a} />
+                </td>
                 <td className="text-muted">{a.detalle.nota}</td>
               </tr>
             ))}
