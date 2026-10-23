@@ -157,6 +157,12 @@ export type AccionDelEquipo =
       email: string | null;
       accion: "sacar_admin";
       detalle: { antes: { id_usuario: string; email: string }; nota: string | null };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "sumar_fundador";
+      detalle: { despues: { vencimiento: string }; nota: string | null };
     };
 
 /** Una fila del registro entero: la de la ficha, más el local si la acción es de uno. */
