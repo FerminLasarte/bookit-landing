@@ -4,6 +4,7 @@ import type { EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
 export const seccionesAdmin = [
   { href: "/admin", label: "Pulso" },
   { href: "/admin/comercios", label: "Comercios" },
+  { href: "/admin/personas", label: "Personas" },
   { href: "/admin/cobros", label: "Cobros" },
 ] as const;
 
@@ -110,4 +111,39 @@ export const acciones = {
     resolvio: (pago: string) => `Resolvió la incidencia del pago ${pago}`,
     extendio: (dias: number, vence: string) => `Extendió la prueba ${dias} ${dias === 1 ? "día" : "días"}: vence el ${vence}`,
   },
+};
+
+/** Lo que es una persona en un local. */
+export const roles: Record<string, string> = {
+  duenio: "Dueño",
+  profesional: "Profesional",
+};
+
+/** Con qué entra una cuenta. */
+export const proveedores: Record<string, string> = {
+  google: "Google",
+  apple: "Apple",
+  email: "Mail y contraseña",
+};
+
+/** Cómo se pagó un turno: el medio, la parte y cómo quedó. */
+export const metodosDePago: Record<string, string> = {
+  mercadopago: "Mercado Pago",
+  efectivo: "Efectivo",
+  cupon_gratis: "Cupón",
+  manual: "Cargado por el local",
+};
+
+export const tiposDePago: Record<string, string> = {
+  total: "total",
+  sena: "seña",
+  manual: "",
+};
+
+export const estadosDePago: Record<string, string> = {
+  pendiente: "sin pagar",
+  pagado: "pagado",
+  devuelto: "devuelto",
+  fallido: "falló",
+  no_aplica: "",
 };

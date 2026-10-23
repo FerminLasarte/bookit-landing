@@ -1,5 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import type { EstadoTurno } from "@/lib/mi-local/turnos";
 import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
@@ -142,6 +143,52 @@ export type Cobros = {
   }[];
 };
 
+/** Un local de una persona. El dueño sale una sola vez, como `duenio`, aunque también sea profesional. */
+export type LocalDePersona = {
+  id_comercio: string;
+  nombre: string;
+  rol: "duenio" | "profesional";
+  dado_de_baja_el: string | null;
+};
+
+export type FilaPersona = {
+  id_usuario: string;
+  email: string | null;
+  nombre: string | null;
+  alta: string;
+  ultimo_ingreso: string | null;
+  locales: LocalDePersona[];
+};
+
+export type TurnoDePersona = {
+  id_turno: string;
+  fecha: string;
+  id_comercio: string;
+  local: string;
+  servicio: string | null;
+  estado: EstadoTurno;
+  metodo_pago: string;
+  tipo_pago: string;
+  pago_estado: string;
+  precio_total: number;
+  monto_pagado: number | null;
+};
+
+/** La ficha de una persona (BooKit `docs/admin-panel.md`, sección 8). Los puntos son de la cuenta, no de un local. */
+export type FichaPersona = Omit<FilaPersona, "locales"> & {
+  telefono: string | null;
+  proveedor: string;
+  proveedores: string[];
+  locales: LocalDePersona[];
+  turnos: TurnoDePersona[];
+  puntos: {
+    disponibles: number;
+    historicos: number;
+    nivel: number;
+    por_local: { id_comercio: string; local: string; ganados: number; canjeados: number }[];
+  };
+};
+
 /*
  * Una cuenta que no está en `administradores` va a /admin/auth/sin-acceso,
  * que le cierra la sesión y la deja en /admin/sin-acceso. El chequeo vive acá
@@ -157,6 +204,9 @@ async function leer<T>(funcion: string, params?: Record<string, unknown>): Promi
   }
   return data as T;
 }
+
+/** Cuántas filas trae cada página de una lista del panel. */
+export const POR_PAGINA = 50;
 
 export const leerPulso = () => leer<Pulso>("admin_pulso");
 
@@ -177,3 +227,12 @@ export const leerComercio = (id: string) =>
   leer<FichaComercio | null>("admin_comercio", { p_id_comercio: id });
 
 export const leerCobros = () => leer<Cobros>("admin_cobros");
+
+export const leerPersonas = (p: { busqueda?: string; limite: number; desde: number }) =>
+  leer<{ total: number; filas: FilaPersona[] }>("admin_personas", {
+    p_busqueda: p.busqueda ?? null,
+    p_limite: p.limite,
+    p_desde: p.desde,
+  });
+
+export const leerPersona = (id: string) => leer<FichaPersona | null>("admin_persona", { p_id_usuario: id });
