@@ -42,7 +42,11 @@ export default function CambiarFundador({
       <input type="hidden" name="id_comercio" value={idComercio} />
       <input type="hidden" name="es_fundador" value={String(!esFundador)} />
       <Field id="nota-de-fundador" label={copy.nota}>
-        {(props) => <input {...props} name="nota" required maxLength={300} placeholder={paso.ejemplo} />}
+        {/* Con la key, la nota de marcar no queda escrita para sacar: el diálogo
+            es el mismo en los dos sentidos, como el de visibilidad. */}
+        {(props) => (
+          <input {...props} key={String(esFundador)} name="nota" required maxLength={300} placeholder={paso.ejemplo} />
+        )}
       </Field>
     </DialogoDeAccion>
   );

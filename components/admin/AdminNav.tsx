@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import Badge from "@/components/ui/Badge";
 import EnlaceDeSeccion from "@/components/ui/EnlaceDeSeccion";
 import Wordmark from "@/components/ui/Wordmark";
@@ -15,6 +16,19 @@ import { seccionesAdmin } from "@/content/admin";
 export default function AdminNav() {
   const ruta = usePathname();
   const activa = (href: string) => (href === "/admin" ? ruta === "/admin" : ruta.startsWith(href));
+  const tira = useRef<HTMLUListElement>(null);
+
+  // En el teléfono la tira se desliza y la sección actual puede quedar fuera
+  // de la vista (Equipo, la última): al llegar, se centra. En la compu entra
+  // entera y no se mueve nada.
+  useEffect(() => {
+    const ul = tira.current;
+    const actual = ul?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!ul || !actual) return;
+    const caja = ul.getBoundingClientRect();
+    const seccion = actual.getBoundingClientRect();
+    ul.scrollLeft += seccion.left - caja.left - (caja.width - seccion.width) / 2;
+  }, [ruta]);
 
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 md:px-6 md:pt-5">
@@ -30,7 +44,9 @@ export default function AdminNav() {
 
           {/* En el teléfono las secciones no entran en el ancho: la tira se
               desliza de costado, como los días de la agenda de /mi-local. */}
-          <ul className="order-last -mx-4 flex w-[calc(100%+2rem)] items-center gap-1 overflow-x-auto px-4 py-1 [scrollbar-width:none] md:order-none md:mx-auto md:w-auto md:overflow-visible md:p-0">
+          <ul
+            ref={tira}
+            className="order-last -mx-4 flex w-[calc(100%+2rem)] items-center gap-1 overflow-x-auto px-4 py-1 [scrollbar-width:none] md:order-none md:mx-auto md:w-auto md:overflow-visible md:p-0">
             {seccionesAdmin.map((s) => (
               <li key={s.href}>
                 <EnlaceDeSeccion href={s.href} activa={activa(s.href)}>
