@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import CambiarVisibilidad from "@/components/admin/CambiarVisibilidad";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import TextLink from "@/components/ui/TextLink";
-import { acciones, canales, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
+import { acciones, canales, estados, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
 import { leerComercio, type AccionDelEquipo, type FichaComercio } from "@/lib/admin/datos";
 import { fecha, fechaConAnio, haceCuanto, mes, numero, pesos } from "@/lib/formato";
 
@@ -25,12 +26,29 @@ const sePuedeExtender = (c: FichaComercio) =>
   c.estado !== "suspendida" &&
   !c.dado_de_baja_el;
 
+/*
+ * Por qué un local visible igual no aparece: la regla de la base
+ * (`_local_a_la_vista()`) pide además que esté al día o en gracia. La baja lo
+ * deja suspendido, pero se dice como baja.
+ */
+function porQueNoSeVe(c: FichaComercio) {
+  const { visibilidad } = acciones;
+  if (c.dado_de_baja_el) return visibilidad.noSeVePorBaja;
+  if (c.estado === "al_dia" || c.estado === "en_gracia") return null;
+  return visibilidad.noSeVePorEstado((estados[c.estado]?.label ?? c.estado).toLowerCase());
+}
+
 /** Una fila del registro, en una frase. */
 function queHizo(a: AccionDelEquipo) {
   const { registro } = acciones;
-  return a.accion === "resolver_incidencia"
-    ? registro.resolvio(a.detalle.antes.id_pago_mp)
-    : registro.extendio(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
+  switch (a.accion) {
+    case "resolver_incidencia":
+      return registro.resolvio(a.detalle.antes.id_pago_mp);
+    case "extender_prueba":
+      return registro.extendio(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
+    case "cambiar_visibilidad":
+      return a.detalle.despues.visible ? registro.mostro : registro.oculto;
+  }
 }
 
 export default async function Comercio({ params }: { params: Promise<{ id: string }> }) {
@@ -40,6 +58,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
   if (!c) notFound();
 
   const activos = c.profesionales.filter((p) => p.esta_activo);
+  const noSeVe = porQueNoSeVe(c);
 
   return (
     <div className="flex flex-col gap-6">
@@ -55,8 +74,16 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
           {c.dado_de_baja_el ? <Dato>De baja {fecha(c.dado_de_baja_el)}</Dato> : <EstadoBadge estado={c.estado} />}
           <Dato>{niveles[c.nivel] ?? c.nivel}</Dato>
           {c.es_fundador && <Dato>Fundador</Dato>}
+          {!c.visible && <Dato>{acciones.visibilidad.oculto}</Dato>}
         </div>
       </Encabezado>
+
+      <Bloque
+        titulo={acciones.visibilidad.titulo}
+        bajada={c.visible ? (noSeVe ?? acciones.visibilidad.seVe) : acciones.visibilidad.oculta}
+      >
+        <CambiarVisibilidad idComercio={c.id_comercio} visible={c.visible} noSeVe={noSeVe} />
+      </Bloque>
 
       <div className="grid gap-3 md:grid-cols-2">
         <Bloque titulo="Suscripción">

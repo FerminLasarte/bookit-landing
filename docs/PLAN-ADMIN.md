@@ -235,6 +235,27 @@ Ver **D9**.
 
 ---
 
+## F. Ocultar un local (pedido aparte, 23-oct)
+
+BooKit (#100, contrato en `docs/admin-panel.md`, sección 11):
+`comercios.visible` y `admin_cambiar_visibilidad(p_id_comercio, p_visible,
+p_nota)`, con su fila en el registro. Un local oculto no aparece ni toma
+turnos aunque esté al día, y su enlace de reserva no existe; los turnos que
+ya tenía siguen. El local no lo ve. Toda la parte pública la resuelve la base.
+
+Web:
+- en la ficha, un bloque **Visibilidad** arriba de todo, con dos píldoras
+  ("Visible para todos" / "Oculto"): la otra abre la confirmación con nota
+  opcional. Al ocultar, el diálogo dice qué pasa; si quedan turnos por
+  delante, no se cierra y avisa "Sigue teniendo N turnos por delante: no se
+  cancelan", con **Listo**;
+- si el local es visible pero no está al día ni en gracia (o está de baja),
+  el bloque lo dice: el control no promete que aparece;
+- la marca **Oculto** en el encabezado de la ficha y en la lista de
+  Comercios, y "Lo ocultó" / "Lo volvió a mostrar" en el registro.
+
+---
+
 ## Decisiones
 
 **D1. Dónde va el link "Panel".**
@@ -310,3 +331,6 @@ Ver **D9**.
 - **C:** buscar a Fermín por mail y ver sus locales y turnos.
 - **D:** comparar el estimado con la cuenta a mano de los locales que pagan.
 - **E:** lo prueba el chat de BooKit con un local de prueba que vence.
+- **F:** con Nogal (la cuenta de prueba): ocultarlo con un turno por delante y
+  ver el aviso, la marca en la lista y la fila en el registro; que no aparezca
+  en la app ni en `/reservar/<id>`; volver a mostrarlo.

@@ -9,15 +9,20 @@ export type Respuesta = { error: string | null; verPlanes?: boolean; listo?: boo
 /**
  * Una acción que va en un diálogo y lo cierra si sale bien: la página vuelve
  * releída, así que no hay nada más que mostrar. Si falla, el diálogo queda con
- * el error.
+ * el error. `cierra`: para la que a veces tiene algo que decir después; lo que
+ * suma a `Respuesta` es opcional, porque arranca sin nada.
  */
-export function useAccionQueCierra(accion: (antes: Respuesta, datos: FormData) => Promise<Respuesta>, cerrar: () => void) {
-  return useActionState<Respuesta, FormData>(
+export function useAccionQueCierra<R extends Respuesta = Respuesta>(
+  accion: (antes: R, datos: FormData) => Promise<R>,
+  cerrar: () => void,
+  cierra: (respuesta: R) => boolean = () => true,
+) {
+  return useActionState<R, FormData>(
     async (antes, datos) => {
-      const respuesta = await accion(antes, datos);
-      if (!respuesta.error) cerrar();
+      const respuesta = await accion(antes as R, datos);
+      if (!respuesta.error && cierra(respuesta)) cerrar();
       return respuesta;
     },
-    { error: null },
+    { error: null } as Awaited<R>,
   );
 }

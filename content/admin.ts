@@ -79,6 +79,7 @@ export const estadosAlta: Record<string, string> = {
 /** Lo que el equipo hace desde el panel (paso B de docs/PLAN-ADMIN.md). Los errores los escribe la base. */
 export const acciones = {
   volver: "Volver",
+  listo: "Listo",
   resolver: {
     boton: "Resolver",
     titulo: "Resolver la incidencia",
@@ -104,12 +105,47 @@ export const acciones = {
     enviando: "Extendiendo…",
     generico: "No pudimos extenderla. Probá de nuevo.",
   },
+  /** El interruptor del equipo (BooKit `docs/admin-panel.md`, sección 11). */
+  visibilidad: {
+    titulo: "Visibilidad",
+    visible: "Visible para todos",
+    oculto: "Oculto",
+    seVe: "Aparece en la app y en la web, y toma turnos.",
+    // Visible, pero la suscripción no lo deja a la vista: el control no puede prometer lo contrario.
+    noSeVePorEstado: (estado: string) => `Igual no aparece ni toma turnos mientras la suscripción esté ${estado}.`,
+    noSeVePorBaja: "Igual no aparece ni toma turnos: está de baja.",
+    oculta: "Lo ocultó el equipo: no aparece ni toma turnos, aunque esté al día. El local no ve este cambio.",
+    ocultar: {
+      titulo: "Ocultar el local",
+      bajada: [
+        "Sale de Explorar, el mapa, Inicio, la búsqueda, la lista de ciudades y las portadas de la landing, y su enlace de reserva deja de andar.",
+        "No toma turnos por ningún lado: ni por la app, ni por la web, ni los que cargue el propio local.",
+        "Los turnos que ya tiene siguen en pie. El local no ve este cambio.",
+      ],
+      ejemplo: "Pagó, pero todavía estamos definiendo su ficha",
+      confirmar: "Ocultar",
+      enviando: "Ocultando…",
+    },
+    mostrar: {
+      titulo: "Volver a mostrar el local",
+      bajada: "Vuelve a aparecer en la app y en la web, y a tomar turnos.",
+      ejemplo: "Ya terminamos su ficha",
+      confirmar: "Mostrar",
+      enviando: "Mostrando…",
+    },
+    nota: "Nota",
+    quedoOculto: "Quedó oculto",
+    porDelante: (n: number) => `Sigue teniendo ${n} ${n === 1 ? "turno" : "turnos"} por delante: no se cancelan.`,
+    generico: "No pudimos cambiarlo. Probá de nuevo.",
+  },
   registro: {
     titulo: "Lo que hizo el equipo",
     bajada: "Lo que se cambió desde el panel, de lo más nuevo a lo más viejo.",
     sinCuenta: "Una cuenta borrada",
     resolvio: (pago: string) => `Resolvió la incidencia del pago ${pago}`,
     extendio: (dias: number, vence: string) => `Extendió la prueba ${dias} ${dias === 1 ? "día" : "días"}: vence el ${vence}`,
+    oculto: "Lo ocultó",
+    mostro: "Lo volvió a mostrar",
   },
 };
 

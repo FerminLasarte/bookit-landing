@@ -47,3 +47,26 @@ export async function extenderPrueba(_: Respuesta, datos: FormData): Promise<Res
   refresh();
   return { error: null };
 }
+
+/** `turnosPorDelante`: los pendientes y confirmados que no empezaron. Ocultar no los cancela. */
+export type RespuestaDeVisibilidad = Respuesta & { visible?: boolean; turnosPorDelante?: number };
+
+/** Oculta un local o lo vuelve a mostrar. El interruptor es del equipo: el local no lo ve. */
+export async function cambiarVisibilidad(_: RespuestaDeVisibilidad, datos: FormData): Promise<RespuestaDeVisibilidad> {
+  const { generico } = acciones.visibilidad;
+  const idComercio = campo(datos, "id_comercio");
+  const visible = campo(datos, "visible");
+  if (!idComercio || (visible !== "true" && visible !== "false")) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { data, error } = await supabase.rpc("admin_cambiar_visibilidad", {
+    p_id_comercio: idComercio,
+    p_visible: visible === "true",
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "cambiar-visibilidad") };
+
+  refresh();
+  const { visible: quedo, turnos_por_delante } = data as { visible: boolean; turnos_por_delante: number };
+  return { error: null, visible: quedo, turnosPorDelante: turnos_por_delante };
+}
