@@ -156,7 +156,7 @@ export const terminos: LegalDoc = {
         {
           type: "ul",
           items: [
-            "Las cuentas de local no participan del programa: no tienen código de invitación ni generan beneficios por referir. Su beneficio de incorporación es el precio fundador descripto en la sección siguiente.",
+            "Las cuentas de local no participan del programa: no tienen código de invitación ni generan beneficios por referir. Su beneficio de incorporación es el precio fundador y, para los primeros locales, el período sin cargo del lanzamiento, descriptos en la sección siguiente.",
             "Un beneficio por persona registrada: no se acumula con otras promociones salvo que se indique.",
             "Está prohibido crear cuentas falsas o duplicadas, usar datos de terceros sin autorización, o difundir tu código como spam.",
             "Detectado un uso irregular, anulamos los beneficios asociados y podemos suspender las cuentas involucradas.",
@@ -170,7 +170,7 @@ export const terminos: LegalDoc = {
       blocks: [
         {
           type: "p",
-          text: "Para publicar un local en Bookit hay que suscribirse a uno de sus planes —Esencial, Pro o Equipo—, que se diferencian por la cantidad de profesionales y las funciones que incluyen. Los precios, lo que incluye cada plan, la duración de cada período y los días de prueba sin cargo se informan en la app antes de contratar.",
+          text: "Para publicar un local en Bookit hay que suscribirse a uno de sus planes —Esencial, Pro o Equipo—, que se diferencian por la cantidad de profesionales y las funciones que incluyen. La excepción es el período sin cargo del lanzamiento, descripto más abajo. Los precios, lo que incluye cada plan, la duración de cada período y los días de prueba sin cargo se informan en la app antes de contratar.",
         },
         {
           type: "p",
@@ -199,6 +199,10 @@ export const terminos: LegalDoc = {
         {
           type: "p",
           text: "El precio fundador es un descuento sobre el precio vigente, de carácter limitado, para los locales que se sumen antes del lanzamiento en la ciudad, y vale para cualquiera de los planes. Se mantiene mientras la suscripción esté activa y al día; si se da de baja, el local pierde esa condición y vuelve al precio vigente.",
+        },
+        {
+          type: "p",
+          text: "Los primeros diez locales que se suman a Bookit en su lanzamiento reciben el plan Pro sin cargo hasta el 1 de julio de 2027, sin contratar nada. Bookit le confirma a cada local si está entre los diez. Durante ese período no se puede cambiar de plan. Ese día termina el período sin cargo: para seguir, el local contrata un plan con el precio fundador. Si no lo hace, tiene 7 días de gracia y después deja de estar visible y de recibir reservas.",
         },
         {
           type: "p",
