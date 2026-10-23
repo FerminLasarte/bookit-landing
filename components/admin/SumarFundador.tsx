@@ -1,17 +1,17 @@
 "use client";
 
-import { sumarAlLanzamiento, type RespuestaDeLanzamiento } from "@/app/admin/(panel)/acciones";
+import { sumarFundador, type RespuestaDeFundador } from "@/app/admin/(panel)/acciones";
 import Field from "@/components/forms/Field";
 import { acciones } from "@/content/admin";
 import DialogoDeAccion from "./DialogoDeAccion";
 
 /**
- * "Sumar a los fundadores del lanzamiento": Pro gratis hasta el 1-jul-2027 y
- * después el precio fundador. Al salir bien dice cuántos lugares quedan de los
- * 10 (BooKit `docs/admin-panel.md`, sección 12).
+ * "Sumar como fundador" en la ficha de un local que nunca pagó. Al salir bien
+ * dice cuántos lugares quedan (BooKit `docs/admin-panel.md`, sección 12).
  */
-export default function SumarAlLanzamiento({ idComercio }: { idComercio: string }) {
+export default function SumarFundador({ idComercio }: { idComercio: string }) {
   const copy = acciones.lanzamiento;
+
   return (
     <DialogoDeAccion
       boton={copy.boton}
@@ -21,8 +21,8 @@ export default function SumarAlLanzamiento({ idComercio }: { idComercio: string 
       ))}
       confirmar={copy.confirmar}
       enviando={copy.enviando}
-      accion={sumarAlLanzamiento}
-      aviso={(r: RespuestaDeLanzamiento) =>
+      accion={sumarFundador}
+      aviso={(r: RespuestaDeFundador) =>
         r.quedan === undefined ? null : { titulo: copy.quedoSumado, texto: copy.quedan(r.quedan) }
       }
     >

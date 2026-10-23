@@ -14,10 +14,10 @@ export default function QueHizo({ accion: a }: { accion: AccionDelEquipo }) {
       return registro.cortesia(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
     case "cambiar_fundador":
       return a.detalle.despues.es_fundador ? registro.marcoFundador : registro.sacoFundador;
-    case "sumar_fundador":
-      return registro.lanzamiento(fechaConAnio(a.detalle.despues.vencimiento));
     case "cambiar_visibilidad":
       return a.detalle.despues.visible ? registro.mostro : registro.oculto;
+    case "sumar_fundador":
+      return registro.sumoFundador;
     case "sumar_admin":
       return registro.sumoAdmin(a.detalle.despues.email);
     case "sacar_admin":

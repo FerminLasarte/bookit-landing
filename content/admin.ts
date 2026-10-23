@@ -165,24 +165,6 @@ export const acciones = {
     nota: "Por qué",
     generico: "No pudimos cambiar el precio. Probá de nuevo.",
   },
-  /** Los 10 primeros locales: Pro gratis hasta el 1-jul-2027 y después el precio fundador (sección 12). */
-  lanzamiento: {
-    marca: "Fundador del lanzamiento",
-    boton: "Sumar a los fundadores del lanzamiento",
-    titulo: "Sumar a los fundadores del lanzamiento",
-    bajada: [
-      "Queda en Pro gratis hasta el 1 de julio de 2027 y, desde ahí, con el precio fundador: 30% menos.",
-      "Son 10 lugares y no se liberan. Lo que pasa después lo hace la base: el 1 de julio pasa a gracia, y si no paga, se corta.",
-    ],
-    nota: "Nota",
-    ejemplo: "Barbería del centro, la sumó Facu",
-    confirmar: "Sumar",
-    enviando: "Sumando…",
-    quedoSumado: "Quedó sumado",
-    quedan: (n: number) =>
-      n === 0 ? "Era el último lugar: ya están los 10." : `${n === 1 ? "Queda 1 lugar" : `Quedan ${n} lugares`} de 10.`,
-    generico: "No pudimos sumarlo. Probá de nuevo.",
-  },
   /** El interruptor del equipo (BooKit `docs/admin-panel.md`, sección 11). */
   visibilidad: {
     titulo: "Visibilidad",
@@ -216,6 +198,25 @@ export const acciones = {
     porDelante: (n: number) => `Sigue teniendo ${n} ${n === 1 ? "turno" : "turnos"} por delante: no se cancelan.`,
     generico: "No pudimos cambiarlo. Probá de nuevo.",
   },
+  /** Los 10 primeros locales del lanzamiento (BooKit `docs/admin-panel.md`, sección 12). */
+  lanzamiento: {
+    marca: "Fundador del lanzamiento",
+    boton: "Sumar como fundador",
+    titulo: "Sumar como fundador del lanzamiento",
+    bajada: [
+      "Queda en Pro, gratis, hasta el 1 de julio de 2027. Entra y se ve como cualquier local al día.",
+      "Después paga con el precio fundador: 30% menos, en la app o en la web. Si no paga, tiene 7 días de gracia y se corta.",
+      "Son 10 lugares en total, y uno usado no se libera aunque el local se vaya.",
+    ],
+    nota: "Nota",
+    ejemplo: "Barbería del centro, la sumó Facu",
+    confirmar: "Sumar",
+    enviando: "Sumando…",
+    quedoSumado: "Quedó sumado",
+    quedan: (n: number) =>
+      n === 0 ? "Era el último lugar: ya están los 10." : `${n === 1 ? "Queda 1 lugar" : `Quedan ${n} lugares`} de fundador.`,
+    generico: "No pudimos sumarlo. Probá de nuevo.",
+  },
   registro: {
     titulo: "Lo que hizo el equipo",
     bajada: "Lo que se cambió desde el panel, de lo más nuevo a lo más viejo.",
@@ -228,9 +229,9 @@ export const acciones = {
       `Dio ${dias} ${dias === 1 ? "día" : "días"} de cortesía: vence el ${vence}`,
     marcoFundador: "Lo marcó fundador",
     sacoFundador: "Le sacó el precio fundador",
-    lanzamiento: (vence: string) => `Lo sumó a los fundadores del lanzamiento: Pro gratis hasta el ${vence}`,
     sumoAdmin: (email: string) => `Sumó a ${email} al equipo`,
     sacoAdmin: (email: string) => `Sacó a ${email} del equipo`,
+    sumoFundador: "Lo sumó como fundador: Pro gratis hasta el 1 de julio de 2027",
   },
   /** Quién entra al panel (paso I de docs/PLAN-ADMIN-V3.md). */
   equipo: {

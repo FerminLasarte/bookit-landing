@@ -7,7 +7,7 @@ import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
 import QueHizo from "@/components/admin/QueHizo";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
-import SumarAlLanzamiento from "@/components/admin/SumarAlLanzamiento";
+import SumarFundador from "@/components/admin/SumarFundador";
 import TextLink from "@/components/ui/TextLink";
 import {
   acciones,
@@ -52,12 +52,13 @@ const sePuedeDarCortesia = (c: FichaComercio) =>
   !c.dado_de_baja_el;
 
 /*
- * Cuándo va "Sumar a los fundadores del lanzamiento" (sección 12): nunca pagó
- * (pendiente, o en una prueba de Mercado Pago sin débito), no se sumó antes y
- * no está suspendido ni de baja. El tope de 10 y la fecha los controla la base.
+ * Cuándo va "Sumar como fundador" (BooKit `docs/admin-panel.md`, sección 12):
+ * un local que nunca pagó y no se sumó antes. El que espera en `pendiente`
+ * figura como de la tienda sin haber comprado nada, por eso entra igual. El
+ * tope de 10 lo controla la base.
  */
 const esDelLanzamiento = (c: FichaComercio) => c.acciones.some((a) => a.accion === "sumar_fundador");
-const sePuedeSumarAlLanzamiento = (c: FichaComercio) =>
+const sePuedeSumarFundador = (c: FichaComercio) =>
   !c.dado_de_baja_el &&
   c.estado !== "suspendida" &&
   !esDelLanzamiento(c) &&
@@ -131,7 +132,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
             )}
             <Fila etiqueta="En Bookit desde">{fechaConAnio(c.creado_el)}</Fila>
           </dl>
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
             {sePuedeExtender(c) && (
               <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
             )}
@@ -143,7 +144,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
                 noRenueva={c.cancela_al_vencer}
               />
             )}
-            {sePuedeSumarAlLanzamiento(c) && <SumarAlLanzamiento idComercio={c.id_comercio} />}
+            {sePuedeSumarFundador(c) && <SumarFundador idComercio={c.id_comercio} />}
             {!c.dado_de_baja_el && (
               <CambiarFundador
                 idComercio={c.id_comercio}
