@@ -60,6 +60,8 @@ export const motivosIncidencia: Record<string, string> = {
   devolucion: "Devolución",
   contracargo: "Contracargo",
   cancelacion: "Devolución por cancelación",
+  suscripcion_no_verificada: "Pago de suscripción sin verificar",
+  suscripcion_doble: "Pago doble (ya paga en la tienda)",
 };
 
 export const reembolsos: Record<string, string> = {

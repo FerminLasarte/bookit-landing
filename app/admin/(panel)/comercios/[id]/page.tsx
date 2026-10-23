@@ -48,6 +48,9 @@ function queHizo(a: AccionDelEquipo) {
       return registro.extendio(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
     case "cambiar_visibilidad":
       return a.detalle.despues.visible ? registro.mostro : registro.oculto;
+    default:
+      // Una acción que la base ya anota y la web todavía no conoce: BooKit la suma primero.
+      return <span className="text-muted">{(a as { accion: string }).accion}</span>;
   }
 }
 
