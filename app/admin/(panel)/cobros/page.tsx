@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Bloque, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
+import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import TextLink from "@/components/ui/TextLink";
 import { canales, estadosAlta, motivosIncidencia, planes, reembolsos } from "@/content/admin";
 import { leerCobros } from "@/lib/admin/datos";
@@ -28,14 +29,14 @@ export default async function Cobros() {
 
       <Bloque
         titulo="Incidencias de pago abiertas"
-        bajada="Plata de un turno que el webhook no pudo resolver solo. Salen en el mail de las 04:00 hasta que se cierran."
+        bajada="Plata de un turno que el webhook no pudo resolver solo. Salen en el mail de las 04:00 hasta que alguien las resuelve."
       >
         {c.incidencias_abiertas.length === 0 ? (
           <Vacio>No hay incidencias abiertas.</Vacio>
         ) : (
-          <Tabla columnas={["Fecha", "Local", "Motivo", "Monto", "Reembolso", "Detalle"]}>
+          <Tabla columnas={["Fecha", "Local", "Motivo", "Monto", "Reembolso", "Detalle", ""]}>
             {c.incidencias_abiertas.map((i) => (
-              <tr key={`${i.creado_el}-${i.motivo}`}>
+              <tr key={i.id_pago_mp}>
                 <td className="whitespace-nowrap">{fecha(i.creado_el)}</td>
                 <td>
                   <AComercio id={i.id_comercio} nombre={i.comercio} />
@@ -44,6 +45,9 @@ export default async function Cobros() {
                 <td className="num">{pesos(i.monto)}</td>
                 <td>{reembolsos[i.reembolso] ?? i.reembolso}</td>
                 <td className="text-muted">{i.detalle}</td>
+                <td>
+                  <ResolverIncidencia idPago={i.id_pago_mp} />
+                </td>
               </tr>
             ))}
           </Tabla>

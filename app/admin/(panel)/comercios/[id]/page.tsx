@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
+import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import TextLink from "@/components/ui/TextLink";
-import { canales, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
+import { acciones, canales, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
 import { enlaceDeTelefono } from "@/lib/admin/contacto";
-import { leerComercio } from "@/lib/admin/datos";
+import { leerComercio, type AccionDelEquipo, type FichaComercio } from "@/lib/admin/datos";
 import { fecha, fechaConAnio, haceCuanto, mes, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercio" };
@@ -31,6 +33,27 @@ function Telefono({ numero }: { numero: string }) {
       {whatsapp && " · WhatsApp"}
     </TextLink>
   );
+}
+
+/*
+ * Cuándo va "Extender la prueba" (BooKit `docs/admin-panel.md`, sección 4):
+ * en prueba, cobrada por nadie todavía o por Mercado Pago, empezada y sin
+ * suspender ni dar de baja. La base rechaza lo demás igual.
+ */
+const CANALES_DE_LA_TIENDA = ["app_store", "play_store", "tienda"];
+const sePuedeExtender = (c: FichaComercio) =>
+  c.plan === "prueba" &&
+  !CANALES_DE_LA_TIENDA.includes(c.canal) &&
+  c.estado !== "pendiente" &&
+  c.estado !== "suspendida" &&
+  !c.dado_de_baja_el;
+
+/** Una fila del registro, en una frase. */
+function queHizo(a: AccionDelEquipo) {
+  const { registro } = acciones;
+  return a.accion === "resolver_incidencia"
+    ? registro.resolvio(a.detalle.antes.id_pago_mp)
+    : registro.extendio(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
 }
 
 export default async function Comercio({ params }: { params: Promise<{ id: string }> }) {
@@ -75,6 +98,11 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
             )}
             <Fila etiqueta="En Bookit desde">{fechaConAnio(c.creado_el)}</Fila>
           </dl>
+          {sePuedeExtender(c) && (
+            <div className="mt-3">
+              <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
+            </div>
+          )}
         </Bloque>
 
         <Bloque titulo="Dueño">
@@ -168,14 +196,30 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
 
       {c.incidencias.length > 0 && (
         <Bloque titulo="Incidencias de pago">
-          <Tabla columnas={["Fecha", "Motivo", "Monto", "Reembolso", "Detalle"]}>
+          <Tabla columnas={["Fecha", "Motivo", "Monto", "Reembolso", "Detalle", ""]}>
             {c.incidencias.map((i) => (
-              <tr key={`${i.creado_el}-${i.motivo}`}>
+              <tr key={i.id_pago_mp}>
                 <td className="whitespace-nowrap">{fecha(i.creado_el)}</td>
                 <td>{motivosIncidencia[i.motivo] ?? i.motivo}</td>
                 <td className="num">{pesos(i.monto)}</td>
                 <td>{i.resuelto_el ? "Resuelta" : (reembolsos[i.reembolso] ?? i.reembolso)}</td>
                 <td className="text-muted">{i.detalle}</td>
+                <td>{!i.resuelto_el && <ResolverIncidencia idPago={i.id_pago_mp} />}</td>
+              </tr>
+            ))}
+          </Tabla>
+        </Bloque>
+      )}
+
+      {c.acciones.length > 0 && (
+        <Bloque titulo={acciones.registro.titulo} bajada={acciones.registro.bajada}>
+          <Tabla columnas={["Fecha", "Quién", "Qué", "Nota"]}>
+            {c.acciones.map((a) => (
+              <tr key={`${a.creado_el}-${a.accion}`}>
+                <td className="whitespace-nowrap">{fecha(a.creado_el)}</td>
+                <td>{a.email ?? acciones.registro.sinCuenta}</td>
+                <td>{queHizo(a)}</td>
+                <td className="text-muted">{a.detalle.nota}</td>
               </tr>
             ))}
           </Tabla>

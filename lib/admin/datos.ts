@@ -77,7 +77,13 @@ export type FichaComercio = {
   dado_de_baja_el: string | null;
   habilita_puntos: boolean;
   acepta_efectivo: boolean;
-  duenio: { email: string | null; nombre: string | null; telefono: string | null; ultimo_ingreso: string | null };
+  duenio: {
+    id_usuario: string | null;
+    email: string | null;
+    nombre: string | null;
+    telefono: string | null;
+    ultimo_ingreso: string | null;
+  };
   mercado_pago: { vinculado_el: string; caida_el: string | null } | null;
   profesionales: { nombre: string; esta_activo: boolean; con_cuenta: boolean }[];
   servicios: { nombre: string; precio: number; duracion_minutos: number; esta_activo: boolean }[];
@@ -85,9 +91,27 @@ export type FichaComercio = {
   pagos_suscripcion: { mp_payment_id: string; plan: string; creado_el: string }[];
   alta: { plan: string; estado: string; primer_cobro: string | null; creado_el: string } | null;
   incidencias: Incidencia[];
+  /** Lo que hizo el equipo desde el panel, de lo más nuevo a lo más viejo (BooKit `docs/admin-panel.md`, sección 5). */
+  acciones: AccionDelEquipo[];
 };
 
+/** Una fila de `admin_acciones`. `email` es `null` si la cuenta de quien lo hizo ya no existe. */
+export type AccionDelEquipo =
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "resolver_incidencia";
+      detalle: { antes: { id_pago_mp: string; motivo: string; monto: number | null }; nota: string };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "extender_prueba";
+      detalle: { despues: { vencimiento: string }; dias: number; nota: string | null };
+    };
+
 export type Incidencia = {
+  id_pago_mp: string;
   id_comercio?: string | null;
   comercio?: string | null;
   motivo: string;
