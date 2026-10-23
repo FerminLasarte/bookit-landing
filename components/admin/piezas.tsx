@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
 import Badge from "@/components/ui/Badge";
+import Button from "@/components/ui/Button";
 import Superficie, { type Tono } from "@/components/ui/Superficie";
+import TextLink from "@/components/ui/TextLink";
 import { estados } from "@/content/admin";
+import { enlaceDeTelefono } from "@/lib/admin/contacto";
 import type { EstadoSuscripcion } from "@/lib/admin/datos";
 import { cn } from "@/lib/utils";
 
@@ -144,5 +147,101 @@ export function Barras({
         </div>
       ))}
     </div>
+  );
+}
+
+/** Un renglón de una ficha: qué es y cuánto vale. Va dentro de un `<dl>`. */
+export function Fila({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 text-small last:border-0">
+      <dt className="text-muted">{etiqueta}</dt>
+      <dd className="text-right text-fg">{children}</dd>
+    </div>
+  );
+}
+
+/** Un mail que abre el correo, o la raya si no hay. */
+export function Mail({ email }: { email: string | null }) {
+  return email ? <TextLink href={`mailto:${email}`}>{email}</TextLink> : "—";
+}
+
+/** Un teléfono que abre WhatsApp si el número da, si no llama (D4). La raya si no hay. */
+export function Telefono({ numero }: { numero: string | null }) {
+  if (!numero) return "—";
+  const { href, whatsapp } = enlaceDeTelefono(numero);
+  return (
+    <TextLink href={href}>
+      {numero}
+      {whatsapp && " · WhatsApp"}
+    </TextLink>
+  );
+}
+
+export type ParamsDeLista = Record<string, string | undefined>;
+
+/** El link a una lista del panel con otros parámetros. Los vacíos no van. */
+export function aLista(base: string, actual: ParamsDeLista, cambios: ParamsDeLista) {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries({ ...actual, ...cambios })) if (v) params.set(k, v);
+  const query = params.toString();
+  return query ? `${base}?${query}` : base;
+}
+
+/** La página que pide la URL, desde 1. */
+export const paginaPedida = (p: string | undefined) => Math.max(1, Number(p) || 1);
+
+/**
+ * La búsqueda de una lista: un GET a la misma página, así que funciona sin
+ * JavaScript y queda en la URL. `conservar`: los filtros que siguen puestos.
+ */
+export function Busqueda({
+  etiqueta,
+  valor,
+  conservar = {},
+}: {
+  etiqueta: string;
+  valor?: string;
+  conservar?: ParamsDeLista;
+}) {
+  return (
+    <form className="flex flex-wrap gap-2" role="search">
+      <label htmlFor="q" className="sr-only">
+        Buscar por {etiqueta.toLowerCase()}
+      </label>
+      <input
+        id="q"
+        name="q"
+        type="search"
+        defaultValue={valor}
+        placeholder={etiqueta}
+        className="ring-focus min-h-11 min-w-0 flex-1 rounded-field border border-line bg-surface px-4 text-small text-fg placeholder:text-muted"
+      />
+      {Object.entries(conservar).map(([k, v]) => v && <input key={k} type="hidden" name={k} value={v} />)}
+      <Button type="submit" variant="secondary" size="compact">
+        Buscar
+      </Button>
+    </form>
+  );
+}
+
+/** Anterior y siguiente, si hay más de una página. `href` arma el link de una página. */
+export function Paginas({ pagina, paginas, href }: { pagina: number; paginas: number; href: (p: number) => string }) {
+  if (paginas <= 1) return null;
+  return (
+    <nav aria-label="Páginas" className="flex items-center justify-center gap-3 text-small">
+      {pagina > 1 && (
+        <Button href={href(pagina - 1)} variant="secondary" size="compact">
+          Anterior
+        </Button>
+      )}
+      <span className="text-muted">
+        Página {pagina} de {paginas}
+      </span>
+      {pagina < paginas && (
+        <Button href={href(pagina + 1)} variant="secondary" size="compact">
+          Siguiente
+        </Button>
+      )}
+    </nav>
   );
 }

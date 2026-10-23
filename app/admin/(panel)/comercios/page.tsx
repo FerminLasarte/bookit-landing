@@ -1,32 +1,34 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bloque, Dato, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
-import Button from "@/components/ui/Button";
+import {
+  aLista,
+  Bloque,
+  Busqueda,
+  Dato,
+  Encabezado,
+  EstadoBadge,
+  paginaPedida,
+  Paginas,
+  Tabla,
+  Vacio,
+} from "@/components/admin/piezas";
 import { canales, filtrosComercios, niveles, planes } from "@/content/admin";
-import { leerComercios, type FiltroComercios } from "@/lib/admin/datos";
+import { leerComercios, POR_PAGINA, type FiltroComercios } from "@/lib/admin/datos";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Comercios" };
 
-const POR_PAGINA = 50;
-
 type Params = { q?: string; estado?: string; p?: string };
 
-/** El link a esta misma lista con otros parámetros. */
-function aLista(actual: Params, cambios: Params) {
-  const params = new URLSearchParams();
-  for (const [k, v] of Object.entries({ ...actual, ...cambios })) if (v) params.set(k, v);
-  const query = params.toString();
-  return query ? `/admin/comercios?${query}` : "/admin/comercios";
-}
+const BASE = "/admin/comercios";
 
 export default async function Comercios({ searchParams }: { searchParams: Promise<Params> }) {
   const params = await searchParams;
   const estado = filtrosComercios.some((f) => f.valor === params.estado)
     ? (params.estado as FiltroComercios)
     : undefined;
-  const pagina = Math.max(1, Number(params.p) || 1);
+  const pagina = paginaPedida(params.p);
   const { total, filas } = await leerComercios({
     busqueda: params.q,
     estado,
@@ -39,23 +41,7 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
     <div className="flex flex-col gap-6">
       <Encabezado titulo="Comercios" bajada={`${numero(total)} ${total === 1 ? "local" : "locales"}`} />
 
-      <form className="flex flex-wrap gap-2" role="search">
-        <label htmlFor="q" className="sr-only">
-          Buscar por nombre del local o mail del dueño
-        </label>
-        <input
-          id="q"
-          name="q"
-          type="search"
-          defaultValue={params.q}
-          placeholder="Nombre del local o mail del dueño"
-          className="ring-focus min-h-11 min-w-0 flex-1 rounded-field border border-line bg-surface px-4 text-small text-fg placeholder:text-muted"
-        />
-        {estado && <input type="hidden" name="estado" value={estado} />}
-        <Button type="submit" variant="secondary" size="compact">
-          Buscar
-        </Button>
-      </form>
+      <Busqueda etiqueta="Nombre del local o mail del dueño" valor={params.q} conservar={{ estado }} />
 
       <nav aria-label="Filtrar por estado" className="-mx-1 flex flex-wrap gap-1">
         {filtrosComercios.map((f) => {
@@ -63,7 +49,7 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
           return (
             <Link
               key={f.label}
-              href={aLista(params, { estado: f.valor ?? undefined, p: undefined })}
+              href={aLista(BASE, params, { estado: f.valor ?? undefined, p: undefined })}
               aria-current={elegido ? "true" : undefined}
               className={cn(
                 "ring-focus flex min-h-10 items-center rounded-pill px-4 text-small font-semibold",
@@ -116,23 +102,7 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
         )}
       </Bloque>
 
-      {paginas > 1 && (
-        <nav aria-label="Páginas" className="flex items-center justify-center gap-3 text-small">
-          {pagina > 1 && (
-            <Button href={aLista(params, { p: String(pagina - 1) })} variant="secondary" size="compact">
-              Anterior
-            </Button>
-          )}
-          <span className="text-muted">
-            Página {pagina} de {paginas}
-          </span>
-          {pagina < paginas && (
-            <Button href={aLista(params, { p: String(pagina + 1) })} variant="secondary" size="compact">
-              Siguiente
-            </Button>
-          )}
-        </nav>
-      )}
+      <Paginas pagina={pagina} paginas={paginas} href={(p) => aLista(BASE, params, { p: String(p) })} />
     </div>
   );
 }

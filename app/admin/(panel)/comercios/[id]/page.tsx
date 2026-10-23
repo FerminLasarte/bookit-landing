@@ -1,39 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import type { ReactNode } from "react";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
-import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
+import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import TextLink from "@/components/ui/TextLink";
 import { acciones, canales, estadosAlta, motivosIncidencia, niveles, planes, reembolsos } from "@/content/admin";
-import { enlaceDeTelefono } from "@/lib/admin/contacto";
 import { leerComercio, type AccionDelEquipo, type FichaComercio } from "@/lib/admin/datos";
 import { fecha, fechaConAnio, haceCuanto, mes, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercio" };
 
 const UUID = /^[0-9a-f-]{36}$/i;
-
-/** Un renglón de una ficha: qué es y cuánto vale. */
-function Fila({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 text-small last:border-0">
-      <dt className="text-muted">{etiqueta}</dt>
-      <dd className="text-right text-fg">{children}</dd>
-    </div>
-  );
-}
-
-/** El teléfono del dueño: abre WhatsApp si el número da, si no llama. */
-function Telefono({ numero }: { numero: string }) {
-  const { href, whatsapp } = enlaceDeTelefono(numero);
-  return (
-    <TextLink href={href}>
-      {numero}
-      {whatsapp && " · WhatsApp"}
-    </TextLink>
-  );
-}
 
 /*
  * Cuándo va "Extender la prueba" (BooKit `docs/admin-panel.md`, sección 4):
@@ -107,9 +84,19 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
 
         <Bloque titulo="Dueño">
           <dl>
-            <Fila etiqueta="Nombre">{c.duenio.nombre ?? "—"}</Fila>
-            <Fila etiqueta="Mail">{c.duenio.email ? <TextLink href={`mailto:${c.duenio.email}`}>{c.duenio.email}</TextLink> : "—"}</Fila>
-            <Fila etiqueta="Teléfono">{c.duenio.telefono ? <Telefono numero={c.duenio.telefono} /> : "—"}</Fila>
+            <Fila etiqueta="Nombre">
+              {c.duenio.id_usuario ? (
+                <TextLink href={`/admin/personas/${c.duenio.id_usuario}`}>{c.duenio.nombre ?? "Ver su ficha"}</TextLink>
+              ) : (
+                (c.duenio.nombre ?? "—")
+              )}
+            </Fila>
+            <Fila etiqueta="Mail">
+              <Mail email={c.duenio.email} />
+            </Fila>
+            <Fila etiqueta="Teléfono">
+              <Telefono numero={c.duenio.telefono} />
+            </Fila>
             <Fila etiqueta="Último ingreso">{haceCuanto(c.duenio.ultimo_ingreso)}</Fila>
             <Fila etiqueta="Mercado Pago para señas">
               {!c.mercado_pago

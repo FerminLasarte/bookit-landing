@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bloque, Encabezado, EstadoBadge, Tabla, Vacio } from "@/components/admin/piezas";
+import { Bloque, Encabezado, EstadoBadge, Mail, Tabla, Vacio } from "@/components/admin/piezas";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
-import TextLink from "@/components/ui/TextLink";
 import { canales, estadosAlta, motivosIncidencia, planes, reembolsos } from "@/content/admin";
 import { leerCobros } from "@/lib/admin/datos";
 import { fecha, fechaConAnio, haceCuanto, pesos } from "@/lib/formato";
@@ -89,7 +88,9 @@ export default async function Cobros() {
             {c.altas_abandonadas.map((a) => (
               <tr key={`${a.email}-${a.creado_el}`}>
                 <td className="whitespace-nowrap">{fecha(a.creado_el)}</td>
-                <td>{a.email ? <TextLink href={`mailto:${a.email}`}>{a.email}</TextLink> : "—"}</td>
+                <td>
+                  <Mail email={a.email} />
+                </td>
                 <td>{planes[a.plan] ?? a.plan}</td>
                 <td>{estadosAlta[a.estado] ?? a.estado}</td>
               </tr>
