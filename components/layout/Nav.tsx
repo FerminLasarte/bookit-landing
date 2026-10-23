@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -8,7 +8,8 @@ import { AnimatePresence, useMotionValueEvent, useScroll } from "motion/react";
 import Button from "@/components/ui/Button";
 import Resaltado from "@/components/ui/Resaltado";
 import Wordmark from "@/components/ui/Wordmark";
-import { navCta, navLinks, navPanel } from "@/content/nav";
+import { navCta, navEquipo, navLinks, navPanel } from "@/content/nav";
+import { haySesionDelPanel } from "@/lib/admin/sesion";
 import { useSeccionEnFoco } from "@/lib/useSeccionEnFoco";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,15 @@ const ENLACE_QUIETO = "text-muted hover:text-fg";
 /** Las anclas de la home que el nav marca como actuales. */
 const ANCLAS = navLinks.flatMap((link) => link.href.split("#")[1] ?? []);
 
+/*
+ * Las cookies no avisan cuando cambian, y no hace falta: se entra y se sale
+ * del panel con una navegación completa, que vuelve a montar el nav. En el
+ * servidor no hay sesión, así que el HTML de la landing nunca trae el link.
+ */
+const sinSuscripcion = () => () => {};
+const delEquipoEnElNavegador = () => haySesionDelPanel(document.cookie);
+const delEquipoEnElServidor = () => false;
+
 export default function Nav() {
   const pathname = usePathname();
   const activa = useSeccionEnFoco(ANCLAS);
@@ -29,6 +39,8 @@ export default function Nav() {
   useMotionValueEvent(scrollY, "change", (y) => setCompacto(y > 24));
   const [abierto, setAbierto] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const delEquipo = useSyncExternalStore(sinSuscripcion, delEquipoEnElNavegador, delEquipoEnElServidor);
+  const puertas = delEquipo ? [navPanel, navEquipo] : [navPanel];
 
   useEffect(() => setAbierto(false), [pathname]);
 
@@ -98,9 +110,11 @@ export default function Nav() {
               ))}
             </ul>
 
-            <Link href={navPanel.href} className={cn(ENLACE, ENLACE_QUIETO, "hidden lg:flex")}>
-              {navPanel.label}
-            </Link>
+            {puertas.map((puerta) => (
+              <Link key={puerta.href} href={puerta.href} className={cn(ENLACE, ENLACE_QUIETO, "hidden lg:flex")}>
+                {puerta.label}
+              </Link>
+            ))}
             <Button href={navCta.href} size="compact" className="ml-auto hidden lg:ml-0 lg:inline-flex">
               {navCta.label}
             </Button>
@@ -139,13 +153,16 @@ export default function Nav() {
             <Button href={navCta.href} className="mt-3 w-full">
               {navCta.label}
             </Button>
-            <Link
-              href={navPanel.href}
-              onClick={() => setAbierto(false)}
-              className="ring-focus mt-2 flex min-h-11 items-center justify-center rounded-pill text-small font-semibold text-muted hover:text-fg"
-            >
-              {navPanel.label}
-            </Link>
+            {puertas.map((puerta) => (
+              <Link
+                key={puerta.href}
+                href={puerta.href}
+                onClick={() => setAbierto(false)}
+                className="ring-focus mt-2 flex min-h-11 items-center justify-center rounded-pill text-small font-semibold text-muted hover:text-fg"
+              >
+                {puerta.label}
+              </Link>
+            ))}
           </div>
         </nav>
       </header>

@@ -17,9 +17,10 @@ import { NextResponse, type NextRequest } from "next/server";
 export type Area = "panel" | "local";
 
 /**
- * El panel conserva la cookie de siempre: cambiarla sacaría al equipo. La del
- * local va en `/` porque la leen dos rutas; reemplazó a `sb-planes`, que vivía
- * sólo en /planes.
+ * El panel conserva la cookie de siempre: cambiarla sacaría al equipo, y el
+ * nav del sitio la busca por ese nombre (`lib/admin/sesion.ts`). La del local
+ * va en `/` porque la leen dos rutas; reemplazó a `sb-planes`, que vivía sólo
+ * en /planes.
  */
 export const cookiesDeArea: Record<Area, CookieOptionsWithName | undefined> = {
   panel: undefined,
@@ -109,9 +110,13 @@ export async function canjearCodigo(
   return NextResponse.redirect(new URL(siFalla, request.url));
 }
 
-/** Cierra la sesión del área y vuelve a donde se entra. */
+/**
+ * Cierra la sesión del área y vuelve a donde se entra. `local`: sólo la de
+ * esta cookie. El `global` de Supabase revoca todas las de la cuenta, y salir
+ * del panel sacaba también de /mi-local y de la app (D3 de docs/PLAN-ADMIN.md).
+ */
 export async function salir(request: NextRequest, area: Area, destino: string) {
   const supabase = await clienteDeSupabase(area);
-  await supabase.auth.signOut();
+  await supabase.auth.signOut({ scope: "local" });
   return NextResponse.redirect(new URL(destino, request.url), 303);
 }

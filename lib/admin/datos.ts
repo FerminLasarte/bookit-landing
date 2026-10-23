@@ -119,15 +119,16 @@ export type Cobros = {
 };
 
 /*
- * Una cuenta que no está en `administradores` va a /admin/sin-acceso. El
- * chequeo vive acá y no en el layout: Next dibuja la página en paralelo al
- * layout, así que un layout que corta no evita que la página lea.
+ * Una cuenta que no está en `administradores` va a /admin/auth/sin-acceso,
+ * que le cierra la sesión y la deja en /admin/sin-acceso. El chequeo vive acá
+ * y no en el layout: Next dibuja la página en paralelo al layout, así que un
+ * layout que corta no evita que la página lea.
  */
 async function leer<T>(funcion: string, params?: Record<string, unknown>): Promise<T> {
   const supabase = await clienteDeSupabase("panel");
   const { data, error } = await supabase.rpc(funcion, params);
   if (error) {
-    if (error.code === "42501") redirect("/admin/sin-acceso");
+    if (error.code === "42501") redirect("/admin/auth/sin-acceso");
     throw new Error(`${funcion}: ${error.message}`);
   }
   return data as T;
