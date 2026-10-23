@@ -26,6 +26,13 @@ export const planes: Record<string, string> = {
   vitalicia: "Vitalicia",
 };
 
+/** Los días de gracia de cada plan pago (`planes.dias_gracia` en BooKit), para decirlos antes de dar una cortesía. */
+export const diasDeGracia: Record<string, number> = {
+  semanal: 2,
+  mensual: 7,
+  anual: 14,
+};
+
 export const niveles: Record<string, string> = {
   esencial: "Esencial",
   pro: "Pro",
@@ -108,6 +115,25 @@ export const acciones = {
     enviando: "Extendiendo…",
     generico: "No pudimos extenderla. Probá de nuevo.",
   },
+  /** Para el local de Mercado Pago que no pagó (BooKit `docs/admin-panel.md`, sección 16). */
+  cortesia: {
+    boton: "Dar días de cortesía",
+    titulo: "Dar días de cortesía",
+    bajada: "Los días se cuentan desde hoy y el local queda al día. El débito y el plan no cambian.",
+    // Lo decide `cancela_al_vencer`, no el débito: así lo mira la auditoría de medianoche.
+    sigueConGracia: (dias: number | undefined) =>
+      `Si no paga en estos días, pasa a en gracia${dias ? ` ${dias} días` : ""} y después se corta.`,
+    conDebito: "Si Mercado Pago le cobra antes, el ciclo pago se suma al final: estos días quedan regalados.",
+    seCortaSinGracia:
+      "Pidió no renovar o se le cayó el débito: se corta la noche que termina la cortesía, sin gracia. Si se suscribe en /planes en estos días, el primer cobro sale ese día.",
+    dias: "Días",
+    rapidos: [7, 14],
+    nota: "Por qué",
+    ejemplo: "Le rechazaron la tarjeta; paga el lunes",
+    confirmar: "Dar los días",
+    enviando: "Dando los días…",
+    generico: "No pudimos darle los días. Probá de nuevo.",
+  },
   /** El interruptor del equipo (BooKit `docs/admin-panel.md`, sección 11). */
   visibilidad: {
     titulo: "Visibilidad",
@@ -149,6 +175,8 @@ export const acciones = {
     extendio: (dias: number, vence: string) => `Extendió la prueba ${dias} ${dias === 1 ? "día" : "días"}: vence el ${vence}`,
     oculto: "Lo ocultó",
     mostro: "Lo volvió a mostrar",
+    cortesia: (dias: number, vence: string) =>
+      `Dio ${dias} ${dias === 1 ? "día" : "días"} de cortesía: vence el ${vence}`,
     sumoAdmin: (email: string) => `Sumó a ${email} al equipo`,
     sacoAdmin: (email: string) => `Sacó a ${email} del equipo`,
   },

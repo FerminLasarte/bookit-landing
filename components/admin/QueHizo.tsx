@@ -10,6 +10,8 @@ export default function QueHizo({ accion: a }: { accion: AccionDelEquipo }) {
       return registro.resolvio(a.detalle.antes.id_pago_mp);
     case "extender_prueba":
       return registro.extendio(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
+    case "dar_cortesia":
+      return registro.cortesia(a.detalle.dias, fechaConAnio(a.detalle.despues.vencimiento));
     case "cambiar_visibilidad":
       return a.detalle.despues.visible ? registro.mostro : registro.oculto;
     case "sumar_admin":

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CambiarVisibilidad from "@/components/admin/CambiarVisibilidad";
+import DarCortesia from "@/components/admin/DarCortesia";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
 import QueHizo from "@/components/admin/QueHizo";
@@ -35,6 +36,17 @@ const sePuedeExtender = (c: FichaComercio) =>
   !CANALES_DE_LA_TIENDA.includes(c.canal) &&
   c.estado !== "pendiente" &&
   c.estado !== "suspendida" &&
+  !c.dado_de_baja_el;
+
+/*
+ * Cuándo va "Dar días de cortesía" (sección 16): de Mercado Pago, con plan
+ * pago, en gracia o cortado y sin dar de baja (D9 de la v3).
+ */
+const PLANES_PAGOS = ["semanal", "mensual", "anual"];
+const sePuedeDarCortesia = (c: FichaComercio) =>
+  c.canal === "mercado_pago" &&
+  PLANES_PAGOS.includes(c.plan) &&
+  (c.estado === "en_gracia" || c.estado === "cortada") &&
   !c.dado_de_baja_el;
 
 /*
@@ -103,6 +115,16 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
           {sePuedeExtender(c) && (
             <div className="mt-3">
               <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
+            </div>
+          )}
+          {sePuedeDarCortesia(c) && (
+            <div className="mt-3">
+              <DarCortesia
+                idComercio={c.id_comercio}
+                plan={c.plan}
+                conDebito={c.tiene_debito_mp}
+                noRenueva={c.cancela_al_vencer}
+              />
             </div>
           )}
         </Bloque>
