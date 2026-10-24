@@ -129,6 +129,43 @@ export async function cambiarAvisos(_: Respuesta, datos: FormData): Promise<Resp
   return { error: null };
 }
 
+/** `turnosPorDelante`: los que no empezaron. Suspender no los cancela, pero el local no los puede ver. */
+export type RespuestaDeSuspension = Respuesta & { turnosPorDelante?: number };
+
+/** Suspende un local: no entra, no aparece y su débito de Mercado Pago se da de baja (D6, D7). La nota es obligatoria. */
+export async function suspender(_: RespuestaDeSuspension, datos: FormData): Promise<RespuestaDeSuspension> {
+  const { generico } = acciones.acceso;
+  const idComercio = campo(datos, "id_comercio");
+  if (!idComercio) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { data, error } = await supabase.rpc("admin_suspender", {
+    p_id_comercio: idComercio,
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "suspender") };
+
+  refresh();
+  return { error: null, turnosPorDelante: (data as { turnos_por_delante: number }).turnos_por_delante };
+}
+
+/** Levanta la suspensión: vuelve según su vencimiento (D9). La nota es obligatoria. */
+export async function reactivar(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  const { generico } = acciones.acceso;
+  const idComercio = campo(datos, "id_comercio");
+  if (!idComercio) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { error } = await supabase.rpc("admin_reactivar", {
+    p_id_comercio: idComercio,
+    p_nota: campo(datos, "nota") || null,
+  });
+  if (error) return { error: errorDeAccion(error, generico, "reactivar") };
+
+  refresh();
+  return { error: null };
+}
+
 /** `turnosPorDelante`: los pendientes y confirmados que no empezaron. Ocultar no los cancela. */
 export type RespuestaDeVisibilidad = Respuesta & { visible?: boolean; turnosPorDelante?: number };
 

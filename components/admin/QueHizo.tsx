@@ -1,4 +1,4 @@
-import { acciones } from "@/content/admin";
+import { acciones, estados } from "@/content/admin";
 import type { AccionDelEquipo } from "@/lib/admin/datos";
 import { fechaConAnio } from "@/lib/formato";
 
@@ -22,6 +22,10 @@ export default function QueHizo({ accion: a }: { accion: AccionDelEquipo }) {
       return registro.sumoAdmin(a.detalle.despues.email);
     case "sacar_admin":
       return registro.sacoAdmin(a.detalle.antes.email);
+    case "suspender":
+      return registro.suspendio;
+    case "reactivar":
+      return registro.reactivo((estados[a.detalle.despues.estado]?.label ?? a.detalle.despues.estado).toLowerCase());
     case "cambiar_avisos":
       return a.detalle.despues.recibe_avisos ? registro.activoAvisos(a.detalle.email) : registro.apagoAvisos(a.detalle.email);
     default:

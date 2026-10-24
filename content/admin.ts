@@ -70,6 +70,7 @@ export const motivosIncidencia: Record<string, string> = {
   cancelacion: "Devolución por cancelación",
   suscripcion_no_verificada: "Pago de suscripción sin verificar",
   suscripcion_doble: "Pago doble (ya paga en la tienda)",
+  suscripcion_suspendida: "Pago de un local suspendido",
 };
 
 export const reembolsos: Record<string, string> = {
@@ -164,6 +165,47 @@ export const acciones = {
     nota: "Por qué",
     generico: "No pudimos cambiar el precio. Probá de nuevo.",
   },
+  /** Suspender y reactivar: para abuso o fraude (BooKit `docs/admin-panel.md`, sección 21; D6–D11 de la v4). */
+  acceso: {
+    titulo: "Acceso",
+    entra: "Entra a gestionar su local, en la app y en /mi-local.",
+    suspendido:
+      "Suspendido por el equipo: ni el dueño ni su equipo entran a gestionar, y no aparece ni toma turnos. No se le avisó nada: lo ve al entrar.",
+    deBaja: "Se dio de baja: ya no entra.",
+    suspender: {
+      boton: "Suspender",
+      titulo: "Suspender el local",
+      bajada: [
+        "Ni el dueño ni su equipo entran a gestionar, en la app ni en /mi-local. El dueño ve “Tu cuenta está suspendida”; su equipo, que el local no tiene la suscripción al día.",
+        "No aparece ni toma turnos. Los turnos que ya tiene no se cancelan, pero el local no los puede ver.",
+        "Es para abuso o fraude: para que sólo no aparezca, está Ocultar. Al local no se le manda nada.",
+      ],
+      conDebito:
+        "Su débito de Mercado Pago se da de baja en unos segundos. Al reactivarlo no vuelve: para seguir tiene que suscribirse de nuevo.",
+      tienda:
+        "Lo cobra Apple o Google y desde acá no se puede cancelar: le siguen cobrando hasta que el dueño cancele en su teléfono, y el reembolso lo pide él a la tienda.",
+      ejemplo: "Reventa de turnos",
+      confirmar: "Suspender",
+      enviando: "Suspendiendo…",
+      quedo: "Quedó suspendido",
+      porDelante: (n: number) =>
+        `Sigue teniendo ${n} ${n === 1 ? "turno" : "turnos"} por delante: no se cancelan, y el local no los puede ver.`,
+    },
+    reactivar: {
+      boton: "Reactivar",
+      titulo: "Reactivar el local",
+      alDia: (vence: string) => `Vuelve al día: tiene días pagos hasta el ${vence}.`,
+      cortado: (vencio: string) => `Vuelve cortado: venció el ${vencio}. Para seguir tiene que suscribirse en /planes.`,
+      pendiente: "Vuelve pendiente: nunca empezó la prueba.",
+      sinDebito: "El débito que tenía no vuelve: al vencer se corta sin gracia, y para seguir tiene que suscribirse en /planes.",
+      tienda: "Lo cobra Apple o Google: esa misma noche queda como diga la tienda.",
+      ejemplo: "Lo aclaramos por WhatsApp",
+      confirmar: "Reactivar",
+      enviando: "Reactivando…",
+    },
+    nota: "Por qué",
+    generico: "No pudimos cambiarlo. Probá de nuevo.",
+  },
   /** El interruptor del equipo (BooKit `docs/admin-panel.md`, sección 11). */
   visibilidad: {
     titulo: "Visibilidad",
@@ -173,6 +215,7 @@ export const acciones = {
     // Visible, pero la suscripción no lo deja a la vista: el control no puede prometer lo contrario.
     noSeVePorEstado: (estado: string) => `Igual no aparece ni toma turnos mientras la suscripción esté ${estado}.`,
     noSeVePorBaja: "Igual no aparece ni toma turnos: está de baja.",
+    noSeVePorSuspension: "Igual no aparece ni toma turnos: está suspendido.",
     oculta: "Lo ocultó el equipo: no aparece ni toma turnos, aunque esté al día. El local no ve este cambio.",
     ocultar: {
       titulo: "Ocultar el local",
@@ -230,6 +273,8 @@ export const acciones = {
     sacoFundador: "Le sacó el precio fundador",
     sumoAdmin: (email: string) => `Sumó a ${email} al equipo`,
     sacoAdmin: (email: string) => `Sacó a ${email} del equipo`,
+    suspendio: "Lo suspendió",
+    reactivo: (estado: string) => `Lo reactivó: quedó ${estado}`,
     activoAvisos: (email: string) => `Activó los avisos de ${email}`,
     apagoAvisos: (email: string) => `Apagó los avisos de ${email}`,
     sumoFundador: "Lo sumó como fundador: Pro gratis hasta el 1 de julio de 2027",
