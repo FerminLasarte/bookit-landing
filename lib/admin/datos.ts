@@ -90,6 +90,10 @@ export type FichaComercio = {
   vencimiento: string | null;
   cancela_al_vencer: boolean;
   tiene_debito_mp: boolean;
+  /** Lo que cobra el débito en cada ciclo, de Mercado Pago. `null` sin débito o si no se sabe (sección 19). */
+  monto_debito: number | null;
+  /** El ciclo del débito. Un local de la tienda también lo tiene: vale sólo con `tiene_debito_mp`. */
+  plan_debito: string | null;
   creado_el: string;
   dado_de_baja_el: string | null;
   habilita_puntos: boolean;

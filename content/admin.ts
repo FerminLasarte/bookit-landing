@@ -26,6 +26,13 @@ export const planes: Record<string, string> = {
   vitalicia: "Vitalicia",
 };
 
+/** Cada cuánto cobra un débito de Mercado Pago, para decir su monto. */
+export const porCiclo: Record<string, string> = {
+  semanal: "por semana",
+  mensual: "por mes",
+  anual: "por año",
+};
+
 export const niveles: Record<string, string> = {
   esencial: "Esencial",
   pro: "Pro",

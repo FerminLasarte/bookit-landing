@@ -18,6 +18,7 @@ import {
   motivosIncidencia,
   niveles,
   planes,
+  porCiclo,
   reembolsos,
 } from "@/content/admin";
 import { leerComercio, type FichaComercio } from "@/lib/admin/datos";
@@ -64,6 +65,16 @@ const sePuedeSumarFundador = (c: FichaComercio) =>
   !esDelLanzamiento(c) &&
   (c.estado === "pendiente" ||
     (c.plan === "prueba" && !CANALES_DE_LA_TIENDA.includes(c.canal) && !c.tiene_debito_mp));
+
+/**
+ * El débito de Mercado Pago y lo que cobra (sección 19, D2 de la v4). Sin
+ * monto, o con un ciclo que no conocemos, sólo "Activo".
+ */
+function debito(c: FichaComercio) {
+  if (!c.tiene_debito_mp) return "No";
+  const ciclo = c.plan_debito ? porCiclo[c.plan_debito] : undefined;
+  return c.monto_debito !== null && ciclo ? `Activo · ${pesos(c.monto_debito)} ${ciclo}` : "Activo";
+}
 
 /*
  * Por qué un local visible igual no aparece: la regla de la base
@@ -124,7 +135,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
             <Fila etiqueta={acciones.fundador.precio}>
               {c.es_fundador ? acciones.fundador.conPrecio : acciones.fundador.deLista}
             </Fila>
-            <Fila etiqueta="Débito de Mercado Pago">{c.tiene_debito_mp ? "Activo" : "No"}</Fila>
+            <Fila etiqueta="Débito de Mercado Pago">{debito(c)}</Fila>
             {c.alta && (
               <Fila etiqueta="Alta">
                 {planes[c.alta.plan] ?? c.alta.plan} · {estadosAlta[c.alta.estado] ?? c.alta.estado}

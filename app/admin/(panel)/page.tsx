@@ -97,7 +97,7 @@ export default async function Pulso() {
           <Cifra
             etiqueta="Ingreso mensual estimado"
             valor={pesos(plata.ingreso_mensual_estimado)}
-            detalle={`Mercado Pago, a precio de lista · ${numero(plata.locales_tienda)} por Apple o Google`}
+            detalle={`Lo que cobran los débitos de Mercado Pago, llevado a 30 días · ${numero(plata.locales_tienda)} por Apple o Google`}
           />
           <Cifra
             tono={plata.incidencias_abiertas > 0 ? "miel" : "niebla"}
