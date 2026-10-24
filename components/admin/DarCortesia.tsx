@@ -1,5 +1,5 @@
 import { darCortesia } from "@/app/admin/(panel)/acciones";
-import { acciones, diasDeGracia } from "@/content/admin";
+import { acciones } from "@/content/admin";
 import DialogoDeDias from "./DialogoDeDias";
 
 /**
@@ -9,12 +9,13 @@ import DialogoDeDias from "./DialogoDeDias";
  */
 export default function DarCortesia({
   idComercio,
-  plan,
+  diasGracia,
   conDebito,
   noRenueva,
 }: {
   idComercio: string;
-  plan: string;
+  /** La gracia de su plan, de la base (sección 18). */
+  diasGracia: number;
   conDebito: boolean;
   noRenueva: boolean;
 }) {
@@ -32,7 +33,7 @@ export default function DarCortesia({
           <p className="font-medium text-fg">{seCortaSinGracia}</p>
         ) : (
           <>
-            <p className="font-medium text-fg">{sigueConGracia(diasDeGracia[plan])}</p>
+            <p className="font-medium text-fg">{sigueConGracia(diasGracia)}</p>
             {conDebito && <p className="font-medium text-fg">{textoConDebito}</p>}
           </>
         )

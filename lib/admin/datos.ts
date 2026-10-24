@@ -85,6 +85,8 @@ export type FichaComercio = {
   visible: boolean;
   canal: string;
   es_fundador: boolean;
+  /** La gracia del plan actual, de `planes` (BooKit `docs/admin-panel.md`, sección 18). */
+  dias_gracia: number;
   vencimiento: string | null;
   cancela_al_vencer: boolean;
   tiene_debito_mp: boolean;

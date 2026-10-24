@@ -139,7 +139,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
             {sePuedeDarCortesia(c) && (
               <DarCortesia
                 idComercio={c.id_comercio}
-                plan={c.plan}
+                diasGracia={c.dias_gracia}
                 conDebito={c.tiene_debito_mp}
                 noRenueva={c.cancela_al_vencer}
               />

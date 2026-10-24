@@ -26,13 +26,6 @@ export const planes: Record<string, string> = {
   vitalicia: "Vitalicia",
 };
 
-/** Los días de gracia de cada plan pago (`planes.dias_gracia` en BooKit), para decirlos antes de dar una cortesía. */
-export const diasDeGracia: Record<string, number> = {
-  semanal: 2,
-  mensual: 7,
-  anual: 14,
-};
-
 export const niveles: Record<string, string> = {
   esencial: "Esencial",
   pro: "Pro",
@@ -121,8 +114,7 @@ export const acciones = {
     titulo: "Dar días de cortesía",
     bajada: "Los días se cuentan desde hoy y el local queda al día. El débito y el plan no cambian.",
     // Lo decide `cancela_al_vencer`, no el débito: así lo mira la auditoría de medianoche.
-    sigueConGracia: (dias: number | undefined) =>
-      `Si no paga en estos días, pasa a en gracia${dias ? ` ${dias} días` : ""} y después se corta.`,
+    sigueConGracia: (dias: number) => `Si no paga en estos días, pasa a en gracia ${dias} días y después se corta.`,
     conDebito: "Si Mercado Pago le cobra antes, el ciclo pago se suma al final: estos días quedan regalados.",
     seCortaSinGracia:
       "Pidió no renovar o se le cayó el débito: se corta la noche que termina la cortesía, sin gracia. Si se suscribe en /planes en estos días, el primer cobro sale ese día.",
