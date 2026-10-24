@@ -173,6 +173,18 @@ export type AccionDelEquipo =
   | {
       creado_el: string;
       email: string | null;
+      accion: "suspender";
+      detalle: { antes: { estado: EstadoSuscripcion }; debito_dado_de_baja: boolean; nota: string };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
+      accion: "reactivar";
+      detalle: { despues: { estado: EstadoSuscripcion }; nota: string };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
       accion: "cambiar_avisos";
       // Sin nota: es una preferencia, no una decisión sobre un local (sección 20).
       detalle: {

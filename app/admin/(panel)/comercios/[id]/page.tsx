@@ -6,8 +6,10 @@ import DarCortesia from "@/components/admin/DarCortesia";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
 import QueHizo from "@/components/admin/QueHizo";
+import Reactivar from "@/components/admin/Reactivar";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
 import SumarFundador from "@/components/admin/SumarFundador";
+import Suspender from "@/components/admin/Suspender";
 import TextLink from "@/components/ui/TextLink";
 import {
   acciones,
@@ -84,6 +86,7 @@ function debito(c: FichaComercio) {
 function porQueNoSeVe(c: FichaComercio) {
   const { visibilidad } = acciones;
   if (c.dado_de_baja_el) return visibilidad.noSeVePorBaja;
+  if (c.estado === "suspendida") return visibilidad.noSeVePorSuspension;
   if (c.estado === "al_dia" || c.estado === "en_gracia") return null;
   return visibilidad.noSeVePorEstado((estados[c.estado]?.label ?? c.estado).toLowerCase());
 }
@@ -97,6 +100,8 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
   const activos = c.profesionales.filter((p) => p.esta_activo);
   const noSeVe = porQueNoSeVe(c);
   const delLanzamiento = esDelLanzamiento(c);
+  const suspendido = c.estado === "suspendida";
+  const deLaTienda = CANALES_DE_LA_TIENDA.includes(c.canal);
 
   return (
     <div className="flex flex-col gap-6">
@@ -121,6 +126,23 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
         bajada={c.visible ? (noSeVe ?? acciones.visibilidad.seVe) : acciones.visibilidad.oculta}
       >
         <CambiarVisibilidad idComercio={c.id_comercio} visible={c.visible} noSeVe={noSeVe} />
+      </Bloque>
+
+      <Bloque
+        titulo={acciones.acceso.titulo}
+        bajada={c.dado_de_baja_el ? acciones.acceso.deBaja : suspendido ? acciones.acceso.suspendido : acciones.acceso.entra}
+      >
+        {!c.dado_de_baja_el &&
+          (suspendido ? (
+            <Reactivar
+              idComercio={c.id_comercio}
+              vencimiento={c.vencimiento}
+              noRenueva={c.cancela_al_vencer}
+              deLaTienda={deLaTienda}
+            />
+          ) : (
+            <Suspender idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} deLaTienda={deLaTienda} />
+          ))}
       </Bloque>
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -160,7 +182,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
               <CambiarFundador
                 idComercio={c.id_comercio}
                 esFundador={c.es_fundador}
-                deLaTienda={CANALES_DE_LA_TIENDA.includes(c.canal)}
+                deLaTienda={deLaTienda}
                 conDebito={c.tiene_debito_mp}
                 delLanzamiento={delLanzamiento}
               />
