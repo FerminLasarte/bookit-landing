@@ -411,6 +411,10 @@ chat de BooKit, como en la v2. Nogal no se toca: está oculta a propósito.
 
 ## Lo que vi y no entra
 
+> **Los dos los resolvió la v4** (`docs/PLAN-ADMIN-V4.md`, pasos N y P):
+> Pulso estima con lo que cobra cada débito, y un pago ya no levanta una
+> suspensión.
+
 - **Pulso estima con el precio de lista**: con fundador marcado sobre un
   débito que cobra precio de lista (D12, la recomendada), el ingreso estimado
   da de menos. Es poca plata y es un estimado; se arregla si un día Pulso usa
@@ -461,6 +465,10 @@ borre el local. El chat de BooKit tiene que borrar esa fila, o el lugar queda
 ocupado.
 
 ## Para más adelante
+
+> **La v4 (`docs/PLAN-ADMIN-V4.md`, en producción desde el 24-oct) hizo los
+> ítems 3, 4, 5 y 6.** Quedan el 1 (plan propio, para después) y el 2 (la pausa
+> del local, que está decidiendo el chat de BooKit).
 
 1. **Lo que cobran Apple y Google** (ítem 5 de la v2): integración con
    RevenueCat, en un plan propio.
