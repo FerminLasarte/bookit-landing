@@ -456,13 +456,18 @@ probó la cortesía y el fundador en producción, en transacciones que se
 deshicieron (contrato, secciones 16 y 17). La tira del nav se midió en el
 navegador: desliza y la página no se ensancha.
 
-**Sin probar:** nada de G a L se vio todavía en `/admin` con una cuenta del
-equipo, y no consta que el mail de J haya llegado. Se prueba como dice
-**Cómo se prueba**, sobre datos que cree y después borre el chat de BooKit.
-Al sumar un local de prueba a los fundadores del lanzamiento, ojo: el lugar se
+**Probado en producción el 23-oct**, con la sesión del panel, sobre un local
+y una cuenta de prueba del chat de BooKit: resolver las dos incidencias (con y
+sin local), la cortesía (al día, "Desde el panel" en la historia y su fila en
+el registro), marcar y sacar fundador, y sumar (un mail en mayúsculas, y el
+error de una cuenta que no existe) y sacar un admin. Salieron dos detalles,
+arreglados en #80: en el teléfono la sección actual quedaba fuera de la tira
+del nav, y la nota de marcar fundador quedaba escrita al sacarlo. **El mail de
+J llega bien** (lo confirmó Fermín el 24-oct).
+
+No se probó sumar un local a los fundadores del lanzamiento: el lugar se
 cuenta por su fila `sumar_fundador` en `admin_acciones`, que queda aunque se
-borre el local. El chat de BooKit tiene que borrar esa fila, o el lugar queda
-ocupado.
+borre el local, así que una prueba gastaría uno de los 10.
 
 ## Para más adelante
 
