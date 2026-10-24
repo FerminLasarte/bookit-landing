@@ -1,9 +1,11 @@
 # El panel del equipo (/admin) — v4
 
-> **Aprobado el 23 de octubre de 2026** con la recomendada de cada decisión
-> D1–D11. Sale de los puntos 3 a 6 de **Para más adelante** de
-> `docs/PLAN-ADMIN-V3.md`. M a P esperan a la base (el prompt al chat de
-> BooKit).
+> **Hecho y en producción el 24 de octubre de 2026.** Aprobado el 23 con la
+> recomendada de cada decisión D1–D11. Sale de los puntos 3 a 6 de **Para más
+> adelante** de `docs/PLAN-ADMIN-V3.md`. La base es de BooKit, con el contrato
+> en BooKit `docs/admin-panel.md` (secciones 18 a 21); la web, un PR por paso:
+> M #83, N #84, O #85 y P #86. Lo probado y lo que falta está al final, en
+> **Estado**.
 
 ## Qué es
 
@@ -258,3 +260,51 @@ después borra el chat de BooKit.
   el chat de BooKit en Mercado Pago). `/mi-local` con la cuenta del dueño de
   prueba muestra el cartel. Reactivarlo y ver cómo vuelve. Un pago simulado a
   un suspendido no lo levanta y queda como incidencia.
+
+## Estado (24-oct)
+
+**En producción.** La base, del chat de BooKit: `20261024000000` a
+`20261024000300` (M a P) y `20261024010150` (sacar del equipo cuida los
+avisos), con `webhook-saas-mp`, `alerta_jobs` y `alerta_al_momento`
+redesplegadas y la edge function nueva `cancelar_debitos_suspendidos`. La web,
+en `main` desde #83 a #86.
+
+**Lo que cambió en el camino (BooKit):**
+- **N:** el monto del débito lo borra un trigger cuando cambia el débito (cubre
+  también la baja de cuenta). La pasada única no llenó ninguno: en producción
+  no había ningún débito real vivo.
+- **O:** `ALERTAS_EMAIL` se borró; los mails van en uno solo a todos los que
+  reciben. Sacar del equipo a la única persona que recibe también se rechaza
+  (`ultimo_que_recibe`).
+- **P:** la baja del débito es asíncrona (segundos; si Mercado Pago falla,
+  reintenta cada 10 minutos y a la media hora sale en el mail de las 04:00).
+  Reactivar un local que nunca empezó la prueba lo deja `pendiente`. El equipo
+  del local suspendido ve "Espacio de trabajo en pausa", no "suspendido": el
+  diálogo lo dice.
+
+**Probado en producción el 24-oct**, con la sesión del panel, sobre locales
+de prueba del chat de BooKit (`a4a40000-…`, "(borrar)"):
+- **M:** la cortesía dice 7 días en el mensual y 2 en el semanal.
+- **N:** la ficha del mensual dice "Activo · $19.100 por mes"; Pulso dice "Lo
+  que cobran los débitos de Mercado Pago, llevado a 30 días".
+- **O:** apagar los avisos del único que recibe da el error y no cambia nada;
+  apagar y prender los del admin de prueba anda, con sus dos filas en el
+  registro.
+- **P:** suspender y reactivar el semanal (sin débito) y el de la tienda: el
+  aviso de cada caso, "Acceso", "está suspendido" en Visibilidad, la historia
+  con "Desde el panel" y el registro. El semanal volvió cortado (había vencido)
+  y el de la tienda, al día, como dijo el diálogo.
+
+**Sin probar:**
+- **Que la baja del débito ande de verdad.** El local de prueba con débito
+  tenía uno falso: suspenderlo habría dejado el reintento fallando cada 10
+  minutos. Hace falta un débito pendiente real en Mercado Pago, como el que usó
+  BooKit para probar la base.
+- **El aviso de turnos por delante al suspender**, por lo mismo: el único local
+  con turnos era el del débito falso.
+- **Un pago que llega a un local suspendido** (la incidencia
+  `suscripcion_suspendida`): lo probó BooKit en la base; en la web sólo es el
+  texto del motivo.
+
+Los locales y la cuenta de prueba quedan para que los borre el chat de BooKit,
+con sus filas del registro.
