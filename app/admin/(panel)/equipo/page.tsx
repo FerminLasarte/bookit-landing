@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import CambiarAvisos from "@/components/admin/CambiarAvisos";
 import { Bloque, Encabezado, Mail, Tabla, Vacio } from "@/components/admin/piezas";
 import QueHizo from "@/components/admin/QueHizo";
 import SacarAdmin from "@/components/admin/SacarAdmin";
@@ -23,7 +24,7 @@ export default async function Equipo() {
         <div className="mb-3">
           <SumarAdmin />
         </div>
-        <Tabla columnas={["Mail", "Nombre", "Desde", "Lo sumó", ""]}>
+        <Tabla columnas={["Mail", "Nombre", "Desde", "Lo sumó", copy.avisos.columna, ""]}>
           {administradores.map((a) => (
             <tr key={a.id_usuario}>
               <td>
@@ -34,6 +35,9 @@ export default async function Equipo() {
               </td>
               <td className="whitespace-nowrap">{fechaConAnio(a.desde)}</td>
               <td className="text-muted">{a.sumado_por ?? copy.aMano}</td>
+              <td>
+                <CambiarAvisos idUsuario={a.id_usuario} email={a.email} recibe={a.recibe_avisos} />
+              </td>
               <td>
                 {a.id_usuario === yo ? (
                   <span className="text-muted">{copy.vos}</span>

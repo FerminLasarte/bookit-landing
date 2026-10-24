@@ -22,6 +22,8 @@ export default function QueHizo({ accion: a }: { accion: AccionDelEquipo }) {
       return registro.sumoAdmin(a.detalle.despues.email);
     case "sacar_admin":
       return registro.sacoAdmin(a.detalle.antes.email);
+    case "cambiar_avisos":
+      return a.detalle.despues.recibe_avisos ? registro.activoAvisos(a.detalle.email) : registro.apagoAvisos(a.detalle.email);
     default:
       // Una acción que la base ya anota y la web todavía no conoce: BooKit la suma primero.
       return <span className="text-muted">{(a as { accion: string }).accion}</span>;

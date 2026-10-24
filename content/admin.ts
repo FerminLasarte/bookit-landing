@@ -230,14 +230,24 @@ export const acciones = {
     sacoFundador: "Le sacó el precio fundador",
     sumoAdmin: (email: string) => `Sumó a ${email} al equipo`,
     sacoAdmin: (email: string) => `Sacó a ${email} del equipo`,
+    activoAvisos: (email: string) => `Activó los avisos de ${email}`,
+    apagoAvisos: (email: string) => `Apagó los avisos de ${email}`,
     sumoFundador: "Lo sumó como fundador: Pro gratis hasta el 1 de julio de 2027",
   },
   /** Quién entra al panel (paso I de docs/PLAN-ADMIN-V3.md). */
   equipo: {
     titulo: "Administradores",
-    bajada: "Las cuentas que entran a este panel.",
+    bajada: "Las cuentas que entran a este panel. Los mails del equipo, el de las 04:00 y el del momento, les llegan a quienes reciben avisos.",
     vos: "Vos",
     aMano: "A mano",
+    /** Los mails del equipo, por persona: un solo interruptor para los dos (D3–D5 de la v4). */
+    avisos: {
+      columna: "Avisos",
+      de: (email: string) => `Avisos de ${email}`,
+      recibe: "Recibe",
+      noRecibe: "No recibe",
+      generico: "No pudimos cambiarlo. Probá de nuevo.",
+    },
     sumar: {
       boton: "Sumar a alguien",
       titulo: "Sumar a alguien al equipo",

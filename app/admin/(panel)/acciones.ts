@@ -111,6 +111,24 @@ export async function sacarAdmin(_: Respuesta, datos: FormData): Promise<Respues
   return { error: null };
 }
 
+/** Prende o apaga los mails del equipo de un admin. La base no deja al equipo sin nadie que los reciba. */
+export async function cambiarAvisos(_: Respuesta, datos: FormData): Promise<Respuesta> {
+  const { generico } = acciones.equipo.avisos;
+  const idUsuario = campo(datos, "id_usuario");
+  const recibe = campo(datos, "recibe");
+  if (!idUsuario || (recibe !== "true" && recibe !== "false")) return { error: generico };
+
+  const supabase = await clienteDeSupabase("panel");
+  const { error } = await supabase.rpc("admin_cambiar_avisos", {
+    p_id_usuario: idUsuario,
+    p_recibe: recibe === "true",
+  });
+  if (error) return { error: errorDeAccion(error, generico, "cambiar-avisos") };
+
+  refresh();
+  return { error: null };
+}
+
 /** `turnosPorDelante`: los pendientes y confirmados que no empezaron. Ocultar no los cancela. */
 export type RespuestaDeVisibilidad = Respuesta & { visible?: boolean; turnosPorDelante?: number };
 

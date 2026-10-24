@@ -173,6 +173,19 @@ export type AccionDelEquipo =
   | {
       creado_el: string;
       email: string | null;
+      accion: "cambiar_avisos";
+      // Sin nota: es una preferencia, no una decisión sobre un local (sección 20).
+      detalle: {
+        id_usuario: string;
+        email: string;
+        antes: { recibe_avisos: boolean };
+        despues: { recibe_avisos: boolean };
+        nota?: undefined;
+      };
+    }
+  | {
+      creado_el: string;
+      email: string | null;
       accion: "sumar_fundador";
       detalle: { despues: { vencimiento: string }; nota: string | null };
     };
@@ -187,6 +200,8 @@ export type Administrador = {
   nombre: string | null;
   desde: string;
   sumado_por: string | null;
+  /** Le llegan los mails del equipo: el de las 04:00 y el del momento (sección 20). */
+  recibe_avisos: boolean;
 };
 
 /** Quién entra al panel y el registro entero (BooKit `docs/admin-panel.md`, sección 14). */
