@@ -110,6 +110,7 @@ async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {
           <DatosDelLocal
             nombre={perfil.nombre}
             categoria={perfil.categoria}
+            otras={perfil.otras}
             direccion={direccion}
             instagram={perfil.instagram}
             email={cuenta.email}

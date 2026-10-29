@@ -9,7 +9,10 @@ import { clienteDeSupabase } from "@/lib/supabase";
 
 export type PerfilDelLocal = {
   nombre: string;
+  /** La principal (`comercios.id_categoria`): la de la card y el mapa. */
   categoria: number | null;
+  /** Las demás de `comercios_categorias`, hasta 2: también lo encuentran por ellas. */
+  otras: number[];
   /** La calle y la altura, sin la ciudad: así la guarda la app. */
   direccion: string | null;
   localidad: string | null;
@@ -32,22 +35,37 @@ type FilaDelPerfil = {
 
 export async function leerPerfilDelLocal(idComercio: string): Promise<PerfilDelLocal> {
   const supabase = await clienteDeSupabase("local");
-  const { data, error } = await supabase
-    .from("comercios")
-    .select("nombre, id_categoria, direccion, instagram, logo_url, banner_url, localidades(nombre)")
-    .eq("id_comercio", idComercio)
-    .single();
+  const [{ data, error }, categorias] = await Promise.all([
+    supabase
+      .from("comercios")
+      .select("nombre, id_categoria, direccion, instagram, logo_url, banner_url, localidades(nombre)")
+      .eq("id_comercio", idComercio)
+      .single(),
+    leerCategoriasDelLocal(idComercio),
+  ]);
   if (error) throw new Error(`perfil: ${error.message}`);
   const fila = data as unknown as FilaDelPerfil;
   return {
     nombre: fila.nombre ?? "",
     categoria: fila.id_categoria,
+    otras: categorias.filter((id) => id !== fila.id_categoria),
     direccion: fila.direccion?.trim() || null,
     localidad: fila.localidades?.nombre?.trim() || null,
     instagram: fila.instagram,
     logo: fila.logo_url,
     portada: fila.banner_url,
   };
+}
+
+/**
+ * Todas las categorías del local en `comercios_categorias`, la principal
+ * entre ellas (BooKit 20261029140000_varias_categorias).
+ */
+export async function leerCategoriasDelLocal(idComercio: string): Promise<number[]> {
+  const supabase = await clienteDeSupabase("local");
+  const { data, error } = await supabase.from("comercios_categorias").select("id_categoria").eq("id_comercio", idComercio);
+  if (error) throw new Error(`categorias-del-local: ${error.message}`);
+  return data.map((c) => c.id_categoria as number);
 }
 
 /**
