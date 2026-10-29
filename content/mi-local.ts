@@ -827,6 +827,8 @@ export const miLocal = {
       titulo: "Datos del local",
       nombre: "Nombre",
       categoria: "Categoría",
+      otras: "También hacemos",
+      otrasBajada: "Hasta 2 más. Tus clientes también te encuentran buscando por estas.",
       direccion: "Dirección",
       sinDireccion: "Sin dirección",
       cambiarDireccion: "Cambiar la dirección",

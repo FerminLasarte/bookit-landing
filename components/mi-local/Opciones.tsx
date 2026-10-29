@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 import Anchor from "@/components/ui/Anchor";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,24 @@ export const claseDeOpcion = (activa: boolean) =>
     "ring-focus inline-flex min-h-9 items-center rounded-pill px-3.5 text-small font-semibold transition-colors duration-(--duration-chico)",
     activa ? "bg-fg text-page" : "bg-fg/6 text-fg hover:bg-fg/12",
   );
+
+/** Una casilla con la píldora de las opciones: un checkbox común, anda sin JavaScript. */
+export function Casilla({
+  children,
+  ...casilla
+}: Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "className" | "children"> & { children: string }) {
+  return (
+    <label
+      className={cn(
+        claseDeOpcion(false),
+        "cursor-pointer gap-2 has-checked:bg-fg has-checked:text-page has-disabled:cursor-not-allowed has-disabled:opacity-50",
+      )}
+    >
+      <input {...casilla} type="checkbox" className="size-4 accent-fg" />
+      {children}
+    </label>
+  );
+}
 
 export function Opcion({
   href,

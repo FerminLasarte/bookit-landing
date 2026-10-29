@@ -8,14 +8,16 @@ import { FORMAS_DEL_LOCAL, FORMAS_DEL_PROFESIONAL } from "@/lib/encuadre";
 import { campo } from "@/lib/formularios";
 import { errorDe, localParaActuar, lugarParaActuar } from "@/lib/mi-local/acciones";
 import { cambiarFotoDelLocal, cambiarFotoDelProfesional, guardarFoto } from "@/lib/mi-local/fotos";
+import { leerCategoriasDelLocal } from "@/lib/mi-local/perfil";
 import type { Respuesta } from "@/lib/mi-local/respuesta";
 import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
  * El perfil del local, con la sesión del dueño, como "Información del negocio"
  * de la app: un `update` a `comercios` con lo que se puede escribir (grants por
- * columna). La categoría vive en dos lugares y la cambia la base, con
- * `cambiar_categoria_de_mi_local` (D3 del plan de la fase 4). El profesional
+ * columna). Las categorías —la principal y hasta 2 más— viven en dos lugares
+ * y las guarda la base, con `guardar_categorias_de_mi_local` (BooKit
+ * 20261029140000_varias_categorias), sólo si cambiaron. El profesional
  * del equipo guarda acá su nombre y su foto en el local (D7).
  */
 
@@ -31,6 +33,11 @@ export async function guardarPerfil(_: EstadoDelPerfil, datos: FormData): Promis
   const leido = leerDatosDelLocal(datos, { ubicacion: "si-viene" });
   if (leido.errores) return { error: null, errores: leido.errores };
   const { nombre, categoria, instagram, ubicacion } = leido.datos;
+
+  // Las otras categorías, sin repetir ni la principal. El tope lo cuida la base.
+  const pedidas = z.array(z.coerce.number().int().positive()).safeParse(datos.getAll("otras"));
+  if (!pedidas.success) return { error: errores.generico };
+  const otras = [...new Set(pedidas.data)].filter((id) => id !== categoria);
 
   const supabase = await clienteDeSupabase("local");
   const { data, error: alGuardar } = await supabase
@@ -50,9 +57,19 @@ export async function guardarPerfil(_: EstadoDelPerfil, datos: FormData): Promis
   if (alGuardar) return errorDe(alGuardar, errores.generico, "perfil");
   if (!data?.length) return { error: errores.generico };
 
-  if (data[0]!.id_categoria !== categoria) {
-    const { error: alCambiar } = await supabase.rpc("cambiar_categoria_de_mi_local", { p_id_categoria: categoria });
-    if (alCambiar) return errorDe(alCambiar, errores.generico, "perfil-categoria");
+  const principalDeAhora = data[0]!.id_categoria as number | null;
+  const deAhora = await leerCategoriasDelLocal(local.id).catch((error: unknown) => {
+    console.error("mi-local/perfil-categorias:", error);
+    return null;
+  });
+  if (!deAhora) return { error: errores.generico };
+  const otrasDeAhora = deAhora.filter((id) => id !== principalDeAhora);
+
+  const cambiaron =
+    principalDeAhora !== categoria || otras.length !== otrasDeAhora.length || otras.some((id) => !otrasDeAhora.includes(id));
+  if (cambiaron) {
+    const { error: alCambiar } = await supabase.rpc("guardar_categorias_de_mi_local", { p_principal: categoria, p_otras: otras });
+    if (alCambiar) return errorDe(alCambiar, errores.generico, "perfil-categorias");
   }
 
   refresh();

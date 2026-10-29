@@ -2,23 +2,29 @@
 
 import { useActionState, useState } from "react";
 import { guardarPerfil, type EstadoDelPerfil } from "@/app/mi-local/(panel)/perfil/acciones";
-import Field from "@/components/forms/Field";
+import Field, { labelClasses } from "@/components/forms/Field";
 import LocalidadYDireccion from "@/components/forms/LocalidadYDireccion";
 import Button from "@/components/ui/Button";
 import { miLocal } from "@/content/mi-local";
 import type { Categoria } from "@/lib/alta";
 import { formularioSinBorrar } from "@/lib/formularios";
+import { Casilla } from "./Opciones";
 import RespuestaDeAccion from "./RespuestaDeAccion";
+
+/** Las categorías además de la principal: la base deja hasta 3 en total. */
+const HASTA_OTRAS = 2;
 
 /**
  * Los datos del local, como "Información del negocio" de la app: el nombre, la
- * categoría, la dirección y el Instagram, con un solo botón. La dirección de
- * ahora se ve como texto; para cambiarla se abren los buscadores del alta, y
- * sólo si se eligió una nueva viaja al servidor.
+ * categoría y hasta 2 más, la dirección y el Instagram, con un solo botón. La
+ * dirección de ahora se ve como texto; para cambiarla se abren los buscadores
+ * del alta, y sólo si se eligió una nueva viaja al servidor. Las otras
+ * categorías son casillas comunes: sin JavaScript, el tope lo dice la base.
  */
 export default function DatosDelLocal({
   nombre,
   categoria,
+  otras: otrasDeAhora,
   direccion,
   instagram,
   email,
@@ -26,6 +32,7 @@ export default function DatosDelLocal({
 }: {
   nombre: string;
   categoria: number | null;
+  otras: number[];
   /** La de ahora, como la muestra la ficha. */
   direccion: string | null;
   instagram: string | null;
@@ -33,7 +40,20 @@ export default function DatosDelLocal({
   categorias: Categoria[];
 }) {
   const copy = miLocal.perfil.datos;
+  const [principal, setPrincipal] = useState(categoria);
+  const [otras, setOtras] = useState(otrasDeAhora);
   const [cambiandoDireccion, setCambiandoDireccion] = useState(false);
+
+  // La principal no va entre las otras: si estaba marcada, se desmarca.
+  function elegirPrincipal(id: number) {
+    setPrincipal(id);
+    setOtras((antes) => antes.filter((otra) => otra !== id));
+  }
+
+  function alternar(id: number, marcada: boolean) {
+    setOtras((antes) => (marcada ? [...antes, id] : antes.filter((otra) => otra !== id)));
+  }
+
   const [estado, enviar, enviando] = useActionState<EstadoDelPerfil, FormData>(async (antes, datos) => {
     const respuesta = await guardarPerfil(antes, datos);
     // Guardada, la dirección nueva pasa a ser la de ahora.
@@ -53,7 +73,7 @@ export default function DatosDelLocal({
 
       <Field id="perfil-categoria" label={copy.categoria} error={errores.categoria}>
         {(props) => (
-          <select {...props} name="categoria" required defaultValue={categoria ?? ""}>
+          <select {...props} name="categoria" required value={principal ?? ""} onChange={(e) => elegirPrincipal(Number(e.target.value))}>
             {categoria === null && <option value="" disabled />}
             {categorias.map((c) => (
               <option key={c.id} value={c.id}>
@@ -63,6 +83,30 @@ export default function DatosDelLocal({
           </select>
         )}
       </Field>
+
+      <fieldset>
+        <legend className={labelClasses}>{copy.otras}</legend>
+        <p className="mt-1 text-small text-muted">{copy.otrasBajada}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {categorias
+            .filter((c) => c.id !== principal)
+            .map((c) => {
+              const marcada = otras.includes(c.id);
+              return (
+                <Casilla
+                  key={c.id}
+                  name="otras"
+                  value={c.id}
+                  checked={marcada}
+                  onChange={(e) => alternar(c.id, e.target.checked)}
+                  disabled={!marcada && otras.length >= HASTA_OTRAS}
+                >
+                  {c.nombre}
+                </Casilla>
+              );
+            })}
+        </div>
+      </fieldset>
 
       {cambiandoDireccion ? (
         <div className="flex flex-col gap-5">
