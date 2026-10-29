@@ -17,6 +17,8 @@ export type PerfilDelLocal = {
   direccion: string | null;
   localidad: string | null;
   instagram: string | null;
+  /** "Sobre el local", hasta 300 caracteres (BooKit 20261029160000_descripcion_del_local). */
+  descripcion: string | null;
   /** El círculo (`logo_url`). */
   logo: string | null;
   /** La portada de la ficha (`banner_url`). Vacía, la ficha muestra el logo. */
@@ -28,6 +30,7 @@ type FilaDelPerfil = {
   id_categoria: number | null;
   direccion: string | null;
   instagram: string | null;
+  descripcion: string | null;
   logo_url: string | null;
   banner_url: string | null;
   localidades: { nombre: string | null } | null;
@@ -38,7 +41,7 @@ export async function leerPerfilDelLocal(idComercio: string): Promise<PerfilDelL
   const [{ data, error }, categorias] = await Promise.all([
     supabase
       .from("comercios")
-      .select("nombre, id_categoria, direccion, instagram, logo_url, banner_url, localidades(nombre)")
+      .select("nombre, id_categoria, direccion, instagram, descripcion, logo_url, banner_url, localidades(nombre)")
       .eq("id_comercio", idComercio)
       .single(),
     leerCategoriasDelLocal(idComercio),
@@ -52,6 +55,7 @@ export async function leerPerfilDelLocal(idComercio: string): Promise<PerfilDelL
     direccion: fila.direccion?.trim() || null,
     localidad: fila.localidades?.nombre?.trim() || null,
     instagram: fila.instagram,
+    descripcion: fila.descripcion,
     logo: fila.logo_url,
     portada: fila.banner_url,
   };

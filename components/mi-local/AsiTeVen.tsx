@@ -5,13 +5,15 @@ import Avatar from "./Avatar";
 
 /**
  * El local como lo ve el cliente en su ficha de la app: la portada arriba, el
- * círculo encima y, abajo, el nombre, la categoría y la dirección. Sin
+ * círculo encima y, abajo, el nombre, lo que cuenta de sí ("Sobre el local",
+ * cortado a dos líneas), la categoría y la dirección. Sin
  * portada, la ficha muestra el logo (`banner_url` vacío, como la app); sin
  * ninguna de las dos, una banda lisa. `accion`: cambiar la foto.
  */
 export default function AsiTeVen({
   titulo,
   nombre,
+  descripcion,
   logo,
   portada,
   detalle,
@@ -19,6 +21,7 @@ export default function AsiTeVen({
 }: {
   titulo: string;
   nombre: string;
+  descripcion: string | null;
   logo: string | null;
   portada: string | null;
   /** "Barbería · Av. Santamarina 480, Tandil". */
@@ -41,6 +44,7 @@ export default function AsiTeVen({
               <Avatar nombre={nombre} foto={logo} tamano="ficha" className="ring-4 ring-surface" />
             </div>
             <p className="mt-3 text-title font-bold text-fg">{nombre}</p>
+            {descripcion && <p className="mt-1 line-clamp-2 whitespace-pre-line text-small text-fg">{descripcion}</p>}
             {detalle && <p className="mt-1 text-small text-muted">{detalle}</p>}
           </div>
           {accion}

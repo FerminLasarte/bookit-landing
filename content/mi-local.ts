@@ -829,6 +829,10 @@ export const miLocal = {
       categoria: "Categoría",
       otras: "También hacemos",
       otrasBajada: "Hasta 2 más. Tus clientes también te encuentran buscando por estas.",
+      /** Como "Sobre el local" de la app: el cliente lo lee primero en la ficha. */
+      sobre: "Sobre el local",
+      sobreEjemplo: "Contale a tus clientes quiénes son y qué los distingue",
+      caracteres: (usados: number, tope: number) => `${usados}/${tope}`,
       direccion: "Dirección",
       sinDireccion: "Sin dirección",
       cambiarDireccion: "Cambiar la dirección",

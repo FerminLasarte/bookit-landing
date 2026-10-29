@@ -17,7 +17,9 @@ import { clienteDeSupabase } from "@/lib/supabase";
  * de la app: un `update` a `comercios` con lo que se puede escribir (grants por
  * columna). Las categorías —la principal y hasta 2 más— viven en dos lugares
  * y las guarda la base, con `guardar_categorias_de_mi_local` (BooKit
- * 20261029140000_varias_categorias), sólo si cambiaron. El profesional
+ * 20261029140000_varias_categorias), sólo si cambiaron. "Sobre el local"
+ * (`descripcion`) va en el mismo `update`; el tope de 300 lo cuida la base
+ * (20261029160000_descripcion_del_local). El profesional
  * del equipo guarda acá su nombre y su foto en el local (D7).
  */
 
@@ -33,6 +35,8 @@ export async function guardarPerfil(_: EstadoDelPerfil, datos: FormData): Promis
   const leido = leerDatosDelLocal(datos, { ubicacion: "si-viene" });
   if (leido.errores) return { error: null, errores: leido.errores };
   const { nombre, categoria, instagram, ubicacion } = leido.datos;
+  // El navegador cuenta un salto de línea como uno; el formulario lo manda como `\r\n`.
+  const descripcion = campo(datos, "descripcion").replaceAll("\r\n", "\n") || null;
 
   // Las otras categorías, sin repetir ni la principal. El tope lo cuida la base.
   const pedidas = z.array(z.coerce.number().int().positive()).safeParse(datos.getAll("otras"));
@@ -45,6 +49,7 @@ export async function guardarPerfil(_: EstadoDelPerfil, datos: FormData): Promis
     .update({
       nombre,
       instagram,
+      descripcion,
       ...(ubicacion && {
         direccion: ubicacion.direccion,
         localidad_id: ubicacion.localidad,
