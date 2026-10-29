@@ -89,6 +89,7 @@ async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {
       <AsiTeVen
         titulo={copy.asiTeVen}
         nombre={perfil.nombre}
+        descripcion={perfil.descripcion}
         logo={perfil.logo}
         portada={perfil.portada}
         detalle={[categoria, direccion].filter(Boolean).join(" · ") || null}
@@ -111,6 +112,7 @@ async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {
             nombre={perfil.nombre}
             categoria={perfil.categoria}
             otras={perfil.otras}
+            descripcion={perfil.descripcion}
             direccion={direccion}
             instagram={perfil.instagram}
             email={cuenta.email}

@@ -14,9 +14,13 @@ import RespuestaDeAccion from "./RespuestaDeAccion";
 /** Las categorías además de la principal: la base deja hasta 3 en total. */
 const HASTA_OTRAS = 2;
 
+/** El tope de "Sobre el local", el mismo del CHECK de `comercios.descripcion`. */
+const HASTA_CARACTERES = 300;
+
 /**
  * Los datos del local, como "Información del negocio" de la app: el nombre, la
- * categoría y hasta 2 más, la dirección y el Instagram, con un solo botón. La
+ * categoría y hasta 2 más, "Sobre el local", la dirección y el Instagram, con
+ * un solo botón. La
  * dirección de ahora se ve como texto; para cambiarla se abren los buscadores
  * del alta, y sólo si se eligió una nueva viaja al servidor. Las otras
  * categorías son casillas comunes: sin JavaScript, el tope lo dice la base.
@@ -25,6 +29,7 @@ export default function DatosDelLocal({
   nombre,
   categoria,
   otras: otrasDeAhora,
+  descripcion,
   direccion,
   instagram,
   email,
@@ -33,6 +38,7 @@ export default function DatosDelLocal({
   nombre: string;
   categoria: number | null;
   otras: number[];
+  descripcion: string | null;
   /** La de ahora, como la muestra la ficha. */
   direccion: string | null;
   instagram: string | null;
@@ -108,6 +114,9 @@ export default function DatosDelLocal({
         </div>
       </fieldset>
 
+      {/* Con `key`, después de guardar muestra lo que quedó y cuenta desde ahí. */}
+      <SobreElLocal key={descripcion} descripcion={descripcion} />
+
       {cambiandoDireccion ? (
         <div className="flex flex-col gap-5">
           <LocalidadYDireccion id="perfil" copy={miLocal.perfil.ubicacion} errores={errores} />
@@ -162,5 +171,30 @@ export default function DatosDelLocal({
         {enviando ? copy.guardando : copy.guardar}
       </Button>
     </form>
+  );
+}
+
+/** "Sobre el local", con lo que lleva escrito. Sin JavaScript, el contador queda en lo de antes y el tope lo pone `maxLength`. */
+function SobreElLocal({ descripcion }: { descripcion: string | null }) {
+  const copy = miLocal.perfil.datos;
+  const [usados, setUsados] = useState(descripcion?.length ?? 0);
+
+  return (
+    <div>
+      <Field id="perfil-descripcion" label={copy.sobre} optional>
+        {(props) => (
+          <textarea
+            {...props}
+            name="descripcion"
+            defaultValue={descripcion ?? ""}
+            onChange={(e) => setUsados(e.target.value.length)}
+            maxLength={HASTA_CARACTERES}
+            rows={3}
+            placeholder={copy.sobreEjemplo}
+          />
+        )}
+      </Field>
+      <p className="mt-1 text-right text-small text-muted tabular-nums">{copy.caracteres(usados, HASTA_CARACTERES)}</p>
+    </div>
   );
 }

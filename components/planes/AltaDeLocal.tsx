@@ -31,20 +31,23 @@ export default function AltaDeLocal({ categorias }: { categorias: Categoria[] })
           {(props) => <input {...props} name="nombre" type="text" autoComplete="organization" maxLength={80} required />}
         </Field>
 
-        <Field id="alta-categoria" label={copy.categoria} error={errores.categoria}>
-          {(props) => (
-            <select {...props} name="categoria" required defaultValue="">
-              <option value="" disabled>
-                {copy.elegirCategoria}
-              </option>
-              {categorias.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nombre}
+        <div>
+          <Field id="alta-categoria" label={copy.categoria} error={errores.categoria}>
+            {(props) => (
+              <select {...props} name="categoria" required defaultValue="">
+                <option value="" disabled>
+                  {copy.elegirCategoria}
                 </option>
-              ))}
-            </select>
-          )}
-        </Field>
+                {categorias.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
+            )}
+          </Field>
+          <p className="mt-2 text-small text-muted">{copy.categoriaNota}</p>
+        </div>
 
         <LocalidadYDireccion id="alta" copy={copy} errores={errores} />
 

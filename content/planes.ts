@@ -107,6 +107,7 @@ export const planes = {
     nombre: "Nombre del local",
     categoria: "Categoría",
     elegirCategoria: "Elegí una",
+    categoriaNota: "Después podés sumar dos más desde tu perfil.",
     localidad: "Localidad",
     buscarLocalidad: "Buscá tu ciudad",
     direccion: "Dirección",
