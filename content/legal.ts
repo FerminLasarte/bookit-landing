@@ -363,6 +363,7 @@ export const privacidad: LegalDoc = {
             "Confirmar y seguir tus turnos, incluidos los recordatorios y el aviso del próximo turno en la pantalla del teléfono.",
             "Mandarte notificaciones y correos sobre tus reservas y tu cuenta.",
             "Si lo aceptaste, mandarte los avisos de los locales donde reservaste o que tenés de favoritos —turnos libres y cupones—, como mucho dos por semana.",
+            "Avisarte si un local donde reservaste o que tenés de favorito cierra o cambia su horario o su dirección, salvo que lo hayas silenciado.",
             "Administrar los Puntos Bookit y los premios.",
             "Avisarte del lanzamiento de Bookit en tu ciudad, acreditarte los beneficios de la lista de espera y contactarte si sos un local interesado en el precio fundador.",
             "Darte soporte si nos escribís, y mejorar la app con métricas internas.",
