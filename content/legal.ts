@@ -206,7 +206,7 @@ export const terminos: LegalDoc = {
         },
         {
           type: "p",
-          text: "Según su plan, el local puede mandarles avisos a sus clientes desde la app: que tiene turnos libres, un cupón, que extraña a quien hace tiempo que no vuelve, o un cierre, un cambio de horario o una mudanza. Los textos los arma Bookit con los datos que el local elige; el local no escribe mensajes libres. Cada plan tiene un tope de avisos por mes, y Bookit no le manda a cada persona más de un aviso de locales por semana. Los avisos sólo les llegan a quienes tuvieron un turno en ese local o lo marcaron como favorito, y aceptaron recibirlos. El local es responsable de que lo que anuncia sea cierto y se cumpla: que el cupón valga, que los turnos estén disponibles y que las fechas sean las reales.",
+          text: "Según su plan, el local puede mandarles avisos a sus clientes desde la app: que tiene turnos libres, un cupón, que extraña a quien hace tiempo que no vuelve, o un cierre, un cambio de horario o una mudanza. Los textos los arma Bookit con los datos que el local elige; el local no escribe mensajes libres. Cada plan tiene un tope de avisos por mes, y Bookit no le manda a cada persona más de dos de esos avisos por semana. Les llegan a quienes tuvieron un turno en ese local o lo marcaron como favorito, y aceptaron recibirlos. Los avisos de un cierre, un cambio de horario o una mudanza son información sobre el servicio: tienen un tope propio por mes y les llegan a todos esos clientes aunque no hayan aceptado los demás, salvo a quienes silenciaron el local. El local es responsable de que lo que anuncia sea cierto y se cumpla: que el cupón valga, que los turnos estén disponibles y que las fechas sean las reales.",
         },
         {
           type: "p",
@@ -330,7 +330,7 @@ export const privacidad: LegalDoc = {
             "Tu historial de reservas, pagos, Puntos Bookit y canjes, y tus locales favoritos.",
             "La ubicación de tu teléfono, sólo si das el permiso y únicamente para mostrarte los locales cercanos. No la guardamos en nuestros servidores.",
             "Un identificador de tu teléfono para mandarte notificaciones.",
-            "Si aceptás recibir los avisos de los locales: la constancia de que aceptaste, con su fecha, los locales que silenciaste y qué avisos te llegaron, para no mandarte más de uno por semana.",
+            "Si aceptás recibir los avisos de los locales: la constancia de que aceptaste, con su fecha, los locales que silenciaste y qué avisos te llegaron, para no mandarte más de dos por semana.",
             "Si tenés un local: sus datos (nombre, dirección, horarios, servicios y fotografías) y los de tu equipo (nombre, fotografía y correo electrónico).",
           ],
         },
@@ -362,7 +362,7 @@ export const privacidad: LegalDoc = {
             "Crear, verificar y gestionar tu cuenta.",
             "Confirmar y seguir tus turnos, incluidos los recordatorios y el aviso del próximo turno en la pantalla del teléfono.",
             "Mandarte notificaciones y correos sobre tus reservas y tu cuenta.",
-            "Si lo aceptaste, mandarte los avisos de los locales donde reservaste o que tenés de favoritos —turnos libres, cupones y novedades del local—, como mucho uno por semana.",
+            "Si lo aceptaste, mandarte los avisos de los locales donde reservaste o que tenés de favoritos —turnos libres y cupones—, como mucho dos por semana.",
             "Administrar los Puntos Bookit y los premios.",
             "Avisarte del lanzamiento de Bookit en tu ciudad, acreditarte los beneficios de la lista de espera y contactarte si sos un local interesado en el precio fundador.",
             "Darte soporte si nos escribís, y mejorar la app con métricas internas.",
