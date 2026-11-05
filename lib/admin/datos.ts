@@ -90,9 +90,26 @@ export type FilaComercio = {
   ultimo_turno: string | null;
   pausa: Pausa | null;
   no_aparece_por: MotivoDeNoAparecer[];
+  es_fundador: boolean;
 };
 
 export type FiltroComercios = "prueba" | "pagando" | "cortados" | "pendientes" | "bajas";
+
+/** Cómo se ordena la lista de Comercios (BooKit `docs/admin-panel.md`, sección 22). Los empates, por alta. */
+export type OrdenComercios = "alta" | "vencimiento" | "turnos" | "ultimo_turno";
+
+/** Lo que se le pide a la lista de Comercios: todo opcional, y sin nada es la lista entera por alta. */
+export type PedidoDeComercios = {
+  busqueda?: string;
+  estado?: FiltroComercios;
+  localidad?: string;
+  nivel?: string;
+  canal?: string;
+  fundador?: boolean;
+  visible?: boolean;
+  enPausa?: boolean;
+  orden?: OrdenComercios;
+};
 
 export type FichaComercio = {
   id_comercio: string;
@@ -349,17 +366,22 @@ export type Encontrados = { comercios: Encontrado[]; personas: Encontrado[] };
 /** Cuántas filas trae cada página de una lista del panel. */
 export const POR_PAGINA = 50;
 
+/** Lo más que da cada lectura de una vez (sección 22): el CSV recorre de a tanto. */
+export const MAXIMO_POR_LECTURA = 200;
+
 export const leerPulso = () => leer<Pulso>("admin_pulso");
 
-export const leerComercios = (p: {
-  busqueda?: string;
-  estado?: FiltroComercios;
-  limite: number;
-  desde: number;
-}) =>
-  leer<{ total: number; filas: FilaComercio[] }>("admin_comercios", {
+export const leerComercios = (p: PedidoDeComercios & { limite: number; desde: number }) =>
+  leer<{ total: number; filas: FilaComercio[]; localidades: string[] }>("admin_comercios", {
     p_busqueda: p.busqueda ?? null,
     p_estado: p.estado ?? null,
+    p_localidad: p.localidad ?? null,
+    p_nivel: p.nivel ?? null,
+    p_canal: p.canal ?? null,
+    p_fundador: p.fundador ?? null,
+    p_visible: p.visible ?? null,
+    p_en_pausa: p.enPausa ?? null,
+    p_orden: p.orden ?? null,
     p_limite: p.limite,
     p_desde: p.desde,
   });
@@ -387,6 +409,20 @@ export const leerQuienEntro = cache(async () => {
   const { data } = await supabase.auth.getClaims();
   return { id: data?.claims.sub ?? null, email: data?.claims.email ?? null };
 });
+
+/** El registro del equipo, paginado (sección 22). Sin `acciones`, todas; con `idComercio`, sólo las de ese local. */
+export const leerRegistro = (p: {
+  acciones?: AccionDelEquipo["accion"][];
+  idComercio?: string;
+  limite: number;
+  desde: number;
+}) =>
+  leer<{ total: number; filas: AccionDelRegistro[] }>("admin_registro", {
+    p_acciones: p.acciones ?? null,
+    p_id_comercio: p.idComercio ?? null,
+    p_limite: p.limite,
+    p_desde: p.desde,
+  });
 
 /** El equipo y quién lo está mirando, que no se puede sacar a sí mismo (D4 de la v3). */
 export async function leerEquipo(): Promise<Equipo & { yo: string | null }> {

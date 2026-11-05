@@ -1,4 +1,4 @@
-import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
+import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios, OrdenComercios } from "@/lib/admin/datos";
 
 /**
  * Las secciones del panel en sus grupos, en el orden de la barra lateral
@@ -111,6 +111,78 @@ export const filtrosComercios: { valor: FiltroComercios | null; label: string }[
   { valor: "pendientes", label: "Pendientes" },
   { valor: "bajas", label: "Bajas" },
 ];
+
+/** Cómo se puede ordenar Comercios (sección 22 del contrato), en el orden del selector. */
+export const ordenesComercios: Record<OrdenComercios, string> = {
+  alta: "Alta, la más nueva",
+  vencimiento: "Vencimiento, el más próximo",
+  turnos: "Turnos en 30 días",
+  ultimo_turno: "Último turno",
+};
+
+/** Lo que dice la lista de Comercios abajo del título, según cómo está ordenada. */
+export const listaSegunOrden: Record<OrdenComercios, string> = {
+  alta: "De los más nuevos a los más viejos.",
+  vencimiento: "Por vencimiento, el más próximo primero.",
+  turnos: "Por turnos en 30 días, de más a menos.",
+  ultimo_turno: "Por el último turno, el más reciente primero.",
+};
+
+/** Los filtros de Comercios además del estado, y la exportación (docs/PLAN-ADMIN-V5.md, paso U). */
+export const filtrosAdmin = {
+  titulo: "Filtros",
+  localidad: "Localidad",
+  nivel: "Nivel",
+  canal: "Cobra",
+  fundador: "Fundador",
+  visibilidad: "Visibilidad",
+  pausa: "Pausa",
+  orden: "Ordenar por",
+  todos: "Todos",
+  todas: "Todas",
+  si: "Sí",
+  no: "No",
+  ocultos: "Ocultos",
+  visibles: "Visibles",
+  enPausa: "En pausa",
+  sinPausa: "Sin pausa",
+  aplicar: "Aplicar",
+  sacar: "Sacar los filtros",
+  exportar: "Exportar CSV",
+};
+
+/** Las columnas de los CSV del panel. Las fechas van como `2026-11-05`, para que se ordenen. */
+export const csvAdmin = {
+  comercios: {
+    archivo: "comercios",
+    columnas: [
+      "Local",
+      "Localidad",
+      "Mail del dueño",
+      "Estado",
+      "Nivel",
+      "Plan",
+      "Cobra",
+      "Vence",
+      "No renueva",
+      "Fundador",
+      "Visible",
+      "Pausa desde",
+      "Pausa hasta",
+      "Turnos en 30 días",
+      "Último turno",
+      "Alta",
+      "Baja",
+    ],
+  },
+  personas: {
+    archivo: "personas",
+    columnas: ["Nombre", "Mail", "Locales", "Alta", "Último ingreso"],
+  },
+  si: "Sí",
+  no: "No",
+  deBaja: "De baja",
+};
 
 /** Los motivos de `incidencias_pago`, en criollo. */
 export const motivosIncidencia: Record<string, string> = {
@@ -375,15 +447,19 @@ export const acciones = {
 };
 
 /**
- * La sección Registro (docs/PLAN-ADMIN-V5.md, paso T): todo lo que hizo el
- * equipo, también lo que no es de un local. Los tipos juntan acciones
+ * La sección Registro (docs/PLAN-ADMIN-V5.md, pasos T y U): todo lo que hizo
+ * el equipo, también lo que no es de un local. Los tipos juntan acciones
  * parecidas para filtrar.
  */
 export const registroAdmin = {
   titulo: "Registro",
-  bajada: "Lo que hizo el equipo desde el panel: las últimas 100 acciones, de la más nueva a la más vieja.",
+  bajada: "Lo que hizo el equipo desde el panel, de lo más nuevo a lo más viejo.",
   vacio: "Todavía nadie cambió nada desde el panel.",
-  vacioDelTipo: "No hay acciones de ese tipo entre las últimas 100.",
+  vacioDelTipo: "No hay acciones de ese tipo.",
+  soloDe: (local: string) => `Sólo de ${local}`,
+  esteLocal: "este local",
+  verSolo: "Ver sólo este",
+  todosLosLocales: "Ver todos los locales",
   filtrar: "Filtrar por tipo",
   todas: "Todas",
   tipos: [
