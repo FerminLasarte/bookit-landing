@@ -153,8 +153,11 @@ export type Atencion = "con_horario" | "orden_de_llegada" | "no_atiende";
 /** Los ratos libres de un día, como momentos ISO, y si el día se atiende. */
 export type Libres = { atencion: Atencion; huecos: { inicio: string; fin: string }[] };
 
-/** Los del local entero, ya unidos por la base, y los de cada profesional activo, por su id. */
-export type HuecosDelDia = { local: Libres; profesionales: Record<string, Libres> };
+/**
+ * Los del local entero, ya unidos por la base, y los de cada profesional activo, por su id.
+ * `local.en_pausa`: el día cae en la pausa del local, y sale `no_atiende` (BooKit 20261024010200).
+ */
+export type HuecosDelDia = { local: Libres & { en_pausa?: boolean }; profesionales: Record<string, Libres> };
 
 /**
  * Los huecos libres de un día del local (`huecos_del_dia`, BooKit

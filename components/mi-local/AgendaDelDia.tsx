@@ -41,7 +41,7 @@ type Props = {
   propia?: boolean;
   /** Un momento fijo para todo el dibujo, como ISO: el servidor y el navegador ven la misma hora. */
   ahora: string;
-  /** El aviso de la suscripción, si hay: va entre el encabezado y la barra. */
+  /** El aviso de la suscripción y el cartel de la pausa, si hay: van entre el encabezado y la barra. */
   aviso?: ReactNode;
 };
 
@@ -191,7 +191,7 @@ export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, 
             ahora={momento}
           />
         ) : (
-          <DiaVacio {...vacioDe({ grupo, libres, profesional, propia, dia, hoy })} />
+          <DiaVacio {...vacioDe({ grupo, libres, enPausa: huecos?.local.en_pausa === true, profesional, propia, dia, hoy })} />
         )}
       </div>
     </>
@@ -207,6 +207,7 @@ export default function AgendaDelDia({ dia, hoy, semana, turnos, profesionales, 
 function vacioDe({
   grupo,
   libres,
+  enPausa,
   profesional,
   propia,
   dia,
@@ -214,6 +215,8 @@ function vacioDe({
 }: {
   grupo: Grupo | null;
   libres: Libres | null | undefined;
+  /** El día cae en la pausa del local: no lo atiende nadie, tenga o no horario. */
+  enPausa: boolean;
   profesional: string | null;
   propia: boolean;
   dia: string;
@@ -223,6 +226,8 @@ function vacioDe({
   if (grupo) return { bajada: vacioConFiltro };
   if (!libres) return { bajada: vacio };
   if (dia < hoy) return diaVacio.paso;
+  // Como la app: decir "nadie tiene horario" un día de la pausa no es cierto. A la pausa se va por el cartel.
+  if (enPausa) return diaVacio.enPausa;
   if (libres.atencion === "no_atiende") {
     if (propia) return { ...diaVacio.noAtendes, href: "/mi-local/horarios" };
     return profesional
