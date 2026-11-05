@@ -1,13 +1,31 @@
 import type { EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
 
-/** Las secciones del panel, en el orden del nav. */
-export const seccionesAdmin = [
-  { href: "/admin", label: "Pulso" },
-  { href: "/admin/comercios", label: "Comercios" },
-  { href: "/admin/personas", label: "Personas" },
-  { href: "/admin/cobros", label: "Cobros" },
-  { href: "/admin/equipo", label: "Equipo" },
+/**
+ * Las secciones del panel en sus grupos, en el orden de la barra lateral
+ * (docs/PLAN-ADMIN-V5.md, paso Q). Cada una suma su `id` para el ícono.
+ */
+export const gruposAdmin = [
+  { rotulo: "General", secciones: [{ id: "pulso", href: "/admin", label: "Pulso" }] },
+  {
+    rotulo: "Operación",
+    secciones: [
+      { id: "comercios", href: "/admin/comercios", label: "Comercios" },
+      { id: "personas", href: "/admin/personas", label: "Personas" },
+      { id: "cobros", href: "/admin/cobros", label: "Cobros" },
+    ],
+  },
+  { rotulo: "Equipo", secciones: [{ id: "equipo", href: "/admin/equipo", label: "Equipo" }] },
 ] as const;
+
+/** Lo que dice el marco del panel, fuera de las secciones. */
+export const marcoAdmin = {
+  insignia: "Admin",
+  navegacion: "Secciones del panel",
+  menu: "Menú",
+  cerrarMenu: "Cerrar el menú",
+  salir: "Salir",
+  irALaWeb: "Ir a la web",
+};
 
 /** Cómo se lee cada estado de la suscripción, y si es una buena noticia. */
 export const estados: Record<EstadoSuscripcion, { label: string; tono: "bien" | "atencion" | "mal" }> = {
