@@ -276,6 +276,52 @@ lista de lo que quedó en la base para que BooKit lo borre si querés.
 
 `npm run typecheck` y `npm run build` antes del PR.
 
+### Resultados (5 de noviembre de 2026)
+
+Implementado en cuatro commits (piezas, página y perfil, agenda, turno a
+mano). `typecheck` y `build` pasan. Probado en el preview contra la base, con
+la sesión del dueño de Nogal que ya estaba abierta.
+
+**Anduvo (D7, 1):**
+- La vista previa sin guardar: del 14 al 16 de diciembre, y desde hoy sin
+  fecha (Nogal no tenía turnos por delante: "no se cancela ningún turno").
+- Un turno a mano "Prueba web (borrar)" el 15/12 aparece en la lista, con
+  día, hora, cliente, servicio y profesional.
+- D3: con la página abierta cargué otro turno de prueba el 16/12 en otra
+  pestaña; al confirmar, no pausó y mostró "Cambiaron los turnos…" con los
+  dos.
+- Pausar: "Revisar" cierra sin hacer nada; "Pausar y cancelar" pausó y dijo
+  "Listo. Cancelamos 2 turnos.". Título "Tu pausa", "Guardar cambios" apagado
+  sin cambios, "Sacar la pausa" (no había empezado).
+- El bloque del Perfil ("Se pausa el 14 de diciembre."), el cartel "Pausa
+  programada" arriba de la agenda y el 14/12 vacío con "El local está en
+  pausa".
+- Un turno a mano el 14/12: preguntó "Ese día el local está en pausa." y
+  "Cargar igual" lo cargó.
+- Cambiar la fecha actualiza la URL y la lista sola. Estirar al 17 mostró ese
+  turno y lo canceló ("Listo. Cancelamos 1 turno."). "Sin fecha" guardó
+  ("Pausa guardada.").
+- Un "Desde" a más de 90 días, con el límite del campo sacado a mano: se ve
+  el mensaje de la base.
+- Sin JavaScript (mirando el HTML del servidor): el formulario va por POST y
+  "Ver los turnos" es el primer botón, por GET.
+- A 375 px, sin scroll de costado.
+- "Sacar la pausa": "Sacamos la pausa.", el cartel se fue.
+- `/admin`: la Historia de Nogal muestra los cuatro cambios.
+
+**Falta:**
+- **D7, 2**, la pausa que empieza hoy y "Volver ahora": espera tu OK.
+- **El profesional del equipo** (cartel sin enlace, nada en Mi perfil, la
+  página lo devuelve a Perfil): hace falta que entres con la cuenta del
+  equipo.
+- Sin JavaScript, haciendo clic: sólo se miró el HTML.
+- Ver el cartel y la fila en la app del teléfono.
+
+**Quedó en la base (Nogal):** tres turnos de prueba cancelados, sin cliente
+ni pago ("Prueba web (borrar)" el 15/12 a las 10:00, "Prueba web (borrar) 2"
+el 16/12 a las 11:00 y "Prueba web (borrar) pausa" el 14/12 a las 10:00), y
+cuatro filas en `comercios_cambios_de_pausa`. Nogal, sin pausa.
+
 ## Lo que vi y no toca este plan
 
 - La página pública del local en pausa (sección 4 del contrato): hoy la
