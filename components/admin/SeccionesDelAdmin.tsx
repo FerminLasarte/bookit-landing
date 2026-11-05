@@ -1,6 +1,6 @@
 "use client";
 
-import { House, ScrollText, ShieldCheck, Store, Users, Wallet, type LucideIcon } from "lucide-react";
+import { ChartColumn, House, ScrollText, ShieldCheck, Store, Users, Wallet, type LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import EnlaceDeSeccion from "@/components/ui/EnlaceDeSeccion";
 import { gruposAdmin, inicioAdmin, marcoAdmin, seccionesAdmin, type SeccionAdmin } from "@/content/admin";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 const iconos: Record<SeccionAdmin["id"], LucideIcon> = {
   inicio: House,
+  estadisticas: ChartColumn,
   comercios: Store,
   personas: Users,
   cobros: Wallet,

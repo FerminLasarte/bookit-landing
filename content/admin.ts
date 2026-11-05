@@ -6,7 +6,13 @@ import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios, OrdenComercio
  * `tecla` que la abre después de `g` (paso R).
  */
 export const gruposAdmin = [
-  { rotulo: "General", secciones: [{ id: "inicio", href: "/admin", label: "Inicio", tecla: "i" }] },
+  {
+    rotulo: "General",
+    secciones: [
+      { id: "inicio", href: "/admin", label: "Inicio", tecla: "i" },
+      { id: "estadisticas", href: "/admin/estadisticas", label: "Estadísticas", tecla: "s" },
+    ],
+  },
   {
     rotulo: "Operación",
     secciones: [
@@ -70,6 +76,73 @@ export const inicioAdmin = {
   yMas: (n: number) => `y ${n} más`,
   /** Lo que dice el contador de una sección en la barra lateral, para quien no lo ve. */
   pendientes: (n: number) => `${n} para atender`,
+};
+
+/**
+ * Estadísticas (docs/PLAN-ADMIN-V5.md, paso W), con `admin_estadisticas`
+ * (BooKit `docs/admin-panel.md`, sección 24). `dias` en null es 12 meses.
+ */
+export const estadisticasAdmin = {
+  titulo: "Estadísticas",
+  bajada: "Cada número, con el del período anterior del mismo largo al lado.",
+  delAl: (desde: string, hasta: string) => `Del ${desde} al ${hasta}.`,
+  periodo: "Período",
+  periodos: [
+    { valor: "7", label: "7 días", dias: 7 },
+    { valor: "30", label: "30 días", dias: 30 },
+    { valor: "90", label: "90 días", dias: 90 },
+    { valor: "12m", label: "12 meses", dias: null },
+  ] as const,
+  anterior: (n: string) => `${n} el período anterior`,
+  hayDatosDesde: (dia: string) => `Hay datos desde el ${dia}`,
+  sinDatos: "Sin datos en este período",
+  porDia: "por día",
+  porMes: "por mes",
+  crecimiento: {
+    titulo: "Crecimiento",
+    altas: "Altas de locales",
+    bajas: "Bajas",
+    cuentasNuevas: "Cuentas nuevas",
+    serie: "Altas",
+  },
+  pruebaAlPago: {
+    titulo: "De la prueba al pago",
+    bajada: "Por mes de alta: los que empezaron la prueba y cuántos de ellos pagan hoy.",
+    columnas: ["Mes de alta", "Empezaron", "Pagan hoy"],
+    vacio: "Ningún local empezó la prueba en estos meses.",
+  },
+  uso: {
+    titulo: "Uso",
+    reservas: "Reservas",
+    reservasDetalle: (app: string, mostrador: string) => `${app} por la app y ${mostrador} de mostrador`,
+    completadas: "Completadas",
+    canceladas: "Canceladas",
+    canceladasDetalle: (tarde: string) => `${tarde} tarde`,
+    ausentes: "Ausentes",
+    clientesActivos: "Clientes activos",
+    clientesDetalle: "Personas que reservaron",
+    turnosQueTocaban: "De los turnos que tocaban en el período.",
+    serie: "Reservas",
+  },
+  plata: {
+    titulo: "Plata",
+    cobrado: "Cobrado en suscripciones",
+    cobradoDetalle: "Pagos de Mercado Pago",
+    ingreso: "Ingreso mensual estimado",
+    ingresoDetalle: "Hoy: no se puede rearmar para atrás",
+    serie: "Cobrado en suscripciones",
+  },
+  locales: {
+    titulo: "Locales",
+    bajada: "Los activos hoy: al día o en gracia. Es una foto: no tiene período anterior.",
+    porNivel: "Por nivel",
+    porCanal: "Por canal de cobro",
+    porLocalidad: "Por localidad",
+    porCategoria: "Por categoría principal",
+    masTurnos: "Los que más reservas tuvieron en el período",
+    ninguno: "Ninguno.",
+    sinDato: "Sin dato",
+  },
 };
 
 /** Lo que dice el marco del panel, fuera de las secciones. */
