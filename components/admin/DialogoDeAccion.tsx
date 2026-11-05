@@ -1,12 +1,14 @@
 "use client";
 
-import { useId, useRef, useState, type ReactNode } from "react";
+import { use, useId, useRef, useState, type ReactNode } from "react";
+import { claseDeOpcion } from "@/components/mi-local/Opciones";
 import Button from "@/components/ui/Button";
 import Dialogo, { Volver } from "@/components/ui/Dialogo";
 import { textLinkClasses } from "@/components/ui/TextLink";
 import { acciones } from "@/content/admin";
 import { formularioSinBorrar } from "@/lib/formularios";
 import { useAccionQueCierra, type Respuesta } from "@/lib/mi-local/respuesta";
+import { EnLaBarra } from "./BarraDeAcciones";
 
 /** Lo que una acción tiene para decir después de salir bien. */
 type Aviso = { titulo: string; texto: string };
@@ -16,7 +18,8 @@ type Aviso = { titulo: string; texto: string };
  * bien se cierra y la página vuelve releída; si no, queda con lo escrito y la
  * frase de la base. Lo abre un link con `boton`, o lo que dibuje `disparador`.
  * Con `aviso`, lo que sale bien y tiene algo para decir deja el diálogo
- * abierto con eso y un "Listo".
+ * abierto con eso y un "Listo". En la barra de la ficha, el botón es una
+ * píldora.
  */
 export default function DialogoDeAccion<R extends Respuesta>({
   boton,
@@ -40,6 +43,7 @@ export default function DialogoDeAccion<R extends Respuesta>({
   children: ReactNode;
 }) {
   const id = useId();
+  const enLaBarra = use(EnLaBarra);
   const dialogo = useRef<HTMLDialogElement>(null);
   const abrir = () => dialogo.current?.showModal();
   const cerrar = () => dialogo.current?.close();
@@ -55,7 +59,7 @@ export default function DialogoDeAccion<R extends Respuesta>({
       {disparador ? (
         disparador(abrir)
       ) : (
-        <button type="button" onClick={abrir} className={textLinkClasses()}>
+        <button type="button" onClick={abrir} className={enLaBarra ? claseDeOpcion(false) : textLinkClasses()}>
           {boton}
         </button>
       )}

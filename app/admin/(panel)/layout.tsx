@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import AdminNav from "@/components/admin/AdminNav";
+import MarcoDelAdmin from "@/components/admin/MarcoDelAdmin";
 
 /*
  * El marco del panel. Quién entra no se decide acá: el proxy manda a
@@ -7,10 +7,5 @@ import AdminNav from "@/components/admin/AdminNav";
  * le cierra la sesión y manda a /admin/sin-acceso a quien no es del equipo.
  */
 export default function PanelLayout({ children }: { children: ReactNode }) {
-  return (
-    <>
-      <AdminNav />
-      <div className="wrap py-8 md:py-12">{children}</div>
-    </>
-  );
+  return <MarcoDelAdmin>{children}</MarcoDelAdmin>;
 }

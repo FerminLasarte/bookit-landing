@@ -1,5 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import type { EstadoTurno } from "@/lib/mi-local/turnos";
 import { clienteDeSupabase } from "@/lib/supabase";
 
@@ -50,6 +51,26 @@ export type Pulso = {
 
 type Mes = { altas: number; bajas: number; reservas: number; cobrado_suscripciones: number };
 
+/**
+ * La pausa que pidió el local y no terminó: en curso o programada. `hasta` es
+ * el último día cerrado, inclusive; `null`, sin fecha de vuelta. Días de
+ * Buenos Aires, como `2027-01-09` (BooKit `docs/pausa-del-local.md`, sección 5).
+ */
+export type Pausa = { desde: string; hasta: string | null };
+
+/** Por qué un local no sale hoy en los listados, con la regla de la base: pueden venir varios. */
+export type MotivoDeNoAparecer = "oculto" | "estado" | "pausa";
+
+/** Cada vez que el dueño pausó, cambió las fechas o volvió. `desde` null: sacó la pausa. */
+export type CambioDePausa = {
+  cambiado_el: string;
+  desde_antes: string | null;
+  hasta_antes: string | null;
+  desde: string | null;
+  hasta: string | null;
+  turnos_cancelados: number;
+};
+
 export type FilaComercio = {
   id_comercio: string;
   nombre: string;
@@ -67,6 +88,8 @@ export type FilaComercio = {
   email_duenio: string | null;
   turnos_30d: number;
   ultimo_turno: string | null;
+  pausa: Pausa | null;
+  no_aparece_por: MotivoDeNoAparecer[];
 };
 
 export type FiltroComercios = "prueba" | "pagando" | "cortados" | "pendientes" | "bajas";
@@ -116,6 +139,10 @@ export type FichaComercio = {
   acciones: AccionDelEquipo[];
   /** Cada cambio de estado, de lo más nuevo a lo más viejo. Se guardan desde el 23-oct-2026 (sección 13). */
   cambios_de_estado: CambioDeEstado[];
+  pausa: Pausa | null;
+  no_aparece_por: MotivoDeNoAparecer[];
+  /** De lo más nuevo a lo más viejo. Los escribe el dueño, nunca el panel. */
+  cambios_de_pausa: CambioDePausa[];
 };
 
 /** `por_el_equipo`: lo cambió una acción del panel, en la misma transacción que su fila del registro. */
@@ -313,6 +340,12 @@ async function leer<T>(funcion: string, params?: Record<string, unknown>): Promi
   return data as T;
 }
 
+/** Un lugar al que lleva el buscador del panel. */
+export type Encontrado = { href: string; titulo: string; detalle: string };
+
+/** Lo que devuelve /admin/buscar. */
+export type Encontrados = { comercios: Encontrado[]; personas: Encontrado[] };
+
 /** Cuántas filas trae cada página de una lista del panel. */
 export const POR_PAGINA = 50;
 
@@ -345,10 +378,18 @@ export const leerPersonas = (p: { busqueda?: string; limite: number; desde: numb
 
 export const leerPersona = (id: string) => leer<FichaPersona | null>("admin_persona", { p_id_usuario: id });
 
-/** El equipo y quién lo está mirando, que no se puede sacar a sí mismo (D4 de la v3). */
-export async function leerEquipo(): Promise<Equipo & { yo: string | null }> {
-  const equipo = await leer<Equipo>("admin_equipo");
+/**
+ * Quién tiene abierta la sesión del panel, de su token. No dice si es del
+ * equipo: eso lo decide la base en cada lectura.
+ */
+export const leerQuienEntro = cache(async () => {
   const supabase = await clienteDeSupabase("panel");
   const { data } = await supabase.auth.getClaims();
-  return { ...equipo, yo: data?.claims.sub ?? null };
+  return { id: data?.claims.sub ?? null, email: data?.claims.email ?? null };
+});
+
+/** El equipo y quién lo está mirando, que no se puede sacar a sí mismo (D4 de la v3). */
+export async function leerEquipo(): Promise<Equipo & { yo: string | null }> {
+  const [equipo, yo] = await Promise.all([leer<Equipo>("admin_equipo"), leerQuienEntro()]);
+  return { ...equipo, yo: yo.id };
 }

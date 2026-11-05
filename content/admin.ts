@@ -1,13 +1,68 @@
-import type { EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
+import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
 
-/** Las secciones del panel, en el orden del nav. */
-export const seccionesAdmin = [
-  { href: "/admin", label: "Pulso" },
-  { href: "/admin/comercios", label: "Comercios" },
-  { href: "/admin/personas", label: "Personas" },
-  { href: "/admin/cobros", label: "Cobros" },
-  { href: "/admin/equipo", label: "Equipo" },
+/**
+ * Las secciones del panel en sus grupos, en el orden de la barra lateral
+ * (docs/PLAN-ADMIN-V5.md, paso Q). Cada una suma su `id` para el ícono y la
+ * `tecla` que la abre después de `g` (paso R).
+ */
+export const gruposAdmin = [
+  { rotulo: "General", secciones: [{ id: "pulso", href: "/admin", label: "Pulso", tecla: "i" }] },
+  {
+    rotulo: "Operación",
+    secciones: [
+      { id: "comercios", href: "/admin/comercios", label: "Comercios", tecla: "c" },
+      { id: "personas", href: "/admin/personas", label: "Personas", tecla: "p" },
+      { id: "cobros", href: "/admin/cobros", label: "Cobros", tecla: "b" },
+    ],
+  },
+  {
+    rotulo: "Equipo",
+    secciones: [
+      { id: "equipo", href: "/admin/equipo", label: "Equipo", tecla: "e" },
+      { id: "registro", href: "/admin/registro", label: "Registro", tecla: "r" },
+    ],
+  },
 ] as const;
+
+export type SeccionAdmin = (typeof gruposAdmin)[number]["secciones"][number];
+
+/** Las secciones sin sus grupos, en el mismo orden. */
+export const seccionesAdmin = gruposAdmin.flatMap((g): readonly SeccionAdmin[] => g.secciones);
+
+/** Lo que dice el marco del panel, fuera de las secciones. */
+export const marcoAdmin = {
+  insignia: "Admin",
+  navegacion: "Secciones del panel",
+  menu: "Menú",
+  cerrarMenu: "Cerrar el menú",
+  salir: "Salir",
+  irALaWeb: "Ir a la web",
+};
+
+/** El buscador "Ir a…" y los atajos de teclado (docs/PLAN-ADMIN-V5.md, paso R). */
+export const atajosAdmin = {
+  buscar: "Buscar",
+  titulo: "Ir a…",
+  campo: "Una sección, un local o una persona",
+  secciones: "Secciones",
+  locales: "Locales",
+  personas: "Personas",
+  buscando: "Buscando…",
+  nada: "No hay nada con eso.",
+  pie: "↑ ↓ para moverte · Enter para ir · Esc para cerrar",
+  error: "No se pudo buscar. Probá de nuevo.",
+  sinDueno: "Sin dueño",
+  sinNombre: "Sin nombre",
+  ayuda: {
+    titulo: "Atajos de teclado",
+    bajada: "Las letras no hacen nada mientras escribís en un campo.",
+    abrirBuscador: "Buscar e ir a cualquier lado",
+    irA: "Ir a",
+    busquedaDeLaPagina: "Ir a la búsqueda de la página",
+    estaLista: "Ver esta lista",
+    cerrar: "Cerrar",
+  },
+};
 
 /** Cómo se lee cada estado de la suscripción, y si es una buena noticia. */
 export const estados: Record<EstadoSuscripcion, { label: string; tono: "bien" | "atencion" | "mal" }> = {
@@ -316,20 +371,88 @@ export const acciones = {
       enviando: "Sacando…",
       generico: "No pudimos sacarlo. Probá de nuevo.",
     },
-    registro: {
-      titulo: "Lo que hizo el equipo",
-      bajada: "Todo el registro, también lo que no es de un local: las últimas 100 acciones, de la más nueva a la más vieja.",
-      vacio: "Todavía nadie cambió nada desde el panel.",
-    },
   },
 };
 
+/**
+ * La sección Registro (docs/PLAN-ADMIN-V5.md, paso T): todo lo que hizo el
+ * equipo, también lo que no es de un local. Los tipos juntan acciones
+ * parecidas para filtrar.
+ */
+export const registroAdmin = {
+  titulo: "Registro",
+  bajada: "Lo que hizo el equipo desde el panel: las últimas 100 acciones, de la más nueva a la más vieja.",
+  vacio: "Todavía nadie cambió nada desde el panel.",
+  vacioDelTipo: "No hay acciones de ese tipo entre las últimas 100.",
+  filtrar: "Filtrar por tipo",
+  todas: "Todas",
+  tipos: [
+    { valor: "locales", label: "Locales", acciones: ["cambiar_visibilidad", "suspender", "reactivar"] },
+    { valor: "cobros", label: "Cobros", acciones: ["resolver_incidencia", "extender_prueba", "dar_cortesia"] },
+    { valor: "fundadores", label: "Fundadores", acciones: ["cambiar_fundador", "sumar_fundador"] },
+    { valor: "equipo", label: "Equipo", acciones: ["sumar_admin", "sacar_admin", "cambiar_avisos"] },
+  ] as { valor: string; label: string; acciones: AccionDelEquipo["accion"][] }[],
+};
+
 /** Los cambios de estado de un local (paso H de docs/PLAN-ADMIN-V3.md, D1). */
+/** La ficha de un local: la barra de acciones y sus pestañas (docs/PLAN-ADMIN-V5.md, paso T). */
+export const fichaAdmin = {
+  volver: "Comercios",
+  acciones: "Acciones sobre el local",
+  pestanas: "Partes de la ficha",
+  partes: [
+    { clave: "resumen", label: "Resumen" },
+    { clave: "suscripcion", label: "Suscripción" },
+    { clave: "turnos", label: "Turnos" },
+    { clave: "equipo", label: "Equipo y servicios" },
+    { clave: "historia", label: "Historia" },
+  ],
+  /** Lo que dice la pestaña Suscripción al lado del nombre: las incidencias sin resolver. */
+  abiertas: (n: number) => `${n} ${n === 1 ? "incidencia abierta" : "incidencias abiertas"}`,
+  ultimoMes: {
+    titulo: (mes: string) => `Turnos de ${mes}`,
+    bajada: "Reservados, sin las reservas de Mercado Pago que nadie pagó.",
+    reservados: "Reservados",
+    completados: "Completados",
+    cancelados: "Cancelados",
+  },
+} as const;
+
+export type ParteDeLaFicha = (typeof fichaAdmin.partes)[number]["clave"];
+
 export const historia = {
-  titulo: "Historia de la suscripción",
-  bajada: "Cada cambio de estado, de lo más nuevo a lo más viejo.",
+  titulo: "Historia",
+  bajada: "Los cambios de estado, las pausas del local y lo que hizo el equipo, de lo más nuevo a lo más viejo.",
   vacia: "Sin cambios desde el 23 de octubre de 2026, cuando se empezó a guardar.",
   desdeElPanel: "Desde el panel",
+  delDuenio: "El dueño",
+};
+
+/**
+ * La pausa que pide el propio local (docs/PLAN-ADMIN-V5.md, paso S). La maneja
+ * el dueño desde la app: el panel sólo la muestra. Las fechas llegan escritas,
+ * y `hasta` es el último día cerrado.
+ */
+export const pausa = {
+  enCurso: "En pausa",
+  programada: "Pausa programada",
+  fechas: (desde: string, hasta: string | null) =>
+    hasta ? `del ${desde} al ${hasta}` : `desde el ${desde}, sin fecha de vuelta`,
+  noSeVe: "Hoy no aparece: el local está en pausa.",
+  detalle: {
+    enCurso: (hasta: string, vuelta: string) =>
+      `En pausa hasta el ${hasta}: vuelve el ${vuelta}. Esos días no toma turnos; para después, sí.`,
+    enCursoSinVuelta: (desde: string) => `En pausa desde el ${desde}, sin fecha de vuelta: no toma turnos.`,
+    programada: (fechas: string) => `Se pausa ${fechas}. Hasta entonces aparece y toma turnos como siempre.`,
+    loManeja: "La pausa la maneja el dueño desde la app.",
+  },
+  cambio: {
+    pauso: (fechas: string) => `Pausó ${fechas}`,
+    cambio: (fechas: string) => `Cambió la pausa: ${fechas}`,
+    volvio: "Volvió de la pausa",
+    saco: "Sacó la pausa antes de que empiece",
+    cancelados: (n: number) => `canceló ${n} ${n === 1 ? "turno" : "turnos"}`,
+  },
 };
 
 /** Lo que es una persona en un local. */
