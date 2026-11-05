@@ -1,5 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import type { EstadoTurno } from "@/lib/mi-local/turnos";
 import { clienteDeSupabase } from "@/lib/supabase";
 
@@ -345,10 +346,18 @@ export const leerPersonas = (p: { busqueda?: string; limite: number; desde: numb
 
 export const leerPersona = (id: string) => leer<FichaPersona | null>("admin_persona", { p_id_usuario: id });
 
-/** El equipo y quién lo está mirando, que no se puede sacar a sí mismo (D4 de la v3). */
-export async function leerEquipo(): Promise<Equipo & { yo: string | null }> {
-  const equipo = await leer<Equipo>("admin_equipo");
+/**
+ * Quién tiene abierta la sesión del panel, de su token. No dice si es del
+ * equipo: eso lo decide la base en cada lectura.
+ */
+export const leerQuienEntro = cache(async () => {
   const supabase = await clienteDeSupabase("panel");
   const { data } = await supabase.auth.getClaims();
-  return { ...equipo, yo: data?.claims.sub ?? null };
+  return { id: data?.claims.sub ?? null, email: data?.claims.email ?? null };
+});
+
+/** El equipo y quién lo está mirando, que no se puede sacar a sí mismo (D4 de la v3). */
+export async function leerEquipo(): Promise<Equipo & { yo: string | null }> {
+  const [equipo, yo] = await Promise.all([leer<Equipo>("admin_equipo"), leerQuienEntro()]);
+  return { ...equipo, yo: yo.id };
 }
