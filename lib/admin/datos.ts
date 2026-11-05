@@ -359,6 +359,27 @@ export type Estadisticas = {
   datos_desde: Partial<Record<MedidaDeEstadisticas, string | null>>;
 };
 
+/**
+ * Los planes como están hoy (BooKit `docs/admin-panel.md`, sección 25). El
+ * precio es de nivel por plan; uno sin niveles va con `nivel` en null. Lo que
+ * cobran Apple y Google no está en la base.
+ */
+export type Planes = {
+  planes: {
+    id: string;
+    nombre: string;
+    ciclo_dias: number;
+    dias_gracia: number;
+    /** Si se puede contratar hoy. */
+    ofrecible: boolean;
+    precios: { nivel: string | null; precio: number; precio_fundador: number | null }[];
+  }[];
+  /** La prueba de Mercado Pago: la de Apple y Google la fija cada tienda. */
+  dias_de_prueba: number;
+  /** Los fundadores del lanzamiento: un lugar usado no vuelve. Desde `hasta` ya no se suman. */
+  fundadores: { cupo: number; usados: number; quedan: number; hasta: string };
+};
+
 /** Un local de una persona. El dueño sale una sola vez, como `duenio`, aunque también sea profesional. */
 export type LocalDePersona = {
   id_comercio: string;
@@ -427,13 +448,12 @@ export type Encontrado = { href: string; titulo: string; detalle: string };
 /** Lo que devuelve /admin/buscar. */
 export type Encontrados = { comercios: Encontrado[]; personas: Encontrado[] };
 
-/** Cuántas filas trae cada página de una lista del panel. */
-export const POR_PAGINA = 50;
-
 /** Lo más que da cada lectura de una vez (sección 22): el CSV recorre de a tanto. */
 export const MAXIMO_POR_LECTURA = 200;
 
 export const leerPulso = () => leer<Pulso>("admin_pulso");
+
+export const leerPlanes = () => leer<Planes>("admin_planes");
 
 export const leerEstadisticas = (desde: string, hasta: string) =>
   leer<Estadisticas>("admin_estadisticas", { p_desde: desde, p_hasta: hasta });

@@ -4,7 +4,8 @@ import LocalesDePersona from "@/components/admin/LocalesDePersona";
 import { aLista, Bloque, Busqueda, Encabezado, paginaPedida, Paginas, Tabla, Vacio } from "@/components/admin/piezas";
 import Button from "@/components/ui/Button";
 import { filtrosAdmin } from "@/content/admin";
-import { leerPersonas, POR_PAGINA } from "@/lib/admin/datos";
+import { leerPersonas } from "@/lib/admin/datos";
+import { leerVista } from "@/lib/admin/vista";
 import { pedidoDePersonas, type ParamsDePersonas } from "@/lib/admin/listas";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
 
@@ -16,13 +17,14 @@ const BASE = "/admin/personas";
 export default async function Personas({ searchParams }: { searchParams: Promise<ParamsDePersonas> }) {
   const params = await searchParams;
   const pagina = paginaPedida(params.p);
+  const { porPagina } = await leerVista();
   const pedido = pedidoDePersonas(params);
   const { total, filas } = await leerPersonas({
     ...pedido,
-    limite: POR_PAGINA,
-    desde: (pagina - 1) * POR_PAGINA,
+    limite: porPagina,
+    desde: (pagina - 1) * porPagina,
   });
-  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  const paginas = Math.max(1, Math.ceil(total / porPagina));
 
   return (
     <div className="flex flex-col gap-6">

@@ -3,7 +3,8 @@ import { aLista, Bloque, Encabezado, paginaPedida, Paginas, Selector, Tabla, Vac
 import QueHizo from "@/components/admin/QueHizo";
 import TextLink from "@/components/ui/TextLink";
 import { acciones, registroAdmin } from "@/content/admin";
-import { leerRegistro, POR_PAGINA } from "@/lib/admin/datos";
+import { leerRegistro } from "@/lib/admin/datos";
+import { leerVista } from "@/lib/admin/vista";
 import { fecha, numero } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Registro" };
@@ -23,13 +24,14 @@ export default async function Registro({ searchParams }: { searchParams: Promise
   const tipo = registroAdmin.tipos.find((t) => t.valor === params.tipo);
   const local = params.local && UUID.test(params.local) ? params.local : undefined;
   const pagina = paginaPedida(params.p);
+  const { porPagina } = await leerVista();
   const { total, filas } = await leerRegistro({
     acciones: tipo?.acciones,
     idComercio: local,
-    limite: POR_PAGINA,
-    desde: (pagina - 1) * POR_PAGINA,
+    limite: porPagina,
+    desde: (pagina - 1) * porPagina,
   });
-  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  const paginas = Math.max(1, Math.ceil(total / porPagina));
   const puestos = { tipo: tipo?.valor, local };
   const nombreDelLocal = local ? (filas[0]?.comercio ?? registroAdmin.esteLocal) : null;
 

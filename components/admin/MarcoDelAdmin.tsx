@@ -7,6 +7,7 @@ import MarcoDePanel from "@/components/ui/MarcoDePanel";
 import Wordmark from "@/components/ui/Wordmark";
 import { marcoAdmin } from "@/content/admin";
 import { leerParaAtender, leerQuienEntro } from "@/lib/admin/datos";
+import { leerVista } from "@/lib/admin/vista";
 import Atajos, { BotonBuscar } from "./Atajos";
 import { cuantosParaAtender } from "./ParaAtender";
 import SeccionesDelAdmin, { SeccionActual, type Contadores } from "./SeccionesDelAdmin";
@@ -58,36 +59,39 @@ function Cuenta({ email }: { email: string | null }) {
 }
 
 export default async function MarcoDelAdmin({ children }: { children: ReactNode }) {
-  const [{ email }, cuantos] = await Promise.all([leerQuienEntro(), contadores()]);
+  const [{ email }, cuantos, vista] = await Promise.all([leerQuienEntro(), contadores(), leerVista()]);
 
   return (
     <Atajos>
-      <MarcoDePanel
-        identidad={
-          <Link href="/admin" className="ring-focus flex items-center gap-3 self-start rounded-pill px-2">
-            <Wordmark className="h-7" />
-            <Badge>{marcoAdmin.insignia}</Badge>
-          </Link>
-        }
-        barra={
-          <div className="flex min-w-0 items-center gap-3">
-            <Link href="/admin" aria-label="Inicio" className="ring-focus shrink-0 rounded-pill">
-              <Wordmark isotipo className="size-7" />
+      {/* La densidad que eligió cada uno en Ajustes: la leen las tablas (`Tabla`). */}
+      <div data-densidad={vista.densidad}>
+        <MarcoDePanel
+          identidad={
+            <Link href="/admin" className="ring-focus flex items-center gap-3 self-start rounded-pill px-2">
+              <Wordmark className="h-7" />
+              <Badge>{marcoAdmin.insignia}</Badge>
             </Link>
-            <SeccionActual />
-          </div>
-        }
-        secciones={
-          <div className="flex flex-col gap-5">
-            <BotonBuscar />
-            <SeccionesDelAdmin contadores={cuantos} />
-          </div>
-        }
-        cuenta={<Cuenta email={email} />}
-        menu={{ abrir: marcoAdmin.menu, cerrar: marcoAdmin.cerrarMenu }}
-      >
-        {children}
-      </MarcoDePanel>
+          }
+          barra={
+            <div className="flex min-w-0 items-center gap-3">
+              <Link href="/admin" aria-label="Inicio" className="ring-focus shrink-0 rounded-pill">
+                <Wordmark isotipo className="size-7" />
+              </Link>
+              <SeccionActual />
+            </div>
+          }
+          secciones={
+            <div className="flex flex-col gap-5">
+              <BotonBuscar />
+              <SeccionesDelAdmin contadores={cuantos} />
+            </div>
+          }
+          cuenta={<Cuenta email={email} />}
+          menu={{ abrir: marcoAdmin.menu, cerrar: marcoAdmin.cerrarMenu }}
+        >
+          {children}
+        </MarcoDePanel>
+      </div>
     </Atajos>
   );
 }

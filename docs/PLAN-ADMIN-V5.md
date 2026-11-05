@@ -305,8 +305,10 @@ Al 5-nov-2026.
    intermedio se miraron antes. Falta que Fermín pruebe `?` con su teclado.
 2. ~~**Mandar al chat de BooKit el prompt de U a X** (D5).~~ Hecho, y BooKit
    lo aplicó el mismo día.
-3. **U, V, W y X en la web**, un PR por paso. Con los datos de prueba de
-   BooKit se ve también la pausa del paso S en pantalla.
+3. ~~**U, V, W y X en la web**, un PR por paso.~~ Hechos el 5-nov en PRs
+   apilados: U #98, V #99, W #100 y X. Con los datos de prueba de BooKit se
+   vio también la pausa del paso S. Falta mergearlos en orden y que BooKit
+   borre los locales de prueba `b5b50000-…` "(borrar)".
 4. **La pausa en `/mi-local`** (D4). No depende de nada de esta lista y puede
    ir en paralelo con 2 y 3: la base ya está. Va en un plan de `/mi-local`
    (`docs/PLAN-MI-LOCAL.md`, Para más adelante).
