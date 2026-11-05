@@ -18,7 +18,8 @@ import { MarcaDePausa } from "@/components/admin/Pausa";
 import Button from "@/components/ui/Button";
 import TextLink from "@/components/ui/TextLink";
 import { acciones, canales, filtrosAdmin, filtrosComercios, listaSegunOrden, niveles, ordenesComercios, planes } from "@/content/admin";
-import { leerComercios, POR_PAGINA } from "@/lib/admin/datos";
+import { leerComercios } from "@/lib/admin/datos";
+import { leerVista } from "@/lib/admin/vista";
 import { FILTROS_DE_COMERCIOS, paramsDeComercios, pedidoDeComercios, type ParamsDeComercios } from "@/lib/admin/listas";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
 
@@ -41,12 +42,13 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
   const params = await searchParams;
   const pedido = pedidoDeComercios(params);
   const pagina = paginaPedida(params.p);
+  const { porPagina } = await leerVista();
   const { total, filas, localidades } = await leerComercios({
     ...pedido,
-    limite: POR_PAGINA,
-    desde: (pagina - 1) * POR_PAGINA,
+    limite: porPagina,
+    desde: (pagina - 1) * porPagina,
   });
-  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  const paginas = Math.max(1, Math.ceil(total / porPagina));
   const f = filtrosAdmin;
   // Lo que sigue puesto, ya validado: lo que no se conoce se cae de los links.
   const puestos = paramsDeComercios(pedido);

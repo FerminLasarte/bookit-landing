@@ -118,7 +118,8 @@ export function Tabla({
             ))}
           </tr>
         </thead>
-        <tbody className="[&>tr]:border-b [&>tr]:border-line [&>tr:last-child]:border-0 [&_td]:py-3 [&_td]:pr-4 [&_td]:align-middle [&_td:last-child]:pr-0">
+        {/* Compacta, si así lo eligió quien mira (Ajustes, `data-densidad` en el marco). */}
+        <tbody className="[&>tr]:border-b [&>tr]:border-line [&>tr:last-child]:border-0 [&_td]:py-3 [&_td]:pr-4 [&_td]:align-middle [&_td:last-child]:pr-0 in-data-[densidad=compacta]:[&_td]:py-1.5">
           {children}
         </tbody>
       </table>

@@ -26,6 +26,7 @@ export const gruposAdmin = [
     secciones: [
       { id: "equipo", href: "/admin/equipo", label: "Equipo", tecla: "e" },
       { id: "registro", href: "/admin/registro", label: "Registro", tecla: "r" },
+      { id: "ajustes", href: "/admin/ajustes", label: "Ajustes", tecla: "a" },
     ],
   },
 ] as const;
@@ -142,6 +143,43 @@ export const estadisticasAdmin = {
     masTurnos: "Los que más reservas tuvieron en el período",
     ninguno: "Ninguno.",
     sinDato: "Sin dato",
+  },
+};
+
+/** Ajustes (docs/PLAN-ADMIN-V5.md, paso X): lo de cada uno y los planes, que sólo se leen (D2). */
+export const ajustesAdmin = {
+  titulo: "Ajustes",
+  bajada: "Lo tuyo y cómo están los planes.",
+  avisos: {
+    titulo: "Tus avisos",
+    bajada: "El mail de las 04:00 con el resumen y el del momento, cuando algo pide una mano. Los de todo el equipo están en Equipo.",
+    sinCuenta: "Tu cuenta no figura en el equipo.",
+  },
+  vista: {
+    titulo: "Cómo ves las listas",
+    bajada: "Se guarda en este navegador. El tema claro u oscuro sigue al de tu sistema.",
+    densidad: "Tablas",
+    densidades: { comoda: "Cómodas", compacta: "Compactas" },
+    filas: "Filas por página",
+  },
+  planes: {
+    titulo: "Los planes",
+    bajada: "Como están hoy en la base. Para cambiarlos hace falta una migración de BooKit: editarlos desde acá queda para un plan aparte.",
+    columnas: ["Plan", "Nivel", "Precio", "Fundador", "Ciclo", "Gracia", "Se contrata"],
+    ciclo: (dias: number) => (dias === 0 ? "Sin vencimiento" : `${dias} ${dias === 1 ? "día" : "días"}`),
+    gracia: (dias: number) => (dias === 0 ? "—" : `${dias} ${dias === 1 ? "día" : "días"}`),
+    todos: "Todos",
+    si: "Sí",
+    no: "No",
+    prueba: (dias: number) =>
+      `La prueba de Mercado Pago dura ${dias} días; la de Apple y Google la fija cada tienda. Lo que cobran las tiendas no está en la base: se ve en sus consolas.`,
+  },
+  fundadores: {
+    titulo: "Lugares de fundador",
+    usados: "Usados",
+    quedan: "Quedan",
+    hasta: "Se suman hasta el",
+    nota: "Un lugar usado no vuelve, aunque después se le saque el fundador al local.",
   },
 };
 
