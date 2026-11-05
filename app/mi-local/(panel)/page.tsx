@@ -1,12 +1,14 @@
 import Aviso from "@/components/mi-local/Aviso";
 import EnVivo from "@/components/mi-local/EnVivo";
 import AgendaDelDia from "@/components/mi-local/AgendaDelDia";
+import CartelDePausa from "@/components/mi-local/CartelDePausa";
 import Encabezado from "@/components/mi-local/Encabezado";
 import ErrorDeLectura from "@/components/mi-local/ErrorDeLectura";
 import { miLocal, type Aviso as CopyDeAviso } from "@/content/mi-local";
 import { dia as diaLargo, diaYMes, hoy } from "@/lib/formato";
 import { leerHuecosDelDia, leerProfesionales, leerSemana, leerTurnosDelDia } from "@/lib/mi-local/agenda";
 import { entra, leerMiLugar, type Lugar, type LugarDelDuenio } from "@/lib/mi-local/lugar";
+import { leerPausa } from "@/lib/mi-local/pausa";
 import { esClaveDeDia, lunesDe } from "@/lib/mi-local/vista";
 import { cookiesDeArea, credenciales } from "@/lib/supabase";
 
@@ -53,7 +55,7 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
 
   const hoyEnTandil = hoy();
   const dia = esClaveDeDia(pedido.dia) ? pedido.dia : hoyEnTandil;
-  const [turnos, semana, profesionales, huecos] = await Promise.all([
+  const [turnos, semana, profesionales, huecos, pausa] = await Promise.all([
     // Un día que no se pudo leer no se muestra vacío: se dice (el B1-11 de la app).
     leerTurnosDelDia(local.id, dia).catch((error: unknown) => {
       console.error("mi-local:", error);
@@ -66,6 +68,11 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
     // Sin los huecos, la agenda va igual: los turnos no dependen de ellos.
     leerHuecosDelDia(local.id, dia).catch((error: unknown) => {
       console.error("mi-local/huecos:", error);
+      return null;
+    }),
+    // Sin la pausa, no hay cartel: cada día de la pausa ya dice que el local está en pausa.
+    leerPausa(local).catch((error: unknown) => {
+      console.error("mi-local/pausa:", error);
       return null;
     }),
   ]);
@@ -89,7 +96,12 @@ export default async function MiLocalPage({ searchParams }: PageProps) {
           huecos={huecos}
           propia={!delDuenio}
           ahora={new Date().toISOString()}
-          aviso={aviso && delDuenio && <Aviso aviso={aviso} conBoton={local.suscripcion.origen !== "tienda"} />}
+          aviso={
+            <>
+              {aviso && delDuenio && <Aviso aviso={aviso} conBoton={local.suscripcion.origen !== "tienda"} />}
+              <CartelDePausa pausa={pausa} delDuenio={delDuenio} />
+            </>
+          }
         />
       )}
 
