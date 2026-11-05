@@ -1,24 +1,37 @@
 import type { Metadata } from "next";
-import { aLista, Bloque, Encabezado, Selector, Tabla, Vacio } from "@/components/admin/piezas";
+import { aLista, Bloque, Encabezado, paginaPedida, Paginas, Selector, Tabla, Vacio } from "@/components/admin/piezas";
 import QueHizo from "@/components/admin/QueHizo";
 import TextLink from "@/components/ui/TextLink";
 import { acciones, registroAdmin } from "@/content/admin";
-import { leerEquipo } from "@/lib/admin/datos";
-import { fecha } from "@/lib/formato";
+import { leerRegistro, POR_PAGINA } from "@/lib/admin/datos";
+import { fecha, numero } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Registro" };
 
 const BASE = "/admin/registro";
+const UUID = /^[0-9a-f-]{36}$/i;
+
+type Params = { tipo?: string; local?: string; p?: string };
 
 /**
  * Todo lo que hizo el equipo, también lo que no es de un local
- * (docs/PLAN-ADMIN-V5.md, paso T). Son las últimas 100 de `admin_equipo`: el
- * filtro por tipo va sobre esas, hasta que la base pagine (paso U).
+ * (docs/PLAN-ADMIN-V5.md, pasos T y U): paginado, por tipo y por local, con
+ * `admin_registro` (BooKit `docs/admin-panel.md`, sección 22).
  */
-export default async function Registro({ searchParams }: { searchParams: Promise<{ tipo?: string }> }) {
-  const [{ tipo: pedido }, { acciones: registro }] = await Promise.all([searchParams, leerEquipo()]);
-  const tipo = registroAdmin.tipos.find((t) => t.valor === pedido);
-  const filas = tipo ? registro.filter((a) => tipo.acciones.includes(a.accion)) : registro;
+export default async function Registro({ searchParams }: { searchParams: Promise<Params> }) {
+  const params = await searchParams;
+  const tipo = registroAdmin.tipos.find((t) => t.valor === params.tipo);
+  const local = params.local && UUID.test(params.local) ? params.local : undefined;
+  const pagina = paginaPedida(params.p);
+  const { total, filas } = await leerRegistro({
+    acciones: tipo?.acciones,
+    idComercio: local,
+    limite: POR_PAGINA,
+    desde: (pagina - 1) * POR_PAGINA,
+  });
+  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  const puestos = { tipo: tipo?.valor, local };
+  const nombreDelLocal = local ? (filas[0]?.comercio ?? registroAdmin.esteLocal) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -27,19 +40,26 @@ export default async function Registro({ searchParams }: { searchParams: Promise
       <Selector
         etiqueta={registroAdmin.filtrar}
         opciones={[
-          { clave: "todas", label: registroAdmin.todas, href: BASE, elegida: !tipo },
+          { clave: "todas", label: registroAdmin.todas, href: aLista(BASE, puestos, { tipo: undefined }), elegida: !tipo },
           ...registroAdmin.tipos.map((t) => ({
             clave: t.valor,
             label: t.label,
-            href: aLista(BASE, {}, { tipo: t.valor }),
+            href: aLista(BASE, puestos, { tipo: t.valor }),
             elegida: t === tipo,
           })),
         ]}
       />
 
-      <Bloque titulo={tipo?.label ?? registroAdmin.todas}>
+      {nombreDelLocal && (
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-small">
+          <span className="font-semibold text-fg">{registroAdmin.soloDe(nombreDelLocal)}</span>
+          <TextLink href={aLista(BASE, puestos, { local: undefined })}>{registroAdmin.todosLosLocales}</TextLink>
+        </p>
+      )}
+
+      <Bloque titulo={tipo?.label ?? registroAdmin.todas} bajada={`${numero(total)} ${total === 1 ? "acción" : "acciones"}`}>
         {filas.length === 0 ? (
-          <Vacio>{registro.length === 0 ? registroAdmin.vacio : registroAdmin.vacioDelTipo}</Vacio>
+          <Vacio>{tipo || local ? registroAdmin.vacioDelTipo : registroAdmin.vacio}</Vacio>
         ) : (
           <Tabla columnas={["Fecha", "Quién", "Qué", "Local", "Nota"]}>
             {filas.map((a, i) => (
@@ -51,7 +71,14 @@ export default async function Registro({ searchParams }: { searchParams: Promise
                 </td>
                 <td>
                   {a.id_comercio ? (
-                    <TextLink href={`/admin/comercios/${a.id_comercio}`}>{a.comercio ?? "Sin nombre"}</TextLink>
+                    <span className="flex flex-col">
+                      <TextLink href={`/admin/comercios/${a.id_comercio}`}>{a.comercio ?? "Sin nombre"}</TextLink>
+                      {!local && (
+                        <TextLink href={aLista(BASE, puestos, { local: a.id_comercio })} tone="quiet" className="text-micro">
+                          {registroAdmin.verSolo}
+                        </TextLink>
+                      )}
+                    </span>
                   ) : (
                     <span className="text-muted">—</span>
                   )}
@@ -62,6 +89,8 @@ export default async function Registro({ searchParams }: { searchParams: Promise
           </Tabla>
         )}
       </Bloque>
+
+      <Paginas pagina={pagina} paginas={paginas} href={(p) => aLista(BASE, puestos, { p: String(p) })} />
     </div>
   );
 }
