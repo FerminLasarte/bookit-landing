@@ -1,11 +1,12 @@
 # El panel del equipo (/admin) — v5
 
-> **Aprobado el 5 de noviembre de 2026** con la recomendada de cada decisión
-> D1–D8. Es un rediseño de la
-> estructura: el panel pasa a tener una barra lateral, atajos, estadísticas y
-> ajustes. La web va en un PR por paso, de Q a X. Lo de la base va por un
-> solo prompt al chat de BooKit, que deja el contrato en BooKit
-> `docs/admin-panel.md` (secciones nuevas desde la 22).
+> **Hecho y en producción el 5 de noviembre de 2026.** Aprobado ese mismo día
+> con la recomendada de cada decisión D1–D8. Es un rediseño de la estructura:
+> el panel pasa a tener una barra lateral, atajos, estadísticas y ajustes. La
+> web, un PR por paso: Q #93, R #94, S #95, T #96, U #98, V #99, W #100 y
+> X #101. La base de U a X la hizo el chat de BooKit, con el contrato en
+> BooKit `docs/admin-panel.md` (secciones 22 a 25). Lo que cambió con el
+> contrato y lo que falta está al final.
 
 ## Qué es
 
@@ -305,13 +306,14 @@ Al 5-nov-2026.
    intermedio se miraron antes. Falta que Fermín pruebe `?` con su teclado.
 2. ~~**Mandar al chat de BooKit el prompt de U a X** (D5).~~ Hecho, y BooKit
    lo aplicó el mismo día.
-3. ~~**U, V, W y X en la web**, un PR por paso.~~ Hechos el 5-nov en PRs
-   apilados: U #98, V #99, W #100 y X. Con los datos de prueba de BooKit se
-   vio también la pausa del paso S. Falta mergearlos en orden y que BooKit
-   borre los locales de prueba `b5b50000-…` "(borrar)".
-4. **La pausa en `/mi-local`** (D4). No depende de nada de esta lista y puede
-   ir en paralelo con 2 y 3: la base ya está. Va en un plan de `/mi-local`
-   (`docs/PLAN-MI-LOCAL.md`, Para más adelante).
+3. ~~**U, V, W y X en la web**, un PR por paso.~~ Hechos y mergeados el
+   5-nov: U #98, V #99, W #100 y X #101. Con los datos de prueba de BooKit se
+   vio también la pausa del paso S. Falta que BooKit borre los locales de
+   prueba `b5b50000-…` "(borrar)" con sus filas del registro, y que Fermín
+   pruebe `?` con su teclado.
+4. **La pausa en `/mi-local`** (D4). La base ya está. Su plan
+   (`docs/PLAN-MI-LOCAL-PAUSA.md`) y la web van en el PR #97, en su propia
+   conversación.
 5. **Notas internas por local** (D3), después de la v5.
 6. **Las pruebas que esperan un caso real:**
    - de la v4: la baja de un débito real al suspender y el aviso de turnos por
