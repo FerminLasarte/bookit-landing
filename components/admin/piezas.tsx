@@ -6,6 +6,7 @@ import Superficie, { type Tono } from "@/components/ui/Superficie";
 import TextLink from "@/components/ui/TextLink";
 import { estados } from "@/content/admin";
 import { enlaceDeTelefono } from "@/lib/admin/contacto";
+import { numero as entero } from "@/lib/formato";
 import type { EstadoSuscripcion } from "@/lib/admin/datos";
 import { cn } from "@/lib/utils";
 
@@ -95,10 +96,19 @@ export function Dato({ children }: { children: ReactNode }) {
  * Una tabla que en el teléfono se desliza de costado en su caja, en vez de
  * empujar la página.
  */
-export function Tabla({ columnas, children }: { columnas: string[]; children: ReactNode }) {
+export function Tabla({
+  columnas,
+  angosta = false,
+  children,
+}: {
+  columnas: string[];
+  /** Pocas columnas cortas, en media pantalla: sin el ancho mínimo que hace deslizar. */
+  angosta?: boolean;
+  children: ReactNode;
+}) {
   return (
     <div className="-mx-5 overflow-x-auto px-5 md:-mx-6 md:px-6">
-      <table className="w-full min-w-[40rem] border-collapse text-left text-small">
+      <table className={cn("w-full border-collapse text-left text-small", !angosta && "min-w-[40rem]")}>
         <thead>
           <tr className="border-b border-line text-micro text-muted">
             {columnas.map((c) => (
@@ -108,7 +118,8 @@ export function Tabla({ columnas, children }: { columnas: string[]; children: Re
             ))}
           </tr>
         </thead>
-        <tbody className="[&>tr]:border-b [&>tr]:border-line [&>tr:last-child]:border-0 [&_td]:py-3 [&_td]:pr-4 [&_td]:align-middle [&_td:last-child]:pr-0">
+        {/* Compacta, si así lo eligió quien mira (Ajustes, `data-densidad` en el marco). */}
+        <tbody className="[&>tr]:border-b [&>tr]:border-line [&>tr:last-child]:border-0 [&_td]:py-3 [&_td]:pr-4 [&_td]:align-middle [&_td:last-child]:pr-0 in-data-[densidad=compacta]:[&_td]:py-1.5">
           {children}
         </tbody>
       </table>
@@ -151,6 +162,37 @@ export function Barras({
     </div>
   );
 }
+
+/**
+ * Un reparto o un ranking en barras horizontales, de mayor a menor y de un
+ * solo color: en una misma base se comparan mejor que en una torta. El total
+ * de la barra es la suma, así cada barra es su parte.
+ */
+export function Ranking({ filas, vacio }: { filas: { clave: string; label: ReactNode; valor: number }[]; vacio: string }) {
+  const ordenadas = [...filas].sort((a, b) => b.valor - a.valor);
+  const total = ordenadas.reduce((s, f) => s + f.valor, 0);
+  if (ordenadas.length === 0 || total === 0) return <p className="text-small text-muted">{vacio}</p>;
+
+  return (
+    <ul className="flex flex-col gap-3">
+      {ordenadas.map((f) => (
+        <li key={f.clave} className="flex flex-col gap-1.5">
+          <div className="flex justify-between gap-4 text-small">
+            <span className="font-semibold text-fg">{f.label}</span>
+            <span className="num text-muted">{entero(f.valor)}</span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-pill bg-fg/6">
+            <div className="h-full rounded-pill bg-accent" style={{ width: `${(f.valor / total) * 100}%` }} />
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Las filas de un `Ranking` a partir de `{ clave: cuántos }` y cómo se lee cada clave. */
+export const filasDeReparto = (valores: Record<string, number>, rotulos: Record<string, string> = {}) =>
+  Object.entries(valores).map(([clave, valor]) => ({ clave, label: rotulos[clave] ?? clave, valor }));
 
 /** Un renglón de una ficha: qué es y cuánto vale. Va dentro de un `<dl>`. */
 export function Fila({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {

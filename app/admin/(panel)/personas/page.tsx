@@ -2,29 +2,37 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import LocalesDePersona from "@/components/admin/LocalesDePersona";
 import { aLista, Bloque, Busqueda, Encabezado, paginaPedida, Paginas, Tabla, Vacio } from "@/components/admin/piezas";
-import { leerPersonas, POR_PAGINA } from "@/lib/admin/datos";
+import Button from "@/components/ui/Button";
+import { filtrosAdmin } from "@/content/admin";
+import { leerPersonas } from "@/lib/admin/datos";
+import { leerVista } from "@/lib/admin/vista";
+import { pedidoDePersonas, type ParamsDePersonas } from "@/lib/admin/listas";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Personas" };
 
-type Params = { q?: string; p?: string };
-
 const BASE = "/admin/personas";
 
 /** Las cuentas de Bookit: clientes, dueños y profesionales (paso C de docs/PLAN-ADMIN.md). */
-export default async function Personas({ searchParams }: { searchParams: Promise<Params> }) {
+export default async function Personas({ searchParams }: { searchParams: Promise<ParamsDePersonas> }) {
   const params = await searchParams;
   const pagina = paginaPedida(params.p);
+  const { porPagina } = await leerVista();
+  const pedido = pedidoDePersonas(params);
   const { total, filas } = await leerPersonas({
-    busqueda: params.q,
-    limite: POR_PAGINA,
-    desde: (pagina - 1) * POR_PAGINA,
+    ...pedido,
+    limite: porPagina,
+    desde: (pagina - 1) * porPagina,
   });
-  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  const paginas = Math.max(1, Math.ceil(total / porPagina));
 
   return (
     <div className="flex flex-col gap-6">
-      <Encabezado titulo="Personas" bajada={`${numero(total)} ${total === 1 ? "cuenta" : "cuentas"}`} />
+      <Encabezado titulo="Personas" bajada={`${numero(total)} ${total === 1 ? "cuenta" : "cuentas"}`}>
+        <Button href={aLista("/admin/exportar/personas", { q: pedido.busqueda }, {})} variant="secondary" size="compact" download>
+          {filtrosAdmin.exportar}
+        </Button>
+      </Encabezado>
 
       <Busqueda etiqueta="Mail o nombre" valor={params.q} />
 

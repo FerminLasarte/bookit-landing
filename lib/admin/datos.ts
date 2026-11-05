@@ -87,9 +87,26 @@ export type FilaComercio = {
   ultimo_turno: string | null;
   pausa: Pausa | null;
   no_aparece_por: MotivoDeNoAparecer[];
+  es_fundador: boolean;
 };
 
 export type FiltroComercios = "prueba" | "pagando" | "cortados" | "pendientes" | "bajas";
+
+/** Cómo se ordena la lista de Comercios (BooKit `docs/admin-panel.md`, sección 22). Los empates, por alta. */
+export type OrdenComercios = "alta" | "vencimiento" | "turnos" | "ultimo_turno";
+
+/** Lo que se le pide a la lista de Comercios: todo opcional, y sin nada es la lista entera por alta. */
+export type PedidoDeComercios = {
+  busqueda?: string;
+  estado?: FiltroComercios;
+  localidad?: string;
+  nivel?: string;
+  canal?: string;
+  fundador?: boolean;
+  visible?: boolean;
+  enPausa?: boolean;
+  orden?: OrdenComercios;
+};
 
 export type FichaComercio = {
   id_comercio: string;
@@ -275,6 +292,91 @@ export type Cobros = {
   }[];
 };
 
+/** Una lista corta de "Para atender": hasta 10 filas y el total aparte. */
+type ListaCorta<T> = { total: number; filas: T[] };
+type LocalCorto = { id_comercio: string; nombre: string };
+
+/**
+ * Lo que pide una mano, para el Inicio y los contadores de la barra lateral
+ * (BooKit `docs/admin-panel.md`, sección 23). Ningún local dado de baja entra.
+ */
+export type ParaAtender = {
+  incidencias_abiertas: number;
+  debitos_con_problemas: number;
+  altas_a_medias: number;
+  /** En prueba y vencen en los próximos 7 días, el más próximo primero. */
+  pruebas_por_vencer: ListaCorta<LocalCorto & { vencimiento: string; tiene_debito_mp: boolean; canal: string }>;
+  /** Con la regla de `_no_aparece_por`. `suspendidos`: sólo los que suspendió el equipo; `en_pausa`: la pausa corre hoy. */
+  no_aparecen: { ocultos: ListaCorta<LocalCorto>; suspendidos: ListaCorta<LocalCorto>; en_pausa: ListaCorta<LocalCorto> };
+  /** Pagando, sin turnos reservados en 14 días: primero los que nunca tuvieron. */
+  sin_turnos: ListaCorta<LocalCorto & { ultimo_turno: string | null }>;
+};
+
+/** Un número del período y el del anterior, del mismo largo. */
+export type ContraAnterior = { periodo: number; anterior: number };
+
+/** Lo que cuentan los totales y cada punto de la serie (BooKit `docs/admin-panel.md`, sección 24). */
+export type MedidaDeEstadisticas =
+  | "altas"
+  | "bajas"
+  | "cobrado_suscripciones"
+  | "reservas"
+  | "por_la_app"
+  | "de_mostrador"
+  | "completadas"
+  | "canceladas"
+  | "canceladas_tarde"
+  | "ausentes"
+  | "cuentas_nuevas"
+  | "clientes_activos";
+
+/**
+ * Las estadísticas de un período de días de Buenos Aires, con `hasta`
+ * inclusive. La serie va por día hasta 92 días y por mes si es más largo.
+ * `hoy` son fotos sin período anterior: la base guarda cómo está cada local
+ * ahora, no cómo estaba.
+ */
+export type Estadisticas = {
+  periodo: { desde: string; hasta: string; dias: number };
+  anterior: { desde: string; hasta: string };
+  serie_por: "dia" | "mes";
+  totales: Record<MedidaDeEstadisticas, ContraAnterior>;
+  serie: ({ desde: string; hasta: string } & Record<MedidaDeEstadisticas, number>)[];
+  /** Por mes de alta, los últimos 12 meses con el actual. `empezaron`: los que ya no están en `pendiente`. */
+  prueba_al_pago: { mes: string; empezaron: number; pagan: number }[];
+  hoy: {
+    ingreso_mensual_estimado: number;
+    activos_por_nivel: Record<string, number>;
+    activos_por_canal: Record<string, number>;
+    activos_por_localidad: Record<string, number>;
+    activos_por_categoria: Record<string, number>;
+  };
+  mas_turnos: { id_comercio: string; nombre: string; turnos: number }[];
+  /** Desde qué día hay datos de cada medida; `null` o sin clave, desde el principio. */
+  datos_desde: Partial<Record<MedidaDeEstadisticas, string | null>>;
+};
+
+/**
+ * Los planes como están hoy (BooKit `docs/admin-panel.md`, sección 25). El
+ * precio es de nivel por plan; uno sin niveles va con `nivel` en null. Lo que
+ * cobran Apple y Google no está en la base.
+ */
+export type Planes = {
+  planes: {
+    id: string;
+    nombre: string;
+    ciclo_dias: number;
+    dias_gracia: number;
+    /** Si se puede contratar hoy. */
+    ofrecible: boolean;
+    precios: { nivel: string | null; precio: number; precio_fundador: number | null }[];
+  }[];
+  /** La prueba de Mercado Pago: la de Apple y Google la fija cada tienda. */
+  dias_de_prueba: number;
+  /** Los fundadores del lanzamiento: un lugar usado no vuelve. Desde `hasta` ya no se suman. */
+  fundadores: { cupo: number; usados: number; quedan: number; hasta: string };
+};
+
 /** Un local de una persona. El dueño sale una sola vez, como `duenio`, aunque también sea profesional. */
 export type LocalDePersona = {
   id_comercio: string;
@@ -343,20 +445,30 @@ export type Encontrado = { href: string; titulo: string; detalle: string };
 /** Lo que devuelve /admin/buscar. */
 export type Encontrados = { comercios: Encontrado[]; personas: Encontrado[] };
 
-/** Cuántas filas trae cada página de una lista del panel. */
-export const POR_PAGINA = 50;
+/** Lo más que da cada lectura de una vez (sección 22): el CSV recorre de a tanto. */
+export const MAXIMO_POR_LECTURA = 200;
 
 export const leerPulso = () => leer<Pulso>("admin_pulso");
 
-export const leerComercios = (p: {
-  busqueda?: string;
-  estado?: FiltroComercios;
-  limite: number;
-  desde: number;
-}) =>
-  leer<{ total: number; filas: FilaComercio[] }>("admin_comercios", {
+export const leerPlanes = () => leer<Planes>("admin_planes");
+
+export const leerEstadisticas = (desde: string, hasta: string) =>
+  leer<Estadisticas>("admin_estadisticas", { p_desde: desde, p_hasta: hasta });
+
+/** La comparten el marco (los contadores) y el Inicio: una sola lectura por página. */
+export const leerParaAtender = cache(() => leer<ParaAtender>("admin_para_atender"));
+
+export const leerComercios = (p: PedidoDeComercios & { limite: number; desde: number }) =>
+  leer<{ total: number; filas: FilaComercio[]; localidades: string[] }>("admin_comercios", {
     p_busqueda: p.busqueda ?? null,
     p_estado: p.estado ?? null,
+    p_localidad: p.localidad ?? null,
+    p_nivel: p.nivel ?? null,
+    p_canal: p.canal ?? null,
+    p_fundador: p.fundador ?? null,
+    p_visible: p.visible ?? null,
+    p_en_pausa: p.enPausa ?? null,
+    p_orden: p.orden ?? null,
     p_limite: p.limite,
     p_desde: p.desde,
   });
@@ -384,6 +496,20 @@ export const leerQuienEntro = cache(async () => {
   const { data } = await supabase.auth.getClaims();
   return { id: data?.claims.sub ?? null, email: data?.claims.email ?? null };
 });
+
+/** El registro del equipo, paginado (sección 22). Sin `acciones`, todas; con `idComercio`, sólo las de ese local. */
+export const leerRegistro = (p: {
+  acciones?: AccionDelEquipo["accion"][];
+  idComercio?: string;
+  limite: number;
+  desde: number;
+}) =>
+  leer<{ total: number; filas: AccionDelRegistro[] }>("admin_registro", {
+    p_acciones: p.acciones ?? null,
+    p_id_comercio: p.idComercio ?? null,
+    p_limite: p.limite,
+    p_desde: p.desde,
+  });
 
 /** El equipo y quién lo está mirando, que no se puede sacar a sí mismo (D4 de la v3). */
 export async function leerEquipo(): Promise<Equipo & { yo: string | null }> {

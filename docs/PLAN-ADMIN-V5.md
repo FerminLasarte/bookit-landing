@@ -278,21 +278,37 @@ lo mira Fermín.
 - **X:** apagar y prender los avisos propios; la densidad y las filas se
   mantienen al volver.
 
+## Lo que cambió con el contrato
+
+BooKit aplicó la base de U a X el 5-nov-2026 (BooKit `docs/admin-panel.md`,
+secciones 22 a 25). Está todo lo pedido, con estos ajustes:
+- **W:** el ingreso mensual estimado y los repartos (nivel, canal, localidad,
+  categoría) son una foto de hoy, no una serie por mes. La base guarda cómo
+  está cada local ahora, no cómo estaba. La categoría es la principal.
+- **W, de la prueba al pago:** `empezaron` son los locales que ya no están en
+  `pendiente`, porque no hay una fecha guardada de cuándo empezó la prueba.
+- **W, datos:** al 5-nov ningún pago de suscripción tiene monto todavía (se
+  guarda desde el 23-oct), y la cancelación tarde se marca desde el 5-nov.
+  Antes de eso, `datos_desde` lo dice y la web pone "sin datos".
+- **U:** las lecturas dan hasta 200 filas: el CSV las recorre de a 200.
+- **V:** "suspendidos" son sólo los que suspendió el equipo; los cortados ya
+  están en débitos con problemas. "Sin turnos" deja afuera la vitalicia y los
+  fundadores.
+- **X:** el precio es de nivel por plan. Lo que cobran Apple y Google no está
+  en la base.
+
 ## Qué sigue, en orden
 
-Al 5-nov-2026. Q, R, S y T están en PRs apilados: #93, #94, #95 y #96.
+Al 5-nov-2026.
 
-1. **Mirar y mergear #93 a #96.** Antes de mergear:
-   - `/mi-local` con la sesión de un dueño, porque Q movió su marco al kit;
-   - `?` con un teclado de verdad;
-   - el ancho intermedio, de 768 a 1023 px.
-
-   Se mergean en orden. Antes de borrar la rama de uno, se cambia a `main` la
-   base del siguiente.
-2. **Mandar al chat de BooKit el prompt de U a X** (D5). Lo manda Fermín.
-3. **U, V, W y X en la web**, un PR por paso, cuando BooKit deje el contrato
-   (secciones desde la 22). Con sus datos de prueba se ve también la pausa del
-   paso S en pantalla, que hoy no tiene ningún local pausado.
+1. ~~**Mirar y mergear #93 a #96.**~~ Hecho el 5-nov: `/mi-local` y el ancho
+   intermedio se miraron antes. Falta que Fermín pruebe `?` con su teclado.
+2. ~~**Mandar al chat de BooKit el prompt de U a X** (D5).~~ Hecho, y BooKit
+   lo aplicó el mismo día.
+3. ~~**U, V, W y X en la web**, un PR por paso.~~ Hechos el 5-nov en PRs
+   apilados: U #98, V #99, W #100 y X. Con los datos de prueba de BooKit se
+   vio también la pausa del paso S. Falta mergearlos en orden y que BooKit
+   borre los locales de prueba `b5b50000-…` "(borrar)".
 4. **La pausa en `/mi-local`** (D4). No depende de nada de esta lista y puede
    ir en paralelo con 2 y 3: la base ya está. Va en un plan de `/mi-local`
    (`docs/PLAN-MI-LOCAL.md`, Para más adelante).

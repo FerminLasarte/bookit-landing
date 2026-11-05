@@ -13,48 +13,98 @@ import {
   Tabla,
   Vacio,
 } from "@/components/admin/piezas";
+import Filtros, { type Filtro } from "@/components/admin/Filtros";
 import { MarcaDePausa } from "@/components/admin/Pausa";
-import { acciones, canales, filtrosComercios, niveles, planes } from "@/content/admin";
-import { leerComercios, POR_PAGINA, type FiltroComercios } from "@/lib/admin/datos";
+import Button from "@/components/ui/Button";
+import TextLink from "@/components/ui/TextLink";
+import { acciones, canales, filtrosAdmin, filtrosComercios, listaSegunOrden, niveles, ordenesComercios, planes } from "@/content/admin";
+import { leerComercios } from "@/lib/admin/datos";
+import { leerVista } from "@/lib/admin/vista";
+import { FILTROS_DE_COMERCIOS, paramsDeComercios, pedidoDeComercios, type ParamsDeComercios } from "@/lib/admin/listas";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercios" };
 
-type Params = { q?: string; estado?: string; p?: string };
-
 const BASE = "/admin/comercios";
 
-export default async function Comercios({ searchParams }: { searchParams: Promise<Params> }) {
+const opcionesSiNo = (todos: string, si: string, no: string) => [
+  { valor: "", label: todos },
+  { valor: "si", label: si },
+  { valor: "no", label: no },
+];
+
+const deUnMapa = (mapa: Record<string, string>, todos: string) => [
+  { valor: "", label: todos },
+  ...Object.entries(mapa).map(([valor, label]) => ({ valor, label })),
+];
+
+export default async function Comercios({ searchParams }: { searchParams: Promise<ParamsDeComercios> }) {
   const params = await searchParams;
-  const estado = filtrosComercios.some((f) => f.valor === params.estado)
-    ? (params.estado as FiltroComercios)
-    : undefined;
+  const pedido = pedidoDeComercios(params);
   const pagina = paginaPedida(params.p);
-  const { total, filas } = await leerComercios({
-    busqueda: params.q,
-    estado,
-    limite: POR_PAGINA,
-    desde: (pagina - 1) * POR_PAGINA,
+  const { porPagina } = await leerVista();
+  const { total, filas, localidades } = await leerComercios({
+    ...pedido,
+    limite: porPagina,
+    desde: (pagina - 1) * porPagina,
   });
-  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  const paginas = Math.max(1, Math.ceil(total / porPagina));
+  const f = filtrosAdmin;
+  // Lo que sigue puesto, ya validado: lo que no se conoce se cae de los links.
+  const puestos = paramsDeComercios(pedido);
+  const conFiltros = FILTROS_DE_COMERCIOS.some((k) => puestos[k]);
+
+  const filtros: Filtro[] = [
+    {
+      nombre: "localidad",
+      etiqueta: f.localidad,
+      valor: pedido.localidad,
+      opciones: [{ valor: "", label: f.todas }, ...localidades.map((l) => ({ valor: l, label: l }))],
+    },
+    { nombre: "nivel", etiqueta: f.nivel, valor: pedido.nivel, opciones: deUnMapa(niveles, f.todos) },
+    { nombre: "canal", etiqueta: f.canal, valor: pedido.canal, opciones: deUnMapa(canales, f.todos) },
+    { nombre: "fundador", etiqueta: f.fundador, valor: puestos.fundador, opciones: opcionesSiNo(f.todos, f.si, f.no) },
+    { nombre: "oculto", etiqueta: f.visibilidad, valor: puestos.oculto, opciones: opcionesSiNo(f.todos, f.ocultos, f.visibles) },
+    { nombre: "pausa", etiqueta: f.pausa, valor: puestos.pausa, opciones: opcionesSiNo(f.todos, f.enPausa, f.sinPausa) },
+    {
+      nombre: "orden",
+      etiqueta: f.orden,
+      valor: pedido.orden,
+      opciones: Object.entries(ordenesComercios).map(([valor, label]) => ({ valor: valor === "alta" ? "" : valor, label })),
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
-      <Encabezado titulo="Comercios" bajada={`${numero(total)} ${total === 1 ? "local" : "locales"}`} />
+      <Encabezado titulo="Comercios" bajada={`${numero(total)} ${total === 1 ? "local" : "locales"}`}>
+        <Button href={aLista("/admin/exportar/comercios", puestos, {})} variant="secondary" size="compact" download>
+          {f.exportar}
+        </Button>
+      </Encabezado>
 
-      <Busqueda etiqueta="Nombre del local o mail del dueño" valor={params.q} conservar={{ estado }} />
+      <Busqueda etiqueta="Nombre del local o mail del dueño" valor={params.q} conservar={{ ...puestos, q: undefined }} />
 
       <Selector
         etiqueta="Filtrar por estado"
-        opciones={filtrosComercios.map((f) => ({
-          clave: f.label,
-          label: f.label,
-          href: aLista(BASE, params, { estado: f.valor ?? undefined, p: undefined }),
-          elegida: (f.valor ?? undefined) === estado,
+        opciones={filtrosComercios.map((e) => ({
+          clave: e.label,
+          label: e.label,
+          href: aLista(BASE, puestos, { estado: e.valor ?? undefined }),
+          elegida: (e.valor ?? undefined) === pedido.estado,
         }))}
       />
 
-      <Bloque titulo="Locales" bajada="De los más nuevos a los más viejos.">
+      <div className="flex flex-wrap items-end gap-3">
+        {/* La key vuelve a armar los selectores cuando los filtros cambian por un link, como "Sacar los filtros". */}
+        <Filtros key={JSON.stringify(puestos)} filtros={filtros} conservar={{ q: pedido.busqueda, estado: pedido.estado }} />
+        {conFiltros && (
+          <TextLink href={aLista(BASE, { q: pedido.busqueda, estado: pedido.estado }, {})} className="min-h-10 items-center text-small">
+            {f.sacar}
+          </TextLink>
+        )}
+      </div>
+
+      <Bloque titulo="Locales" bajada={listaSegunOrden[pedido.orden ?? "alta"]}>
         {filas.length === 0 ? (
           <Vacio>No hay locales con ese filtro.</Vacio>
         ) : (
@@ -98,7 +148,7 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
         )}
       </Bloque>
 
-      <Paginas pagina={pagina} paginas={paginas} href={(p) => aLista(BASE, params, { p: String(p) })} />
+      <Paginas pagina={pagina} paginas={paginas} href={(p) => aLista(BASE, puestos, { p: String(p) })} />
     </div>
   );
 }

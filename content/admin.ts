@@ -1,4 +1,4 @@
-import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
+import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios, OrdenComercios } from "@/lib/admin/datos";
 
 /**
  * Las secciones del panel en sus grupos, en el orden de la barra lateral
@@ -6,7 +6,13 @@ import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios } from "@/lib/
  * `tecla` que la abre después de `g` (paso R).
  */
 export const gruposAdmin = [
-  { rotulo: "General", secciones: [{ id: "pulso", href: "/admin", label: "Pulso", tecla: "i" }] },
+  {
+    rotulo: "General",
+    secciones: [
+      { id: "inicio", href: "/admin", label: "Inicio", tecla: "i" },
+      { id: "estadisticas", href: "/admin/estadisticas", label: "Estadísticas", tecla: "s" },
+    ],
+  },
   {
     rotulo: "Operación",
     secciones: [
@@ -20,6 +26,7 @@ export const gruposAdmin = [
     secciones: [
       { id: "equipo", href: "/admin/equipo", label: "Equipo", tecla: "e" },
       { id: "registro", href: "/admin/registro", label: "Registro", tecla: "r" },
+      { id: "ajustes", href: "/admin/ajustes", label: "Ajustes", tecla: "a" },
     ],
   },
 ] as const;
@@ -28,6 +35,153 @@ export type SeccionAdmin = (typeof gruposAdmin)[number]["secciones"][number];
 
 /** Las secciones sin sus grupos, en el mismo orden. */
 export const seccionesAdmin = gruposAdmin.flatMap((g): readonly SeccionAdmin[] => g.secciones);
+
+/**
+ * El Inicio (docs/PLAN-ADMIN-V5.md, paso V): arriba lo que pide una mano, de
+ * `admin_para_atender`, y abajo cómo está Bookit hoy, de `admin_pulso`.
+ */
+export const inicioAdmin = {
+  titulo: "Inicio",
+  bajada: "Lo que pide una mano y cómo está Bookit hoy. Los números se calculan al abrir la página.",
+  paraAtender: "Para atender",
+  nadaParaAtender: "Nada para atender: no hay cobros con problemas, pruebas por vencer ni locales sin turnos.",
+  cobros: {
+    titulo: "Cobros",
+    incidencias: "Incidencias de pago abiertas",
+    debitos: "Débitos con problemas",
+    altas: "Altas a medias",
+    ver: "Ir a Cobros",
+  },
+  pruebas: {
+    titulo: "Pruebas que vencen en 7 días",
+    conDebito: "Tiene el débito armado",
+    sinDebito: "Sin débito: no va a cobrar",
+    deLaTienda: "La cobra la tienda",
+    ver: "Ver las pruebas",
+  },
+  sinTurnos: {
+    titulo: "Pagando y sin turnos en 14 días",
+    bajada: "Los que se pueden ir: primero los que nunca tuvieron uno.",
+    nunca: "Nunca tuvo un turno",
+    ultimo: (cuando: string) => `Último turno ${cuando}`,
+  },
+  noAparecen: {
+    titulo: "No aparecen en la app",
+    ocultos: "Ocultos por el equipo",
+    suspendidos: "Suspendidos",
+    enPausa: "En pausa hoy",
+    verOcultos: "Ver los ocultos",
+    verEnPausa: "Ver los pausados",
+  },
+  /** Cuando una lista trae menos que su total. */
+  yMas: (n: number) => `y ${n} más`,
+  /** Lo que dice el contador de una sección en la barra lateral, para quien no lo ve. */
+  pendientes: (n: number) => `${n} para atender`,
+};
+
+/**
+ * Estadísticas (docs/PLAN-ADMIN-V5.md, paso W), con `admin_estadisticas`
+ * (BooKit `docs/admin-panel.md`, sección 24). `dias` en null es 12 meses.
+ */
+export const estadisticasAdmin = {
+  titulo: "Estadísticas",
+  bajada: "Cada número, con el del período anterior del mismo largo al lado.",
+  delAl: (desde: string, hasta: string) => `Del ${desde} al ${hasta}.`,
+  periodo: "Período",
+  periodos: [
+    { valor: "7", label: "7 días", dias: 7 },
+    { valor: "30", label: "30 días", dias: 30 },
+    { valor: "90", label: "90 días", dias: 90 },
+    { valor: "12m", label: "12 meses", dias: null },
+  ] as const,
+  anterior: (n: string) => `${n} el período anterior`,
+  hayDatosDesde: (dia: string) => `Hay datos desde el ${dia}`,
+  sinDatos: "Sin datos en este período",
+  porDia: "por día",
+  porMes: "por mes",
+  crecimiento: {
+    titulo: "Crecimiento",
+    altas: "Altas de locales",
+    bajas: "Bajas",
+    cuentasNuevas: "Cuentas nuevas",
+    serie: "Altas",
+  },
+  pruebaAlPago: {
+    titulo: "De la prueba al pago",
+    bajada: "Por mes de alta: los que empezaron la prueba y cuántos de ellos pagan hoy.",
+    columnas: ["Mes de alta", "Empezaron", "Pagan hoy"],
+    vacio: "Ningún local empezó la prueba en estos meses.",
+  },
+  uso: {
+    titulo: "Uso",
+    reservas: "Reservas",
+    reservasDetalle: (app: string, mostrador: string) => `${app} por la app y ${mostrador} de mostrador`,
+    completadas: "Completadas",
+    canceladas: "Canceladas",
+    canceladasDetalle: (tarde: string) => `${tarde} tarde`,
+    ausentes: "Ausentes",
+    clientesActivos: "Clientes activos",
+    clientesDetalle: "Personas que reservaron",
+    turnosQueTocaban: "De los turnos que tocaban en el período.",
+    serie: "Reservas",
+  },
+  plata: {
+    titulo: "Plata",
+    cobrado: "Cobrado en suscripciones",
+    cobradoDetalle: "Pagos de Mercado Pago",
+    ingreso: "Ingreso mensual estimado",
+    ingresoDetalle: "Hoy: no se puede rearmar para atrás",
+    serie: "Cobrado en suscripciones",
+  },
+  locales: {
+    titulo: "Locales",
+    bajada: "Los activos hoy: al día o en gracia. Es una foto: no tiene período anterior.",
+    porNivel: "Por nivel",
+    porCanal: "Por canal de cobro",
+    porLocalidad: "Por localidad",
+    porCategoria: "Por categoría principal",
+    masTurnos: "Los que más reservas tuvieron en el período",
+    ninguno: "Ninguno.",
+    sinDato: "Sin dato",
+  },
+};
+
+/** Ajustes (docs/PLAN-ADMIN-V5.md, paso X): lo de cada uno y los planes, que sólo se leen (D2). */
+export const ajustesAdmin = {
+  titulo: "Ajustes",
+  bajada: "Lo tuyo y cómo están los planes.",
+  avisos: {
+    titulo: "Tus avisos",
+    bajada: "El mail de las 04:00 con el resumen y el del momento, cuando algo pide una mano. Los de todo el equipo están en Equipo.",
+    sinCuenta: "Tu cuenta no figura en el equipo.",
+  },
+  vista: {
+    titulo: "Cómo ves las listas",
+    bajada: "Se guarda en este navegador. El tema claro u oscuro sigue al de tu sistema.",
+    densidad: "Tablas",
+    densidades: { comoda: "Cómodas", compacta: "Compactas" },
+    filas: "Filas por página",
+  },
+  planes: {
+    titulo: "Los planes",
+    bajada: "Como están hoy en la base. Para cambiarlos hace falta una migración de BooKit: editarlos desde acá queda para un plan aparte.",
+    columnas: ["Plan", "Nivel", "Precio", "Fundador", "Ciclo", "Gracia", "Se contrata"],
+    ciclo: (dias: number) => (dias === 0 ? "Sin vencimiento" : `${dias} ${dias === 1 ? "día" : "días"}`),
+    gracia: (dias: number) => (dias === 0 ? "—" : `${dias} ${dias === 1 ? "día" : "días"}`),
+    todos: "Todos",
+    si: "Sí",
+    no: "No",
+    prueba: (dias: number) =>
+      `La prueba de Mercado Pago dura ${dias} días; la de Apple y Google la fija cada tienda. Lo que cobran las tiendas no está en la base: se ve en sus consolas.`,
+  },
+  fundadores: {
+    titulo: "Lugares de fundador",
+    usados: "Usados",
+    quedan: "Quedan",
+    hasta: "Se suman hasta el",
+    nota: "Un lugar usado no vuelve, aunque después se le saque el fundador al local.",
+  },
+};
 
 /** Lo que dice el marco del panel, fuera de las secciones. */
 export const marcoAdmin = {
@@ -103,6 +257,9 @@ export const canales: Record<string, string> = {
   tienda: "Apple / Google",
 };
 
+/** Los canales en que cobra Apple o Google, y no Mercado Pago. */
+export const CANALES_DE_LA_TIENDA = ["app_store", "play_store", "tienda"];
+
 export const filtrosComercios: { valor: FiltroComercios | null; label: string }[] = [
   { valor: null, label: "Todos" },
   { valor: "prueba", label: "En prueba" },
@@ -111,6 +268,78 @@ export const filtrosComercios: { valor: FiltroComercios | null; label: string }[
   { valor: "pendientes", label: "Pendientes" },
   { valor: "bajas", label: "Bajas" },
 ];
+
+/** Cómo se puede ordenar Comercios (sección 22 del contrato), en el orden del selector. */
+export const ordenesComercios: Record<OrdenComercios, string> = {
+  alta: "Alta, la más nueva",
+  vencimiento: "Vencimiento, el más próximo",
+  turnos: "Turnos en 30 días",
+  ultimo_turno: "Último turno",
+};
+
+/** Lo que dice la lista de Comercios abajo del título, según cómo está ordenada. */
+export const listaSegunOrden: Record<OrdenComercios, string> = {
+  alta: "De los más nuevos a los más viejos.",
+  vencimiento: "Por vencimiento, el más próximo primero.",
+  turnos: "Por turnos en 30 días, de más a menos.",
+  ultimo_turno: "Por el último turno, el más reciente primero.",
+};
+
+/** Los filtros de Comercios además del estado, y la exportación (docs/PLAN-ADMIN-V5.md, paso U). */
+export const filtrosAdmin = {
+  titulo: "Filtros",
+  localidad: "Localidad",
+  nivel: "Nivel",
+  canal: "Cobra",
+  fundador: "Fundador",
+  visibilidad: "Visibilidad",
+  pausa: "Pausa",
+  orden: "Ordenar por",
+  todos: "Todos",
+  todas: "Todas",
+  si: "Sí",
+  no: "No",
+  ocultos: "Ocultos",
+  visibles: "Visibles",
+  enPausa: "En pausa",
+  sinPausa: "Sin pausa",
+  aplicar: "Aplicar",
+  sacar: "Sacar los filtros",
+  exportar: "Exportar CSV",
+};
+
+/** Las columnas de los CSV del panel. Las fechas van como `2026-11-05`, para que se ordenen. */
+export const csvAdmin = {
+  comercios: {
+    archivo: "comercios",
+    columnas: [
+      "Local",
+      "Localidad",
+      "Mail del dueño",
+      "Estado",
+      "Nivel",
+      "Plan",
+      "Cobra",
+      "Vence",
+      "No renueva",
+      "Fundador",
+      "Visible",
+      "Pausa desde",
+      "Pausa hasta",
+      "Turnos en 30 días",
+      "Último turno",
+      "Alta",
+      "Baja",
+    ],
+  },
+  personas: {
+    archivo: "personas",
+    columnas: ["Nombre", "Mail", "Locales", "Alta", "Último ingreso"],
+  },
+  si: "Sí",
+  no: "No",
+  deBaja: "De baja",
+};
 
 /** Los motivos de `incidencias_pago`, en criollo. */
 export const motivosIncidencia: Record<string, string> = {
@@ -375,15 +604,19 @@ export const acciones = {
 };
 
 /**
- * La sección Registro (docs/PLAN-ADMIN-V5.md, paso T): todo lo que hizo el
- * equipo, también lo que no es de un local. Los tipos juntan acciones
+ * La sección Registro (docs/PLAN-ADMIN-V5.md, pasos T y U): todo lo que hizo
+ * el equipo, también lo que no es de un local. Los tipos juntan acciones
  * parecidas para filtrar.
  */
 export const registroAdmin = {
   titulo: "Registro",
-  bajada: "Lo que hizo el equipo desde el panel: las últimas 100 acciones, de la más nueva a la más vieja.",
+  bajada: "Lo que hizo el equipo desde el panel, de lo más nuevo a lo más viejo.",
   vacio: "Todavía nadie cambió nada desde el panel.",
-  vacioDelTipo: "No hay acciones de ese tipo entre las últimas 100.",
+  vacioDelTipo: "No hay acciones de ese tipo.",
+  soloDe: (local: string) => `Sólo de ${local}`,
+  esteLocal: "este local",
+  verSolo: "Ver sólo este",
+  todosLosLocales: "Ver todos los locales",
   filtrar: "Filtrar por tipo",
   todas: "Todas",
   tipos: [
