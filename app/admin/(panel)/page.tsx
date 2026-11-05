@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ParaAtender from "@/components/admin/ParaAtender";
 import { Barras, Bloque, Cifra, Cifras, Encabezado } from "@/components/admin/piezas";
-import { canales, niveles } from "@/content/admin";
-import { leerPulso } from "@/lib/admin/datos";
+import { canales, inicioAdmin, niveles } from "@/content/admin";
+import { leerParaAtender, leerPulso } from "@/lib/admin/datos";
 import { esteMesYElAnterior, fecha, numero, pesos } from "@/lib/formato";
 
-export const metadata: Metadata = { title: "Pulso" };
+export const metadata: Metadata = { title: inicioAdmin.titulo };
 
-/** Cómo está la plataforma hoy: locales, gente, turnos y plata. */
-export default async function Pulso() {
-  const p = await leerPulso();
+/**
+ * El Inicio: arriba lo que pide una mano y abajo cómo está la plataforma hoy
+ * (locales, gente, turnos y plata). Los gráficos pasan a Estadísticas en el
+ * paso W.
+ */
+export default async function Inicio() {
+  const [p, paraAtender] = await Promise.all([leerPulso(), leerParaAtender()]);
   const { comercios: c, usuarios: u, turnos: t, plata, mes_en_curso: ahora, mes_anterior: antes } = p;
   const dias = t.reservas_por_dia;
   const reservas30 = dias.reduce((s, d) => s + d.reservas, 0);
@@ -18,7 +23,9 @@ export default async function Pulso() {
 
   return (
     <div className="flex flex-col gap-8">
-      <Encabezado titulo="Pulso" bajada="Cómo está Bookit hoy. Los números se calculan al abrir la página." />
+      <Encabezado titulo={inicioAdmin.titulo} bajada={inicioAdmin.bajada} />
+
+      <ParaAtender datos={paraAtender} />
 
       <section aria-labelledby="locales" className="flex flex-col gap-3">
         <h2 id="locales" className="text-body font-bold text-fg">

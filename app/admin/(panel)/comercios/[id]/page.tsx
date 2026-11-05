@@ -27,6 +27,7 @@ import Suspender from "@/components/admin/Suspender";
 import TextLink from "@/components/ui/TextLink";
 import {
   acciones,
+  CANALES_DE_LA_TIENDA,
   canales,
   estados,
   estadosAlta,
@@ -58,7 +59,6 @@ const UUID = /^[0-9a-f-]{36}$/i;
  * en prueba, cobrada por nadie todavía o por Mercado Pago, empezada y sin
  * suspender ni dar de baja. La base rechaza lo demás igual.
  */
-const CANALES_DE_LA_TIENDA = ["app_store", "play_store", "tienda"];
 const sePuedeExtender = (c: FichaComercio) =>
   c.plan === "prueba" &&
   !CANALES_DE_LA_TIENDA.includes(c.canal) &&

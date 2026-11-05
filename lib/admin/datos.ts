@@ -295,6 +295,26 @@ export type Cobros = {
   }[];
 };
 
+/** Una lista corta de "Para atender": hasta 10 filas y el total aparte. */
+type ListaCorta<T> = { total: number; filas: T[] };
+type LocalCorto = { id_comercio: string; nombre: string };
+
+/**
+ * Lo que pide una mano, para el Inicio y los contadores de la barra lateral
+ * (BooKit `docs/admin-panel.md`, sección 23). Ningún local dado de baja entra.
+ */
+export type ParaAtender = {
+  incidencias_abiertas: number;
+  debitos_con_problemas: number;
+  altas_a_medias: number;
+  /** En prueba y vencen en los próximos 7 días, el más próximo primero. */
+  pruebas_por_vencer: ListaCorta<LocalCorto & { vencimiento: string; tiene_debito_mp: boolean; canal: string }>;
+  /** Con la regla de `_no_aparece_por`. `suspendidos`: sólo los que suspendió el equipo; `en_pausa`: la pausa corre hoy. */
+  no_aparecen: { ocultos: ListaCorta<LocalCorto>; suspendidos: ListaCorta<LocalCorto>; en_pausa: ListaCorta<LocalCorto> };
+  /** Pagando, sin turnos reservados en 14 días: primero los que nunca tuvieron. */
+  sin_turnos: ListaCorta<LocalCorto & { ultimo_turno: string | null }>;
+};
+
 /** Un local de una persona. El dueño sale una sola vez, como `duenio`, aunque también sea profesional. */
 export type LocalDePersona = {
   id_comercio: string;
@@ -370,6 +390,9 @@ export const POR_PAGINA = 50;
 export const MAXIMO_POR_LECTURA = 200;
 
 export const leerPulso = () => leer<Pulso>("admin_pulso");
+
+/** La comparten el marco (los contadores) y el Inicio: una sola lectura por página. */
+export const leerParaAtender = cache(() => leer<ParaAtender>("admin_para_atender"));
 
 export const leerComercios = (p: PedidoDeComercios & { limite: number; desde: number }) =>
   leer<{ total: number; filas: FilaComercio[]; localidades: string[] }>("admin_comercios", {

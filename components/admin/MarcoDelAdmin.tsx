@@ -1,21 +1,40 @@
 import Link from "next/link";
+import { unstable_rethrow } from "next/navigation";
 import type { ReactNode } from "react";
 import Anchor from "@/components/ui/Anchor";
 import Badge from "@/components/ui/Badge";
 import MarcoDePanel from "@/components/ui/MarcoDePanel";
 import Wordmark from "@/components/ui/Wordmark";
 import { marcoAdmin } from "@/content/admin";
-import { leerQuienEntro } from "@/lib/admin/datos";
+import { leerParaAtender, leerQuienEntro } from "@/lib/admin/datos";
 import Atajos, { BotonBuscar } from "./Atajos";
-import SeccionesDelAdmin, { SeccionActual } from "./SeccionesDelAdmin";
+import { cuantosParaAtender } from "./ParaAtender";
+import SeccionesDelAdmin, { SeccionActual, type Contadores } from "./SeccionesDelAdmin";
 
 /*
  * El marco del panel del equipo, sobre el de los paneles (`ui/MarcoDePanel`):
  * la marca arriba, las secciones en sus grupos y la cuenta abajo
  * (docs/PLAN-ADMIN-V5.md, paso Q). En el teléfono, las secciones van en el
  * menú: son demasiadas para pestañas. Arriba de las secciones, "Buscar", que
- * abre lo mismo que ⌘K (paso R).
+ * abre lo mismo que ⌘K (paso R). Inicio y Cobros llevan cuánto pide una mano
+ * (paso V).
  */
+
+/**
+ * Los contadores de la barra. Si la lectura falla, el panel sigue sin
+ * números: no vale tirar todas las páginas por un contador. La redirección de
+ * quien no es del equipo sí sigue su curso.
+ */
+async function contadores(): Promise<Contadores> {
+  try {
+    const d = await leerParaAtender();
+    return { inicio: cuantosParaAtender(d), cobros: d.incidencias_abiertas + d.debitos_con_problemas };
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("admin/contadores:", error);
+    return {};
+  }
+}
 
 /** Quién entró, la salida y la vuelta al sitio. */
 function Cuenta({ email }: { email: string | null }) {
@@ -39,7 +58,7 @@ function Cuenta({ email }: { email: string | null }) {
 }
 
 export default async function MarcoDelAdmin({ children }: { children: ReactNode }) {
-  const { email } = await leerQuienEntro();
+  const [{ email }, cuantos] = await Promise.all([leerQuienEntro(), contadores()]);
 
   return (
     <Atajos>
@@ -52,7 +71,7 @@ export default async function MarcoDelAdmin({ children }: { children: ReactNode 
         }
         barra={
           <div className="flex min-w-0 items-center gap-3">
-            <Link href="/admin" aria-label="Pulso" className="ring-focus shrink-0 rounded-pill">
+            <Link href="/admin" aria-label="Inicio" className="ring-focus shrink-0 rounded-pill">
               <Wordmark isotipo className="size-7" />
             </Link>
             <SeccionActual />
@@ -61,7 +80,7 @@ export default async function MarcoDelAdmin({ children }: { children: ReactNode 
         secciones={
           <div className="flex flex-col gap-5">
             <BotonBuscar />
-            <SeccionesDelAdmin />
+            <SeccionesDelAdmin contadores={cuantos} />
           </div>
         }
         cuenta={<Cuenta email={email} />}

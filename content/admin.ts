@@ -6,7 +6,7 @@ import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios, OrdenComercio
  * `tecla` que la abre después de `g` (paso R).
  */
 export const gruposAdmin = [
-  { rotulo: "General", secciones: [{ id: "pulso", href: "/admin", label: "Pulso", tecla: "i" }] },
+  { rotulo: "General", secciones: [{ id: "inicio", href: "/admin", label: "Inicio", tecla: "i" }] },
   {
     rotulo: "Operación",
     secciones: [
@@ -28,6 +28,49 @@ export type SeccionAdmin = (typeof gruposAdmin)[number]["secciones"][number];
 
 /** Las secciones sin sus grupos, en el mismo orden. */
 export const seccionesAdmin = gruposAdmin.flatMap((g): readonly SeccionAdmin[] => g.secciones);
+
+/**
+ * El Inicio (docs/PLAN-ADMIN-V5.md, paso V): arriba lo que pide una mano, de
+ * `admin_para_atender`, y abajo cómo está Bookit hoy, de `admin_pulso`.
+ */
+export const inicioAdmin = {
+  titulo: "Inicio",
+  bajada: "Lo que pide una mano y cómo está Bookit hoy. Los números se calculan al abrir la página.",
+  paraAtender: "Para atender",
+  nadaParaAtender: "Nada para atender: no hay cobros con problemas, pruebas por vencer ni locales sin turnos.",
+  cobros: {
+    titulo: "Cobros",
+    incidencias: "Incidencias de pago abiertas",
+    debitos: "Débitos con problemas",
+    altas: "Altas a medias",
+    ver: "Ir a Cobros",
+  },
+  pruebas: {
+    titulo: "Pruebas que vencen en 7 días",
+    conDebito: "Tiene el débito armado",
+    sinDebito: "Sin débito: no va a cobrar",
+    deLaTienda: "La cobra la tienda",
+    ver: "Ver las pruebas",
+  },
+  sinTurnos: {
+    titulo: "Pagando y sin turnos en 14 días",
+    bajada: "Los que se pueden ir: primero los que nunca tuvieron uno.",
+    nunca: "Nunca tuvo un turno",
+    ultimo: (cuando: string) => `Último turno ${cuando}`,
+  },
+  noAparecen: {
+    titulo: "No aparecen en la app",
+    ocultos: "Ocultos por el equipo",
+    suspendidos: "Suspendidos",
+    enPausa: "En pausa hoy",
+    verOcultos: "Ver los ocultos",
+    verEnPausa: "Ver los pausados",
+  },
+  /** Cuando una lista trae menos que su total. */
+  yMas: (n: number) => `y ${n} más`,
+  /** Lo que dice el contador de una sección en la barra lateral, para quien no lo ve. */
+  pendientes: (n: number) => `${n} para atender`,
+};
 
 /** Lo que dice el marco del panel, fuera de las secciones. */
 export const marcoAdmin = {
@@ -102,6 +145,9 @@ export const canales: Record<string, string> = {
   // Un local de la tienda cuya compra el servidor todavía no volvió a aplicar.
   tienda: "Apple / Google",
 };
+
+/** Los canales en que cobra Apple o Google, y no Mercado Pago. */
+export const CANALES_DE_LA_TIENDA = ["app_store", "play_store", "tienda"];
 
 export const filtrosComercios: { valor: FiltroComercios | null; label: string }[] = [
   { valor: null, label: "Todos" },
