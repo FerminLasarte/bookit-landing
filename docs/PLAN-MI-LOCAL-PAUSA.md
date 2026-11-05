@@ -2,8 +2,8 @@
 
 > Borrador del 5 de noviembre de 2026, para que Fermín apruebe las decisiones
 > **D1–D7**. Es la fila "La pausa del local" de "Para más adelante" en
-> `docs/PLAN-MI-LOCAL.md` (la suma el PR del paso T de la v5 del panel, todavía
-> sin mergear), y la D4 de `docs/PLAN-ADMIN-V5.md`.
+> `docs/PLAN-MI-LOCAL.md`, y la D4 de `docs/PLAN-ADMIN-V5.md`. Parte de `main`
+> con la v5 del panel ya adentro (#93–#96, mergeados el 5/11).
 
 ## Qué es
 
@@ -86,13 +86,14 @@ Rutas relativas a `~/Desarrollo/GitHub/BooKit`, en `origin/develop` (5117177e).
   reformas, un cierre", o "En pausa hasta el 9 de enero", etc.) y un botón que
   lleva a su página, `/mi-local/perfil/pausa`. La sección marcada sigue siendo
   Perfil. Además, el cartel arriba de la agenda, como en la app. No suma una
-  sección ni toca el marco del panel, que el PR #93 está moviendo a
-  `components/ui/MarcoDePanel.tsx`.
+  sección ni toca el marco del panel (`components/ui/MarcoDePanel.tsx`, que
+  comparte con `/admin` desde el #93).
 - En Gestión, arriba de Horarios: la pausa cierra días, como los días
   especiales. Pero Horarios es por profesional y la pausa es del local entero,
   y el dueño que la busca donde está en la app no la encuentra.
 - Una sección propia: una séptima entrada en la barra para algo que se usa
-  dos o tres veces por año, y toca el marco que mueve el #93.
+  dos o tres veces por año, y toca el marco que ahora comparten los dos
+  paneles.
 
 **D2 · Cómo se eligen las fechas.**
 - **(Recomendada) Los campos de fecha del navegador**, como en Días especiales
@@ -181,16 +182,14 @@ Rutas relativas a `~/Desarrollo/GitHub/BooKit`, en `origin/develop` (5117177e).
 
 ## Lo que se reusa y lo que se suma en la web
 
-- **Las cuentas de la pausa, una sola vez.** El PR #95 (paso S de la v5) trae
-  `components/admin/Pausa.tsx`, con `enCurso` y "la vuelta es `hasta` + 1", y
-  suma `diaYMesDe` y `diaDe` a `lib/formato.ts`. Para no tenerlas dos veces,
-  van a `lib/pausa.ts` (el tipo `Pausa`, `pausaVigente` —ignora la que ya
-  terminó—, `enCurso` y `vuelta`), y el panel las usa desde ahí.
-  - Si el #95 está en `main` cuando empiece, este PR mueve las cuentas de
-    `Pausa.tsx` a `lib/pausa.ts` y reusa `diaYMesDe`.
-  - Si no, este PR crea `lib/pausa.ts` y suma `diaYMesDe` igual que el #95 (el
-    conflicto se resuelve quedándose con una), y anoto en el #95 que pase a
-    usarlo.
+- **Las cuentas de la pausa, una sola vez.** El panel ya las tiene en
+  `components/admin/Pausa.tsx` (paso S de la v5, #95): `enCurso` y "la vuelta
+  es `hasta` + 1" (con `sumarDias` de `lib/mi-local/vista.ts`). Para no
+  tenerlas dos veces, este PR las mueve a `lib/pausa.ts` (el tipo `Pausa`,
+  `pausaVigente` —ignora la que ya terminó—, `enCurso` y `vuelta`) y
+  `Pausa.tsx` pasa a usarlas desde ahí, sin cambiar lo que muestra. Las fechas
+  se escriben con `diaYMesDe` de `lib/formato.ts` ("21 de octubre" a partir de
+  `2026-10-21`, sin que la zona lo corra), que ya está en `main`.
 - **La lectura** (`lib/mi-local/pausa.ts`, `server-only`): la del dueño con
   `comercios.select('pausa_desde, pausa_hasta')` y la del profesional por
   `profesionales`, como `PausaRepository` de la app. Si falla, no hay cartel:
@@ -224,8 +223,8 @@ Un solo PR desde `main`, un commit por paso.
 4. **El turno a mano:** `en_pausa` como tercer motivo de `FUERA_DE_HORARIO`,
    con "Ese día el local está en pausa." Hoy la web no lo conoce y lo muestra
    como un error sin dejar "Cargar igual", aunque la base lo permite.
-5. **La prueba** (D7) y, al mergear, la fila de la hoja de ruta en
-   `docs/PLAN-MI-LOCAL.md`.
+5. **La prueba** (D7) y, al mergear, la fila de la pausa en
+   `docs/PLAN-MI-LOCAL.md` pasa de "Para más adelante" a hecha.
 
 ## Cómo se prueba
 
