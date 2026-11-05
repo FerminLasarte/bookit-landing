@@ -1,5 +1,8 @@
 # Mi local — la pausa del local
 
+> **Aprobado por Fermín el 5 de noviembre de 2026**, con la recomendada de cada
+> decisión D1–D7. Se implementa en la rama `mi-local/plan-pausa`.
+
 > Borrador del 5 de noviembre de 2026, para que Fermín apruebe las decisiones
 > **D1–D7**. Es la fila "La pausa del local" de "Para más adelante" en
 > `docs/PLAN-MI-LOCAL.md`, y la D4 de `docs/PLAN-ADMIN-V5.md`. Parte de `main`
