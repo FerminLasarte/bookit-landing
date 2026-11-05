@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { guardarFotoDelLocal, guardarMiFoto } from "@/app/mi-local/(panel)/perfil/acciones";
 import AsiTeVen from "@/components/mi-local/AsiTeVen";
 import Avatar from "@/components/mi-local/Avatar";
+import BloqueDePausa from "@/components/mi-local/BloqueDePausa";
 import CambiarFoto from "@/components/mi-local/CambiarFoto";
 import DatosDelLocal from "@/components/mi-local/DatosDelLocal";
 import Encabezado from "@/components/mi-local/Encabezado";
@@ -14,13 +15,15 @@ import { leerCategorias } from "@/lib/alta";
 import { FORMAS_DEL_LOCAL, FORMAS_DEL_PROFESIONAL } from "@/lib/encuadre";
 import { leerMiCuenta } from "@/lib/mi-local/gestion";
 import { leerLugarQueEntra, type LugarDelDuenio, type LugarDelProfesional } from "@/lib/mi-local/lugar";
+import { leerPausa } from "@/lib/mi-local/pausa";
 import { direccionParaMostrar, leerMiFicha, leerPerfilDelLocal } from "@/lib/mi-local/perfil";
 
 export const metadata: Metadata = { title: miLocal.perfil.titulo };
 
 /*
  * El perfil (fase 4, docs/PLAN-MI-LOCAL-FASE-4.md). El dueño, lo que el
- * cliente ve de su local en la app: "Así te ven" y los datos. El profesional
+ * cliente ve de su local en la app: "Así te ven" y los datos; al pie, la
+ * pausa del local (docs/PLAN-MI-LOCAL-PAUSA.md). El profesional
  * del equipo, "Mi perfil": su nombre y su foto en ese local (D7).
  */
 export default async function PerfilPage() {
@@ -61,6 +64,11 @@ async function MiPerfil({ lugar }: { lugar: LugarDelProfesional }) {
 
 async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {
   const copy = miLocal.perfil;
+  // La pausa va aparte, a la par: si no se lee, el perfil sigue y el bloque no afirma nada.
+  const pidiendoPausa = leerPausa(local).catch((error: unknown) => {
+    console.error("mi-local/perfil-pausa:", error);
+    return undefined;
+  });
   // Un perfil que no se pudo leer no se muestra vacío: se dice.
   const lectura = await Promise.all([leerPerfilDelLocal(local.id), leerCategorias(), leerMiCuenta()]).catch(
     (error: unknown) => {
@@ -79,6 +87,7 @@ async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {
   }
 
   const [perfil, categorias, cuenta] = lectura;
+  const pausa = await pidiendoPausa;
   const direccion = direccionParaMostrar(perfil);
   const categoria = categorias.find((c) => c.id === perfil.categoria)?.nombre;
 
@@ -120,6 +129,8 @@ async function PerfilDelLocal({ local }: { local: LugarDelDuenio }) {
           />
         </Superficie>
       </section>
+
+      <BloqueDePausa pausa={pausa} />
     </div>
   );
 }
