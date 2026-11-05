@@ -212,6 +212,7 @@ antes de empezarla, como las fases.
 | **Eliminar la cuenta** | Cierra el local y borra datos: decidir si va en la web. Si va, con la misma función de la base que la app |
 | **El pin del mapa** (D8 de la fase 4) | La API de mapas de Google en el navegador: otra clave y otro costo. El alta también lo usaría |
 | **"Acepta efectivo"** | No lo edita nadie, ni la app ni la web: todos los locales dicen que aceptan efectivo |
+| **La pausa del local** (D4 de `docs/PLAN-ADMIN-V5.md`): pausar entre dos días o sin fecha de vuelta, cambiar las fechas y volver | La base ya está y aplicada (BooKit `docs/pausa-del-local.md`, sección 3: `turnos_en_la_pausa`, `pausar_mi_local`, `terminar_pausa`). Es sólo web, sin esperar a BooKit. Hoy se pausa sólo desde la app |
 
 **Pruebas que quedaron pendientes:**
 
