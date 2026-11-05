@@ -2,6 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { EstadoTurno } from "@/lib/mi-local/turnos";
+import type { Pausa } from "@/lib/pausa";
 import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
@@ -51,12 +52,8 @@ export type Pulso = {
 
 type Mes = { altas: number; bajas: number; reservas: number; cobrado_suscripciones: number };
 
-/**
- * La pausa que pidió el local y no terminó: en curso o programada. `hasta` es
- * el último día cerrado, inclusive; `null`, sin fecha de vuelta. Días de
- * Buenos Aires, como `2027-01-09` (BooKit `docs/pausa-del-local.md`, sección 5).
- */
-export type Pausa = { desde: string; hasta: string | null };
+/** La que manda la base es la que no terminó (BooKit `docs/pausa-del-local.md`, sección 5). */
+export type { Pausa };
 
 /** Por qué un local no sale hoy en los listados, con la regla de la base: pueden venir varios. */
 export type MotivoDeNoAparecer = "oculto" | "estado" | "pausa";

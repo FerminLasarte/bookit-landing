@@ -121,6 +121,8 @@ export const miLocal = {
       /** La agenda de un profesional del equipo: la de la app dice "Tú", la web dice "Vos". */
       noAtendes: { titulo: "No atendés este día", bajada: "Lo cambiás en Horarios." },
       ordenDeLlegada: { titulo: "Por orden de llegada", bajada: "Este día se atiende sin turno." },
+      /** Un día de la pausa del local (`local.en_pausa` de `huecos_del_dia`), igual para el dueño y el equipo. */
+      enPausa: { titulo: "El local está en pausa", bajada: "Este día no se toman turnos." },
       hoyNoQuedan: { titulo: "Hoy ya no quedan horarios", bajada: "El horario de hoy ya pasó." },
       sinLibres: { titulo: "Sin horarios libres", bajada: "Este día no tiene turnos ni horarios para reservar." },
     },
@@ -163,6 +165,8 @@ export const miLocal = {
         no_atiende: (profesional: string | null) => (profesional ? `${profesional} no atiende ese día.` : "Ese día no atendés."),
         fuera_de_hora: (profesional: string | null) =>
           profesional ? `Ese horario queda fuera de la agenda de ${profesional}.` : "Ese horario queda fuera de tu agenda.",
+        /** Igual para el dueño y el equipo (BooKit `docs/turno-manual-fuera-de-horario.md`). */
+        en_pausa: () => "Ese día el local está en pausa.",
       } satisfies Record<FueraDeHorario, (profesional: string | null) => string>,
       cargarIgual: "Cargar igual",
       cambiarHorario: "Cambiar horario",
@@ -861,6 +865,88 @@ export const miLocal = {
   },
 
   /** El perfil del profesional del equipo en ese local, como "Información profesional" de la app (D7 del plan de la fase 4). */
+  /**
+   * La pausa del local (docs/PLAN-MI-LOCAL-PAUSA.md), con los textos de la app
+   * para que el dueño lea lo mismo en los dos lados (BooKit
+   * `docs/pausa-del-local.md`, sección 3, y `pausa_sheet.dart`). La web dice
+   * "Bookit", como el resto del sitio. `hasta` es el último día cerrado.
+   */
+  pausa: {
+    /** Al pie del Perfil del dueño, como la fila de la app (D1). */
+    bloque: {
+      titulo: "Pausa del local",
+      sinPausa: "Vacaciones, reformas, un cierre. Esos días no aparecés en Bookit ni tomás turnos.",
+      enCurso: (hasta: string) => `En pausa hasta el ${hasta}.`,
+      enCursoSinVuelta: "En pausa, sin fecha de vuelta.",
+      programada: (desde: string) => `Se pausa el ${desde}.`,
+      pausar: "Pausar el local",
+      verPausa: "Ver tu pausa",
+    },
+    titulo: "Pausar el local",
+    tuPausa: "Tu pausa",
+    bajada: "Esos días no aparecés en Bookit ni tomás turnos. Para después se puede reservar.",
+    error: "No pudimos traer la pausa de tu local. Recargá la página en un rato.",
+    alPerfil: "Volver al perfil",
+    vuelta: "La vuelta",
+    conVuelta: "Con vuelta",
+    sinFecha: "Sin fecha",
+    desde: "Desde",
+    hasta: "Hasta",
+    hastaNota: "El último día cerrado.",
+    yaEmpezo: "La pausa ya empezó: le cambiás la vuelta, no el principio.",
+    volves: (dia: string) => `Volvés a aparecer el ${dia}.`,
+    volvesCuandoQuieras: "Volvés cuando quieras, desde acá.",
+    /** Sin JavaScript, la lista de turnos se pide con este botón. */
+    verTurnos: "Ver los turnos",
+    turnos: {
+      titulo: (n: number) => (n === 1 ? "Se cancela 1 turno" : `Se cancelan ${n} turnos`),
+      nota: "Les avisamos a tus clientes y les devolvemos lo que pagaron por Mercado Pago. Si querés salvar alguno, reprogramalo antes.",
+      ninguno: "Con estas fechas no se cancela ningún turno.",
+      sinNombre: "Sin nombre",
+      error: "No pudimos ver qué turnos se cancelan. Recargá la página en un rato.",
+      /** La lista cambió entre que se vio y se confirmó (D3): no se pausa. */
+      cambiaron: "Cambiaron los turnos de esas fechas. Revisalos antes de pausar.",
+    },
+    pausar: "Pausar el local",
+    /** Sin JavaScript no hay diálogo: el botón ya dice qué cancela. */
+    pausarYCancelar: (n: number) => (n === 1 ? "Pausar y cancelar 1 turno" : `Pausar y cancelar ${n} turnos`),
+    guardar: "Guardar cambios",
+    guardando: "Guardando…",
+    volverAhora: "Volver ahora",
+    sacar: "Sacar la pausa",
+    volviendo: "Un momento…",
+    confirmar: {
+      titulo: (n: number) => (n === 1 ? "¿Cancelar 1 turno?" : `¿Cancelar ${n} turnos?`),
+      texto: "Les avisamos a tus clientes y les devolvemos lo que pagaron por Mercado Pago.",
+      si: "Pausar y cancelar",
+      revisar: "Revisar",
+    },
+    /** Lo que se hizo, arriba de la página, como el aviso de la app al cerrar la hoja. */
+    hecho: {
+      pausado: "Tu local quedó pausado.",
+      guardado: "Pausa guardada.",
+      cancelados: (n: number) => (n === 1 ? "Listo. Cancelamos 1 turno." : `Listo. Cancelamos ${n} turnos.`),
+      volvio: "Tu local volvió a Bookit.",
+      saco: "Sacamos la pausa.",
+    },
+    /** Arriba de la agenda, mientras dura o está programada, como `CartelDePausa` de la app (D5). */
+    cartel: {
+      /** `delDuenio`: le habla al dueño; si no, al profesional del equipo. */
+      enCurso: (delDuenio: boolean) => (delDuenio ? "Tu local está en pausa" : "El local está en pausa"),
+      vuelve: (dia: string) => `Vuelve a aparecer el ${dia}.`,
+      sinVuelta: (delDuenio: boolean) => `No aparece en Bookit ni toma turnos hasta que ${delDuenio ? "vuelvas" : "vuelva"}.`,
+      programada: "Pausa programada",
+      entre: (desde: string, hasta: string) => `Del ${desde} al ${hasta} no aparece ni toma turnos.`,
+      desdeSinVuelta: (desde: string) => `Desde el ${desde} no aparece ni toma turnos.`,
+      verPausa: "Ver tu pausa",
+    },
+    errores: {
+      generico: "No pudimos pausar el local. Probá de nuevo.",
+      volver: "No pudimos sacar la pausa. Probá de nuevo.",
+      fechas: "Elegí desde cuándo se pausa el local y, con vuelta, hasta cuándo.",
+    },
+  },
+
   miPerfil: {
     titulo: "Mi perfil",
     bajada: (local: string) => `Cómo te ven los clientes de ${local}.`,

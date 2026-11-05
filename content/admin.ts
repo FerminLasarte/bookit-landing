@@ -430,7 +430,7 @@ export const historia = {
 
 /**
  * La pausa que pide el propio local (docs/PLAN-ADMIN-V5.md, paso S). La maneja
- * el dueño desde la app: el panel sólo la muestra. Las fechas llegan escritas,
+ * el dueño, desde la app o desde /mi-local: el panel sólo la muestra. Las fechas llegan escritas,
  * y `hasta` es el último día cerrado.
  */
 export const pausa = {
@@ -444,7 +444,7 @@ export const pausa = {
       `En pausa hasta el ${hasta}: vuelve el ${vuelta}. Esos días no toma turnos; para después, sí.`,
     enCursoSinVuelta: (desde: string) => `En pausa desde el ${desde}, sin fecha de vuelta: no toma turnos.`,
     programada: (fechas: string) => `Se pausa ${fechas}. Hasta entonces aparece y toma turnos como siempre.`,
-    loManeja: "La pausa la maneja el dueño desde la app.",
+    loManeja: "La pausa la maneja el dueño, desde la app o desde Mi local.",
   },
   cambio: {
     pauso: (fechas: string) => `Pausó ${fechas}`,

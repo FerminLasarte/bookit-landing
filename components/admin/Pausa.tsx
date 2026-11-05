@@ -1,7 +1,7 @@
 import { pausa as copy } from "@/content/admin";
 import type { CambioDePausa, Pausa } from "@/lib/admin/datos";
-import { diaDe, diaYMesDe, hoy } from "@/lib/formato";
-import { sumarDias } from "@/lib/mi-local/vista";
+import { diaDe, diaYMesDe } from "@/lib/formato";
+import { enCurso, vuelta } from "@/lib/pausa";
 import { Dato } from "./piezas";
 
 /*
@@ -9,8 +9,6 @@ import { Dato } from "./piezas";
  * paso S, y BooKit `docs/pausa-del-local.md`, sección 5). La base manda sólo
  * la que no terminó: en curso si ya empezó, programada si no.
  */
-
-const enCurso = (p: Pausa) => p.desde <= hoy();
 
 const fechas = (desde: string, hasta: string | null) => copy.fechas(diaYMesDe(desde), hasta && diaYMesDe(hasta));
 
@@ -31,7 +29,7 @@ export function DetalleDePausa({ pausa }: { pausa: Pausa | null }) {
   const texto = !enCurso(pausa)
     ? detalle.programada(fechas(pausa.desde, pausa.hasta))
     : pausa.hasta
-      ? detalle.enCurso(diaYMesDe(pausa.hasta), diaYMesDe(sumarDias(pausa.hasta, 1)))
+      ? detalle.enCurso(diaYMesDe(pausa.hasta), diaYMesDe(vuelta(pausa)!))
       : detalle.enCursoSinVuelta(diaYMesDe(pausa.desde));
 
   return (
