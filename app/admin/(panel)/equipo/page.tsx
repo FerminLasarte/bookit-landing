@@ -1,24 +1,23 @@
 import type { Metadata } from "next";
 import CambiarAvisos from "@/components/admin/CambiarAvisos";
-import { Bloque, Encabezado, Mail, Tabla, Vacio } from "@/components/admin/piezas";
-import QueHizo from "@/components/admin/QueHizo";
+import { Bloque, Encabezado, Mail, Tabla } from "@/components/admin/piezas";
 import SacarAdmin from "@/components/admin/SacarAdmin";
 import SumarAdmin from "@/components/admin/SumarAdmin";
 import TextLink from "@/components/ui/TextLink";
 import { acciones } from "@/content/admin";
 import { leerEquipo } from "@/lib/admin/datos";
-import { fecha, fechaConAnio } from "@/lib/formato";
+import { fechaConAnio } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Equipo" };
 
-/** Quién entra al panel y todo lo que hizo el equipo, también lo que no es de un local (paso I, D5). */
+/** Quién entra al panel y sus avisos (paso I). Lo que hizo cada uno está en Registro (paso T de la v5). */
 export default async function Equipo() {
-  const { administradores, acciones: registro, yo } = await leerEquipo();
+  const { administradores, yo } = await leerEquipo();
   const copy = acciones.equipo;
 
   return (
     <div className="flex flex-col gap-6">
-      <Encabezado titulo="Equipo" bajada="Quién entra al panel y lo que hizo cada uno." />
+      <Encabezado titulo="Equipo" bajada="Quién entra al panel y a quién le llegan los avisos." />
 
       <Bloque titulo={copy.titulo} bajada={copy.bajada}>
         <div className="mb-3">
@@ -50,31 +49,6 @@ export default async function Equipo() {
         </Tabla>
       </Bloque>
 
-      <Bloque titulo={copy.registro.titulo} bajada={copy.registro.bajada}>
-        {registro.length === 0 ? (
-          <Vacio>{copy.registro.vacio}</Vacio>
-        ) : (
-          <Tabla columnas={["Fecha", "Quién", "Qué", "Local", "Nota"]}>
-            {registro.map((a, i) => (
-              <tr key={`${a.creado_el}-${a.accion}-${i}`}>
-                <td className="whitespace-nowrap">{fecha(a.creado_el)}</td>
-                <td>{a.email ?? acciones.registro.sinCuenta}</td>
-                <td>
-                  <QueHizo accion={a} />
-                </td>
-                <td>
-                  {a.id_comercio ? (
-                    <TextLink href={`/admin/comercios/${a.id_comercio}`}>{a.comercio ?? "Sin nombre"}</TextLink>
-                  ) : (
-                    <span className="text-muted">—</span>
-                  )}
-                </td>
-                <td className="text-muted">{a.detalle.nota}</td>
-              </tr>
-            ))}
-          </Tabla>
-        )}
-      </Bloque>
     </div>
   );
 }

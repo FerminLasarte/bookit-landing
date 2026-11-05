@@ -9,6 +9,7 @@ import {
   EstadoBadge,
   paginaPedida,
   Paginas,
+  Selector,
   Tabla,
   Vacio,
 } from "@/components/admin/piezas";
@@ -16,7 +17,6 @@ import { MarcaDePausa } from "@/components/admin/Pausa";
 import { acciones, canales, filtrosComercios, niveles, planes } from "@/content/admin";
 import { leerComercios, POR_PAGINA, type FiltroComercios } from "@/lib/admin/datos";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Comercios" };
 
@@ -44,24 +44,15 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
 
       <Busqueda etiqueta="Nombre del local o mail del dueño" valor={params.q} conservar={{ estado }} />
 
-      <nav aria-label="Filtrar por estado" className="-mx-1 flex flex-wrap gap-1">
-        {filtrosComercios.map((f) => {
-          const elegido = (f.valor ?? undefined) === estado;
-          return (
-            <Link
-              key={f.label}
-              href={aLista(BASE, params, { estado: f.valor ?? undefined, p: undefined })}
-              aria-current={elegido ? "true" : undefined}
-              className={cn(
-                "ring-focus flex min-h-10 items-center rounded-pill px-4 text-small font-semibold",
-                elegido ? "bg-fg text-page" : "text-fg hover:bg-fg/6",
-              )}
-            >
-              {f.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <Selector
+        etiqueta="Filtrar por estado"
+        opciones={filtrosComercios.map((f) => ({
+          clave: f.label,
+          label: f.label,
+          href: aLista(BASE, params, { estado: f.valor ?? undefined, p: undefined }),
+          elegida: (f.valor ?? undefined) === estado,
+        }))}
+      />
 
       <Bloque titulo="Locales" bajada="De los más nuevos a los más viejos.">
         {filas.length === 0 ? (

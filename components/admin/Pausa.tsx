@@ -24,7 +24,7 @@ export function MarcaDePausa({ pausa }: { pausa: Pausa | null }) {
   );
 }
 
-/** Lo que dice el bloque Visibilidad de la pausa: cuándo y qué pasa con los turnos. */
+/** Lo que dice el bloque Visibilidad de la pausa, debajo de su bajada: cuándo y qué pasa con los turnos. */
 export function DetalleDePausa({ pausa }: { pausa: Pausa | null }) {
   if (!pausa) return null;
   const { detalle } = copy;
@@ -35,7 +35,7 @@ export function DetalleDePausa({ pausa }: { pausa: Pausa | null }) {
       : detalle.enCursoSinVuelta(diaYMesDe(pausa.desde));
 
   return (
-    <div className="mt-4 flex flex-col gap-1 border-t border-line pt-3 text-small">
+    <div className="flex flex-col gap-1 text-small">
       <p className="font-medium text-fg">{texto}</p>
       <p className="text-muted">{detalle.loManeja}</p>
     </div>
