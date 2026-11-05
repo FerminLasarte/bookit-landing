@@ -1,23 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ParaAtender from "@/components/admin/ParaAtender";
-import { Barras, Bloque, Cifra, Cifras, Encabezado } from "@/components/admin/piezas";
-import { canales, inicioAdmin, niveles } from "@/content/admin";
+import { Cifra, Cifras, Encabezado } from "@/components/admin/piezas";
+import { inicioAdmin } from "@/content/admin";
 import { leerParaAtender, leerPulso } from "@/lib/admin/datos";
-import { esteMesYElAnterior, fecha, numero, pesos } from "@/lib/formato";
+import { esteMesYElAnterior, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: inicioAdmin.titulo };
 
 /**
- * El Inicio: arriba lo que pide una mano y abajo cómo está la plataforma hoy
- * (locales, gente, turnos y plata). Los gráficos pasan a Estadísticas en el
- * paso W.
+ * El Inicio: arriba lo que pide una mano y abajo las cifras de hoy (locales,
+ * gente, turnos y plata). Los gráficos y los repartos están en Estadísticas.
  */
 export default async function Inicio() {
   const [p, paraAtender] = await Promise.all([leerPulso(), leerParaAtender()]);
   const { comercios: c, usuarios: u, turnos: t, plata, mes_en_curso: ahora, mes_anterior: antes } = p;
-  const dias = t.reservas_por_dia;
-  const reservas30 = dias.reduce((s, d) => s + d.reservas, 0);
   // Los dos meses lado a lado, sin porcentaje: el en curso va hasta hoy (docs/PLAN-ADMIN.md).
   const meses = esteMesYElAnterior();
 
@@ -46,14 +43,6 @@ export default async function Inicio() {
             detalle={`${numero(antes.altas)} en ${meses.anterior} · ${numero(ahora.bajas)} ${ahora.bajas === 1 ? "baja" : "bajas"} (${numero(antes.bajas)} en ${meses.anterior})`}
           />
         </Cifras>
-        <div className="grid gap-3 md:grid-cols-2">
-          <Bloque titulo="Activos por nivel" bajada="Al día o en gracia.">
-            <Reparto valores={c.por_nivel} rotulos={niveles} />
-          </Bloque>
-          <Bloque titulo="Activos por canal de cobro">
-            <Reparto valores={c.por_canal} rotulos={canales} />
-          </Bloque>
-        </div>
       </section>
 
       <section aria-labelledby="uso" className="flex flex-col gap-3">
@@ -74,16 +63,6 @@ export default async function Inicio() {
           />
           <Cifra etiqueta="Cuentas" valor={numero(u.total)} detalle={`${numero(u.nuevos_30d)} nuevas en 30 días`} />
         </Cifras>
-        <Bloque
-          titulo="Reservas por día"
-          bajada={`${numero(reservas30)} en 30 días · ${numero(t.por_la_app_30d)} por la app y ${numero(t.de_mostrador_30d)} de mostrador`}
-        >
-          <Barras valores={dias.map((d) => d.reservas)} etiquetas={dias.map((d) => fecha(d.dia))} />
-          <div className="mt-2 flex justify-between text-micro text-muted">
-            <span>{fecha(dias[0]?.dia)}</span>
-            <span>Hoy</span>
-          </div>
-        </Bloque>
       </section>
 
       <section aria-labelledby="plata" className="flex flex-col gap-3">
@@ -119,28 +98,5 @@ export default async function Inicio() {
         </Cifras>
       </section>
     </div>
-  );
-}
-
-/** Un reparto en filas con su barra: cuántos de cada uno. */
-function Reparto({ valores, rotulos }: { valores: Record<string, number>; rotulos: Record<string, string> }) {
-  const filas = Object.entries(valores).sort((a, b) => b[1] - a[1]);
-  const total = filas.reduce((s, [, n]) => s + n, 0);
-  if (filas.length === 0) return <p className="text-small text-muted">Ninguno.</p>;
-
-  return (
-    <ul className="flex flex-col gap-3">
-      {filas.map(([clave, n]) => (
-        <li key={clave} className="flex flex-col gap-1.5">
-          <div className="flex justify-between text-small">
-            <span className="font-semibold text-fg">{rotulos[clave] ?? clave}</span>
-            <span className="num text-muted">{numero(n)}</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-pill bg-fg/6">
-            <div className="h-full rounded-pill bg-accent" style={{ width: `${(n / total) * 100}%` }} />
-          </div>
-        </li>
-      ))}
-    </ul>
   );
 }

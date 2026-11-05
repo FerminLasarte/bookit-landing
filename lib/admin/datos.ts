@@ -315,6 +315,50 @@ export type ParaAtender = {
   sin_turnos: ListaCorta<LocalCorto & { ultimo_turno: string | null }>;
 };
 
+/** Un número del período y el del anterior, del mismo largo. */
+export type ContraAnterior = { periodo: number; anterior: number };
+
+/** Lo que cuentan los totales y cada punto de la serie (BooKit `docs/admin-panel.md`, sección 24). */
+export type MedidaDeEstadisticas =
+  | "altas"
+  | "bajas"
+  | "cobrado_suscripciones"
+  | "reservas"
+  | "por_la_app"
+  | "de_mostrador"
+  | "completadas"
+  | "canceladas"
+  | "canceladas_tarde"
+  | "ausentes"
+  | "cuentas_nuevas"
+  | "clientes_activos";
+
+/**
+ * Las estadísticas de un período de días de Buenos Aires, con `hasta`
+ * inclusive. La serie va por día hasta 92 días y por mes si es más largo.
+ * `hoy` son fotos sin período anterior: la base guarda cómo está cada local
+ * ahora, no cómo estaba.
+ */
+export type Estadisticas = {
+  periodo: { desde: string; hasta: string; dias: number };
+  anterior: { desde: string; hasta: string };
+  serie_por: "dia" | "mes";
+  totales: Record<MedidaDeEstadisticas, ContraAnterior>;
+  serie: ({ desde: string; hasta: string } & Record<MedidaDeEstadisticas, number>)[];
+  /** Por mes de alta, los últimos 12 meses con el actual. `empezaron`: los que ya no están en `pendiente`. */
+  prueba_al_pago: { mes: string; empezaron: number; pagan: number }[];
+  hoy: {
+    ingreso_mensual_estimado: number;
+    activos_por_nivel: Record<string, number>;
+    activos_por_canal: Record<string, number>;
+    activos_por_localidad: Record<string, number>;
+    activos_por_categoria: Record<string, number>;
+  };
+  mas_turnos: { id_comercio: string; nombre: string; turnos: number }[];
+  /** Desde qué día hay datos de cada medida; `null` o sin clave, desde el principio. */
+  datos_desde: Partial<Record<MedidaDeEstadisticas, string | null>>;
+};
+
 /** Un local de una persona. El dueño sale una sola vez, como `duenio`, aunque también sea profesional. */
 export type LocalDePersona = {
   id_comercio: string;
@@ -390,6 +434,9 @@ export const POR_PAGINA = 50;
 export const MAXIMO_POR_LECTURA = 200;
 
 export const leerPulso = () => leer<Pulso>("admin_pulso");
+
+export const leerEstadisticas = (desde: string, hasta: string) =>
+  leer<Estadisticas>("admin_estadisticas", { p_desde: desde, p_hasta: hasta });
 
 /** La comparten el marco (los contadores) y el Inicio: una sola lectura por página. */
 export const leerParaAtender = cache(() => leer<ParaAtender>("admin_para_atender"));
