@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -66,14 +67,15 @@ export function Bloque({
 }: {
   titulo: string;
   bajada?: ReactNode;
-  children: ReactNode;
+  /** Sin nada adentro, el bloque es su título y su bajada. */
+  children?: ReactNode;
   className?: string;
 }) {
   return (
     <Superficie tone="surface" className={cn("p-5 md:p-6", className)}>
       <h2 className="text-body font-bold text-fg">{titulo}</h2>
       {bajada && <p className="mt-0.5 text-small text-muted">{bajada}</p>}
-      <div className="mt-4">{children}</div>
+      {children && <div className="mt-4">{children}</div>}
     </Superficie>
   );
 }
@@ -185,6 +187,40 @@ export function aLista(base: string, actual: ParamsDeLista, cambios: ParamsDeLis
   for (const [k, v] of Object.entries({ ...actual, ...cambios })) if (v) params.set(k, v);
   const query = params.toString();
   return query ? `${base}?${query}` : base;
+}
+
+/**
+ * Elegir una entre varias con links: los filtros de una lista y las pestañas
+ * de una ficha. Lo elegido queda en la URL y anda sin JavaScript. Las pestañas
+ * no suben al principio de la página (`scroll={false}`).
+ */
+export function Selector({
+  etiqueta,
+  opciones,
+  scroll = true,
+}: {
+  etiqueta: string;
+  opciones: { clave: string; label: ReactNode; href: string; elegida: boolean }[];
+  scroll?: boolean;
+}) {
+  return (
+    <nav aria-label={etiqueta} className="-mx-1 flex flex-wrap gap-1">
+      {opciones.map((o) => (
+        <Link
+          key={o.clave}
+          href={o.href}
+          scroll={scroll}
+          aria-current={o.elegida ? "true" : undefined}
+          className={cn(
+            "ring-focus flex min-h-10 items-center gap-2 rounded-pill px-4 text-small font-semibold",
+            o.elegida ? "bg-fg text-page" : "text-fg hover:bg-fg/6",
+          )}
+        >
+          {o.label}
+        </Link>
+      ))}
+    </nav>
+  );
 }
 
 /** La página que pide la URL, desde 1. */

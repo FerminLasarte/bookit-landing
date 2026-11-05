@@ -5,7 +5,20 @@ import CambiarVisibilidad from "@/components/admin/CambiarVisibilidad";
 import DarCortesia from "@/components/admin/DarCortesia";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
 import { DetalleDePausa, MarcaDePausa, queCambioLaPausa } from "@/components/admin/Pausa";
-import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
+import BarraDeAcciones from "@/components/admin/BarraDeAcciones";
+import {
+  Barras,
+  Bloque,
+  Dato,
+  Encabezado,
+  EstadoBadge,
+  Fila,
+  Mail,
+  Selector,
+  Tabla,
+  Telefono,
+  Vacio,
+} from "@/components/admin/piezas";
 import QueHizo from "@/components/admin/QueHizo";
 import Reactivar from "@/components/admin/Reactivar";
 import ResolverIncidencia from "@/components/admin/ResolverIncidencia";
@@ -17,6 +30,7 @@ import {
   canales,
   estados,
   estadosAlta,
+  fichaAdmin,
   historia,
   motivosIncidencia,
   niveles,
@@ -24,9 +38,16 @@ import {
   planes,
   porCiclo,
   reembolsos,
+  type ParteDeLaFicha,
 } from "@/content/admin";
-import { leerComercio, type CambioDeEstado, type CambioDePausa, type FichaComercio } from "@/lib/admin/datos";
-import { fecha, fechaConAnio, haceCuanto, hora, mes, numero, pesos } from "@/lib/formato";
+import {
+  leerComercio,
+  type AccionDelEquipo,
+  type CambioDeEstado,
+  type CambioDePausa,
+  type FichaComercio,
+} from "@/lib/admin/datos";
+import { fecha, fechaConAnio, haceCuanto, hora, mes, mesYAnio, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercio" };
 
@@ -96,31 +117,49 @@ function porQueNoSeVe(c: FichaComercio) {
   return c.no_aparece_por.includes("pausa") ? pausa.noSeVe : null;
 }
 
-/** La historia de la ficha: los cambios de estado y los de la pausa, intercalados por fecha. */
-type Hito = { cuando: string } & ({ estado: CambioDeEstado } | { pausa: CambioDePausa });
+/**
+ * La historia de la ficha: los cambios de estado, los de la pausa y lo que
+ * hizo el equipo, intercalados por fecha.
+ */
+type Hito = { cuando: string } & (
+  | { estado: CambioDeEstado }
+  | { pausa: CambioDePausa }
+  | { accion: AccionDelEquipo }
+);
 const historiaDe = (c: FichaComercio): Hito[] =>
   [
     ...c.cambios_de_estado.map((k) => ({ cuando: k.cambiado_el, estado: k })),
     ...c.cambios_de_pausa.map((k) => ({ cuando: k.cambiado_el, pausa: k })),
+    ...c.acciones.map((a) => ({ cuando: a.creado_el, accion: a })),
   ].sort((a, b) => b.cuando.localeCompare(a.cuando));
 
-export default async function Comercio({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+const parteElegida = (pedida: string | undefined): ParteDeLaFicha =>
+  fichaAdmin.partes.find((p) => p.clave === pedida)?.clave ?? "resumen";
+
+export default async function Comercio({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ pestana?: string }>;
+}) {
+  const [{ id }, { pestana }] = await Promise.all([params, searchParams]);
   if (!UUID.test(id)) notFound();
   const c = await leerComercio(id);
   if (!c) notFound();
 
-  const activos = c.profesionales.filter((p) => p.esta_activo);
+  const parte = parteElegida(pestana);
   const noSeVe = porQueNoSeVe(c);
   const delLanzamiento = esDelLanzamiento(c);
   const suspendido = c.estado === "suspendida";
   const deLaTienda = CANALES_DE_LA_TIENDA.includes(c.canal);
-  const hitos = historiaDe(c);
+  const abiertas = c.incidencias.filter((i) => !i.resuelto_el).length;
+  const base = `/admin/comercios/${c.id_comercio}`;
 
   return (
     <div className="flex flex-col gap-6">
       <TextLink href="/admin/comercios" className="self-start text-small">
-        ← Comercios
+        ← {fichaAdmin.volver}
       </TextLink>
 
       <Encabezado
@@ -136,18 +175,29 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
         </div>
       </Encabezado>
 
-      <Bloque
-        titulo={acciones.visibilidad.titulo}
-        bajada={c.visible ? (noSeVe ?? acciones.visibilidad.seVe) : acciones.visibilidad.oculta}
-      >
+      <BarraDeAcciones etiqueta={fichaAdmin.acciones}>
+        {sePuedeExtender(c) && (
+          <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
+        )}
+        {sePuedeDarCortesia(c) && (
+          <DarCortesia
+            idComercio={c.id_comercio}
+            diasGracia={c.dias_gracia}
+            conDebito={c.tiene_debito_mp}
+            noRenueva={c.cancela_al_vencer}
+          />
+        )}
+        {sePuedeSumarFundador(c) && <SumarFundador idComercio={c.id_comercio} />}
+        {!c.dado_de_baja_el && (
+          <CambiarFundador
+            idComercio={c.id_comercio}
+            esFundador={c.es_fundador}
+            deLaTienda={deLaTienda}
+            conDebito={c.tiene_debito_mp}
+            delLanzamiento={delLanzamiento}
+          />
+        )}
         <CambiarVisibilidad idComercio={c.id_comercio} visible={c.visible} noSeVe={noSeVe} />
-        <DetalleDePausa pausa={c.pausa} />
-      </Bloque>
-
-      <Bloque
-        titulo={acciones.acceso.titulo}
-        bajada={c.dado_de_baja_el ? acciones.acceso.deBaja : suspendido ? acciones.acceso.suspendido : acciones.acceso.entra}
-      >
         {!c.dado_de_baja_el &&
           (suspendido ? (
             <Reactivar
@@ -159,185 +209,121 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
           ) : (
             <Suspender idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} deLaTienda={deLaTienda} />
           ))}
-      </Bloque>
+      </BarraDeAcciones>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <Bloque titulo="Suscripción">
-          <dl>
-            <Fila etiqueta="Plan">{planes[c.plan] ?? c.plan}</Fila>
-            <Fila etiqueta="Cobra">{canales[c.canal] ?? c.canal}</Fila>
-            <Fila etiqueta="Vence">
-              {fechaConAnio(c.vencimiento)}
-              {c.cancela_al_vencer && <span className="block text-micro text-danger">No renueva</span>}
-            </Fila>
-            <Fila etiqueta={acciones.fundador.precio}>
-              {c.es_fundador ? acciones.fundador.conPrecio : acciones.fundador.deLista}
-            </Fila>
-            <Fila etiqueta="Débito de Mercado Pago">{debito(c)}</Fila>
-            {c.alta && (
-              <Fila etiqueta="Alta">
-                {planes[c.alta.plan] ?? c.alta.plan} · {estadosAlta[c.alta.estado] ?? c.alta.estado}
-              </Fila>
-            )}
-            <Fila etiqueta="En Bookit desde">{fechaConAnio(c.creado_el)}</Fila>
-          </dl>
-          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
-            {sePuedeExtender(c) && (
-              <ExtenderPrueba idComercio={c.id_comercio} conDebito={c.tiene_debito_mp} noRenueva={c.cancela_al_vencer} />
-            )}
-            {sePuedeDarCortesia(c) && (
-              <DarCortesia
-                idComercio={c.id_comercio}
-                diasGracia={c.dias_gracia}
-                conDebito={c.tiene_debito_mp}
-                noRenueva={c.cancela_al_vencer}
-              />
-            )}
-            {sePuedeSumarFundador(c) && <SumarFundador idComercio={c.id_comercio} />}
-            {!c.dado_de_baja_el && (
-              <CambiarFundador
-                idComercio={c.id_comercio}
-                esFundador={c.es_fundador}
-                deLaTienda={deLaTienda}
-                conDebito={c.tiene_debito_mp}
-                delLanzamiento={delLanzamiento}
-              />
-            )}
-          </div>
-        </Bloque>
-
-        <Bloque titulo="Dueño">
-          <dl>
-            <Fila etiqueta="Nombre">
-              {c.duenio.id_usuario ? (
-                <TextLink href={`/admin/personas/${c.duenio.id_usuario}`}>{c.duenio.nombre ?? "Ver su ficha"}</TextLink>
+      <div className="border-b border-line pb-3">
+        <Selector
+          etiqueta={fichaAdmin.pestanas}
+          scroll={false}
+          opciones={fichaAdmin.partes.map((p) => ({
+            clave: p.clave,
+            label:
+              p.clave === "suscripcion" && abiertas > 0 ? (
+                <>
+                  {p.label}
+                  <span className="num rounded-pill bg-danger px-1.5 text-micro text-page" title={fichaAdmin.abiertas(abiertas)}>
+                    {abiertas}
+                  </span>
+                </>
               ) : (
-                (c.duenio.nombre ?? "—")
-              )}
-            </Fila>
-            <Fila etiqueta="Mail">
-              <Mail email={c.duenio.email} />
-            </Fila>
-            <Fila etiqueta="Teléfono">
-              <Telefono numero={c.duenio.telefono} />
-            </Fila>
-            <Fila etiqueta="Último ingreso">{haceCuanto(c.duenio.ultimo_ingreso)}</Fila>
-            <Fila etiqueta="Mercado Pago para señas">
-              {!c.mercado_pago
-                ? "Sin vincular"
-                : c.mercado_pago.caida_el
-                  ? `Se cayó el ${fecha(c.mercado_pago.caida_el)}`
-                  : `Vinculado el ${fecha(c.mercado_pago.vinculado_el)}`}
-            </Fila>
-            <Fila etiqueta="Efectivo · puntos">
-              {c.acepta_efectivo ? "Acepta" : "No acepta"} · {c.habilita_puntos ? "Suma puntos" : "Sin puntos"}
-            </Fila>
+                p.label
+              ),
+            href: p.clave === "resumen" ? base : `${base}?pestana=${p.clave}`,
+            elegida: p.clave === parte,
+          }))}
+        />
+      </div>
+
+      {parte === "resumen" && <Resumen c={c} noSeVe={noSeVe} suspendido={suspendido} />}
+      {parte === "suscripcion" && <Suscripcion c={c} />}
+      {parte === "turnos" && <Turnos c={c} />}
+      {parte === "equipo" && <EquipoYServicios c={c} />}
+      {parte === "historia" && <Historia c={c} />}
+    </div>
+  );
+}
+
+/** Lo de todos los días: si se ve, si entra, con quién hablar y cómo le va. */
+function Resumen({ c, noSeVe, suspendido }: { c: FichaComercio; noSeVe: string | null; suspendido: boolean }) {
+  const { visibilidad, acceso } = acciones;
+  const ultimo = c.turnos_por_mes.at(-1);
+
+  return (
+    <div className="grid gap-3 md:grid-cols-2">
+      <Bloque titulo={visibilidad.titulo} bajada={c.visible ? (noSeVe ?? visibilidad.seVe) : visibilidad.oculta}>
+        {c.pausa && <DetalleDePausa pausa={c.pausa} />}
+      </Bloque>
+
+      <Bloque
+        titulo={acceso.titulo}
+        bajada={c.dado_de_baja_el ? acceso.deBaja : suspendido ? acceso.suspendido : acceso.entra}
+      />
+
+      <Bloque titulo="Dueño">
+        <dl>
+          <Fila etiqueta="Nombre">
+            {c.duenio.id_usuario ? (
+              <TextLink href={`/admin/personas/${c.duenio.id_usuario}`}>{c.duenio.nombre ?? "Ver su ficha"}</TextLink>
+            ) : (
+              (c.duenio.nombre ?? "—")
+            )}
+          </Fila>
+          <Fila etiqueta="Mail">
+            <Mail email={c.duenio.email} />
+          </Fila>
+          <Fila etiqueta="Teléfono">
+            <Telefono numero={c.duenio.telefono} />
+          </Fila>
+          <Fila etiqueta="Último ingreso">{haceCuanto(c.duenio.ultimo_ingreso)}</Fila>
+          <Fila etiqueta="Mercado Pago para señas">
+            {!c.mercado_pago
+              ? "Sin vincular"
+              : c.mercado_pago.caida_el
+                ? `Se cayó el ${fecha(c.mercado_pago.caida_el)}`
+                : `Vinculado el ${fecha(c.mercado_pago.vinculado_el)}`}
+          </Fila>
+          <Fila etiqueta="Efectivo · puntos">
+            {c.acepta_efectivo ? "Acepta" : "No acepta"} · {c.habilita_puntos ? "Suma puntos" : "Sin puntos"}
+          </Fila>
+        </dl>
+      </Bloque>
+
+      {ultimo && (
+        <Bloque titulo={fichaAdmin.ultimoMes.titulo(mesYAnio(`${ultimo.mes}-01`))} bajada={fichaAdmin.ultimoMes.bajada}>
+          <dl>
+            <Fila etiqueta={fichaAdmin.ultimoMes.reservados}>{numero(ultimo.reservados)}</Fila>
+            <Fila etiqueta={fichaAdmin.ultimoMes.completados}>{numero(ultimo.completados)}</Fila>
+            <Fila etiqueta={fichaAdmin.ultimoMes.cancelados}>{numero(ultimo.cancelados)}</Fila>
           </dl>
         </Bloque>
-      </div>
+      )}
+    </div>
+  );
+}
 
-      <Bloque titulo={historia.titulo} bajada={historia.bajada}>
-        {hitos.length === 0 ? (
-          <Vacio>{historia.vacia}</Vacio>
-        ) : (
-          <ul className="flex flex-col">
-            {hitos.map((h, i) => (
-              <li
-                key={`${h.cuando}-${i}`}
-                className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line py-2.5 text-small last:border-0"
-              >
-                {"estado" in h ? (
-                  <span className="flex flex-wrap items-center gap-2">
-                    <EstadoBadge estado={h.estado.estado_anterior} />
-                    <span aria-hidden className="text-muted">
-                      →
-                    </span>
-                    <span className="sr-only">a</span>
-                    <EstadoBadge estado={h.estado.estado_nuevo} />
-                    {h.estado.por_el_equipo && <span className="text-micro text-muted">{historia.desdeElPanel}</span>}
-                  </span>
-                ) : (
-                  <span className="flex flex-wrap items-center gap-2">
-                    <span className="text-fg">{queCambioLaPausa(h.pausa)}</span>
-                    <span className="text-micro text-muted">{historia.delDuenio}</span>
-                  </span>
-                )}
-                <span className="num whitespace-nowrap text-muted">
-                  {fechaConAnio(h.cuando)} · {hora(h.cuando)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Bloque>
-
-      <Bloque titulo="Turnos por mes" bajada="Reservados, sin las reservas de Mercado Pago que nadie pagó.">
-        <Barras
-          valores={c.turnos_por_mes.map((m) => m.reservados)}
-          etiquetas={c.turnos_por_mes.map((m) => mes(m.mes))}
-          alto="h-24"
-        />
-        <div className="mt-2 grid grid-cols-6 text-center text-micro text-muted">
-          {c.turnos_por_mes.map((m) => (
-            <span key={m.mes}>
-              {mes(m.mes)}
-              <span className="num block text-fg">
-                {numero(m.completados)}/{numero(m.reservados)}
-              </span>
-            </span>
-          ))}
-        </div>
-        <p className="mt-2 text-micro text-muted">Completados sobre reservados.</p>
-      </Bloque>
-
-      <div className="grid gap-3 md:grid-cols-2">
-        <Bloque titulo="Profesionales" bajada={`${numero(activos.length)} activos`}>
-          {c.profesionales.length === 0 ? (
-            <Vacio>Sin profesionales.</Vacio>
-          ) : (
-            <ul className="flex flex-col">
-              {c.profesionales.map((p, i) => (
-                <li key={`${p.nombre}-${i}`} className="flex justify-between border-b border-line py-2.5 text-small last:border-0">
-                  <span className={p.esta_activo ? "text-fg" : "text-muted line-through"}>{p.nombre}</span>
-                  <span className="text-muted">{p.con_cuenta ? "Con cuenta" : "Sin cuenta"}</span>
-                </li>
-              ))}
-            </ul>
+/** El plan, quién cobra, los pagos y lo que salió mal. */
+function Suscripcion({ c }: { c: FichaComercio }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <Bloque titulo="Suscripción">
+        <dl>
+          <Fila etiqueta="Plan">{planes[c.plan] ?? c.plan}</Fila>
+          <Fila etiqueta="Cobra">{canales[c.canal] ?? c.canal}</Fila>
+          <Fila etiqueta="Vence">
+            {fechaConAnio(c.vencimiento)}
+            {c.cancela_al_vencer && <span className="block text-micro text-danger">No renueva</span>}
+          </Fila>
+          <Fila etiqueta={acciones.fundador.precio}>
+            {c.es_fundador ? acciones.fundador.conPrecio : acciones.fundador.deLista}
+          </Fila>
+          <Fila etiqueta="Débito de Mercado Pago">{debito(c)}</Fila>
+          {c.alta && (
+            <Fila etiqueta="Alta">
+              {planes[c.alta.plan] ?? c.alta.plan} · {estadosAlta[c.alta.estado] ?? c.alta.estado}
+            </Fila>
           )}
-        </Bloque>
-
-        <Bloque titulo="Servicios">
-          {c.servicios.length === 0 ? (
-            <Vacio>Sin servicios.</Vacio>
-          ) : (
-            <ul className="flex flex-col">
-              {c.servicios.map((s, i) => (
-                <li key={`${s.nombre}-${i}`} className="flex justify-between gap-4 border-b border-line py-2.5 text-small last:border-0">
-                  <span className={s.esta_activo ? "text-fg" : "text-muted line-through"}>{s.nombre}</span>
-                  <span className="num whitespace-nowrap text-muted">
-                    {pesos(s.precio)} · {s.duracion_minutos} min
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Bloque>
-      </div>
-
-      <Bloque titulo="Pagos de suscripción" bajada="Los de Mercado Pago. Los de Apple y Google están en RevenueCat.">
-        {c.pagos_suscripcion.length === 0 ? (
-          <Vacio>Sin pagos.</Vacio>
-        ) : (
-          <Tabla columnas={["Fecha", "Plan", "Pago de Mercado Pago"]}>
-            {c.pagos_suscripcion.map((p) => (
-              <tr key={p.mp_payment_id}>
-                <td>{fechaConAnio(p.creado_el)}</td>
-                <td>{planes[p.plan] ?? p.plan}</td>
-                <td className="num text-muted">{p.mp_payment_id}</td>
-              </tr>
-            ))}
-          </Tabla>
-        )}
+          <Fila etiqueta="En Bookit desde">{fechaConAnio(c.creado_el)}</Fila>
+        </dl>
       </Bloque>
 
       {c.incidencias.length > 0 && (
@@ -357,22 +343,134 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
         </Bloque>
       )}
 
-      {c.acciones.length > 0 && (
-        <Bloque titulo={acciones.registro.titulo} bajada={acciones.registro.bajada}>
-          <Tabla columnas={["Fecha", "Quién", "Qué", "Nota"]}>
-            {c.acciones.map((a) => (
-              <tr key={`${a.creado_el}-${a.accion}`}>
-                <td className="whitespace-nowrap">{fecha(a.creado_el)}</td>
-                <td>{a.email ?? acciones.registro.sinCuenta}</td>
-                <td>
-                  <QueHizo accion={a} />
-                </td>
-                <td className="text-muted">{a.detalle.nota}</td>
+      <Bloque titulo="Pagos de suscripción" bajada="Los de Mercado Pago. Los de Apple y Google están en RevenueCat.">
+        {c.pagos_suscripcion.length === 0 ? (
+          <Vacio>Sin pagos.</Vacio>
+        ) : (
+          <Tabla columnas={["Fecha", "Plan", "Pago de Mercado Pago"]}>
+            {c.pagos_suscripcion.map((p) => (
+              <tr key={p.mp_payment_id}>
+                <td>{fechaConAnio(p.creado_el)}</td>
+                <td>{planes[p.plan] ?? p.plan}</td>
+                <td className="num text-muted">{p.mp_payment_id}</td>
               </tr>
             ))}
           </Tabla>
-        </Bloque>
-      )}
+        )}
+      </Bloque>
     </div>
+  );
+}
+
+function Turnos({ c }: { c: FichaComercio }) {
+  return (
+    <Bloque titulo="Turnos por mes" bajada="Reservados, sin las reservas de Mercado Pago que nadie pagó.">
+      <Barras
+        valores={c.turnos_por_mes.map((m) => m.reservados)}
+        etiquetas={c.turnos_por_mes.map((m) => mes(m.mes))}
+        alto="h-24"
+      />
+      <div className="mt-2 grid grid-cols-6 text-center text-micro text-muted">
+        {c.turnos_por_mes.map((m) => (
+          <span key={m.mes}>
+            {mes(m.mes)}
+            <span className="num block text-fg">
+              {numero(m.completados)}/{numero(m.reservados)}
+            </span>
+          </span>
+        ))}
+      </div>
+      <p className="mt-2 text-micro text-muted">Completados sobre reservados.</p>
+    </Bloque>
+  );
+}
+
+function EquipoYServicios({ c }: { c: FichaComercio }) {
+  const activos = c.profesionales.filter((p) => p.esta_activo);
+  return (
+    <div className="grid gap-3 md:grid-cols-2">
+      <Bloque titulo="Profesionales" bajada={`${numero(activos.length)} activos`}>
+        {c.profesionales.length === 0 ? (
+          <Vacio>Sin profesionales.</Vacio>
+        ) : (
+          <ul className="flex flex-col">
+            {c.profesionales.map((p, i) => (
+              <li key={`${p.nombre}-${i}`} className="flex justify-between border-b border-line py-2.5 text-small last:border-0">
+                <span className={p.esta_activo ? "text-fg" : "text-muted line-through"}>{p.nombre}</span>
+                <span className="text-muted">{p.con_cuenta ? "Con cuenta" : "Sin cuenta"}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Bloque>
+
+      <Bloque titulo="Servicios">
+        {c.servicios.length === 0 ? (
+          <Vacio>Sin servicios.</Vacio>
+        ) : (
+          <ul className="flex flex-col">
+            {c.servicios.map((s, i) => (
+              <li key={`${s.nombre}-${i}`} className="flex justify-between gap-4 border-b border-line py-2.5 text-small last:border-0">
+                <span className={s.esta_activo ? "text-fg" : "text-muted line-through"}>{s.nombre}</span>
+                <span className="num whitespace-nowrap text-muted">
+                  {pesos(s.precio)} · {s.duracion_minutos} min
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Bloque>
+    </div>
+  );
+}
+
+/** Todo lo que le pasó al local, en una sola línea de tiempo. */
+function Historia({ c }: { c: FichaComercio }) {
+  const hitos = historiaDe(c);
+  return (
+    <Bloque titulo={historia.titulo} bajada={historia.bajada}>
+      {hitos.length === 0 ? (
+        <Vacio>{historia.vacia}</Vacio>
+      ) : (
+        <ul className="flex flex-col">
+          {hitos.map((h, i) => (
+            <li
+              key={`${h.cuando}-${i}`}
+              className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 border-b border-line py-2.5 text-small last:border-0"
+            >
+              {"estado" in h ? (
+                <span className="flex flex-wrap items-center gap-2">
+                  <EstadoBadge estado={h.estado.estado_anterior} />
+                  <span aria-hidden className="text-muted">
+                    →
+                  </span>
+                  <span className="sr-only">a</span>
+                  <EstadoBadge estado={h.estado.estado_nuevo} />
+                  {h.estado.por_el_equipo && <span className="text-micro text-muted">{historia.desdeElPanel}</span>}
+                </span>
+              ) : "pausa" in h ? (
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className="text-fg">{queCambioLaPausa(h.pausa)}</span>
+                  <span className="text-micro text-muted">{historia.delDuenio}</span>
+                </span>
+              ) : (
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="text-fg">
+                      <QueHizo accion={h.accion} />
+                    </span>
+                    <span className="text-micro text-muted">{h.accion.email ?? acciones.registro.sinCuenta}</span>
+                  </span>
+                  {h.accion.detalle.nota && <span className="text-muted">{h.accion.detalle.nota}</span>}
+                </span>
+              )}
+              <span className="num whitespace-nowrap text-muted">
+                {fechaConAnio(h.cuando)} · {hora(h.cuando)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Bloque>
   );
 }

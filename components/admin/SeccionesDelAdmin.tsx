@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ShieldCheck, Store, Users, Wallet, type LucideIcon } from "lucide-react";
+import { Activity, ScrollText, ShieldCheck, Store, Users, Wallet, type LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import EnlaceDeSeccion from "@/components/ui/EnlaceDeSeccion";
 import { gruposAdmin, marcoAdmin, seccionesAdmin, type SeccionAdmin } from "@/content/admin";
@@ -11,6 +11,7 @@ const iconos: Record<SeccionAdmin["id"], LucideIcon> = {
   personas: Users,
   cobros: Wallet,
   equipo: ShieldCheck,
+  registro: ScrollText,
 };
 
 /** La sección en la que se está: Pulso sólo en /admin; las otras, también en sus fichas. */

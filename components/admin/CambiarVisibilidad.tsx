@@ -2,14 +2,13 @@
 
 import { cambiarVisibilidad, type RespuestaDeVisibilidad } from "@/app/admin/(panel)/acciones";
 import Field from "@/components/forms/Field";
-import { claseDeOpcion } from "@/components/mi-local/Opciones";
 import { acciones } from "@/content/admin";
 import DialogoDeAccion from "./DialogoDeAccion";
 
 /**
- * El interruptor del equipo en la ficha: "Visible para todos" u "Oculto". La
- * opción vigente va llena; la otra abre la confirmación. `noSeVe`: por qué un
- * local visible igual no aparece, para decirlo también al volver a mostrarlo.
+ * "Ocultar" o "Mostrar", en la barra de la ficha: abre la confirmación. Cómo
+ * está ahora lo dice el bloque Visibilidad. `noSeVe`: por qué un local visible
+ * igual no aparece, para decirlo también al volver a mostrarlo.
  */
 export default function CambiarVisibilidad({
   idComercio,
@@ -22,28 +21,10 @@ export default function CambiarVisibilidad({
 }) {
   const copy = acciones.visibilidad;
   const paso = visible ? copy.ocultar : copy.mostrar;
-  const opciones = [
-    { valor: true, label: copy.visible },
-    { valor: false, label: copy.oculto },
-  ];
 
   return (
     <DialogoDeAccion
-      disparador={(abrir) => (
-        <div role="group" aria-label={copy.titulo} className="flex flex-wrap gap-2">
-          {opciones.map((o) =>
-            o.valor === visible ? (
-              <span key={o.label} aria-current="true" className={claseDeOpcion(true)}>
-                {o.label}
-              </span>
-            ) : (
-              <button key={o.label} type="button" onClick={abrir} className={claseDeOpcion(false)}>
-                {o.label}
-              </button>
-            ),
-          )}
-        </div>
-      )}
+      boton={paso.confirmar}
       titulo={paso.titulo}
       bajada={
         visible ? (

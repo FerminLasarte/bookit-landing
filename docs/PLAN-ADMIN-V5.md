@@ -278,12 +278,58 @@ lo mira Fermín.
 - **X:** apagar y prender los avisos propios; la densidad y las filas se
   mantienen al volver.
 
-## Lo que sigue pendiente de antes
+## Qué sigue, en orden
 
-Sigue en pie, fuera de la v5:
-- **Sin probar de la v4:** la baja de un débito real al suspender y el aviso
-  de turnos por delante. Hace falta un débito pendiente real en Mercado Pago.
-- **Sin probar de la v2:** la tabla de turnos de Personas, el link de
-  WhatsApp y el mail de las altas a medias, cuando aparezca un caso real.
-- **Lo que cobran Apple y Google:** plan propio.
-- Confirmar que BooKit borró los locales de prueba `a4a40000-…`.
+Al 5-nov-2026. Q, R, S y T están en PRs apilados: #93, #94, #95 y #96.
+
+1. **Mirar y mergear #93 a #96.** Antes de mergear:
+   - `/mi-local` con la sesión de un dueño, porque Q movió su marco al kit;
+   - `?` con un teclado de verdad;
+   - el ancho intermedio, de 768 a 1023 px.
+
+   Se mergean en orden. Antes de borrar la rama de uno, se cambia a `main` la
+   base del siguiente.
+2. **Mandar al chat de BooKit el prompt de U a X** (D5). Lo manda Fermín.
+3. **U, V, W y X en la web**, un PR por paso, cuando BooKit deje el contrato
+   (secciones desde la 22). Con sus datos de prueba se ve también la pausa del
+   paso S en pantalla, que hoy no tiene ningún local pausado.
+4. **La pausa en `/mi-local`** (D4). No depende de nada de esta lista y puede
+   ir en paralelo con 2 y 3: la base ya está. Va en un plan de `/mi-local`
+   (`docs/PLAN-MI-LOCAL.md`, Para más adelante).
+5. **Notas internas por local** (D3), después de la v5.
+6. **Las pruebas que esperan un caso real:**
+   - de la v4: la baja de un débito real al suspender y el aviso de turnos por
+     delante al suspender u ocultar;
+   - de la v2: la tabla de turnos de Personas, el link de WhatsApp y el mail
+     de las altas a medias;
+   - confirmar que BooKit borró los locales de prueba `a4a40000-…`.
+7. **Lo que cobran Apple y Google**, con RevenueCat, en un plan propio.
+8. **Editar la configuración de la plataforma** (D2), sólo si se vuelve
+   frecuente.
+
+## Para más adelante
+
+**Editar la configuración de la plataforma (D2).** Cambiar desde el panel lo
+que hoy se cambia con una migración de BooKit:
+- los precios de `/planes` (`precios_web`);
+- el precio fundador y el tope de 10 lugares;
+- los días de prueba y de gracia de cada plan.
+
+Por qué no ahora:
+- Un precio nuevo vale sólo para lo próximo. Los débitos de Mercado Pago ya
+  autorizados siguen cobrando su monto.
+- Lo que cobran Apple y Google se cambia en sus consolas, no en la base.
+- Un error ahí le cambia el precio a todo el que entre a `/planes`.
+
+Hoy esto cambia pocas veces y una migración deja todo revisado. Si algún día
+cambia seguido, lo más seguro para empezar son los días de prueba, la gracia
+y los lugares de fundador. Los precios, al final y con confirmación doble.
+
+**Notas internas por local (D3).** Un lugar en la ficha para que el equipo
+anote lo que no es una acción: "habló por WhatsApp el 3-nov, quiere pasar a
+anual", "pagó tarde dos veces", "el dueño prefiere que lo llamen". Cada nota
+lleva quién la escribió y cuándo, la ve sólo el equipo y el local nunca. Hoy
+la única nota posible va pegada a una acción del panel. Pide una tabla y dos
+funciones en BooKit (escribir y borrar la propia), más una pestaña en la ficha.
+Es chico, y sirve desde que hay dos personas en el equipo hablando con
+locales.

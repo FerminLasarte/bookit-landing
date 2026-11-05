@@ -1,4 +1,4 @@
-import type { EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
+import type { AccionDelEquipo, EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
 
 /**
  * Las secciones del panel en sus grupos, en el orden de la barra lateral
@@ -15,7 +15,13 @@ export const gruposAdmin = [
       { id: "cobros", href: "/admin/cobros", label: "Cobros", tecla: "b" },
     ],
   },
-  { rotulo: "Equipo", secciones: [{ id: "equipo", href: "/admin/equipo", label: "Equipo", tecla: "e" }] },
+  {
+    rotulo: "Equipo",
+    secciones: [
+      { id: "equipo", href: "/admin/equipo", label: "Equipo", tecla: "e" },
+      { id: "registro", href: "/admin/registro", label: "Registro", tecla: "r" },
+    ],
+  },
 ] as const;
 
 export type SeccionAdmin = (typeof gruposAdmin)[number]["secciones"][number];
@@ -365,18 +371,58 @@ export const acciones = {
       enviando: "Sacando…",
       generico: "No pudimos sacarlo. Probá de nuevo.",
     },
-    registro: {
-      titulo: "Lo que hizo el equipo",
-      bajada: "Todo el registro, también lo que no es de un local: las últimas 100 acciones, de la más nueva a la más vieja.",
-      vacio: "Todavía nadie cambió nada desde el panel.",
-    },
   },
 };
 
+/**
+ * La sección Registro (docs/PLAN-ADMIN-V5.md, paso T): todo lo que hizo el
+ * equipo, también lo que no es de un local. Los tipos juntan acciones
+ * parecidas para filtrar.
+ */
+export const registroAdmin = {
+  titulo: "Registro",
+  bajada: "Lo que hizo el equipo desde el panel: las últimas 100 acciones, de la más nueva a la más vieja.",
+  vacio: "Todavía nadie cambió nada desde el panel.",
+  vacioDelTipo: "No hay acciones de ese tipo entre las últimas 100.",
+  filtrar: "Filtrar por tipo",
+  todas: "Todas",
+  tipos: [
+    { valor: "locales", label: "Locales", acciones: ["cambiar_visibilidad", "suspender", "reactivar"] },
+    { valor: "cobros", label: "Cobros", acciones: ["resolver_incidencia", "extender_prueba", "dar_cortesia"] },
+    { valor: "fundadores", label: "Fundadores", acciones: ["cambiar_fundador", "sumar_fundador"] },
+    { valor: "equipo", label: "Equipo", acciones: ["sumar_admin", "sacar_admin", "cambiar_avisos"] },
+  ] as { valor: string; label: string; acciones: AccionDelEquipo["accion"][] }[],
+};
+
 /** Los cambios de estado de un local (paso H de docs/PLAN-ADMIN-V3.md, D1). */
+/** La ficha de un local: la barra de acciones y sus pestañas (docs/PLAN-ADMIN-V5.md, paso T). */
+export const fichaAdmin = {
+  volver: "Comercios",
+  acciones: "Acciones sobre el local",
+  pestanas: "Partes de la ficha",
+  partes: [
+    { clave: "resumen", label: "Resumen" },
+    { clave: "suscripcion", label: "Suscripción" },
+    { clave: "turnos", label: "Turnos" },
+    { clave: "equipo", label: "Equipo y servicios" },
+    { clave: "historia", label: "Historia" },
+  ],
+  /** Lo que dice la pestaña Suscripción al lado del nombre: las incidencias sin resolver. */
+  abiertas: (n: number) => `${n} ${n === 1 ? "incidencia abierta" : "incidencias abiertas"}`,
+  ultimoMes: {
+    titulo: (mes: string) => `Turnos de ${mes}`,
+    bajada: "Reservados, sin las reservas de Mercado Pago que nadie pagó.",
+    reservados: "Reservados",
+    completados: "Completados",
+    cancelados: "Cancelados",
+  },
+} as const;
+
+export type ParteDeLaFicha = (typeof fichaAdmin.partes)[number]["clave"];
+
 export const historia = {
   titulo: "Historia",
-  bajada: "Los cambios de estado de la suscripción y las pausas del local, de lo más nuevo a lo más viejo.",
+  bajada: "Los cambios de estado, las pausas del local y lo que hizo el equipo, de lo más nuevo a lo más viejo.",
   vacia: "Sin cambios desde el 23 de octubre de 2026, cuando se empezó a guardar.",
   desdeElPanel: "Desde el panel",
   delDuenio: "El dueño",
