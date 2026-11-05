@@ -12,6 +12,7 @@ import {
   Tabla,
   Vacio,
 } from "@/components/admin/piezas";
+import { MarcaDePausa } from "@/components/admin/Pausa";
 import { acciones, canales, filtrosComercios, niveles, planes } from "@/content/admin";
 import { leerComercios, POR_PAGINA, type FiltroComercios } from "@/lib/admin/datos";
 import { fecha, haceCuanto, numero } from "@/lib/formato";
@@ -84,6 +85,7 @@ export default async function Comercios({ searchParams }: { searchParams: Promis
                   <div className="flex flex-wrap gap-1">
                     {c.dado_de_baja_el ? <Dato>De baja</Dato> : <EstadoBadge estado={c.estado} />}
                     {!c.visible && <Dato>{acciones.visibilidad.oculto}</Dato>}
+                    <MarcaDePausa pausa={c.pausa} />
                   </div>
                 </td>
                 <td className="whitespace-nowrap">

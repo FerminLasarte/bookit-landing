@@ -22,6 +22,7 @@ const diaDeAgenda = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "nu
 const diaDeLaSemanaCorto = new Intl.DateTimeFormat("es-AR", { weekday: "short", timeZone: "UTC" });
 const mesYAnioLargo = new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric", timeZone: "UTC" });
 const mesLargo = new Intl.DateTimeFormat("es-AR", { month: "long", timeZone: "UTC" });
+const diaYMesDeClave = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", timeZone: "UTC" });
 // `en-CA` escribe la fecha como `2026-10-21`.
 const claveDeDia = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: ZONA });
 const relativo = new Intl.RelativeTimeFormat("es-AR", { numeric: "auto" });
@@ -87,6 +88,9 @@ export const dia = (clave: string) => diaDeAgenda.format(new Date(`${clave}T12:0
 
 /** `lun`, a partir de `2026-10-21`. */
 export const diaCorto = (clave: string) => diaDeLaSemanaCorto.format(new Date(`${clave}T12:00:00Z`)).replace(".", "");
+
+/** `21 de octubre`, a partir de `2026-10-21`. */
+export const diaYMesDe = (clave: string) => diaYMesDeClave.format(new Date(`${clave}T12:00:00Z`));
 
 /** `octubre de 2026`, a partir de `2026-10-21`. */
 export const mesYAnio = (clave: string) => mesYAnioLargo.format(new Date(`${clave}T12:00:00Z`));

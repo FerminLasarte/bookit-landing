@@ -4,6 +4,7 @@ import CambiarFundador from "@/components/admin/CambiarFundador";
 import CambiarVisibilidad from "@/components/admin/CambiarVisibilidad";
 import DarCortesia from "@/components/admin/DarCortesia";
 import ExtenderPrueba from "@/components/admin/ExtenderPrueba";
+import { DetalleDePausa, MarcaDePausa, queCambioLaPausa } from "@/components/admin/Pausa";
 import { Barras, Bloque, Dato, Encabezado, EstadoBadge, Fila, Mail, Tabla, Telefono, Vacio } from "@/components/admin/piezas";
 import QueHizo from "@/components/admin/QueHizo";
 import Reactivar from "@/components/admin/Reactivar";
@@ -19,11 +20,12 @@ import {
   historia,
   motivosIncidencia,
   niveles,
+  pausa,
   planes,
   porCiclo,
   reembolsos,
 } from "@/content/admin";
-import { leerComercio, type FichaComercio } from "@/lib/admin/datos";
+import { leerComercio, type CambioDeEstado, type CambioDePausa, type FichaComercio } from "@/lib/admin/datos";
 import { fecha, fechaConAnio, haceCuanto, hora, mes, numero, pesos } from "@/lib/formato";
 
 export const metadata: Metadata = { title: "Comercio" };
@@ -79,17 +81,28 @@ function debito(c: FichaComercio) {
 }
 
 /*
- * Por qué un local visible igual no aparece: la regla de la base
- * (`_local_a_la_vista()`) pide además que esté al día o en gracia. La baja lo
- * deja suspendido, pero se dice como baja.
+ * Por qué un local visible igual no aparece, con los motivos que calcula la
+ * base (`no_aparece_por`): la suscripción primero, que además no lo deja tomar
+ * turnos, y la pausa del local. La baja lo deja suspendido, pero se dice como
+ * baja. Que esté oculto ya lo dice el bloque.
  */
 function porQueNoSeVe(c: FichaComercio) {
   const { visibilidad } = acciones;
-  if (c.dado_de_baja_el) return visibilidad.noSeVePorBaja;
-  if (c.estado === "suspendida") return visibilidad.noSeVePorSuspension;
-  if (c.estado === "al_dia" || c.estado === "en_gracia") return null;
-  return visibilidad.noSeVePorEstado((estados[c.estado]?.label ?? c.estado).toLowerCase());
+  if (c.no_aparece_por.includes("estado")) {
+    if (c.dado_de_baja_el) return visibilidad.noSeVePorBaja;
+    if (c.estado === "suspendida") return visibilidad.noSeVePorSuspension;
+    return visibilidad.noSeVePorEstado((estados[c.estado]?.label ?? c.estado).toLowerCase());
+  }
+  return c.no_aparece_por.includes("pausa") ? pausa.noSeVe : null;
 }
+
+/** La historia de la ficha: los cambios de estado y los de la pausa, intercalados por fecha. */
+type Hito = { cuando: string } & ({ estado: CambioDeEstado } | { pausa: CambioDePausa });
+const historiaDe = (c: FichaComercio): Hito[] =>
+  [
+    ...c.cambios_de_estado.map((k) => ({ cuando: k.cambiado_el, estado: k })),
+    ...c.cambios_de_pausa.map((k) => ({ cuando: k.cambiado_el, pausa: k })),
+  ].sort((a, b) => b.cuando.localeCompare(a.cuando));
 
 export default async function Comercio({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -102,6 +115,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
   const delLanzamiento = esDelLanzamiento(c);
   const suspendido = c.estado === "suspendida";
   const deLaTienda = CANALES_DE_LA_TIENDA.includes(c.canal);
+  const hitos = historiaDe(c);
 
   return (
     <div className="flex flex-col gap-6">
@@ -118,6 +132,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
           <Dato>{niveles[c.nivel] ?? c.nivel}</Dato>
           {c.es_fundador && <Dato>{delLanzamiento ? acciones.lanzamiento.marca : "Fundador"}</Dato>}
           {!c.visible && <Dato>{acciones.visibilidad.oculto}</Dato>}
+          <MarcaDePausa pausa={c.pausa} />
         </div>
       </Encabezado>
 
@@ -126,6 +141,7 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
         bajada={c.visible ? (noSeVe ?? acciones.visibilidad.seVe) : acciones.visibilidad.oculta}
       >
         <CambiarVisibilidad idComercio={c.id_comercio} visible={c.visible} noSeVe={noSeVe} />
+        <DetalleDePausa pausa={c.pausa} />
       </Bloque>
 
       <Bloque
@@ -221,26 +237,33 @@ export default async function Comercio({ params }: { params: Promise<{ id: strin
       </div>
 
       <Bloque titulo={historia.titulo} bajada={historia.bajada}>
-        {c.cambios_de_estado.length === 0 ? (
+        {hitos.length === 0 ? (
           <Vacio>{historia.vacia}</Vacio>
         ) : (
           <ul className="flex flex-col">
-            {c.cambios_de_estado.map((k, i) => (
+            {hitos.map((h, i) => (
               <li
-                key={`${k.cambiado_el}-${i}`}
+                key={`${h.cuando}-${i}`}
                 className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line py-2.5 text-small last:border-0"
               >
-                <span className="flex flex-wrap items-center gap-2">
-                  <EstadoBadge estado={k.estado_anterior} />
-                  <span aria-hidden className="text-muted">
-                    →
+                {"estado" in h ? (
+                  <span className="flex flex-wrap items-center gap-2">
+                    <EstadoBadge estado={h.estado.estado_anterior} />
+                    <span aria-hidden className="text-muted">
+                      →
+                    </span>
+                    <span className="sr-only">a</span>
+                    <EstadoBadge estado={h.estado.estado_nuevo} />
+                    {h.estado.por_el_equipo && <span className="text-micro text-muted">{historia.desdeElPanel}</span>}
                   </span>
-                  <span className="sr-only">a</span>
-                  <EstadoBadge estado={k.estado_nuevo} />
-                  {k.por_el_equipo && <span className="text-micro text-muted">{historia.desdeElPanel}</span>}
-                </span>
+                ) : (
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="text-fg">{queCambioLaPausa(h.pausa)}</span>
+                    <span className="text-micro text-muted">{historia.delDuenio}</span>
+                  </span>
+                )}
                 <span className="num whitespace-nowrap text-muted">
-                  {fechaConAnio(k.cambiado_el)} · {hora(k.cambiado_el)}
+                  {fechaConAnio(h.cuando)} · {hora(h.cuando)}
                 </span>
               </li>
             ))}
