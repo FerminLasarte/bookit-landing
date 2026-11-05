@@ -309,8 +309,15 @@ la sesión del dueño de Nogal que ya estaba abierta.
 - "Sacar la pausa": "Sacamos la pausa.", el cartel se fue.
 - `/admin`: la Historia de Nogal muestra los cuatro cambios.
 
+**Anduvo (D7, 2, con el OK de Fermín):** con la lista en cero, pausé Nogal del
+5 al 6 de noviembre: "Tu local quedó pausado.", "Desde" fijo con "La pausa
+ya empezó…", "Volver ahora". La agenda mostró "Tu local está en pausa · Vuelve
+a aparecer el 7 de noviembre." y el día de hoy "El local está en pausa"; el
+Perfil, "En pausa hasta el 6 de noviembre.". "Volver ahora" dijo "Tu local
+volvió a Bookit." y el cartel se fue. Como empezó hoy, la base dejó las dos
+fechas en null, y el panel lo cuenta como "Volvió de la pausa".
+
 **Falta:**
-- **D7, 2**, la pausa que empieza hoy y "Volver ahora": espera tu OK.
 - **El profesional del equipo** (cartel sin enlace, nada en Mi perfil, la
   página lo devuelve a Perfil): hace falta que entres con la cuenta del
   equipo.
@@ -320,7 +327,7 @@ la sesión del dueño de Nogal que ya estaba abierta.
 **Quedó en la base (Nogal):** tres turnos de prueba cancelados, sin cliente
 ni pago ("Prueba web (borrar)" el 15/12 a las 10:00, "Prueba web (borrar) 2"
 el 16/12 a las 11:00 y "Prueba web (borrar) pausa" el 14/12 a las 10:00), y
-cuatro filas en `comercios_cambios_de_pausa`. Nogal, sin pausa.
+seis filas en `comercios_cambios_de_pausa`. Nogal, sin pausa.
 
 ## Lo que vi y no toca este plan
 
