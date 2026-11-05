@@ -375,10 +375,38 @@ export const acciones = {
 
 /** Los cambios de estado de un local (paso H de docs/PLAN-ADMIN-V3.md, D1). */
 export const historia = {
-  titulo: "Historia de la suscripción",
-  bajada: "Cada cambio de estado, de lo más nuevo a lo más viejo.",
+  titulo: "Historia",
+  bajada: "Los cambios de estado de la suscripción y las pausas del local, de lo más nuevo a lo más viejo.",
   vacia: "Sin cambios desde el 23 de octubre de 2026, cuando se empezó a guardar.",
   desdeElPanel: "Desde el panel",
+  delDuenio: "El dueño",
+};
+
+/**
+ * La pausa que pide el propio local (docs/PLAN-ADMIN-V5.md, paso S). La maneja
+ * el dueño desde la app: el panel sólo la muestra. Las fechas llegan escritas,
+ * y `hasta` es el último día cerrado.
+ */
+export const pausa = {
+  enCurso: "En pausa",
+  programada: "Pausa programada",
+  fechas: (desde: string, hasta: string | null) =>
+    hasta ? `del ${desde} al ${hasta}` : `desde el ${desde}, sin fecha de vuelta`,
+  noSeVe: "Hoy no aparece: el local está en pausa.",
+  detalle: {
+    enCurso: (hasta: string, vuelta: string) =>
+      `En pausa hasta el ${hasta}: vuelve el ${vuelta}. Esos días no toma turnos; para después, sí.`,
+    enCursoSinVuelta: (desde: string) => `En pausa desde el ${desde}, sin fecha de vuelta: no toma turnos.`,
+    programada: (fechas: string) => `Se pausa ${fechas}. Hasta entonces aparece y toma turnos como siempre.`,
+    loManeja: "La pausa la maneja el dueño desde la app.",
+  },
+  cambio: {
+    pauso: (fechas: string) => `Pausó ${fechas}`,
+    cambio: (fechas: string) => `Cambió la pausa: ${fechas}`,
+    volvio: "Volvió de la pausa",
+    saco: "Sacó la pausa antes de que empiece",
+    cancelados: (n: number) => `canceló ${n} ${n === 1 ? "turno" : "turnos"}`,
+  },
 };
 
 /** Lo que es una persona en un local. */
