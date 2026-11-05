@@ -314,6 +314,12 @@ async function leer<T>(funcion: string, params?: Record<string, unknown>): Promi
   return data as T;
 }
 
+/** Un lugar al que lleva el buscador del panel. */
+export type Encontrado = { href: string; titulo: string; detalle: string };
+
+/** Lo que devuelve /admin/buscar. */
+export type Encontrados = { comercios: Encontrado[]; personas: Encontrado[] };
+
 /** Cuántas filas trae cada página de una lista del panel. */
 export const POR_PAGINA = 50;
 

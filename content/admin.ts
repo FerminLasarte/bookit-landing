@@ -2,20 +2,26 @@ import type { EstadoSuscripcion, FiltroComercios } from "@/lib/admin/datos";
 
 /**
  * Las secciones del panel en sus grupos, en el orden de la barra lateral
- * (docs/PLAN-ADMIN-V5.md, paso Q). Cada una suma su `id` para el ícono.
+ * (docs/PLAN-ADMIN-V5.md, paso Q). Cada una suma su `id` para el ícono y la
+ * `tecla` que la abre después de `g` (paso R).
  */
 export const gruposAdmin = [
-  { rotulo: "General", secciones: [{ id: "pulso", href: "/admin", label: "Pulso" }] },
+  { rotulo: "General", secciones: [{ id: "pulso", href: "/admin", label: "Pulso", tecla: "i" }] },
   {
     rotulo: "Operación",
     secciones: [
-      { id: "comercios", href: "/admin/comercios", label: "Comercios" },
-      { id: "personas", href: "/admin/personas", label: "Personas" },
-      { id: "cobros", href: "/admin/cobros", label: "Cobros" },
+      { id: "comercios", href: "/admin/comercios", label: "Comercios", tecla: "c" },
+      { id: "personas", href: "/admin/personas", label: "Personas", tecla: "p" },
+      { id: "cobros", href: "/admin/cobros", label: "Cobros", tecla: "b" },
     ],
   },
-  { rotulo: "Equipo", secciones: [{ id: "equipo", href: "/admin/equipo", label: "Equipo" }] },
+  { rotulo: "Equipo", secciones: [{ id: "equipo", href: "/admin/equipo", label: "Equipo", tecla: "e" }] },
 ] as const;
+
+export type SeccionAdmin = (typeof gruposAdmin)[number]["secciones"][number];
+
+/** Las secciones sin sus grupos, en el mismo orden. */
+export const seccionesAdmin = gruposAdmin.flatMap((g): readonly SeccionAdmin[] => g.secciones);
 
 /** Lo que dice el marco del panel, fuera de las secciones. */
 export const marcoAdmin = {
@@ -25,6 +31,31 @@ export const marcoAdmin = {
   cerrarMenu: "Cerrar el menú",
   salir: "Salir",
   irALaWeb: "Ir a la web",
+};
+
+/** El buscador "Ir a…" y los atajos de teclado (docs/PLAN-ADMIN-V5.md, paso R). */
+export const atajosAdmin = {
+  buscar: "Buscar",
+  titulo: "Ir a…",
+  campo: "Una sección, un local o una persona",
+  secciones: "Secciones",
+  locales: "Locales",
+  personas: "Personas",
+  buscando: "Buscando…",
+  nada: "No hay nada con eso.",
+  pie: "↑ ↓ para moverte · Enter para ir · Esc para cerrar",
+  error: "No se pudo buscar. Probá de nuevo.",
+  sinDueno: "Sin dueño",
+  sinNombre: "Sin nombre",
+  ayuda: {
+    titulo: "Atajos de teclado",
+    bajada: "Las letras no hacen nada mientras escribís en un campo.",
+    abrirBuscador: "Buscar e ir a cualquier lado",
+    irA: "Ir a",
+    busquedaDeLaPagina: "Ir a la búsqueda de la página",
+    estaLista: "Ver esta lista",
+    cerrar: "Cerrar",
+  },
 };
 
 /** Cómo se lee cada estado de la suscripción, y si es una buena noticia. */

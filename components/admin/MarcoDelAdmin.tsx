@@ -6,13 +6,15 @@ import MarcoDePanel from "@/components/ui/MarcoDePanel";
 import Wordmark from "@/components/ui/Wordmark";
 import { marcoAdmin } from "@/content/admin";
 import { leerQuienEntro } from "@/lib/admin/datos";
+import Atajos, { BotonBuscar } from "./Atajos";
 import SeccionesDelAdmin, { SeccionActual } from "./SeccionesDelAdmin";
 
 /*
  * El marco del panel del equipo, sobre el de los paneles (`ui/MarcoDePanel`):
  * la marca arriba, las secciones en sus grupos y la cuenta abajo
  * (docs/PLAN-ADMIN-V5.md, paso Q). En el teléfono, las secciones van en el
- * menú: son demasiadas para pestañas.
+ * menú: son demasiadas para pestañas. Arriba de las secciones, "Buscar", que
+ * abre lo mismo que ⌘K (paso R).
  */
 
 /** Quién entró, la salida y la vuelta al sitio. */
@@ -40,26 +42,33 @@ export default async function MarcoDelAdmin({ children }: { children: ReactNode 
   const { email } = await leerQuienEntro();
 
   return (
-    <MarcoDePanel
-      identidad={
-        <Link href="/admin" className="ring-focus flex items-center gap-3 self-start rounded-pill px-2">
-          <Wordmark className="h-7" />
-          <Badge>{marcoAdmin.insignia}</Badge>
-        </Link>
-      }
-      barra={
-        <div className="flex min-w-0 items-center gap-3">
-          <Link href="/admin" aria-label="Pulso" className="ring-focus shrink-0 rounded-pill">
-            <Wordmark isotipo className="size-7" />
+    <Atajos>
+      <MarcoDePanel
+        identidad={
+          <Link href="/admin" className="ring-focus flex items-center gap-3 self-start rounded-pill px-2">
+            <Wordmark className="h-7" />
+            <Badge>{marcoAdmin.insignia}</Badge>
           </Link>
-          <SeccionActual />
-        </div>
-      }
-      secciones={<SeccionesDelAdmin />}
-      cuenta={<Cuenta email={email} />}
-      menu={{ abrir: marcoAdmin.menu, cerrar: marcoAdmin.cerrarMenu }}
-    >
-      {children}
-    </MarcoDePanel>
+        }
+        barra={
+          <div className="flex min-w-0 items-center gap-3">
+            <Link href="/admin" aria-label="Pulso" className="ring-focus shrink-0 rounded-pill">
+              <Wordmark isotipo className="size-7" />
+            </Link>
+            <SeccionActual />
+          </div>
+        }
+        secciones={
+          <div className="flex flex-col gap-5">
+            <BotonBuscar />
+            <SeccionesDelAdmin />
+          </div>
+        }
+        cuenta={<Cuenta email={email} />}
+        menu={{ abrir: marcoAdmin.menu, cerrar: marcoAdmin.cerrarMenu }}
+      >
+        {children}
+      </MarcoDePanel>
+    </Atajos>
   );
 }
