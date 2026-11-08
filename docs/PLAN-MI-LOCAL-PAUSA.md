@@ -317,17 +317,21 @@ Perfil, "En pausa hasta el 6 de noviembre.". "Volver ahora" dijo "Tu local
 volvió a Bookit." y el cartel se fue. Como empezó hoy, la base dejó las dos
 fechas en null, y el panel lo cuenta como "Volvió de la pausa".
 
+**Anduvo el 8/11, el profesional del equipo (D5):** con Nogal pausada del 14 al
+16 de diciembre desde la web, Fermín entró con la cuenta del equipo (Nico
+Ferreyra). La agenda muestra "Pausa programada · Del 14 de diciembre al 16 de
+diciembre no aparece ni toma turnos." sin botón; el 15/12 dice "El local está
+en pausa"; "Mi perfil" no tiene nada de la pausa, y
+`/mi-local/perfil/pausa` lo devuelve a Perfil.
+
 **Falta:**
-- **El profesional del equipo** (cartel sin enlace, nada en Mi perfil, la
-  página lo devuelve a Perfil): hace falta que entres con la cuenta del
-  equipo.
 - Sin JavaScript, haciendo clic: sólo se miró el HTML.
 - Ver el cartel y la fila en la app del teléfono.
 
 **Quedó en la base (Nogal):** tres turnos de prueba cancelados, sin cliente
 ni pago ("Prueba web (borrar)" el 15/12 a las 10:00, "Prueba web (borrar) 2"
 el 16/12 a las 11:00 y "Prueba web (borrar) pausa" el 14/12 a las 10:00), y
-seis filas en `comercios_cambios_de_pausa`. Nogal, sin pausa.
+ocho filas en `comercios_cambios_de_pausa` (dos de la prueba del 8/11). Nogal, sin pausa.
 
 ## Lo que vi y no toca este plan
 
