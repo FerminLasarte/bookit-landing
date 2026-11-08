@@ -189,6 +189,7 @@ lo que haya en la app y en la base en ese momento.
 | — | **"Otra hora"** en la carga de un turno, y la pregunta cuando cae fuera de horario (contrato de BooKit#87). Plan: `docs/PLAN-MI-LOCAL-OTRA-HORA.md` | En `main` (#57; la prueba, #59) |
 | 4 | **Perfil** del local: lo que ve el cliente (los datos, la categoría y la foto con sus dos encuadres), las fotos del equipo y "Mi perfil" del profesional. Va antes que Crecimiento, decidido por Fermín el 22-oct-2026. Plan: `docs/PLAN-MI-LOCAL-FASE-4.md` | En `main` (#58). En BooKit: #92 (la categoría y la foto de los sin cuenta), aplicada en la base |
 | 5 | **Crecimiento:** los números, cupones y recompensas, como la pestaña de la app. Gestión pasa a juntar Horarios, Servicios y Equipo (D1). Plan: `docs/PLAN-MI-LOCAL-FASE-5.md` | En `main` (#60, #61). En BooKit: #93, aplicada en la base |
+| — | **La pausa del local:** pausar entre dos días o sin fecha de vuelta, cambiar las fechas y volver, desde el Perfil; el cartel en la agenda, también para el equipo. Plan: `docs/PLAN-MI-LOCAL-PAUSA.md` | En `main` (#97). La base es la de BooKit (`docs/pausa-del-local.md`), ya aplicada |
 
 Aparte, en BooKit y sin frenar a la web: los tres arreglos que dejó anotados
 la fase 2 (ver "Para revisar más adelante" en su plan) están en `develop`
@@ -212,7 +213,6 @@ antes de empezarla, como las fases.
 | **Eliminar la cuenta** | Cierra el local y borra datos: decidir si va en la web. Si va, con la misma función de la base que la app |
 | **El pin del mapa** (D8 de la fase 4) | La API de mapas de Google en el navegador: otra clave y otro costo. El alta también lo usaría |
 | **"Acepta efectivo"** | No lo edita nadie, ni la app ni la web: todos los locales dicen que aceptan efectivo |
-| **La pausa del local** (D4 de `docs/PLAN-ADMIN-V5.md`): pausar entre dos días o sin fecha de vuelta, cambiar las fechas y volver | La base ya está y aplicada (BooKit `docs/pausa-del-local.md`, sección 3: `turnos_en_la_pausa`, `pausar_mi_local`, `terminar_pausa`). Es sólo web, sin esperar a BooKit. Hoy se pausa sólo desde la app |
 
 **Pruebas que quedaron pendientes:**
 
