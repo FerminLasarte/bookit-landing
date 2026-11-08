@@ -3,6 +3,9 @@ export type ErrorDeLaBase = { code: string; message: string; hint?: string | nul
 /** Las pistas con que la base dice que algo no entra en el plan (BooKit 20261003140000). */
 const PISTAS_DEL_PLAN = ["tope_profesionales", "plan_sin_staff", "plan_sin_promociones"];
 
+/** Los `P0001` de la pausa que son para leer (BooKit `docs/pausa-del-local.md`, sección 2). Otros `P0001` no. */
+const PISTAS_DE_LA_PAUSA = ["sin_cambios", "sin_pausa"];
+
 /**
  * Lo que dice la base cuando rechaza algo, si es una frase para personas, o
  * `null`. Las que la base escribe para mostrarse son:
@@ -14,6 +17,7 @@ const PISTAS_DEL_PLAN = ["tope_profesionales", "plan_sin_staff", "plan_sin_promo
  *   activos.").
  * - `54000`, el tope de invitaciones del día, y `P0002`, la invitación que ya
  *   no se puede reenviar.
+ * - Los de la pausa con su pista ("La pausa ya tiene esas fechas.").
  *
  * La app las muestra tal cual (D7 de la fase 2, D3 de la fase 3).
  */
@@ -21,6 +25,7 @@ export function mensajeDeLaBase(error: ErrorDeLaBase): string | null {
   if (["22023", "54000", "P0002"].includes(error.code)) return error.message;
   if (error.code === "42501" && !error.message.startsWith("permission denied")) return error.message;
   if (pideOtroPlan(error)) return error.message;
+  if (error.code === "P0001" && PISTAS_DE_LA_PAUSA.includes(error.hint ?? "")) return error.message;
   return null;
 }
 

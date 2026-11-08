@@ -46,8 +46,9 @@ export const ACCIONES_DE_TURNO = ["completado", "ausente", "cancelado"] as const
 /**
  * Por qué un turno a mano cae fuera de la agenda del profesional, como lo
  * contesta `crear_turno_manual` (BooKit, docs/turno-manual-fuera-de-horario.md).
+ * `en_pausa`: ese día el local entero está en pausa; se puede cargar igual.
  */
-export const FUERA_DE_HORARIO = ["no_atiende", "fuera_de_hora"] as const;
+export const FUERA_DE_HORARIO = ["no_atiende", "fuera_de_hora", "en_pausa"] as const;
 export type FueraDeHorario = (typeof FUERA_DE_HORARIO)[number];
 export type AccionDeTurno = (typeof ACCIONES_DE_TURNO)[number];
 
