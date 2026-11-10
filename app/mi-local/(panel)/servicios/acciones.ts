@@ -24,6 +24,8 @@ const servicio = z.object({
   descripcion: z.string().trim().max(500),
   precio: z.coerce.number().finite(),
   duracion: z.coerce.number().int(),
+  /** Sólo viaja si el local tiene más de una: si no, la base pone la principal. */
+  categoria: z.coerce.number().int().positive().nullable(),
   /** Sólo viaja si el plan incluye la seña: sin ella, la seña del servicio no se toca. */
   sena: z
     .object({ pide: z.boolean(), tipo: z.enum(["porcentaje", "fijo"]), valor: z.coerce.number().finite() })
@@ -49,6 +51,7 @@ export async function guardarServicio(_: EstadoDeServicio, datos: FormData): Pro
     descripcion: campo(datos, "descripcion"),
     precio: campo(datos, "precio"),
     duracion: campo(datos, "duracion"),
+    categoria: campo(datos, "categoria") || null,
     sena: conSena ? { pide, tipo, valor: campo(datos, "valor_sena") || 0 } : null,
   });
   if (!leido.success) return { error: errores.generico };
@@ -62,6 +65,8 @@ export async function guardarServicio(_: EstadoDeServicio, datos: FormData): Pro
     descripcion: d.descripcion || null,
     precio: d.precio,
     duracion_minutos: d.duracion,
+    // A una variante, la base se la cambia también a las otras del grupo.
+    ...(d.categoria && { id_categoria: d.categoria }),
     ...(d.sena && { requiere_sena: d.sena.pide, tipo_sena: d.sena.tipo, valor_sena: d.sena.pide ? d.sena.valor : 0 }),
   };
   const supabase = await clienteDeSupabase("local");

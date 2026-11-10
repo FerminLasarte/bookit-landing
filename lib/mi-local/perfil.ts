@@ -1,4 +1,5 @@
 import "server-only";
+import { leerCategorias, type Categoria } from "@/lib/alta";
 import { clienteDeSupabase } from "@/lib/supabase";
 
 /*
@@ -70,6 +71,23 @@ export async function leerCategoriasDelLocal(idComercio: string): Promise<number
   const { data, error } = await supabase.from("comercios_categorias").select("id_categoria").eq("id_comercio", idComercio);
   if (error) throw new Error(`categorias-del-local: ${error.message}`);
   return data.map((c) => c.id_categoria as number);
+}
+
+/**
+ * Las categorías del local con su nombre, la principal primero: entre éstas
+ * se elige la de cada servicio.
+ */
+export async function leerCategoriasConNombre(idComercio: string): Promise<Categoria[]> {
+  const supabase = await clienteDeSupabase("local");
+  const [{ data, error }, delLocal, todas] = await Promise.all([
+    supabase.from("comercios").select("id_categoria").eq("id_comercio", idComercio).single(),
+    leerCategoriasDelLocal(idComercio),
+    leerCategorias(),
+  ]);
+  if (error) throw new Error(`categoria-principal: ${error.message}`);
+  const principal = data.id_categoria as number | null;
+  const orden = [principal, ...delLocal.filter((id) => id !== principal)];
+  return orden.flatMap((id) => todas.filter((c) => c.id === id));
 }
 
 /**

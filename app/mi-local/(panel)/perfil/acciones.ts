@@ -72,13 +72,19 @@ export async function guardarPerfil(_: EstadoDelPerfil, datos: FormData): Promis
 
   const cambiaron =
     principalDeAhora !== categoria || otras.length !== otrasDeAhora.length || otras.some((id) => !otrasDeAhora.includes(id));
+  // Cuántos servicios pasaron a la principal porque se sacó su categoría.
+  let movidos = 0;
   if (cambiaron) {
-    const { error: alCambiar } = await supabase.rpc("guardar_categorias_de_mi_local", { p_principal: categoria, p_otras: otras });
+    const { data: deLaBase, error: alCambiar } = await supabase.rpc("guardar_categorias_de_mi_local", {
+      p_principal: categoria,
+      p_otras: otras,
+    });
     if (alCambiar) return errorDe(alCambiar, errores.generico, "perfil-categorias");
+    movidos = typeof deLaBase === "number" ? deLaBase : 0;
   }
 
   refresh();
-  return { error: null, listo: true };
+  return { error: null, listo: true, ...(movidos > 0 && { aviso: miLocal.perfil.datos.serviciosMovidos(movidos) }) };
 }
 
 /** La foto del local: el círculo y la portada, ya recortados en el navegador (D4 y D5). */

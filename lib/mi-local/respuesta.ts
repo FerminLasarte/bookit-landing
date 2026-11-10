@@ -2,9 +2,10 @@ import { useActionState } from "react";
 
 /**
  * Lo que contesta una acción del panel a su formulario. `verPlanes`: lo que se
- * rechazó se destraba con otro plan. `listo`: se guardó y la pantalla sigue.
+ * rechazó se destraba con otro plan. `listo`: se guardó y la pantalla sigue;
+ * `aviso`, si además hay algo que contar en lugar de "quedó guardado".
  */
-export type Respuesta = { error: string | null; verPlanes?: boolean; listo?: boolean };
+export type Respuesta = { error: string | null; verPlanes?: boolean; listo?: boolean; aviso?: string };
 
 /**
  * Una acción que va en un diálogo y lo cierra si sale bien: la página vuelve

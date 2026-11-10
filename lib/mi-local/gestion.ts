@@ -20,6 +20,8 @@ export type Servicio = {
   duracion: number;
   /** Lo que se cobra de adelanto con Mercado Pago, o `null` si no pide seña. */
   sena: { tipo: TipoDeSena; valor: number } | null;
+  /** La categoría del local a la que pertenece (BooKit 20261110120000_rubro_del_servicio). */
+  categoria: number | null;
 };
 
 type FilaDeServicio = {
@@ -31,9 +33,10 @@ type FilaDeServicio = {
   requiere_sena: boolean;
   tipo_sena: string | null;
   valor_sena: number | null;
+  id_categoria: number | null;
 };
 
-const columnas = "id_servicio, nombre, descripcion, precio, duracion_minutos, requiere_sena, tipo_sena, valor_sena";
+const columnas = "id_servicio, nombre, descripcion, precio, duracion_minutos, requiere_sena, tipo_sena, valor_sena, id_categoria";
 
 const servicioDe = (fila: FilaDeServicio): Servicio => ({
   id: fila.id_servicio,
@@ -46,6 +49,7 @@ const servicioDe = (fila: FilaDeServicio): Servicio => ({
     fila.requiere_sena && (fila.valor_sena ?? 0) > 0
       ? { tipo: fila.tipo_sena === "porcentaje" ? "porcentaje" : "fijo", valor: fila.valor_sena ?? 0 }
       : null,
+  categoria: fila.id_categoria,
 });
 
 /** Los servicios activos del local, por nombre. Un dado de baja no se ve. */

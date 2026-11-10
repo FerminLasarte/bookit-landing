@@ -327,6 +327,7 @@ export const miLocal = {
     volver: "Volver a los servicios",
     errorDeLectura: "No pudimos traer este servicio. Recargá la página en un rato.",
     nombre: "Nombre",
+    categoria: "Categoría",
     descripcion: "Descripción",
     precio: "Precio",
     duracion: "Duración, en minutos",
@@ -833,6 +834,11 @@ export const miLocal = {
       categoria: "Categoría",
       otras: "También hacemos",
       otrasBajada: "Hasta 2 más. Tus clientes también te encuentran buscando por estas.",
+      /** Al sacar una categoría, sus servicios pasan a la principal (BooKit 20261110120000). */
+      serviciosMovidos: (cuantos: number) =>
+        cuantos === 1
+          ? "Listo, quedó guardado. Un servicio pasó a tu categoría principal."
+          : `Listo, quedó guardado. ${cuantos} servicios pasaron a tu categoría principal.`,
       /** Como "Sobre el local" de la app: el cliente lo lee primero en la ficha. */
       sobre: "Sobre el local",
       sobreEjemplo: "Contale a tus clientes quiénes son y qué los distingue",

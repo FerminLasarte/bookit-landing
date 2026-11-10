@@ -6,23 +6,28 @@ import Field, { labelClasses } from "@/components/forms/Field";
 import Button from "@/components/ui/Button";
 import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
+import type { Categoria } from "@/lib/alta";
 import { formularioSinBorrar } from "@/lib/formularios";
 import type { Incluye, Servicio, TipoDeSena } from "@/lib/mi-local/gestion";
 import { ElegirUno } from "./HorasDelDia";
 import RespuestaDeAccion from "./RespuestaDeAccion";
 
 /**
- * Crear o editar un servicio: nombre, descripción, precio, duración y la seña.
- * La seña se ofrece si el plan la incluye (`niveles.cobro_mp`); si no, se dice
- * desde qué plan está, como la app. Lo que no va lo dice la base.
+ * Crear o editar un servicio: nombre, categoría, descripción, precio, duración
+ * y la seña. La categoría se elige sólo si el local tiene más de una, como la
+ * app. La seña se ofrece si el plan la incluye (`niveles.cobro_mp`); si no, se
+ * dice desde qué plan está. Lo que no va lo dice la base.
  */
 export default function FormularioDeServicio({
   servicio,
   sena,
+  categorias,
 }: {
   /** El que se edita, o nada para uno nuevo. */
   servicio?: Servicio;
   sena: Incluye;
+  /** Las del local, la principal primero. */
+  categorias: Categoria[];
 }) {
   const copy = miLocal.servicio;
   const [estado, enviar, enviando] = useActionState<EstadoDeServicio, FormData>(guardarServicio, { error: null });
@@ -36,6 +41,25 @@ export default function FormularioDeServicio({
       <Field id="servicio-nombre" label={copy.nombre}>
         {(props) => <input {...props} name="nombre" type="text" defaultValue={servicio?.nombre} maxLength={100} autoComplete="off" />}
       </Field>
+      {categorias.length > 1 && (
+        <Field id="servicio-categoria" label={copy.categoria}>
+          {(props) => (
+            <select
+              {...props}
+              name="categoria"
+              defaultValue={
+                categorias.some((c) => c.id === servicio?.categoria) ? servicio?.categoria ?? undefined : categorias[0]!.id
+              }
+            >
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+          )}
+        </Field>
+      )}
       <Field id="servicio-descripcion" label={copy.descripcion} optional>
         {(props) => (
           <textarea {...props} name="descripcion" defaultValue={servicio?.descripcion ?? ""} maxLength={500} rows={2} />
