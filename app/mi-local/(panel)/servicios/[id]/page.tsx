@@ -9,6 +9,7 @@ import TextLink from "@/components/ui/TextLink";
 import { miLocal } from "@/content/mi-local";
 import { contarTurnosPorVenir, leerPlanDelLocal, leerServicio } from "@/lib/mi-local/gestion";
 import { leerLocalDelDuenio } from "@/lib/mi-local/lugar";
+import { leerCategoriasConNombre } from "@/lib/mi-local/perfil";
 
 export const metadata: Metadata = { title: miLocal.servicio.editar };
 
@@ -21,7 +22,7 @@ export default async function EditarServicioPage({ params }: PageProps<"/mi-loca
   if (!Number.isInteger(numero) || numero <= 0) notFound();
 
   const copy = miLocal.servicio;
-  const [servicio, plan, reservados] = await Promise.all([
+  const [servicio, plan, reservados, categorias] = await Promise.all([
     // `undefined`: no se pudo leer, que no es lo mismo que no existir.
     leerServicio(local.id, numero).catch((error: unknown) => {
       console.error("mi-local/editar-servicio:", error);
@@ -29,6 +30,11 @@ export default async function EditarServicioPage({ params }: PageProps<"/mi-loca
     }),
     leerPlanDelLocal(local.suscripcion.nivel),
     contarTurnosPorVenir(numero),
+    // Sin las categorías el servicio se guarda igual: no se toca la que tiene.
+    leerCategoriasConNombre(local.id).catch((error: unknown) => {
+      console.error("mi-local/categorias-del-servicio:", error);
+      return [];
+    }),
   ]);
   if (servicio === null) notFound();
 
@@ -49,7 +55,7 @@ export default async function EditarServicioPage({ params }: PageProps<"/mi-loca
         accion={<TextLink href="/mi-local/servicios">{copy.volver}</TextLink>}
       />
       <Superficie tone="surface" className="p-5 md:p-6">
-        <FormularioDeServicio servicio={servicio} sena={plan.cobroMp} />
+        <FormularioDeServicio servicio={servicio} sena={plan.cobroMp} categorias={categorias} />
       </Superficie>
       <BajaDeServicio id={servicio.id} nombre={servicio.nombre} reservados={reservados} />
     </div>

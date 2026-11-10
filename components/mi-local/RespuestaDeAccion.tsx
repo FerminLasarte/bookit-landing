@@ -19,7 +19,7 @@ export default function RespuestaDeAccion({ estado, className }: { estado: Respu
   if (estado.listo) {
     return (
       <p role="status" className={cn("text-small text-muted", className)}>
-        {miLocal.profesional.guardado}
+        {estado.aviso ?? miLocal.profesional.guardado}
       </p>
     );
   }
